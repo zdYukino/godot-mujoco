@@ -178,7 +178,12 @@ FetchContent_MakeAvailable(godot-cpp)
 # ---------------------------------------------------------------------------
 add_library(godot_mujoco SHARED
     src/register_types.cpp
-    src/mj_world.cpp)
+    src/mj_world.cpp
+    src/physics/mj_coordinates.cpp
+    src/physics/mj_physics_server.cpp
+    src/physics/mj_direct_body_state.cpp
+    src/physics/mj_direct_space_state.cpp
+    src/physics/mj_unsupported.cpp)
 
 target_link_libraries(godot_mujoco PRIVATE godot-cpp "${MUJOCO_LINK_LIB}")
 target_include_directories(godot_mujoco PRIVATE "${MUJOCO_INCLUDE_DIR}")

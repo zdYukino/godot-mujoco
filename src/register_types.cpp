@@ -1,6 +1,9 @@
 #include "register_types.h"
 
 #include "mj_world.h"
+#include "physics/mj_physics_server.h"
+#include <godot_cpp/classes/physics_server3d_manager.hpp>
+#include <godot_cpp/variant/callable_method_pointer.hpp>
 
 #include <gdextension_interface.h>
 #include <godot_cpp/core/class_db.hpp>
@@ -33,7 +36,18 @@ static void gmj_log_handler(const mjLogMessage *msg) {
 	}
 }
 
+static PhysicsServer3D *create_mujoco_physics_server() {
+ return memnew(MjPhysicsServer3D);
+}
+
 void initialize_godot_mujoco_module(ModuleInitializationLevel p_level) {
+ if (p_level == MODULE_INITIALIZATION_LEVEL_SERVERS) {
+  GDREGISTER_CLASS(MjDirectBodyState);
+  GDREGISTER_CLASS(MjDirectSpaceState);
+  GDREGISTER_CLASS(MjPhysicsServer3D);
+  PhysicsServer3DManager::get_singleton()->register_server("MuJoCo", callable_mp_static(create_mujoco_physics_server));
+  return;
+ }
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
@@ -59,7 +73,7 @@ GDExtensionBool GDE_EXPORT godot_mujoco_library_init(
 
 	init_obj.register_initializer(initialize_godot_mujoco_module);
 	init_obj.register_terminator(uninitialize_godot_mujoco_module);
-	init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SCENE);
+	init_obj.set_minimum_library_initialization_level(MODULE_INITIALIZATION_LEVEL_SERVERS);
 
 	return init_obj.init();
 }
