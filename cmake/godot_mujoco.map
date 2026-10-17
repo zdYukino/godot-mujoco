@@ -1,0 +1,4 @@
+{
+    global: godot_mujoco_library_init;
+    local: *;
+};

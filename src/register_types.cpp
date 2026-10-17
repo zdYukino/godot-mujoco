@@ -42,9 +42,12 @@ static PhysicsServer3D *create_mujoco_physics_server() {
 
 void initialize_godot_mujoco_module(ModuleInitializationLevel p_level) {
  if (p_level == MODULE_INITIALIZATION_LEVEL_SERVERS) {
-  GDREGISTER_CLASS(MjDirectBodyState);
-  GDREGISTER_CLASS(MjDirectSpaceState);
-  GDREGISTER_CLASS(MjPhysicsServer3D);
+  // These objects require a server/space owner and are created only by the
+  // factory below or the server. Editor documentation probes default property
+  // values on instantiable classes; an unowned direct state has no server.
+  GDREGISTER_ABSTRACT_CLASS(MjDirectBodyState);
+  GDREGISTER_ABSTRACT_CLASS(MjDirectSpaceState);
+  GDREGISTER_ABSTRACT_CLASS(MjPhysicsServer3D);
   PhysicsServer3DManager::get_singleton()->register_server("MuJoCo", callable_mp_static(create_mujoco_physics_server));
   return;
  }

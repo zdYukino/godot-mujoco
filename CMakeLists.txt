@@ -188,6 +188,17 @@ add_library(godot_mujoco SHARED
 target_link_libraries(godot_mujoco PRIVATE godot-cpp "${MUJOCO_LINK_LIB}")
 target_include_directories(godot_mujoco PRIVATE "${MUJOCO_INCLUDE_DIR}")
 
+# godot-cpp statically links libstdc++ on Linux. Its locale facets and the
+# engine's C++ runtime must not interpose on one another: floating-point
+# ostream formatting otherwise crashes during the first space rebuild.
+# GDExtension communicates through this C entry point and the supplied API.
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    target_link_options(godot_mujoco PRIVATE
+        "LINKER:--version-script=${CMAKE_CURRENT_SOURCE_DIR}/cmake/godot_mujoco.map")
+    set_property(TARGET godot_mujoco APPEND PROPERTY LINK_DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake/godot_mujoco.map")
+endif()
+
 get_target_property(GODOTCPP_SUFFIX godot-cpp GODOTCPP_SUFFIX)
 
 set_target_properties(godot_mujoco PROPERTIES

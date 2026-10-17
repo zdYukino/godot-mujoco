@@ -173,7 +173,10 @@ bool MjDirectSpaceState::_intersect_ray(const Vector3 &p_from, const Vector3 &p_
 
 	p_result->rid = nearest_body->rid;
 	p_result->collider_id = ObjectID(nearest_body->object_id);
-	p_result->collider = nearest_body->object_id ? ObjectDB::get_instance(nearest_body->object_id) : nullptr;
+	// Native result structs cross the ABI without Variant/PtrToArg conversion.
+	// Godot expects its engine Object*, not the godot-cpp wrapper Object*.
+	Object *collider = nearest_body->object_id ? ObjectDB::get_instance(nearest_body->object_id) : nullptr;
+	p_result->collider = collider ? reinterpret_cast<Object *>(collider->_owner) : nullptr;
 	p_result->shape = nearest_shape;
 	if (nearest_inside) {
 		p_result->position = p_from;

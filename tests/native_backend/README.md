@@ -17,9 +17,14 @@ GODOT_BIN=/absolute/path/to/Godot_v4.7.2-stable_mono_linux.x86_64 \
 
 The runner copies this project and the built addon to `$OUT/project`, uses the
 existing cold import helper (1000 ms frame-delay workaround), and executes
-headlessly at 60 fixed FPS in three fresh engine processes (`REPEAT=3`,
-overridable). It leaves `import.log`, per-run `runtime-N.log` and
-`results-N.json`, and aggregate `results.json` under `$OUT`. The report records
+headlessly at 60 fixed FPS in three repetitions (`REPEAT=3`, overridable).
+Each repetition uses separate processes for the original 44 checks and 25
+additional primitive/ownership checks: 207 checks across six processes by default.
+It leaves `import.log`, `runtime-N.log`, `results-N.json`, `primitives-N.log`,
+`primitives-N.json`, and aggregate `results.json` under `$OUT`.
+`OUT/project` must not already exist, so import always starts with a fresh cache.
+Import has a separate 120-second timeout and never retries a failed cache.
+The report records
 the Godot version and SHA-256 of the exact staged extension binary. The 90-second execution timeout, missing report,
 nonzero engine exit, engine/script errors, or failed checks fail the runner.
 Required but unsupported functionality is a failure, never a silent skip.
@@ -41,12 +46,18 @@ Required but unsupported functionality is a failure, never a silent skip.
   after reentry.
 - Distinct worlds and isolated rays, disposal of a world and its objects,
   empty replacement world, and removal of all body query references.
+- Sphere falling onto an infinite plane, rest height/speed, sphere and plane
+  ray fields, inside-ray behavior, transformed plane offset/normal, and cleanup.
+- Contact layer filtering and collision exceptions; ray masks are independent
+  of the target body's collision mask.
+- Server-owned classes cannot be instantiated through ClassDB, including
+  editor documentation's default-property probes.
 
 This is minimal native-backend acceptance, not complete Godot physics
 conformance. Areas, joints, CCD, character motion and complex/concave shapes
 are outside its claims. Headless quantitative checks do not establish rendered
-GUI behavior. No result is claimed until this runner passes against the built
-native backend.
+GUI behavior. Cloud results and the independent acceptance gate are recorded in
+[`docs/native-backend-validation.md`](../../docs/native-backend-validation.md).
 
 ## Manual rendered demo
 
