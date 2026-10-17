@@ -89,9 +89,15 @@ void MjPhysicsServer3D::_body_remove_collision_exception(const RID&r,const RID&e
 TypedArray<RID> MjPhysicsServer3D::_body_get_collision_exceptions(const RID&r) const{TypedArray<RID>a;if(auto*b=body(r))for(auto id:b->exceptions){auto i=bodies.find(id);if(i!=bodies.end())a.push_back(i->second->rid);}return a;}
 void MjPhysicsServer3D::_free_rid(const RID&source_rid){
  const RID r=source_rid; // Owners may erase the object that supplied this RID reference.
+ // Model-instance RIDs obey the same paused transaction contract even when
+ // released through the generic server API. Do not erase a live spec first.
+ for(auto &entry:spaces)if(entry.second->imported.count(r.get_id())){
+  if(!scene_remove(entry.second->rid,r))UtilityFunctions::push_error("MuJoCo model instance removal requires a paused space outside callbacks");
+  return;
+ }
  if(flushing){pending_free.insert(r.get_id());return;}
  if(auto*b=body(r)){dirty(b->space);if(b->direct)memdelete(b->direct);bodies.erase(r.get_id());}
- else if(space(r)){for(auto &b:bodies)if(b.second->space==r){b.second->space=RID();b.second->mj_body=-1;}spaces.erase(r.get_id());}
+ else if(space(r)){for(auto &i:space(r)->imported)handles.free(i.second->rid);for(auto &b:bodies)if(b.second->space==r){b.second->space=RID();b.second->mj_body=-1;}spaces.erase(r.get_id());}
  else if(shape(r)){for(auto &b:bodies){auto &s=b.second->shapes;auto n=s.size();s.erase(std::remove_if(s.begin(),s.end(),[&](auto&i){return i.shape==r;}),s.end());if(s.size()!=n)dirty(b.second->space);}shapes.erase(r.get_id());}
  else return;
  handles.free(r);
@@ -104,7 +110,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s){
  std::vector<std::pair<RID,int>> owners;
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;
  xml<<"<body name=\"b"<<b.rid.get_id()<<"\"";pose_xml(xml,b.transform);xml<<">";
- if(b.mode==BODY_MODE_RIGID)xml<<"<freejoint/>";
+ if(b.mode==BODY_MODE_RIGID)xml<<"<freejoint name=\"native_joint_"<<b.rid.get_id()<<"\"/>";
  int count=0;for(auto&i:b.shapes)if(!i.disabled&&shape(i.shape)&&shape(i.shape)->type!=SHAPE_WORLD_BOUNDARY)++count;
  if(b.mode==BODY_MODE_RIGID&&count==0)xml<<"<inertial pos=\"0 0 0\" mass=\""<<b.mass<<"\" diaginertia=\"0.001 0.001 0.001\"/>";
  for(int j=0;j<int(b.shapes.size());++j){auto&i=b.shapes[j];auto*sh=shape(i.shape);if(i.disabled||!sh)continue;if(sh->type==SHAPE_WORLD_BOUNDARY&&b.mode!=BODY_MODE_STATIC){mj_unsupported("WorldBoundaryShape3D on dynamic body");continue;}
@@ -123,10 +129,58 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s){
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;for(auto id:b.exceptions){auto i=bodies.find(id);if(i!=bodies.end()&&i->second->space==s.rid&&id!=b.rid.get_id())exclusions.emplace(std::min<uint64_t>(id,b.rid.get_id()),std::max<uint64_t>(id,b.rid.get_id()));}}
  for(auto p:exclusions)xml<<"<exclude body1=\"b"<<p.first<<"\" body2=\"b"<<p.second<<"\"/>";
  xml<<"</contact></mujoco>";
- char error[2048]={};mjSpec *spec=mj_parseXMLString(xml.str().c_str(),nullptr,error,sizeof(error));mjModel*model=spec?mj_compile(spec,nullptr):nullptr;
- if(!model){UtilityFunctions::push_error(String("MuJoCo backend model compile failed: ")+String::utf8(spec?mjs_getError(spec):error));if(spec)mj_deleteSpec(spec);return false;}
- mj_deleteSpec(spec);mjData*data=mj_makeData(model);if(!data){mj_deleteModel(model);return false;}
- double time=s.data?s.data->time:0;if(s.data)mj_deleteData(s.data);if(s.model)mj_deleteModel(s.model);s.model=model;s.data=data;s.data->time=time;s.geom_owners=std::move(owners);s.dirty=false;
+ char error[2048]={};mjSpec *spec=mj_parseXMLString(xml.str().c_str(),nullptr,error,sizeof(error));
+ if(!spec){s.last_error=String::utf8(error);return false;}
+ mjs_setDeepCopy(spec,1);
+ if(!s.imported.empty())spec->option.integrator=mjINT_IMPLICITFAST;
+ for(auto &entry:s.imported){
+  auto &object=*entry.second;
+  auto *frame=mjs_addFrame(mjs_findBody(spec,"world"),nullptr);
+  Vector3 pos=godot_to_mj(object.pose.origin);
+  Quaternion q=godot_to_mj(object.pose.basis).get_rotation_quaternion();
+  for(int k=0;k<3;++k)frame->pos[k]=pos[k];
+  frame->quat[0]=q.w;frame->quat[1]=q.x;frame->quat[2]=q.y;frame->quat[3]=q.z;
+  auto *root=mjs_findBody(object.spec,"world");
+  // A parsed fixed-base URDF may fuse pelvis geometry into its world body.
+  // Attach that whole world once so assets and actuator references stay shared.
+  // Our free box instead attaches its sole root body directly: a freejoint
+  // must remain top-level in the combined model.
+  bool free_root=false;
+  for(auto *j=mjs_firstElement(object.spec,mjOBJ_JOINT);j;j=mjs_nextElement(object.spec,j))
+   if(mjs_asJoint(j)->type==mjJNT_FREE)free_root=true;
+  auto *child=free_root?mjs_firstChild(root,mjOBJ_BODY,0):root->element;
+  if(!child || !mjs_attach(frame->element,child,object.prefix.c_str(),"")){
+   s.last_error=String::utf8(mjs_getError(spec));mj_deleteSpec(spec);return false;
+  }
+ }
+ // Compile entirely off to the side. Never mutate the active model on failure.
+ mjModel *model=mj_compile(spec,nullptr);
+ if(!model){s.last_error=String::utf8(mjs_getError(spec));mj_deleteSpec(spec);return false;}
+ mj_deleteSpec(spec);mjData *data=mj_makeData(model);
+ if(!data){mj_deleteModel(model);s.last_error="Could not allocate candidate data";return false;}
+ // Initialize new bounded joints inside their URDF limits, with matching targets.
+ for(int j=0;j<model->njnt;++j)if(model->jnt_type[j]==mjJNT_HINGE && model->jnt_limited[j])
+  data->qpos[model->jnt_qposadr[j]]=std::clamp(0.0,model->jnt_range[2*j]+0.001,model->jnt_range[2*j+1]-0.001);
+ for(int a=0;a<model->nu;++a)if(model->actuator_trntype[a]==mjTRN_JOINT){int j=model->actuator_trnid[2*a];data->ctrl[a]=data->qpos[model->jnt_qposadr[j]];}
+ // Names, not array indices, identify compatible state across insertions/deletions.
+ if(s.model && s.data){
+  data->time=s.data->time;
+  for(int j=0;j<model->njnt;++j){const char *name=mj_id2name(model,mjOBJ_JOINT,j);if(!name)continue;
+   int old=mj_name2id(s.model,mjOBJ_JOINT,name);if(old<0||model->jnt_type[j]!=s.model->jnt_type[old])continue;
+   int nq=model->jnt_type[j]==mjJNT_FREE?7:(model->jnt_type[j]==mjJNT_BALL?4:1);
+   int nv=model->jnt_type[j]==mjJNT_FREE?6:(model->jnt_type[j]==mjJNT_BALL?3:1);
+   std::copy_n(s.data->qpos+s.model->jnt_qposadr[old],nq,data->qpos+model->jnt_qposadr[j]);
+   std::copy_n(s.data->qvel+s.model->jnt_dofadr[old],nv,data->qvel+model->jnt_dofadr[j]);
+   std::copy_n(s.data->qacc_warmstart+s.model->jnt_dofadr[old],nv,data->qacc_warmstart+model->jnt_dofadr[j]);
+  }
+  for(int a=0;a<model->nu;++a){const char *name=mj_id2name(model,mjOBJ_ACTUATOR,a);if(!name)continue;int old=mj_name2id(s.model,mjOBJ_ACTUATOR,name);if(old>=0)data->ctrl[a]=s.data->ctrl[old];}
+ }
+ mj_forward(model,data);
+ for(int i=0;i<model->nq;++i)if(!std::isfinite(data->qpos[i])){mj_deleteData(data);mj_deleteModel(model);s.last_error="Nonfinite candidate state";return false;}
+ std::vector<std::pair<RID,int>> mapped(model->ngeom);
+ for(size_t i=0;i<owners.size();++i){int g=mj_name2id(model,mjOBJ_GEOM,("g"+std::to_string(i)).c_str());if(g>=0)mapped[g]=owners[i];}
+ if(s.data)mj_deleteData(s.data);if(s.model)mj_deleteModel(s.model);
+ s.model=model;s.data=data;s.geom_owners=std::move(mapped);s.dirty=false;s.last_error="";++s.revision;
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;std::string name="b"+std::to_string(b.rid.get_id());b.mj_body=mj_name2id(model,mjOBJ_BODY,name.c_str());write_body(b);}
  mj_forward(model,data);return true;
 }
@@ -141,7 +195,7 @@ void MjPhysicsServer3D::_step(float dt){
  if(!active||dt<=0)return;last_step=dt;
  // Each Godot fixed tick advances each active space exactly dt. Subdivide, don't
  // accumulate another autonomous clock (MjWorld owns entirely separate models).
- for(auto &entry:spaces){auto&s=*entry.second;if(!s.active||!rebuild(s))continue;
+ for(auto &entry:spaces){auto&s=*entry.second;if(!s.active||s.paused||!rebuild(s))continue;
  const int steps=std::max(1,int(std::ceil(double(dt)/0.002)));s.model->opt.timestep=double(dt)/steps;
  for(int n=0;n<steps;++n){
  for(auto &be:bodies){auto&b=*be.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID||b.mj_body<1)continue;

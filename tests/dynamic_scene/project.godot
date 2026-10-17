@@ -1,0 +1,13 @@
+config_version=5
+[application]
+config/name="MuJoCo Dynamic G1 World"
+run/main_scene="res://VisualDemo.tscn"
+config/features=PackedStringArray("4.7")
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=800
+[physics]
+3d/physics_engine="MuJoCo"
+common/physics_ticks_per_second=60
+[rendering]
+renderer/rendering_method="gl_compatibility"

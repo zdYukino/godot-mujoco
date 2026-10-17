@@ -93,6 +93,10 @@ cmake --build build-release -j
 
 ## Run
 
+For the native backend's runtime G1/obstacle import, pause/commit/delete controls
+and independent screenshot acceptance, see [dynamic world](docs/dynamic-world.md)
+and [its runnable scene](tests/dynamic_scene/README.md).
+
 Visual demo (a MuJoCo-simulated pendulum driven every physics tick):
 
 ```bash

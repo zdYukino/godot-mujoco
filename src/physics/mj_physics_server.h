@@ -17,6 +17,11 @@ class MjDirectBodyState;
 class MjDirectSpaceState;
 struct MjShape { RID rid; PhysicsServer3D::ShapeType type; Variant data; float margin=0.04f; };
 struct MjShapeInstance { RID shape; Transform3D transform; bool disabled=false; };
+struct MjImported {
+ RID rid; String label; Transform3D pose; mjSpec *spec=nullptr;
+ std::string prefix;
+ ~MjImported() { if(spec) mj_deleteSpec(spec); }
+};
 struct MjBody {
  RID rid, space; uint64_t object_id=0; PhysicsServer3D::BodyMode mode=PhysicsServer3D::BODY_MODE_RIGID;
  Transform3D transform; Vector3 linear_velocity, angular_velocity, force, torque, constant_force, constant_torque;
@@ -27,6 +32,8 @@ struct MjBody {
  std::set<uint64_t> exceptions;
 };
 struct MjSpace {
+ bool paused=false; uint64_t revision=0; String last_error;
+ std::map<uint64_t,std::unique_ptr<MjImported>> imported;
  RID rid; bool active=false, dirty=true; mjModel *model=nullptr; mjData *data=nullptr;
  MjDirectSpaceState *direct=nullptr; Vector3 gravity_direction=Vector3(0,-1,0); double gravity=9.8;
  double linear_damp=0.1, angular_damp=0.1, accumulator=0; std::map<int,Variant> params;
@@ -43,8 +50,17 @@ void mj_unsupported(const char *feature);
 class MjPhysicsServer3D : public PhysicsServer3DExtension {
  GDCLASS(MjPhysicsServer3D, PhysicsServer3DExtension)
 protected:
- static void _bind_methods() {}
+ static void _bind_methods();
 public:
+ bool scene_pause(const RID &space, bool paused);
+ RID scene_import_g1(const RID &space, const String &path, const String &label, const Transform3D &pose);
+ RID scene_add_box(const RID &space, const String &label, const Transform3D &pose, const Vector3 &size, double mass);
+ bool scene_remove(const RID &space, const RID &object);
+ Dictionary scene_info(const RID &space) const;
+ Dictionary scene_state(const RID &space, const RID &object) const;
+ Array scene_geometry(const RID &space, const RID &object) const;
+ bool scene_set_control(const RID &space, const RID &object, const String &joint, double target);
+ RID scene_insert(MjSpace &space, mjSpec *spec, const String &label, const Transform3D &pose);
  std::set<uint64_t> pending_free;
  RID_Owner<int> handles;
  std::map<uint64_t,std::unique_ptr<MjShape>> shapes;
