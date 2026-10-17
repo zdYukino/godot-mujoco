@@ -17,3 +17,9 @@
 /demo/addons/godot_mujoco/bin/gmj_core_smoke
 /demo/addons/godot_mujoco/bin/libc++_shared.so
 /demo/addons/godot_mujoco/bin/*.framework/
+
+# Local validation outputs and .NET build artifacts
+/build-*/
+/**/bin/Debug/
+/**/bin/Release/
+/**/obj/

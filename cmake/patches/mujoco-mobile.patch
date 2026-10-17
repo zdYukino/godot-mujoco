@@ -32,12 +32,3 @@
  #elif defined(__STDC_VERSION__) && __STDC_VERSION__ >= 201112L
    return aligned_alloc(align, size);
  #endif
-@@ -218,7 +223,7 @@
-   struct tm timeinfo;
-   time(&rawtime);
- 
--#if defined(_POSIX_C_SOURCE) || defined(__APPLE__) || defined(__STDC_VERSION_TIME_H__) || defined(__EMSCRIPTEN__)
-+#if defined(_POSIX_C_SOURCE) || defined(__APPLE__) || defined(__STDC_VERSION_TIME_H__) || defined(__EMSCRIPTEN__) || defined(__ANDROID__)
-   localtime_r(&rawtime, &timeinfo);
- #elif defined(_WIN32)
-   localtime_s(&timeinfo, &rawtime);

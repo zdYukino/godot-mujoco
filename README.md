@@ -42,7 +42,8 @@ frames, joint axes and center of mass. See [`VisualDebug.tscn`](demo/VisualDebug
 
 - CMake ≥ 3.24 and a C++17 compiler (`g++` / `clang++` / MSVC).
 - Network access on first configure (to fetch MuJoCo + godot-cpp).
-- A standard Godot 4.7 binary to run the demo.
+- The validated Linux baseline uses **Godot 4.7.2 .NET** and **MuJoCo 3.16.0**.
+  See [Linux/headless baseline](docs/headless-baseline.md) for exact commands and limitations.
 
 Nothing else — MuJoCo is fetched automatically.
 
@@ -55,7 +56,7 @@ cmake --build build -j
 
 This will:
 
-1. Download the pinned prebuilt **MuJoCo** release (default `3.12.0`) and verify
+1. Download the pinned prebuilt **MuJoCo** release (default `3.16.0`) and verify
    its SHA-256. All shipped archives (Linux x86_64/aarch64, Windows x86_64) are
    pinned; fetching an unpinned archive fails unless `-DGMJ_ALLOW_UNVERIFIED=ON`.
 2. Fetch and build **godot-cpp** (`godot-4.5-stable`, forward-compatible with
@@ -63,7 +64,7 @@ This will:
 3. Build the extension and **stage everything** into
    `demo/addons/godot_mujoco/bin/`:
    - `libgodot_mujoco.<platform>.<target>.<arch>.so|.dylib|.dll`
-   - the MuJoCo runtime (`libmujoco.so.3.12.0`, etc.)
+   - the MuJoCo runtime (`libmujoco.so.3.16.0`, etc.)
 
 For an **exported game** you also need the release variant (the `.gdextension`
 maps release feature tags to `*.template_release.*`):
@@ -78,7 +79,7 @@ cmake --build build-release -j
 
 ### Useful CMake options
 
-- `-DMUJOCO_VERSION=3.12.0` — MuJoCo release to fetch.
+- `-DMUJOCO_VERSION=3.16.0` — MuJoCo release to fetch.
 - `-DGODOT_CPP_TAG=godot-4.5-stable` — godot-cpp tag to build against.
 - `-DGODOTCPP_TARGET=template_debug|template_release` — build variant.
 - `-DGMJ_ADDON_BIN=/path/to/bin` — where to stage the built binaries.
@@ -287,7 +288,7 @@ example.
 - **Linux aarch64 / Windows x86_64** — official archives are checksum-pinned;
   CI builds both (arm64 also runs the headless smoke).
 - **macOS** — the official release is a `.dmg` CMake can't extract; download and
-  mount it, then build with `-DGMJ_MUJOCO_ROOT=/path/to/mujoco-3.12.0`. (The
+  mount it, then build with `-DGMJ_MUJOCO_ROOT=/path/to/mujoco-3.16.0`. (The
   `.gdextension` currently expects a `.framework`; adjust it to the produced
   `.dylib` name if you package for macOS.)
 - **Android arm64 / iOS arm64** — from-source cross-compile, proven in CI as

@@ -6,7 +6,7 @@ include(FetchContent)
 # ---------------------------------------------------------------------------
 # Options
 # ---------------------------------------------------------------------------
-set(MUJOCO_VERSION "3.12.0" CACHE STRING "MuJoCo release version to fetch")
+set(MUJOCO_VERSION "3.16.0" CACHE STRING "MuJoCo release version to fetch")
 set(GODOT_CPP_TAG "godot-4.5-stable" CACHE STRING "godot-cpp git tag to build against")
 
 # Where the built extension + MuJoCo runtime are staged so the demo project
@@ -39,11 +39,11 @@ option(GMJ_BUILD_CORE_SMOKE
 set(GMJ_MUJOCO_FROM_SOURCE_TARGET FALSE)
 
 if(GMJ_BUILD_MUJOCO_FROM_SOURCE)
-    # Source tarball (not the desktop binary archive). Hash is for 3.12.0.
+    # Source tarball (not the desktop binary archive). Hash is for 3.16.0.
     set(_mj_src_url
         "https://github.com/google-deepmind/mujoco/archive/refs/tags/${MUJOCO_VERSION}.tar.gz")
-    if(MUJOCO_VERSION STREQUAL "3.12.0")
-        set(_mj_src_hash "SHA256=9faa979982c3e924e8aaff3b16983bba3a1ab19c81f4f73178ae9c2ea25e467d")
+    if(MUJOCO_VERSION STREQUAL "3.16.0")
+        set(_mj_src_hash "SHA256=45fe830707c80cf2fa54b37811ea13d7cc1774400704f69d85d2ecc1a151a236")
     endif()
     if(NOT DEFINED _mj_src_hash AND NOT GMJ_ALLOW_UNVERIFIED)
         message(FATAL_ERROR "No pinned checksum for MuJoCo source ${MUJOCO_VERSION}. "
@@ -75,7 +75,7 @@ if(GMJ_BUILD_MUJOCO_FROM_SOURCE)
     endif()
 
     set(_mj_mobile_patch "${CMAKE_CURRENT_SOURCE_DIR}/cmake/patches/mujoco-mobile.patch")
-    # posix_memalign + localtime_r: official sources assume desktop C11/POSIX.
+    # Mobile allocation/macOS guards; localtime_r is handled upstream in 3.16.
     # apply_patch.cmake treats "already applied" as success so reconfigure is idempotent.
     set(_mj_patch_cmd ${CMAKE_COMMAND} -D PATCH_FILE=${_mj_mobile_patch}
         -P "${CMAKE_CURRENT_SOURCE_DIR}/cmake/apply_patch.cmake")
@@ -115,13 +115,13 @@ else()
     endif()
 
     # Pinned SHA-256 checksums per (version, asset) for supply-chain integrity.
-    if(MUJOCO_VERSION STREQUAL "3.12.0")
+    if(MUJOCO_VERSION STREQUAL "3.16.0")
         if(_mj_asset MATCHES "linux-x86_64")
-            set(_mj_hash "SHA256=a9367911e6d5eaeade17c2197304687421c1fc932cdf7bcd4cb8cfaf0374dcb2")
+            set(_mj_hash "SHA256=139577c541d43716a63992ab698cbc7b09788b1d547fb82b682d59b40ef49b9d")
         elseif(_mj_asset MATCHES "linux-aarch64")
-            set(_mj_hash "SHA256=08fd5627a2ef7d5a42580c40e014ab2c1a644f082010c584ca361a3ed8cad838")
+            set(_mj_hash "SHA256=2872f91a29dc4bb3c117ec38e156b4a34e6fb8082a47fe3a23e3788ccebc3595")
         elseif(_mj_asset MATCHES "windows-x86_64")
-            set(_mj_hash "SHA256=ffe071c2747dd9513a1c59e7d2428bb678d887f9edec9eb9674b4288a248a8e9")
+            set(_mj_hash "SHA256=0e25e6fc21fa8d6d214481d9d8a50e2649a7f1fba39c0176be4b8198cc6d84c3")
         endif()
     endif()
 

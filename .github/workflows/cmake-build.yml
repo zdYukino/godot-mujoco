@@ -27,11 +27,11 @@ jobs:
         run: |
           ls -la demo/addons/godot_mujoco/bin/
           test -f demo/addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so
-          test -f demo/addons/godot_mujoco/bin/libmujoco.so.3.12.0
+          test -f demo/addons/godot_mujoco/bin/libmujoco.so.3.16.0
           objdump -p demo/addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so \
             | tee /tmp/objdump.txt
           grep -q 'RUNPATH .*\$ORIGIN' /tmp/objdump.txt
-          grep -q 'NEEDED .*libmujoco.so.3.12.0' /tmp/objdump.txt
+          grep -q 'NEEDED .*libmujoco.so.3.16.0' /tmp/objdump.txt
 
       - name: Build release variant (export target)
         run: |
@@ -86,11 +86,11 @@ jobs:
         run: |
           ls -la demo/addons/godot_mujoco/bin/
           test -f demo/addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.arm64.so
-          test -f demo/addons/godot_mujoco/bin/libmujoco.so.3.12.0
+          test -f demo/addons/godot_mujoco/bin/libmujoco.so.3.16.0
           objdump -p demo/addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.arm64.so \
             | tee /tmp/objdump.txt
           grep -q 'RUNPATH .*\$ORIGIN' /tmp/objdump.txt
-          grep -q 'NEEDED .*libmujoco.so.3.12.0' /tmp/objdump.txt
+          grep -q 'NEEDED .*libmujoco.so.3.16.0' /tmp/objdump.txt
 
       - name: Headless MuJoCo smoke test (arm64)
         run: |
