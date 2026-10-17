@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1070" viewBox="0 0 1440 1070" role="img" aria-labelledby="title desc"><title id="title">02  仓库文件：从源码到可加载项目</title><desc id="desc">蓝：跟踪的源码/配置；绿：下载或构建生成；橙：Godot 项目入口。</desc><defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#52647b"/></marker></defs><style>text{font-family:'Noto Sans CJK SC','Microsoft YaHei',sans-serif;fill:#192b43}.title{font-size:32px;font-weight:700}.sub{font-size:18px;fill:#52647b}.head{font-size:22px;font-weight:700}.body{font-size:19px}.small{font-size:17px;fill:#52647b}</style><rect width="1440" height="1070" fill="#f5f7fb"/>
+<text x="48" y="60" class="title">02  仓库文件：从源码到可加载项目</text>
+<text x="48" y="97" class="sub">蓝：跟踪的源码/配置；绿：下载或构建生成；橙：Godot 项目入口。</text>
+<rect x="48" y="140" width="610" height="145" rx="14" fill="#e8efff" stroke="#c2cee0"/>
+<text x="70" y="175" class="head">CMakeLists.txt + cmake/</text>
+<text x="70" y="209" class="body">依赖版本 / 校验 / 编译 / 链接 / 拷贝</text>
+<text x="70" y="238" class="body">src/register_types.cpp：入口与注册</text>
+<text x="70" y="267" class="body">src/mj_world.cpp：MuJoCo 的 Node 封装</text>
+<rect x="782" y="140" width="610" height="145" rx="14" fill="#e4f3ed" stroke="#c2cee0"/>
+<text x="804" y="175" class="head">build/_deps/ · 本地依赖</text>
+<text x="804" y="209" class="body">godot-cpp：godot-4.5-stable</text>
+<text x="804" y="238" class="body">MuJoCo 3.12.0：本次使用官方预编译包</text>
+<text x="804" y="267" class="body">移动平台默认从源码构建 MuJoCo 核心</text>
+<polyline points="658,210 782,210" fill="none" stroke="#52647b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="676" y="194" class="small">获取依赖</text>
+<rect x="48" y="335" width="610" height="145" rx="14" fill="#fff2db" stroke="#c2cee0"/>
+<text x="70" y="370" class="head">演示项目 · demo/</text>
+<text x="70" y="404" class="body">project.godot：60 Hz / Main.tscn</text>
+<text x="70" y="433" class="body">*.tscn + scripts/*.gd：场景、控制、测试</text>
+<text x="70" y="462" class="body">models/*.xml + composite/：MJCF 与资源</text>
+<rect x="782" y="335" width="610" height="145" rx="14" fill="#e4f3ed" stroke="#c2cee0"/>
+<text x="804" y="370" class="head">demo/addons/godot_mujoco/bin/</text>
+<text x="804" y="404" class="body">libgodot_mujoco.linux.template_debug.</text>
+<text x="804" y="433" class="body">x86_64.so  +  libmujoco.so.3.12.0</text>
+<text x="804" y="462" class="body">生成物被 .gitignore 排除；.gitkeep 被跟踪</text>
+<polyline points="1087,285 1087,335" fill="none" stroke="#52647b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="1110" y="314" class="small">编译 / 链接 / 拷贝</text>
+<rect x="48" y="535" width="610" height="145" rx="14" fill="#e8efff" stroke="#c2cee0"/>
+<text x="70" y="570" class="head">扩展配置与可视辅助</text>
+<text x="70" y="604" class="body">godot_mujoco.gdextension：入口 + 库映射</text>
+<text x="70" y="633" class="body">mj_debug_draw.gd：ImmediateMesh 可视化</text>
+<text x="70" y="662" class="body">THIRD_PARTY.md：第三方说明</text>
+<polyline points="353,480 353,535" fill="none" stroke="#52647b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="658,605 1087,605 1087,480" fill="none" stroke="#52647b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="745" y="588" class="small">清单选择匹配平台的库</text>
+<rect x="48" y="735" width="610" height="175" rx="14" fill="#e8efff" stroke="#c2cee0"/>
+<text x="70" y="770" class="head">支持文件 · 已跟踪</text>
+<text x="70" y="804" class="body">scripts/：构建、环境、二进制检查</text>
+<text x="70" y="833" class="body">src/mobile_core_smoke.cpp：独立核心测试</text>
+<text x="70" y="862" class="body">.github/workflows/：CI / 上游版本检查</text>
+<text x="70" y="891" class="body">docs/*.gif：演示图片</text>
+<rect x="782" y="735" width="610" height="175" rx="14" fill="#e4f3ed" stroke="#c2cee0"/>
+<text x="804" y="770" class="head">运行与缓存 · 本地生成</text>
+<text x="804" y="804" class="body">Godot 加载 demo/ 项目与扩展</text>
+<text x="804" y="833" class="body">Linux RUNPATH=$ORIGIN → 同目录 MuJoCo</text>
+<text x="804" y="862" class="body">demo/.godot/：导入与编辑器缓存</text>
+<text x="804" y="891" class="body">build/：中间文件；二者均被忽略</text>
+<polyline points="1087,605 1087,735" fill="none" stroke="#52647b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<text x="48" y="965" class="body">Godot 可执行文件、GodotSharp、.NET SDK 均在仓库外；架构文档不附带这些二进制。</text>
+<text x="48" y="1045" class="small">2026-10-16 · 源码基线 e8b6443 · 详细依据、坐标与测试限制见 ARCHITECTURE.zh-CN.md</text>
+</svg>

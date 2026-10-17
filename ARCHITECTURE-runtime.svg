@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="1190" viewBox="0 0 1440 1190" role="img" aria-labelledby="title desc"><title id="title">03  通信架构：一个 Godot 进程，原生直接调用</title><desc id="desc">没有网络/IPC 桥；命令和状态经绑定传递，Godot 显示与 MuJoCo 仿真各自负责。</desc><defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8" fill="#52647b"/></marker></defs><style>text{font-family:'Noto Sans CJK SC','Microsoft YaHei',sans-serif;fill:#192b43}.title{font-size:32px;font-weight:700}.sub{font-size:18px;fill:#52647b}.head{font-size:22px;font-weight:700}.body{font-size:19px}.small{font-size:17px;fill:#52647b}</style><rect width="1440" height="1190" fill="#f5f7fb"/>
+<text x="48" y="60" class="title">03  通信架构：一个 Godot 进程，原生直接调用</text>
+<text x="48" y="97" class="sub">没有网络/IPC 桥；命令和状态经绑定传递，Godot 显示与 MuJoCo 仿真各自负责。</text>
+<rect x="48" y="135" width="1344" height="120" rx="14" fill="#e8efff" stroke="#c2cee0"/>
+<text x="70" y="170" class="head">启动链：清单 → 共享库 → 导出入口 → 注册</text>
+<text x="70" y="204" class="body">godot_mujoco.gdextension → libgodot_mujoco…so → godot_mujoco_library_init</text>
+<text x="70" y="233" class="body">SCENE 初始化阶段 → GDREGISTER_CLASS(MjWorld) → _bind_methods() / ClassDB</text>
+<rect x="48" y="310" width="400" height="175" rx="14" fill="#fff2db" stroke="#c2cee0"/>
+<text x="70" y="345" class="head">脚本与场景</text>
+<text x="70" y="379" class="body">GDScript：MjWorld.new()</text>
+<text x="70" y="408" class="body">C#：ClassDB.Instantiate</text>
+<text x="70" y="437" class="body">         + Call(...) 动态 API</text>
+<text x="70" y="466" class="body">控制输入 / step(n) / 查询</text>
+<rect x="520" y="310" width="400" height="175" rx="14" fill="#e4f3ed" stroke="#c2cee0"/>
+<text x="542" y="345" class="head">MjWorld : Node</text>
+<text x="542" y="379" class="body">godot-cpp / ClassDB 绑定</text>
+<text x="542" y="408" class="body">拥有 mjModel* + mjData*</text>
+<text x="542" y="437" class="body">set_ctrl() → data.ctrl</text>
+<text x="542" y="466" class="body">step(n) → n 次 mj_step()</text>
+<rect x="992" y="310" width="400" height="175" rx="14" fill="#e4f3ed" stroke="#c2cee0"/>
+<text x="1014" y="345" class="head">MuJoCo 原生库</text>
+<text x="1014" y="379" class="body">mjModel：结构与参数</text>
+<text x="1014" y="408" class="body">mjData：状态与计算结果</text>
+<text x="1014" y="437" class="body">积分 / 碰撞 / 约束 / 传感器</text>
+<text x="1014" y="466" class="body">与 Godot 共用一个进程</text>
+<polyline points="448,365 520,365" fill="none" stroke="#52647b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="920,365 992,365" fill="none" stroke="#52647b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="992,450 920,450" fill="none" stroke="#52647b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="520,450 448,450" fill="none" stroke="#52647b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<polyline points="720,255 720,310" fill="none" stroke="#52647b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="48" y="555" width="580" height="150" rx="14" fill="#e8efff" stroke="#c2cee0"/>
+<text x="70" y="590" class="head">模型加载 · 文件数据流</text>
+<text x="70" y="624" class="body">res://models/ → Godot FileAccess → MuJoCo VFS</text>
+<text x="70" y="653" class="body">mj_loadXML → mj_makeData → mj_forward</text>
+<text x="70" y="682" class="body">成功后替换旧模型；失败保留原模型</text>
+<polyline points="628,620 720,620 720,485" fill="none" stroke="#52647b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="812" y="555" width="580" height="150" rx="14" fill="#fff2db" stroke="#c2cee0"/>
+<text x="834" y="590" class="head">读回与显式同步</text>
+<text x="834" y="624" class="body">qpos / qvel / sensor / body transform / contacts</text>
+<text x="834" y="653" class="body">脚本拿到 Godot 值类型，再更新可视节点</text>
+<text x="834" y="682" class="body">必要时 forward() 刷新最终状态的派生量</text>
+<polyline points="1192,485 1192,555" fill="none" stroke="#52647b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="48" y="775" width="580" height="175" rx="14" fill="#e8efff" stroke="#c2cee0"/>
+<text x="70" y="810" class="head">Godot 负责画面</text>
+<text x="70" y="844" class="body">Node3D / MeshInstance3D / ImmediateMesh</text>
+<text x="70" y="873" class="body">→ RenderingServer → 图形后端</text>
+<text x="70" y="902" class="body">MuJoCo Z-up → Godot Y-up：(x, z, -y)</text>
+<text x="70" y="931" class="body">没有自动与 Godot 原生刚体交换碰撞力</text>
+<polyline points="1102,705 1102,745 338,745 338,775" fill="none" stroke="#52647b" stroke-width="2.5" marker-end="url(#arrow)"/>
+<rect x="812" y="775" width="580" height="175" rx="14" fill="#fff2db" stroke="#c2cee0"/>
+<text x="834" y="810" class="head">步进与线程边界</text>
+<text x="834" y="844" class="body">自动模式忽略 delta，手动/自动通常二选一</text>
+<text x="834" y="873" class="body">主摆：60 Hz × 2 步 × 0.01 s = 1.2 倍时间</text>
+<text x="834" y="902" class="body">一个 MjWorld 不可多线程同时读写</text>
+<text x="834" y="931" class="body">日志转到 Godot 控制台；处理器为进程级</text>
+<rect x="48" y="990" width="1344" height="115" rx="14" fill="#fbe8e8" stroke="#c2cee0"/>
+<text x="70" y="1025" class="head">验证边界</text>
+<text x="70" y="1059" class="body">headless 仿真与额外 C# 动态 API 测试通过；GUI 外观/交互未验证。</text>
+<text x="70" y="1088" class="body">编辑器导入两次以 139 段错误退出：完成导入不等于进程成功，根因未确认。</text>
+<text x="48" y="1165" class="small">2026-10-16 · 源码基线 e8b6443 · 详细依据、坐标与测试限制见 ARCHITECTURE.zh-CN.md</text>
+</svg>
