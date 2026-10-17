@@ -36,12 +36,30 @@ before/after object counts. `import.log`, `runtime.log`, `ui-smoke.log` are reta
    Repeat adding/deleting G1 and obstacles at least twice; keep before/after
    screenshots tied to the exact tested commit.
 
+The camera automatically frames actual object geometry after adding/removing
+instances, excluding the large floor. **Focus (F)** frames the selected object;
+**Frame all (A)** includes all selectable objects. Use the mouse wheel over the
+3D view to zoom and right-button drag to orbit. The left panel is reserved in
+the framing and scrolls on shorter windows. Lighting is deliberately moderate
+so link contours and joint motion remain readable.
+
+Selecting, adding or deleting an instance refreshes the slider from its real
+elbow control without writing a target. Obstacles and empty selection disable
+and reset the slider with an explicit label. For regression, set one robot to
+1.08 rad, add another, switch between them and delete/re-add: the new robot
+must show its own initial target, not 1.08 rad.
+
 Edits while running are rejected with an on-screen message. Deleting the
 selected model removes its physics instance first, and releases its display
 meshes only after the transaction succeeds. The floor is intentionally not in
 the deletion dropdown. `--demo-sequence` starts with G1 plus an obstacle for a
 quick scene demonstration. `--ui-smoke` exercises the UI methods and exits;
 neither headless mode establishes rendered acceptance.
+
+Optional real-render diagnostics (requires a desktop/display): pass
+`-- --capture-dir=/tmp/gmj-camera-images` to save floor-only, G1/obstacle,
+focused G1 and a genuinely simulated 1.08-rad elbow pose. This does not replace
+dot's independent screenshot acceptance.
 
 ## Quantitative scope
 
