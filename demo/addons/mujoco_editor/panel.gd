@@ -710,6 +710,7 @@ func transform_selection(operation: String, direction: float) -> bool:
 		var size: Array = p.size.duplicate()
 		var count := 1 if p.type == 2 else 2 if p.type == 5 else 3
 		for index in count: size[index] *= 1.1 if direction > 0 else 1.0/1.1
+		for index in range(count,3): size[index] = 0.0
 		values.size = size
 	else:
 		if not p.get("pose_editable", true):

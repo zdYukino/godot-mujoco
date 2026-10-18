@@ -91,6 +91,7 @@ func run(plugin: EditorPlugin) -> void:
 	check(panel.import_mjcf("res://fixtures/pendulum.xml"), "editor imports actual MJCF")
 	await capture(plugin, "01-imported-mjcf.png")
 	selection_rejection_regression(panel, doc)
+	primitive_ui_regression(panel,doc)
 	check(doc.inspect().version == "3.16.0", "runtime version pinned")
 	check(entity(doc, "joint", "hinge").type == "hinge", "joint type and name")
 	check(entity(doc, "body", "arm").mass == 2, "compiled body mass")
@@ -302,3 +303,39 @@ func selection_rejection_regression(panel: Control, doc: RefCounted) -> void:
 	panel.tree.set_selected(arm,0)
 	panel.tree.item_selected.emit()
 	check(panel.selected.name=="arm" and panel.tree.get_selected()==arm and panel.inputs.has("mass"),"selection proceeds normally after Discard")
+
+func ui_button(node: Node, label: String) -> Button:
+	if node is Button and node.text == label: return node
+	for child in node.get_children():
+		var found := ui_button(child,label)
+		if found: return found
+	return null
+
+func primitive_ui_regression(panel: Control, doc: RefCounted) -> void:
+	var retained: Dictionary = doc.snapshot()
+	var blank: RefCounted = ClassDB.instantiate("MjEditorDocument")
+	for shape in ["sphere","cylinder"]:
+		panel.state.restore_snapshot(blank.snapshot())
+		ui_button(panel,"+ " + shape).pressed.emit()
+		var geom: String = panel.selected.name + "_geom"
+		var point: Vector2 = panel.camera.unproject_position(panel.meshes[geom].global_position)
+		var click := InputEventMouseButton.new()
+		click.button_index=MOUSE_BUTTON_LEFT
+		click.pressed=true
+		click.position=point
+		panel.camera_input(click)
+		check(panel.selected.kind=="geom" and panel.selected.name==geom,"new " + shape + " selected through viewport click")
+		var expected: Array = [.25,0.0,0.0] if shape=="sphere" else [.25,.25,0.0]
+		check(JSON.parse_string(panel.inputs.size.text)==expected,"new " + shape + " form shows canonical dimensions")
+		var before: Dictionary = doc.snapshot()
+		ui_button(panel,"Size ×1.1").pressed.emit()
+		var resized: Array = entity(doc,"geom",geom).size
+		check(is_equal_approx(resized[0],.275) and resized[2]==0 and (resized[1]==0 if shape=="sphere" else is_equal_approx(resized[1],.275)),"real Size button writes valid " + shape + " dimensions")
+		var undo: UndoRedo = panel.plugin.get_undo_redo().get_history_undo_redo(panel.plugin.get_undo_redo().get_object_history_id(panel.state))
+		check(undo.undo() and same_snapshot(doc.snapshot(),before),"new " + shape + " resize undo")
+		check(undo.redo() and entity(doc,"geom",geom).size==resized,"new " + shape + " resize redo")
+		check(panel.write_document("user://primitive-ui.json") and panel.open_document("user://primitive-ui.json") and entity(doc,"geom",geom).size==resized,"new " + shape + " resize save reopen")
+		if shape=="sphere":
+			var mesh: SphereMesh = panel.meshes[geom].mesh
+			check(is_equal_approx(mesh.radius,.275) and is_equal_approx(mesh.height,.55) and panel.meshes[geom].scale==Vector3.ONE,"sphere remains spherical in viewport and physics")
+	panel.state.restore_snapshot(retained)
