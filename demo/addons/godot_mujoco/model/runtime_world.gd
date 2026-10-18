@@ -40,13 +40,15 @@ func _ready() -> void:
 		set_paused(start_paused)
 
 func _exit_tree() -> void:
-	if Engine.is_editor_hint() or not ready_for_models: return
+	if Engine.is_editor_hint(): return
+	# Even a failed first entry consumed _ready; recovery must run it again.
+	request_ready()
+	if not ready_for_models: return
 	PhysicsServer3D.call("scene_pause", space, true)
 	var world := get_world_3d()
 	if world and world.has_meta("mj_runtime_owner"):
 		world.remove_meta("mj_runtime_owner")
 	ready_for_models = false
-	request_ready()
 
 func set_paused(value: bool) -> bool:
 	return ready_for_models and PhysicsServer3D.call("scene_pause", space, value)

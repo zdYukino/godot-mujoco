@@ -38,6 +38,13 @@ The local reconstruction used official CMake 4.4.4 and the existing
 
 ## First-import crash and workaround
 
+**2026-10-18 independent acceptance update:** dot's first portable, G1 and
+dynamic imports returned 139 even with the helper's 1000 ms delay. Reliability
+is not established. The cloud follow-up reproduced a shutdown-time cleared
+EditorHelp document pointer with a native watchpoint; see
+[the diagnosis and evidence](portable-edge-fixes.md). The helper remains a
+mitigation, not an engine fix; preserve every first-run failure.
+
 Fresh headless imports can race during GDExtension documentation generation.
 This matches the reported behavior in
 [Godot issue #111048](https://github.com/godotengine/godot/issues/111048), which

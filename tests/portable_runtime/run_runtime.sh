@@ -20,6 +20,7 @@ for name in ['multi.xml','conflict.xml']:(p/'relocated'/name).unlink()
 PY
 timeout --kill-after=5 120 "$ROOT/scripts/import_headless.sh" "$OUT/relocated" > "$OUT/relocated-import.log" 2>&1
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/relocated" --script res://runtime_test.gd > "$OUT/relocated-runtime.log" 2>&1
+timeout --kill-after=5 90 "$GODOT_BIN" --headless --path "$OUT/relocated" --script res://recovery_integrity_test.gd > "$OUT/recovery-integrity.log" 2>&1
 timeout --kill-after=5 180 dotnet build "$OUT/relocated/PortableRuntime.csproj" -c Debug > "$OUT/dotnet-build.log" 2>&1
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/relocated" res://RuntimeBinding.tscn > "$OUT/csharp.log" 2>&1
 cp "$ROOT/tests/portable_runtime/editor_acceptance.gd" "$OUT/relocated/acceptance.gd"
@@ -34,8 +35,15 @@ for name in ['runtime','relocated-runtime']:
 editor=json.loads(next(x.split(' ',1)[1] for x in (p/'editor-flow.log').read_text().splitlines() if x.startswith('PORTABLE_EDITOR_RESULT ')));assert editor['failed']==0,editor;results['editor']=editor
 assert 'EDITOR_SCENE_RESTART_PASS' in (p/'editor-scene-restart.log').read_text()
 assert 'PORTABLE CSHARP PASS' in (p/'csharp.log').read_text()
+edge=(p/'recovery-integrity.log').read_text()
+e=json.loads(next(x.split(' ',1)[1] for x in edge.splitlines() if x.startswith('RECOVERY_INTEGRITY_RESULT ')));assert e['failed']==0,e;results['recovery-integrity']=e
+expected=['ERROR: Assign a world_model resource to define all global MuJoCo options','ERROR: Only one MjRuntimeWorld may own a World3D; use a separate SubViewport for another world']
+assert [x for x in edge.splitlines() if x.startswith('ERROR:')]==expected
 for f in p.glob('*.log'):
- s=f.read_text();assert 'ERROR:' not in s and 'ObjectDB instances leaked' not in s,f
+ s=f.read_text()
+ if f.name=='recovery-integrity.log':
+  for message in expected:s=s.replace(message,'EXPECTED_REJECTION')
+ assert 'ERROR:' not in s and 'ObjectDB instances leaked' not in s,f
 (p/'results.json').write_text(json.dumps(results,indent=2)+'\n')
 print('PORTABLE RUNTIME PASS; original project and source assets unavailable;',p)
 PY
