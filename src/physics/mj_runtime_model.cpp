@@ -38,4 +38,59 @@ bool MjPhysicsServer3D::scene_set_actuator(const RID&r,const RID&id,const String
  s->data->ctrl[a]=value;return true;
 }
 bool MjPhysicsServer3D::scene_release_model(const RID&r,const RID&id){auto*s=space(r);if(!s||!s->imported.count(id.get_id()))return false;if(flushing){pending_free.insert(id.get_id());return true;}bool paused=s->paused;s->paused=true;bool ok=scene_remove(r,id);s->paused=paused;return ok;}
+int64_t MjPhysicsServer3D::scene_request_model_edit(const RID&r,const RID&id,const Dictionary&snapshot,const String&directory,int64_t expected_revision){
+ std::lock_guard<std::mutex> lock(edits_mutex);
+ if(model_edits.size()>=64||edit_results.size()>=256||expected_revision<0)return 0;
+ for(const auto &pending:model_edits)if(pending.object==id)return 0;
+ int64_t request=next_edit_request++;
+ model_edits.push_back({request,expected_revision,r,id,snapshot.duplicate(true),directory});
+ return request;
+}
+void MjPhysicsServer3D::scene_cancel_model_edit(int64_t request){
+ std::lock_guard<std::mutex> lock(edits_mutex);
+ for(auto it=model_edits.begin();it!=model_edits.end();++it)if(it->request==request){model_edits.erase(it);break;}
+ edit_results.erase(request);
+}
+Dictionary MjPhysicsServer3D::scene_edit_result(int64_t request){
+ std::lock_guard<std::mutex> lock(edits_mutex);
+ auto result=edit_results.find(request);if(result==edit_results.end())return {};
+ Dictionary value=result->second;edit_results.erase(result);return value;
+}
+void MjPhysicsServer3D::process_model_edits(){
+ std::deque<ModelEdit> pending;
+ {std::lock_guard<std::mutex> lock(edits_mutex);pending.swap(model_edits);}
+ for(const auto &request:pending){
+  Dictionary result;result["request"]=request.request;result["success"]=false;result["revision"]=request.expected_revision;
+  auto apply=[&]()->String {
+   auto*s=space(request.space);if(!s)return "Runtime world was removed";
+   auto found=s->imported.find(request.object.get_id());if(found==s->imported.end()||!found->second->whole_model)return "Model instance was removed";
+   auto &object=*found->second;
+   result["revision"]=int64_t(object.property_revision);
+   if(object.property_revision!=uint64_t(request.expected_revision))return "Stale property revision; refresh before retrying";
+   // No active model/data writes occur before this native physics-step boundary.
+   bool paused=s->paused;double accumulator=s->accumulator;s->paused=true;
+   struct Resume {MjSpace*s;bool paused;double accumulator;~Resume(){s->paused=paused;s->accumulator=accumulator;}} resume{s,paused,accumulator};
+   Ref<MjEditorDocument> doc;doc.instantiate();
+   if(!doc->restore_at(request.snapshot,request.directory))return doc->get_error();
+   auto*m=doc->native_model();String conflict=gmj_option_conflict(s->options,m->opt);
+   if(!conflict.is_empty())return "World/model option conflict: "+conflict;
+   if(m->nuserdata||m->nmocap||m->nkey)return "Runtime composition does not support global userdata, mocap bodies or keyframes";
+   // Same names must retain state dimensions/semantics. New/deleted names are allowed.
+   for(int j=0;j<m->njnt;++j){const char*n=mj_id2name(m,mjOBJ_JOINT,j);int old=mj_name2id(s->model,mjOBJ_JOINT,(object.prefix+n).c_str());if(old>=0&&m->jnt_type[j]!=s->model->jnt_type[old])return "Incompatible joint type: "+String(n);}
+   for(int a=0;a<m->nu;++a){const char*n=mj_id2name(m,mjOBJ_ACTUATOR,a);int old=mj_name2id(s->model,mjOBJ_ACTUATOR,(object.prefix+n).c_str());if(old>=0&&(m->actuator_dyntype[a]!=s->model->actuator_dyntype[old]||m->actuator_actnum[a]!=s->model->actuator_actnum[old]))return "Incompatible actuator state: "+String(n);}
+   mjSpec*previous=object.spec;Dictionary initial=object.initial;bool dirty=s->dirty;
+   object.spec=doc->copy_spec();object.initial=initial_state(m,doc->native_data());s->dirty=true;
+   if(!rebuild(*s)){
+    String error=s->last_error;mj_deleteSpec(object.spec);object.spec=previous;object.initial=initial;s->dirty=dirty;
+    return error;
+   }
+   mj_deleteSpec(previous);++object.property_revision;
+   result["revision"]=int64_t(object.property_revision);result["success"]=true;
+   return {};
+  };
+  result["error"]=apply();
+  std::lock_guard<std::mutex> lock(edits_mutex);edit_results[request.request]=result;
+ }
+}
+
 }

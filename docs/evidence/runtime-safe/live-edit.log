@@ -1,0 +1,1433 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:        238.7   (wall clock)
+  assets:       217.7   -
+    load:        74.0     (CPU time)
+    hull:        77.8     -
+    polygon:     29.4     -
+    inertia:     14.6     -
+    bvh:        155.1     -
+    octree:       0.1     -
+    texture:      0.0     -
+  other:         21.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:         37.2   (wall clock)
+  assets:        17.2   -
+    load:        29.7     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         20.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:         42.5   (wall clock)
+  assets:        24.0   -
+    load:        44.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.6   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         32.6   (wall clock)
+  assets:        12.7   -
+    load:        22.6     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         19.9   (wall clock)
+MuJoCo: compile time (ms)
+  total:         83.6   (wall clock)
+  assets:        42.4   -
+    load:        79.9     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         41.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         64.5   (wall clock)
+  assets:        25.5   -
+    load:        47.8     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         39.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:         30.9   (wall clock)
+  assets:        12.0   -
+    load:        21.6     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.9   (wall clock)
+MuJoCo: compile time (ms)
+  total:         36.7   (wall clock)
+  assets:        18.2   -
+    load:        32.8     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.5   (wall clock)
+MuJoCo: compile time (ms)
+  total:         31.3   (wall clock)
+  assets:        12.3   -
+    load:        22.1     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         19.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:        230.2   (wall clock)
+  assets:       211.1   -
+    load:        71.3     (CPU time)
+    hull:        79.3     -
+    polygon:     30.3     -
+    inertia:     13.8     -
+    bvh:        144.4     -
+    octree:       0.1     -
+    texture:      0.0     -
+  other:         19.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:        225.2   (wall clock)
+  assets:       206.0   -
+    load:        71.6     (CPU time)
+    hull:        76.4     -
+    polygon:     29.4     -
+    inertia:     14.0     -
+    bvh:        138.3     -
+    octree:       0.1     -
+    texture:      0.0     -
+  other:         19.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:        104.3   (wall clock)
+  assets:        62.5   -
+    load:       121.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         41.8   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:         31.9   (wall clock)
+  assets:        13.5   -
+    load:        23.8     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.5   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         31.0   (wall clock)
+  assets:        12.5   -
+    load:        22.2     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.5   (wall clock)
+MuJoCo: compile time (ms)
+  total:         71.7   (wall clock)
+  assets:        35.5   -
+    load:        66.9     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         36.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         31.6   (wall clock)
+  assets:        12.8   -
+    load:        22.5     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.8   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:        221.1   (wall clock)
+  assets:       202.2   -
+    load:        73.0     (CPU time)
+    hull:        78.8     -
+    polygon:     31.3     -
+    inertia:     14.3     -
+    bvh:        132.0     -
+    octree:       0.1     -
+    texture:      0.0     -
+  other:         18.9   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:        213.7   (wall clock)
+  assets:       194.0   -
+    load:        71.0     (CPU time)
+    hull:        75.7     -
+    polygon:     31.3     -
+    inertia:     14.1     -
+    bvh:        127.5     -
+    octree:       0.1     -
+    texture:      0.0     -
+  other:         19.7   (wall clock)
+MuJoCo: compile time (ms)
+  total:        258.8   (wall clock)
+  assets:       219.7   -
+    load:       106.0     (CPU time)
+    hull:        76.7     -
+    polygon:     33.2     -
+    inertia:     14.5     -
+    bvh:        145.5     -
+    octree:       0.2     -
+    texture:      0.0     -
+  other:         39.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         32.0   (wall clock)
+  assets:        13.1   -
+    load:        23.5     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.9   (wall clock)
+MuJoCo: compile time (ms)
+  total:         62.9   (wall clock)
+  assets:        26.7   -
+    load:        50.4     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         36.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         32.4   (wall clock)
+  assets:        13.2   -
+    load:        23.7     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         19.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         77.8   (wall clock)
+  assets:        38.3   -
+    load:        72.1     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         39.5   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:         31.3   (wall clock)
+  assets:        12.0   -
+    load:        21.4     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         19.3   (wall clock)
+MuJoCo: compile time (ms)
+  total:        115.0   (wall clock)
+  assets:        58.1   -
+    load:       110.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         57.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:         61.3   (wall clock)
+  assets:        23.7   -
+    load:        44.1     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         37.6   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         31.1   (wall clock)
+  assets:        12.2   -
+    load:        21.7     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.9   (wall clock)
+MuJoCo: compile time (ms)
+  total:        111.5   (wall clock)
+  assets:        55.5   -
+    load:       106.1     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         56.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         31.7   (wall clock)
+  assets:        12.6   -
+    load:        22.6     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         19.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:        111.0   (wall clock)
+  assets:        55.8   -
+    load:       106.9     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         55.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         59.6   (wall clock)
+  assets:        23.6   -
+    load:        43.8     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         36.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         30.7   (wall clock)
+  assets:        12.3   -
+    load:        22.2     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.3   (wall clock)
+MuJoCo: compile time (ms)
+  total:        101.8   (wall clock)
+  assets:        46.8   -
+    load:        88.7     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         55.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:         60.6   (wall clock)
+  assets:        23.9   -
+    load:        44.4     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         36.6   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         23.7   (wall clock)
+  assets:        12.1   -
+    load:        21.7     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         11.6   (wall clock)
+MuJoCo: compile time (ms)
+  total:        110.6   (wall clock)
+  assets:        54.7   -
+    load:       104.7     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         55.9   (wall clock)
+MuJoCo: compile time (ms)
+  total:         59.9   (wall clock)
+  assets:        24.0   -
+    load:        44.6     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         35.9   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         21.9   (wall clock)
+  assets:        12.3   -
+    load:        22.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          9.5   (wall clock)
+MuJoCo: compile time (ms)
+  total:        110.6   (wall clock)
+  assets:        54.6   -
+    load:       104.1     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         56.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         24.0   (wall clock)
+  assets:        12.9   -
+    load:        23.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         11.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:        104.4   (wall clock)
+  assets:        49.6   -
+    load:        94.2     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         54.8   (wall clock)
+MuJoCo: compile time (ms)
+  total:         62.8   (wall clock)
+  assets:        24.1   -
+    load:        44.9     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         38.7   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         22.4   (wall clock)
+  assets:        12.5   -
+    load:        22.3     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          9.9   (wall clock)
+MuJoCo: compile time (ms)
+  total:        102.1   (wall clock)
+  assets:        48.0   -
+    load:        90.9     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         54.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:         61.1   (wall clock)
+  assets:        24.4   -
+    load:        45.3     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         36.7   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         21.9   (wall clock)
+  assets:        12.6   -
+    load:        22.3     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          9.4   (wall clock)
+MuJoCo: compile time (ms)
+  total:        105.5   (wall clock)
+  assets:        51.8   -
+    load:        98.5     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         53.7   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         31.3   (wall clock)
+  assets:        22.3   -
+    load:        42.2     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          9.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:        129.5   (wall clock)
+  assets:        75.4   -
+    load:       145.4     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         54.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:         60.6   (wall clock)
+  assets:        24.9   -
+    load:        46.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         35.7   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         21.0   (wall clock)
+  assets:        12.0   -
+    load:        21.4     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          9.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:        112.9   (wall clock)
+  assets:        58.8   -
+    load:       112.6     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         54.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:         59.5   (wall clock)
+  assets:        24.0   -
+    load:        45.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         35.5   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         20.7   (wall clock)
+  assets:        11.7   -
+    load:        21.1     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          9.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:        109.3   (wall clock)
+  assets:        56.2   -
+    load:       107.4     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         53.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         30.1   (wall clock)
+  assets:        12.2   -
+    load:        22.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         17.9   (wall clock)
+MuJoCo: compile time (ms)
+  total:        103.3   (wall clock)
+  assets:        49.1   -
+    load:        93.3     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         54.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         59.5   (wall clock)
+  assets:        24.0   -
+    load:        44.9     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         35.4   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         29.4   (wall clock)
+  assets:        11.6   -
+    load:        20.9     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         17.8   (wall clock)
+MuJoCo: compile time (ms)
+  total:        109.3   (wall clock)
+  assets:        56.4   -
+    load:       107.7     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         52.9   (wall clock)
+MuJoCo: compile time (ms)
+  total:         59.6   (wall clock)
+  assets:        24.2   -
+    load:        45.1     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         35.4   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         30.2   (wall clock)
+  assets:        12.0   -
+    load:        21.7     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:        112.0   (wall clock)
+  assets:        57.2   -
+    load:       109.4     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         54.8   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         31.1   (wall clock)
+  assets:        12.5   -
+    load:        22.5     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.5   (wall clock)
+MuJoCo: compile time (ms)
+  total:        114.6   (wall clock)
+  assets:        59.2   -
+    load:       112.7     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         55.5   (wall clock)
+MuJoCo: compile time (ms)
+  total:         61.0   (wall clock)
+  assets:        24.7   -
+    load:        46.2     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         36.3   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:         29.9   (wall clock)
+  assets:        11.7   -
+    load:        21.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.3   (wall clock)
+MuJoCo: compile time (ms)
+  total:        106.5   (wall clock)
+  assets:        54.4   -
+    load:       103.9     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         52.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:         60.3   (wall clock)
+  assets:        24.4   -
+    load:        45.6     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         35.9   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         29.7   (wall clock)
+  assets:        11.9   -
+    load:        21.3     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         17.9   (wall clock)
+MuJoCo: compile time (ms)
+  total:        112.8   (wall clock)
+  assets:        59.1   -
+    load:       110.3     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         53.8   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         31.0   (wall clock)
+  assets:        12.6   -
+    load:        22.7     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.4   (wall clock)
+MuJoCo: compile time (ms)
+  total:        112.1   (wall clock)
+  assets:        58.5   -
+    load:       111.8     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         53.7   (wall clock)
+MuJoCo: compile time (ms)
+  total:         63.4   (wall clock)
+  assets:        24.8   -
+    load:        44.9     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         38.5   (wall clock)
+MuJoCo: compile time (ms)
+  total:         30.7   (wall clock)
+  assets:        12.5   -
+    load:        22.5     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.3   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         30.6   (wall clock)
+  assets:        11.9   -
+    load:        21.5     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.6   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:         30.9   (wall clock)
+  assets:        12.3   -
+    load:        22.4     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.6   (wall clock)
+MuJoCo: compile time (ms)
+  total:         29.8   (wall clock)
+  assets:        11.9   -
+    load:        21.9     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         17.9   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:         30.4   (wall clock)
+  assets:        11.6   -
+    load:        21.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         18.8   (wall clock)
+MuJoCo: compile time (ms)
+  total:         66.3   (wall clock)
+  assets:        28.6   -
+    load:        53.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         37.7   (wall clock)
+MuJoCo: compile time (ms)
+  total:         60.0   (wall clock)
+  assets:        23.6   -
+    load:        44.2     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         36.4   (wall clock)
+MuJoCo: compile time (ms)
+  total:         31.0   (wall clock)
+  assets:        12.0   -
+    load:        21.8     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         19.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+LIVE_EDIT_RESULT {"checks":[{"name":"open design model","passed":true},{"name":"author inertial edit","passed":true},{"name":"author joint edit","passed":true},{"name":"save immutable edited design","passed":true},{"name":"request accepted without direct mutation","passed":true},{"name":"request leaves active model unchanged before boundary","passed":true},{"name":"repeated click rejected while pending","passed":true},{"name":"commit reports revision","passed":true},{"name":"same instance RID applies inertia","passed":true},{"name":"paused compatible state and controls exactly preserved","passed":true},{"name":"paused state and clock restored","passed":true},{"name":"other instance isolated","passed":true},{"name":"design snapshot is not overwritten by simulation","passed":true},{"name":"stale revision request queues","passed":true},{"name":"stale revision rolls back without state loss","passed":true},{"name":"stage invalid saved candidate","passed":true},{"name":"invalid candidate queues for boundary compile","passed":true},{"name":"candidate compile failure retains original instance","passed":true},{"name":"failure preserves state and pause","passed":true},{"name":"queue conflicting options gravity","passed":true},{"name":"conflicting option rollback gravity","passed":true},{"name":"queue conflicting options solver","passed":true},{"name":"conflicting option rollback solver","passed":true},{"name":"queue conflicting options timestep","passed":true},{"name":"conflicting option rollback timestep","passed":true},{"name":"stage incompatible joint design","passed":true},{"name":"queue incompatible named joint","passed":true},{"name":"same-name joint type change rejected without state corruption","passed":true},{"name":"retry after failure","passed":true},{"name":"retry restores previous design with live state","passed":true},{"name":"author internal topology insertion","passed":true},{"name":"publish topology revision","passed":true},{"name":"queue internal topology insertion","passed":true},{"name":"new free root initialized and existing joint retained","passed":true},{"name":"queue internal topology deletion","passed":true},{"name":"internal topology removal keeps both robot states","passed":true},{"name":"running edit queues","passed":true},{"name":"running edit resumes clock","passed":true},{"name":"repeated instance add 0: ","passed":true},{"name":"repeated instance edit 0","passed":true},{"name":"delete pending/completed edit preserves peers 0","passed":true},{"name":"repeated instance add 1: ","passed":true},{"name":"repeated instance edit 1","passed":true},{"name":"repeated edit completes 1","passed":true},{"name":"same node reload gets a new generation ID","passed":true},{"name":"delete pending/completed edit preserves peers 1","passed":true},{"name":"repeated instance add 2: ","passed":true},{"name":"repeated instance edit 2","passed":true},{"name":"delete pending/completed edit preserves peers 2","passed":true},{"name":"repeated instance add 3: ","passed":true},{"name":"repeated instance edit 3","passed":true},{"name":"repeated edit completes 3","passed":true},{"name":"delete pending/completed edit preserves peers 3","passed":true},{"name":"repeated instance add 4: ","passed":true},{"name":"repeated instance edit 4","passed":true},{"name":"delete pending/completed edit preserves peers 4","passed":true},{"name":"repeated instance add 5: ","passed":true},{"name":"repeated instance edit 5","passed":true},{"name":"repeated edit completes 5","passed":true},{"name":"delete pending/completed edit preserves peers 5","passed":true},{"name":"repeated instance add 6: ","passed":true},{"name":"repeated instance edit 6","passed":true},{"name":"delete pending/completed edit preserves peers 6","passed":true},{"name":"repeated instance add 7: ","passed":true},{"name":"repeated instance edit 7","passed":true},{"name":"repeated edit completes 7","passed":true},{"name":"delete pending/completed edit preserves peers 7","passed":true},{"name":"repeated instance add 8: ","passed":true},{"name":"repeated instance edit 8","passed":true},{"name":"delete pending/completed edit preserves peers 8","passed":true},{"name":"repeated instance add 9: ","passed":true},{"name":"repeated instance edit 9","passed":true},{"name":"repeated edit completes 9","passed":true},{"name":"delete pending/completed edit preserves peers 9","passed":true},{"name":"repeated instance add 10: ","passed":true},{"name":"repeated instance edit 10","passed":true},{"name":"delete pending/completed edit preserves peers 10","passed":true},{"name":"repeated instance add 11: ","passed":true},{"name":"repeated instance edit 11","passed":true},{"name":"repeated edit completes 11","passed":true},{"name":"delete pending/completed edit preserves peers 11","passed":true},{"name":"save updated design reference","passed":true},{"name":"restart keeps saved design revision","passed":true},{"name":"restart uses authored initial pose instead of last simulation pose","passed":true}],"failed":0,"passed":84}

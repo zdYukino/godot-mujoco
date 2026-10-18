@@ -11,6 +11,8 @@
 #include <memory>
 #include <vector>
 #include <set>
+#include <mutex>
+#include <deque>
 namespace godot {
 class MjPhysicsServer3D;
 class MjDirectBodyState;
@@ -19,7 +21,7 @@ struct MjShape { RID rid; PhysicsServer3D::ShapeType type; Variant data; float m
 struct MjShapeInstance { RID shape; Transform3D transform; bool disabled=false; };
 struct MjImported {
  RID rid; String label; Transform3D pose; mjSpec *spec=nullptr;
- bool whole_model=false; Dictionary initial;
+ bool whole_model=false; Dictionary initial; uint64_t property_revision=0;
  std::string prefix;
  ~MjImported() { if(spec) mj_deleteSpec(spec); }
 };
@@ -67,6 +69,16 @@ public:
  RID scene_load_model(const RID &space, const Dictionary &snapshot, const String &directory, const String &label, const Transform3D &pose);
  bool scene_set_actuator(const RID &space, const RID &object, const String &name, double value);
  bool scene_release_model(const RID &space, const RID &object);
+ int64_t scene_request_model_edit(const RID &space, const RID &object, const Dictionary &snapshot, const String &directory, int64_t expected_revision);
+ Dictionary scene_edit_result(int64_t request);
+ void scene_cancel_model_edit(int64_t request);
+ void process_model_edits();
+ struct ModelEdit {int64_t request, expected_revision; RID space, object; Dictionary snapshot; String directory;};
+ std::mutex edits_mutex;
+ std::deque<ModelEdit> model_edits;
+ std::map<int64_t,Dictionary> edit_results;
+ int64_t next_edit_request=1;
+
  std::set<uint64_t> pending_free;
  RID_Owner<int> handles;
  std::map<uint64_t,std::unique_ptr<MjShape>> shapes;

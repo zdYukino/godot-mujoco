@@ -1,0 +1,146 @@
+[
+  {
+    "path": "g1_29dof_mode_18.urdf",
+    "unchanged": true
+  },
+  {
+    "path": "LICENSE",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/head_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/left_ankle_pitch_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/left_ankle_roll_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/left_elbow_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/left_hip_pitch_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/left_hip_roll_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/left_hip_yaw_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/left_knee_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/left_rubber_hand.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/left_shoulder_pitch_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/left_shoulder_roll_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/left_shoulder_yaw_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/left_wrist_pitch_link_5010.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/left_wrist_roll_link_5010.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/left_wrist_yaw_link_5010.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/logo_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/pelvis_ver0529.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/right_ankle_pitch_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/right_ankle_roll_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/right_elbow_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/right_hip_pitch_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/right_hip_roll_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/right_hip_yaw_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/right_knee_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/right_rubber_hand.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/right_shoulder_pitch_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/right_shoulder_roll_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/right_shoulder_yaw_link.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/right_wrist_pitch_link_5010.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/right_wrist_roll_link_5010.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/right_wrist_yaw_link_5010.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/torso_link_rev_1_0.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/waist_roll_link_rev_1_0.STL",
+    "unchanged": true
+  },
+  {
+    "path": "meshes/waist_yaw_link_rev_1_0.STL",
+    "unchanged": true
+  }
+]

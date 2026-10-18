@@ -2,6 +2,10 @@
 extends VBoxContainer
 const PackageBuilder = preload("res://addons/godot_mujoco/model/package_builder.gd")
 const SceneBuilder = preload("res://addons/godot_mujoco/model/scene_builder.gd")
+var runtime_targets: OptionButton
+var runtime_status: Label
+var runtime_apply: Button
+var runtime_target_key := ""
 var project_model_path := ""
 var project_model_snapshot: Dictionary = {}
 var model_provenance: Dictionary = {}
@@ -51,6 +55,22 @@ func _ready() -> void:
 	button(toolbar, "Frame all", frame_all)
 	for shape in ["box", "sphere", "cylinder"]:
 		button(toolbar, "+ " + shape, add_primitive.bind(shape))
+	var runtime_bar := HFlowContainer.new()
+	add_child(runtime_bar)
+	runtime_targets = OptionButton.new()
+	runtime_targets.custom_minimum_size.x = 280
+	runtime_bar.add_child(runtime_targets)
+	runtime_targets.item_selected.connect(func(index):
+		runtime_target_key = str(runtime_targets.get_item_metadata(index))
+		refresh_runtime_targets())
+	button(runtime_bar, "Assign saved model to scene selection", assign_saved_model)
+	runtime_apply = button(runtime_bar, "Apply saved model to runtime", apply_runtime_model)
+	button(runtime_bar, "Send selected control to runtime", send_runtime_control)
+	runtime_status = Label.new()
+	runtime_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	add_child(runtime_status)
+	plugin.live_debugger.changed.connect(refresh_runtime_targets)
+	refresh_runtime_targets()
 	var operations := HFlowContainer.new()
 	add_child(operations)
 	var axis := OptionButton.new()
@@ -175,6 +195,7 @@ func record_change(before: Dictionary, title: String) -> void:
 	pending = false
 	refresh()
 	save_recovery()
+	refresh_runtime_targets()
 
 func import_mjcf(path: String) -> bool:
 	if not can_leave_fields():
@@ -318,6 +339,7 @@ func save_project_model() -> void:
 	model_provenance = ResourceLoader.load(project_model_path).provenance.duplicate(true)
 	refresh_project_files()
 	status.text = "Saved portable project model: " + result.path
+	refresh_runtime_targets()
 
 func open_project_model_dialog() -> void:
 	if not can_leave_fields():
@@ -403,6 +425,7 @@ func refresh() -> void:
 	rebuild_meshes()
 	status.text = "Paused" if info.paused else "Running"
 	status.text += " • Apply commits pending fields transactionally; Ctrl+Z / Ctrl+Shift+Z use editor history • " + ("Unsaved" if state.dirty else "Saved")
+	refresh_runtime_targets()
 
 func select_entity(kind: String, entity_name: String) -> void:
 	selected = {"kind":kind, "name":entity_name}
@@ -426,7 +449,7 @@ func field(key: String, value: Variant, editable: bool, hint: String) -> void:
 	if editable:
 		var input := LineEdit.new()
 		input.text = JSON.stringify(value)
-		input.text_changed.connect(func(_text): pending = true; status.text = "Pending changes — Apply or Discard; not yet written to physics")
+		input.text_changed.connect(func(_text): pending = true; status.text = "Pending changes — Apply or Discard; not yet written to physics"; refresh_runtime_targets())
 		fields.add_child(input)
 		inputs[key] = input
 	else:
@@ -691,3 +714,58 @@ func transform_selection(operation: String, direction: float) -> bool:
 		else: return false
 	state.document.set_paused(true)
 	return execute({"op":"set", "kind":selected.kind,"name":selected.name,"values":values})
+
+func refresh_runtime_targets() -> void:
+	if not is_instance_valid(runtime_targets) or not plugin.live_debugger: return
+	runtime_targets.clear()
+	var targets: Dictionary = plugin.live_debugger.instances
+	for key in targets:
+		var info: Dictionary = targets[key]
+		runtime_targets.add_item("Session %s • %s" % [info.session,info.path])
+		var index := runtime_targets.item_count - 1
+		runtime_targets.set_item_metadata(index,key)
+		if key == runtime_target_key: runtime_targets.select(index)
+	if not targets.has(runtime_target_key):
+		runtime_target_key = str(runtime_targets.get_item_metadata(0)) if runtime_targets.item_count else ""
+	runtime_apply.disabled = runtime_target_key.is_empty()
+	if runtime_target_key.is_empty():
+		runtime_status.text = "No runtime instance connected. Run with F5; save a project model before applying."
+		return
+	var info: Dictionary = targets[runtime_target_key]
+	runtime_apply.disabled = info.pending
+	var changed: bool = project_model_path != info.resource or state.dirty or pending
+	runtime_status.text = "Runtime revision %s • %s • %s" % [info.revision,"Request pending" if info.pending else "Ready", "Design changes not applied" if changed else "Saved resource matches"]
+	if not str(info.error).is_empty(): runtime_status.text += " • Failed: " + str(info.error) + " • Fix and retry"
+
+func apply_runtime_model() -> bool:
+	if not can_leave_fields(): return false
+	if project_model_path.is_empty() or state.dirty or state.document.snapshot() != project_model_snapshot:
+		show_error("Save project model before applying its design revision to runtime")
+		return false
+	if not plugin.live_debugger.send(runtime_target_key,"apply",{"resource":project_model_path}):
+		show_error("Runtime target unavailable or request pending")
+		return false
+	return true
+
+func send_runtime_control() -> bool:
+	if not can_leave_fields() or selected.get("kind") != "actuator": return false
+	return plugin.live_debugger.send(runtime_target_key,"control",{"actuator":selected.name,"value":selected.properties.control})
+
+func assign_saved_model() -> bool:
+	if not can_leave_fields(): return false
+	if project_model_path.is_empty() or state.dirty or state.document.snapshot() != project_model_snapshot:
+		show_error("Save the project model before assigning its design revision")
+		return false
+	var nodes := EditorInterface.get_selection().get_selected_nodes()
+	if nodes.size() != 1 or not nodes[0] is MjModelInstance:
+		show_error("Select one MjModelInstance in the local Godot scene tree")
+		return false
+	var node: Node = nodes[0]
+	var resource = ResourceLoader.load(project_model_path,"",ResourceLoader.CACHE_MODE_IGNORE)
+	var history := plugin.get_undo_redo()
+	history.create_action("Assign MuJoCo design revision",UndoRedo.MERGE_DISABLE,node)
+	history.add_do_property(node,"model",resource)
+	history.add_undo_property(node,"model",node.model)
+	history.commit_action()
+	status.text = "Assigned design revision to local scene. Save the scene to persist it; live runtime application is separate."
+	return true

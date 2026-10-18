@@ -1,0 +1,9 @@
+  Determining projects to restore...
+  Restored /workspace/shared/validation/application-final-g1/godot/G1ActuationTests.csproj (in 4.68 sec).
+  G1ActuationTests -> /workspace/shared/validation/application-final-g1/godot/.godot/mono/temp/bin/Debug/G1ActuationTests.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:06.94

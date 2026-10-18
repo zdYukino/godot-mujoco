@@ -2,6 +2,7 @@
 extends EditorPlugin
 const State = preload("editor_state.gd")
 const EditorPanel = preload("panel.gd")
+var live_debugger: EditorDebuggerPlugin
 var panel: Control
 var state: RefCounted
 const META := "mujoco_editor_document"
@@ -10,6 +11,8 @@ func _enter_tree() -> void:
 	if not ClassDB.class_exists("MjEditorDocument"):
 		push_error("MuJoCo editor requires the rebuilt Linux godot_mujoco GDExtension. Build and restart the editor.")
 		return
+	live_debugger = preload("live_debugger.gd").new()
+	add_debugger_plugin(live_debugger)
 	var base := EditorInterface.get_base_control()
 	state = base.get_meta(META) if base.has_meta(META) else State.new()
 	base.set_meta(META, state)
@@ -27,6 +30,10 @@ func _enter_tree() -> void:
 		call_deferred("_run_acceptance")
 
 func _exit_tree() -> void:
+	if live_debugger:
+		live_debugger.shutdown()
+		remove_debugger_plugin(live_debugger)
+		live_debugger = null
 	if panel:
 		panel.shutdown()
 		panel.free()

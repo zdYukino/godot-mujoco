@@ -213,6 +213,7 @@ void MjPhysicsServer3D::_sync(){}
 void MjPhysicsServer3D::_end_sync(){}
 bool MjPhysicsServer3D::_is_flushing_queries() const{return flushing;}
 void MjPhysicsServer3D::_step(float dt){
+ process_model_edits(); // Before stepping, including paused worlds: UI only enqueues snapshots.
  if(!active||dt<=0)return;last_step=dt;
  // Each Godot fixed tick advances each active space exactly dt. Subdivide, don't
  // accumulate another autonomous clock (MjWorld owns entirely separate models).

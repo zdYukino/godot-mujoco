@@ -17,6 +17,9 @@ bool rigid_pose(const Transform3D &t){return t.is_finite() && t.basis.is_orthogo
 Transform3D geom_pose(const mjData *d,int g){const auto *p=d->geom_xpos+3*g,*m=d->geom_xmat+9*g;Basis b;for(int r=0;r<3;++r)for(int c=0;c<3;++c)b[r][c]=m[3*r+c];return Transform3D(mj_to_godot(b),mj_to_godot(Vector3(p[0],p[1],p[2])));}
 }
 void MjPhysicsServer3D::_bind_methods(){
+ ClassDB::bind_method(D_METHOD("scene_request_model_edit","space","object","snapshot","directory","expected_revision"),&MjPhysicsServer3D::scene_request_model_edit);
+ ClassDB::bind_method(D_METHOD("scene_cancel_model_edit","request"),&MjPhysicsServer3D::scene_cancel_model_edit);
+ ClassDB::bind_method(D_METHOD("scene_edit_result","request"),&MjPhysicsServer3D::scene_edit_result);
  ClassDB::bind_method(D_METHOD("scene_configure_model","space","snapshot","directory"),&MjPhysicsServer3D::scene_configure_model);
  ClassDB::bind_method(D_METHOD("scene_load_model","space","snapshot","directory","label","pose"),&MjPhysicsServer3D::scene_load_model);
  ClassDB::bind_method(D_METHOD("scene_set_actuator","space","object","name","value"),&MjPhysicsServer3D::scene_set_actuator);
@@ -75,7 +78,7 @@ Dictionary MjPhysicsServer3D::scene_info(const RID &r) const {
 }
 Dictionary MjPhysicsServer3D::scene_state(const RID &r,const RID &id) const {
  Dictionary result;auto*s=space(r);if(!s||!s->model)return result;auto it=s->imported.find(id.get_id());if(it==s->imported.end())return result;
- auto&m=*s->model;auto&d=*s->data;auto &prefix=it->second->prefix;result["rid"]=id;result["label"]=it->second->label;
+ auto&m=*s->model;auto&d=*s->data;auto &prefix=it->second->prefix;result["property_revision"]=int64_t(it->second->property_revision);result["rid"]=id;result["label"]=it->second->label;
  Dictionary joints,controls,parameters,body_parameters;Array geoms;int body_count=0;
  for(int b=1;b<m.nbody;++b)if(belongs(mj_id2name(&m,mjOBJ_BODY,b),prefix)){++body_count;Dictionary props;props["mass"]=m.body_mass[b];props["inertia"]=Vector3(m.body_inertia[3*b],m.body_inertia[3*b+1],m.body_inertia[3*b+2]);body_parameters[String(mj_id2name(&m,mjOBJ_BODY,b)+prefix.size())]=props;}
  for(int j=0;j<m.njnt;++j){const char*n=mj_id2name(&m,mjOBJ_JOINT,j);if(!belongs(n,prefix))continue;int nq=m.jnt_type[j]==mjJNT_FREE?7:(m.jnt_type[j]==mjJNT_BALL?4:1),nv=m.jnt_type[j]==mjJNT_FREE?6:(m.jnt_type[j]==mjJNT_BALL?3:1);PackedFloat64Array q,v;for(int k=0;k<nq;++k)q.push_back(d.qpos[m.jnt_qposadr[j]+k]);for(int k=0;k<nv;++k)v.push_back(d.qvel[m.jnt_dofadr[j]+k]);Dictionary state;state["qpos"]=q;state["qvel"]=v;joints[String(n+prefix.size())]=state;}

@@ -1,0 +1,348 @@
+{
+  "live-edit": {
+    "checks": [
+      {
+        "name": "open design model",
+        "passed": true
+      },
+      {
+        "name": "author inertial edit",
+        "passed": true
+      },
+      {
+        "name": "author joint edit",
+        "passed": true
+      },
+      {
+        "name": "save immutable edited design",
+        "passed": true
+      },
+      {
+        "name": "request accepted without direct mutation",
+        "passed": true
+      },
+      {
+        "name": "request leaves active model unchanged before boundary",
+        "passed": true
+      },
+      {
+        "name": "repeated click rejected while pending",
+        "passed": true
+      },
+      {
+        "name": "commit reports revision",
+        "passed": true
+      },
+      {
+        "name": "same instance RID applies inertia",
+        "passed": true
+      },
+      {
+        "name": "paused compatible state and controls exactly preserved",
+        "passed": true
+      },
+      {
+        "name": "paused state and clock restored",
+        "passed": true
+      },
+      {
+        "name": "other instance isolated",
+        "passed": true
+      },
+      {
+        "name": "design snapshot is not overwritten by simulation",
+        "passed": true
+      },
+      {
+        "name": "stale revision request queues",
+        "passed": true
+      },
+      {
+        "name": "stale revision rolls back without state loss",
+        "passed": true
+      },
+      {
+        "name": "stage invalid saved candidate",
+        "passed": true
+      },
+      {
+        "name": "invalid candidate queues for boundary compile",
+        "passed": true
+      },
+      {
+        "name": "candidate compile failure retains original instance",
+        "passed": true
+      },
+      {
+        "name": "failure preserves state and pause",
+        "passed": true
+      },
+      {
+        "name": "queue conflicting options gravity",
+        "passed": true
+      },
+      {
+        "name": "conflicting option rollback gravity",
+        "passed": true
+      },
+      {
+        "name": "queue conflicting options solver",
+        "passed": true
+      },
+      {
+        "name": "conflicting option rollback solver",
+        "passed": true
+      },
+      {
+        "name": "queue conflicting options timestep",
+        "passed": true
+      },
+      {
+        "name": "conflicting option rollback timestep",
+        "passed": true
+      },
+      {
+        "name": "stage incompatible joint design",
+        "passed": true
+      },
+      {
+        "name": "queue incompatible named joint",
+        "passed": true
+      },
+      {
+        "name": "same-name joint type change rejected without state corruption",
+        "passed": true
+      },
+      {
+        "name": "retry after failure",
+        "passed": true
+      },
+      {
+        "name": "retry restores previous design with live state",
+        "passed": true
+      },
+      {
+        "name": "author internal topology insertion",
+        "passed": true
+      },
+      {
+        "name": "publish topology revision",
+        "passed": true
+      },
+      {
+        "name": "queue internal topology insertion",
+        "passed": true
+      },
+      {
+        "name": "new free root initialized and existing joint retained",
+        "passed": true
+      },
+      {
+        "name": "queue internal topology deletion",
+        "passed": true
+      },
+      {
+        "name": "internal topology removal keeps both robot states",
+        "passed": true
+      },
+      {
+        "name": "running edit queues",
+        "passed": true
+      },
+      {
+        "name": "running edit resumes clock",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 0: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 0",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 0",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 1: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 1",
+        "passed": true
+      },
+      {
+        "name": "repeated edit completes 1",
+        "passed": true
+      },
+      {
+        "name": "same node reload gets a new generation ID",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 1",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 2: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 2",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 2",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 3: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 3",
+        "passed": true
+      },
+      {
+        "name": "repeated edit completes 3",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 3",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 4: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 4",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 4",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 5: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 5",
+        "passed": true
+      },
+      {
+        "name": "repeated edit completes 5",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 5",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 6: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 6",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 6",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 7: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 7",
+        "passed": true
+      },
+      {
+        "name": "repeated edit completes 7",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 7",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 8: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 8",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 8",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 9: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 9",
+        "passed": true
+      },
+      {
+        "name": "repeated edit completes 9",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 9",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 10: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 10",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 10",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 11: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 11",
+        "passed": true
+      },
+      {
+        "name": "repeated edit completes 11",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 11",
+        "passed": true
+      },
+      {
+        "name": "save updated design reference",
+        "passed": true
+      },
+      {
+        "name": "restart keeps saved design revision",
+        "passed": true
+      },
+      {
+        "name": "restart uses authored initial pose instead of last simulation pose",
+        "passed": true
+      }
+    ],
+    "failed": 0,
+    "passed": 84
+  },
+  "live-editor": {
+    "failed": 0,
+    "failures": []
+  }
+}

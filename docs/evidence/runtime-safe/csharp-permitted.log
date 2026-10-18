@@ -1,0 +1,15 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+MuJoCo: compile time (ms)
+  total:        246.2   (wall clock)
+  assets:       226.8   -
+    load:        72.9     (CPU time)
+    hull:        82.2     -
+    polygon:     30.2     -
+    inertia:     15.1     -
+    bvh:        163.3     -
+    octree:       0.2     -
+    texture:      0.0     -
+  other:         19.4   (wall clock)
+G1_BINDING_RESULT {"binding":"csharp","passed":true,"joint_count":29,"trials":60,"steps":240000,"max_position_error_rad":7.204254215003453E-06,"position_tolerance_rad":0.002,"elapsed_ms":1699,"failure":""}
+G1 CSHARP PASS

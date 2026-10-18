@@ -2,10 +2,18 @@
 class_name MjModelInstance
 extends Node3D
 const Visual = preload("model_visual.gd")
+const LiveBridge = preload("live_bridge.gd")
+signal edit_finished(result: Dictionary)
+var property_revision := 0
+var edit_request := 0
+var pending_model: MjModelResource
+var committing_model := false
+var live_id := ""
+
 var model_rid := RID()
 @export var model: MjModelResource:
 	set(value):
-		if model_rid.is_valid():
+		if model_rid.is_valid() and not committing_model:
 			last_error = "Active model assignment rejected; unload explicitly before replacing the resource"
 			return
 		model = value
@@ -22,6 +30,7 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		show_editor_preview()
 		return
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	load_model()
 
 func find_world() -> MjRuntimeWorld:
@@ -52,10 +61,16 @@ func load_model() -> bool:
 	if not model_rid.is_valid():
 		last_error = world.info().last_error
 		return false
+	property_revision = 0
+	last_error = ""
+	live_id = str(get_path()) + "#" + str(get_instance_id()) + ":" + str(model_rid.get_id())
+	LiveBridge.attach(self)
 	build_visuals(PhysicsServer3D.call("scene_geometry",space,model_rid),true)
 	return true
 
 func unload_model() -> void:
+	cancel_pending_edit()
+	LiveBridge.detach(self)
 	if model_rid.is_valid():
 		# Native free defers a transaction if invoked during a physics callback.
 		PhysicsServer3D.free_rid(model_rid)
@@ -63,6 +78,8 @@ func unload_model() -> void:
 	clear_visuals()
 
 func _exit_tree() -> void:
+	cancel_pending_edit()
+	LiveBridge.detach(self)
 	if model_rid.is_valid():
 		PhysicsServer3D.free_rid(model_rid)
 		model_rid = RID()
@@ -114,3 +131,52 @@ func _physics_process(_delta: float) -> void:
 		if visuals.has(geom.name):
 			visuals[geom.name].global_transform = geom.transform
 			visuals[geom.name].scale *= scales[geom.name]
+
+func request_model_edit(candidate: MjModelResource, expected_revision: int = -1) -> bool:
+	if Engine.is_editor_hint() or not model_rid.is_valid() or edit_request != 0:
+		last_error = "Load an instance and wait for the pending edit before retrying"
+		return false
+	if not candidate:
+		last_error = "Choose a saved model resource"
+		return false
+	last_error = candidate.validate_package()
+	if not last_error.is_empty(): return false
+	if expected_revision < 0: expected_revision = property_revision
+	# Copy authored data: future UI/resource changes cannot alter this queued request.
+	pending_model = ResourceLoader.load(candidate.resource_path,"",ResourceLoader.CACHE_MODE_IGNORE)
+	if not pending_model:
+		last_error = "Save the design resource before requesting runtime application"
+		return false
+	last_error = pending_model.validate_package()
+	if not last_error.is_empty():
+		pending_model = null
+		return false
+	edit_request = PhysicsServer3D.call("scene_request_model_edit",space,model_rid,pending_model.snapshot,pending_model.resource_path.get_base_dir(),expected_revision)
+	if edit_request == 0:
+		pending_model = null
+		last_error = "Edit queue full or this instance already has a pending request"
+		return false
+	LiveBridge.publish(self)
+	return true
+
+func cancel_pending_edit() -> void:
+	if edit_request != 0:
+		PhysicsServer3D.call("scene_cancel_model_edit",edit_request)
+	edit_request = 0
+	pending_model = null
+
+func _process(_delta: float) -> void:
+	if Engine.is_editor_hint() or edit_request == 0: return
+	var result: Dictionary = PhysicsServer3D.call("scene_edit_result",edit_request)
+	if result.is_empty(): return
+	edit_request = 0
+	property_revision = result.revision
+	last_error = result.error
+	if result.success:
+		committing_model = true
+		model = pending_model
+		committing_model = false
+		build_visuals(PhysicsServer3D.call("scene_geometry",space,model_rid),true)
+	pending_model = null
+	LiveBridge.publish(self)
+	edit_finished.emit(result)

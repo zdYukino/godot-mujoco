@@ -9,6 +9,10 @@ var ready_for_models := false
 
 func _enter_tree() -> void:
 	if Engine.is_editor_hint(): return
+	if ProjectSettings.get_setting("physics/3d/run_on_separate_thread", false):
+		last_error = "MjRuntimeWorld currently requires the default main-thread physics mode"
+		push_error(last_error)
+		return
 	if not PhysicsServer3D.has_method("scene_configure_model"):
 		last_error = "Select MuJoCo as the project's 3D physics engine and restart"
 		push_error(last_error)

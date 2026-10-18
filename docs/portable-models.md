@@ -105,9 +105,12 @@ removal requested from physics callbacks is deferred until callback flushing end
 No PhysicsServer3D full-joint compatibility is implied by MJCF constraint retention.
 
 The node transform is the **initial placement**, not a continuously driven physics
-pose. Do not scale model nodes: edit source geometry/mass explicitly. To replace a
-loaded resource, call `unload_model()`, assign `model`, then `load_model()` outside
-physics callbacks; assignment while loaded is rejected. Preview nodes never step
+pose. Do not scale model nodes: edit source geometry/mass explicitly. To apply a saved design revision while loaded, call `request_model_edit(resource)`
+and observe its completion/revision, or use the editor runtime target selector.
+This queues a synchronous transaction at the next native physics-step boundary;
+compatible live state is retained and failures roll back. Direct assignment while
+loaded remains rejected. Explicit unload/assign/load remains available when a
+state reset is intended. See [runtime safe editing](runtime-safe-editing.md). Preview nodes never step
 or mutate the shared resource. Actual runtime visual transforms come from MuJoCo.
 Mesh and primitive geometry is shown with flat colors; texture/material rendering
 parity and filesystem-free PCK export are not claimed.
