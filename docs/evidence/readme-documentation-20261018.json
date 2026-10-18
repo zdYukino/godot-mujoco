@@ -1,0 +1,186 @@
+{
+  "base_commit": "dfdfbbac9cd3217e6c9df5bfb3fa17c92388dd3e",
+  "scope": "Documentation only. Static inspection; no product build, simulation or heavy-load tests run.",
+  "checked_files": [
+    "README.md",
+    "README.en.md",
+    "docs/linux-install.zh-CN.md"
+  ],
+  "relative_links_checked": 39,
+  "relative_links": [
+    {
+      "file": "README.md",
+      "target": "README.en.md"
+    },
+    {
+      "file": "README.md",
+      "target": "docs/linux-install.zh-CN.md"
+    },
+    {
+      "file": "README.md",
+      "target": "docs/README.zh-CN.md"
+    },
+    {
+      "file": "README.md",
+      "target": "docs/linux-editor-runtime-baseline.zh-CN.md"
+    },
+    {
+      "file": "README.md",
+      "target": "docs/evidence/mouse-gui-fix/viewport-shapes.png"
+    },
+    {
+      "file": "README.md",
+      "target": "demo/assets/robots/unitree_g1/g1_29dof_mode_18/"
+    },
+    {
+      "file": "README.md",
+      "target": "docs/linux-install.zh-CN.md"
+    },
+    {
+      "file": "README.md",
+      "target": "docs/mjcf-editor.zh-CN.md"
+    },
+    {
+      "file": "README.md",
+      "target": "docs/runtime-safe-editing.zh-CN.md"
+    },
+    {
+      "file": "README.md",
+      "target": "docs/evidence/freebase-clock/runtime-step9.png"
+    },
+    {
+      "file": "README.md",
+      "target": "docs/runtime-clock.zh-CN.md"
+    },
+    {
+      "file": "README.md",
+      "target": "tests/runtime_clock/ClockBinding.cs"
+    },
+    {
+      "file": "README.md",
+      "target": "demo/scripts/mj_pendulum_demo.gd"
+    },
+    {
+      "file": "README.md",
+      "target": "tests/portable_runtime/RuntimeBinding.cs"
+    },
+    {
+      "file": "README.md",
+      "target": "docs/portable-models.zh-CN.md"
+    },
+    {
+      "file": "README.md",
+      "target": "ARCHITECTURE.zh-CN.md"
+    },
+    {
+      "file": "README.md",
+      "target": "docs/linux-editor-runtime-baseline.zh-CN.md"
+    },
+    {
+      "file": "README.md",
+      "target": "docs/known-issues.zh-CN.md"
+    },
+    {
+      "file": "README.md",
+      "target": "docs/linux-baseline-manual-checklist.zh-CN.md"
+    },
+    {
+      "file": "README.md",
+      "target": "tests/"
+    },
+    {
+      "file": "README.md",
+      "target": "LICENSE"
+    },
+    {
+      "file": "README.md",
+      "target": "demo/addons/godot_mujoco/THIRD_PARTY.md"
+    },
+    {
+      "file": "README.md",
+      "target": "demo/assets/robots/unitree_g1/g1_29dof_mode_18/LICENSE"
+    },
+    {
+      "file": "README.md",
+      "target": "demo/assets/robots/unitree_g1/g1_29dof_mode_18/README.md"
+    },
+    {
+      "file": "README.en.md",
+      "target": "README.md"
+    },
+    {
+      "file": "README.en.md",
+      "target": "docs/README.zh-CN.md"
+    },
+    {
+      "file": "README.en.md",
+      "target": "docs/linux-install.zh-CN.md"
+    },
+    {
+      "file": "README.en.md",
+      "target": "docs/freebase-clock-validation.zh-CN.md"
+    },
+    {
+      "file": "README.en.md",
+      "target": "docs/portable-models.md"
+    },
+    {
+      "file": "README.en.md",
+      "target": "docs/editor-advanced-properties.md"
+    },
+    {
+      "file": "README.en.md",
+      "target": "docs/runtime-safe-editing.md"
+    },
+    {
+      "file": "README.en.md",
+      "target": "docs/linux-editor-runtime-baseline.zh-CN.md"
+    },
+    {
+      "file": "README.en.md",
+      "target": "docs/known-issues.zh-CN.md"
+    },
+    {
+      "file": "docs/linux-install.zh-CN.md",
+      "target": "../README.md"
+    },
+    {
+      "file": "docs/linux-install.zh-CN.md",
+      "target": "mouse-gui-fix.zh-CN.md"
+    },
+    {
+      "file": "docs/linux-install.zh-CN.md",
+      "target": "linux-editor-runtime-baseline.zh-CN.md"
+    },
+    {
+      "file": "docs/linux-install.zh-CN.md",
+      "target": "daily-paths-baseline.zh-CN.md"
+    },
+    {
+      "file": "docs/linux-install.zh-CN.md",
+      "target": "known-issues.zh-CN.md"
+    },
+    {
+      "file": "docs/linux-install.zh-CN.md",
+      "target": "linux-baseline-manual-checklist.zh-CN.md"
+    }
+  ],
+  "shell_blocks_bash_n": 7,
+  "existing_png_headers_checked": 2,
+  "api_checks": [
+    "RuntimeWorld command signatures and signal",
+    "ModelInstance set_control signature",
+    "generated scene Model node name and playground start_paused",
+    "pendulum hinge_motor actuator and timestep",
+    "C# Call/Get/ToSignal pattern compared with existing bindings"
+  ],
+  "release_check": {
+    "url": "https://api.github.com/repos/zdYukino/godot-mujoco/releases?per_page=100",
+    "checked_date_utc": "2026-10-18",
+    "response": []
+  },
+  "tracked_addon_bin": [
+    "demo/addons/godot_mujoco/bin/.gitkeep"
+  ],
+  "result": "PASS"
+}
