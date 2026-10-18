@@ -1,3 +1,5 @@
+> [中文使用指南](linux-install.zh-CN.md) · [当前范围与验证](freebase-clock-validation.zh-CN.md)。本文保留原阶段的英文说明；版本和支持范围以当前入口为准。
+
 # Linux headless baseline
 
 The recovery baseline is **Godot 4.7.2 .NET**, **MuJoCo 3.16.0**, Linux x86_64.

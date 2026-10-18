@@ -1,3 +1,5 @@
+> [中文使用指南](portable-models.zh-CN.md) · [当前范围与验证](freebase-clock-validation.zh-CN.md)。本文保留原阶段的英文说明；版本和支持范围以当前入口为准。
+
 # Project-owned MuJoCo models
 
 Branch `codex/portable-model-runtime`, starting at the accepted

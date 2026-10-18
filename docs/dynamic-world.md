@@ -1,3 +1,5 @@
+> [中文使用指南](README.zh-CN.md) · [当前范围与验证](freebase-clock-validation.zh-CN.md)。本文保留原阶段的英文说明；版本和支持范围以当前入口为准。
+
 # Transactional model instances in the native MuJoCo space
 
 Linux milestone based on independently accepted `b32fd22f0405caf086b8fb866160694e88853c9e`.
