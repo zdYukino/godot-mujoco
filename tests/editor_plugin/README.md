@@ -9,7 +9,7 @@ OUT=/tmp/gmj-editor-new tests/editor_plugin/run.sh
 
 The runner uses a fresh isolated project and the cold-import helper. It runs an
 actual `--editor` process with the enabled EditorPlugin, not a runtime imitation.
-80 assertions cover import, real body mass/inertia-derived size/density, kp/kv
+116 assertions cover import, real body mass/inertia-derived size/density, kp/kv
 and non-PD rejection, joint movement, controls, geometry visuals, failed candidate
 compilation, rollback, state migration, EditorUndoRedoManager, atomic persistence,
 external include/OBJ resolution, unsupported content, draft recovery, scene switch,
@@ -30,7 +30,7 @@ godot --editor --path /tmp/gmj-editor-new/project \
 ```
 
 The three screenshots are engine viewport captures of the editor itself. Capture
-adds three assertions (83 total). Cloud rendering uses Mesa llvmpipe and Xvfb;
+adds three assertions (119 total). Cloud rendering uses Mesa llvmpipe and Xvfb;
 it does not replace dot's independent actual desktop acceptance.
 
 ## Manual acceptance
@@ -57,3 +57,8 @@ it does not replace dot's independent actual desktop acceptance.
 
 See [scope and ownership details](../../docs/mjcf-editor.md). This milestone does
 not add CharacterBody/Area/native-joint compatibility or walking validation.
+
+The Apply regression emits actual Button.pressed signals for qpos, kp, kv and
+body position, checks complete form retention after Apply/undo/redo/Discard, and
+checks invalid input and repeated signals on retired controls. Direct calls to
+apply_fields alone do not reproduce signal-emitter lifetime bugs.

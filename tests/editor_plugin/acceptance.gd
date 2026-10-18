@@ -35,6 +35,55 @@ func capture(plugin: EditorPlugin, filename: String) -> void:
 				await plugin.get_tree().process_frame
 			await RenderingServer.frame_post_draw
 			check(plugin.get_viewport().get_texture().get_image().save_png(folder.path_join(filename)) == OK, "real editor screenshot " + filename)
+func form_button(panel: Control, text: String) -> Button:
+	for child in panel.fields.get_children():
+		if child is Button and child.text == text:
+			return child
+	return null
+
+func button_regression(panel: Control, doc: RefCounted, undo: UndoRedo) -> void:
+	for trial in [
+		["joint", "hinge", "set_qpos", "0.25"],
+		["actuator", "position_drive", "kp", "95.0"],
+		["actuator", "position_drive", "kv", "9.0"],
+		["body", "box", "pos", "[-0.8, 0.1, 2.0]"]
+	]:
+		panel.select_entity(trial[0], trial[1])
+		var key: String = trial[2]
+		panel.inputs[key].text = trial[3]
+		panel.inputs[key].text_changed.emit(trial[3])
+		var apply := form_button(panel, "Apply to physics")
+		check(apply != null, "Apply button exists " + key)
+		if apply == null:
+			return
+		var input_count: int = panel.inputs.size()
+		apply.pressed.emit()
+		var revision: int = doc.inspect().revision
+		apply.pressed.emit()
+		check(doc.inspect().revision == revision, "retired Apply ignores repeated signal " + key)
+		await panel.get_tree().process_frame
+		check(panel.inputs.size() == input_count and panel.inputs.has(key) and is_instance_valid(panel.inputs[key]) and panel.inputs[key].is_inside_tree(), "pressed Apply retains fields " + key)
+		var actual: Dictionary = entity(doc, trial[0], trial[1])
+		var expected: Variant = JSON.parse_string(trial[3])
+		var value: Variant = actual.qpos[0] if key == "set_qpos" else actual[key]
+		check(is_equal_approx(float(value),float(expected)) if not value is Array else value == expected, "pressed Apply writes physics " + key)
+		check(undo.undo(), "undo after pressed Apply " + key)
+		check(undo.redo(), "redo after pressed Apply " + key)
+		await panel.get_tree().process_frame
+		check(panel.inputs.has(key) and is_instance_valid(panel.inputs[key]), "undo redo retains form " + key)
+		if not panel.inputs.has(key):
+			return
+		panel.inputs[key].text = "invalid pending value"
+		panel.inputs[key].text_changed.emit(panel.inputs[key].text)
+		var invalid_apply := form_button(panel, "Apply to physics")
+		var before_invalid: Dictionary = doc.snapshot()
+		invalid_apply.pressed.emit()
+		check(panel.pending and doc.snapshot() == before_invalid and panel.inputs.size() == input_count, "pressed invalid Apply preserves draft " + key)
+		var discard := form_button(panel, "Discard pending fields")
+		discard.pressed.emit()
+		await panel.get_tree().process_frame
+		check(not panel.pending and panel.inputs.has(key) and panel.inputs[key].text != "invalid pending value", "pressed Discard restores fields " + key)
+
 func run(plugin: EditorPlugin) -> void:
 	var panel = plugin.panel
 	var doc: RefCounted = plugin.state.document
@@ -88,6 +137,7 @@ func run(plugin: EditorPlugin) -> void:
 	check(not entity(doc,"body","sphere").is_empty(), "undo restores body")
 	check(undo.redo(), "Godot editor redo")
 	check(entity(doc,"body","sphere").is_empty(), "redo deletes body")
+	await button_regression(panel, doc, undo)
 	panel.select_entity("actuator","position_drive")
 	panel.inputs.control.text = "0.8"
 	check(panel.apply_fields(), "actual property form apply")

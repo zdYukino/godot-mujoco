@@ -7,8 +7,8 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 mkdir -p "$OUT/project"
 cp -a "$ROOT/tests/editor_plugin/". "$OUT/project/"
 cp -a "$ROOT/demo/addons" "$OUT/project/"
-timeout 120 "$ROOT/scripts/import_headless.sh" "$OUT/project" > "$OUT/import.log" 2>&1
-timeout 120 "$GODOT_BIN" --headless --editor --path "$OUT/project" -- --mj-editor-test --report="$OUT/results.json" > "$OUT/runtime.log" 2>&1
+timeout --kill-after=5 120 "$ROOT/scripts/import_headless.sh" "$OUT/project" > "$OUT/import.log" 2>&1
+timeout --kill-after=5 120 "$GODOT_BIN" --headless --editor --path "$OUT/project" -- --mj-editor-test --report="$OUT/results.json" > "$OUT/runtime.log" 2>&1
 python3 - "$OUT" <<'PY'
 import json,sys,pathlib,hashlib
 p=pathlib.Path(sys.argv[1]);r=json.loads((p/'results.json').read_text());assert r['failed']==0,r

@@ -319,8 +319,17 @@ func field(key: String, value: Variant, editable: bool, hint: String) -> void:
 		fields.add_child(label_value)
 
 func build_fields() -> void:
+	# Apply/Discard can rebuild their own form from inside pressed. A signal
+	# emitter is locked until its callback returns: detach now, destroy only
+	# at the end of the frame. Disconnect retired buttons so a queued/repeated
+	# activation cannot apply the replacement form through a stale control.
 	for child in fields.get_children():
-		child.free()
+		if child is BaseButton:
+			child.disabled = true
+			for connection in child.get_signal_connection_list("pressed"):
+				child.disconnect("pressed", connection.callable)
+		fields.remove_child(child)
+		child.queue_free()
 	inputs.clear()
 	if selected.is_empty():
 		field("Selection", "Select a body, geom, joint or actuator", false, "")
