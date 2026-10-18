@@ -1,0 +1,77 @@
+[
+  {
+    "path": "commands.json",
+    "bytes": 32973,
+    "sha256": "54b99cc9b6037d4f3095ce29026b4a8251847b8628c6d22607f4e05b29381e7f"
+  },
+  {
+    "path": "f5-mujoco.png",
+    "bytes": 154628,
+    "sha256": "266f8d7697c88fce30e0e2237805d9b9b881707271291727d1f0d3084f3d32fd"
+  },
+  {
+    "path": "frozen.json",
+    "bytes": 41651,
+    "sha256": "64573bc772f77640f6fe9a6432dc58626145b3aa93e0ca6131214ee590ccb6f6"
+  },
+  {
+    "path": "g1-barrier.png",
+    "bytes": 63352,
+    "sha256": "5552d624a126e7edde8aaea15dc771618856d776c260960bc98ef64a3c539ff8"
+  },
+  {
+    "path": "g1-high-friction.png",
+    "bytes": 80207,
+    "sha256": "4aaf79a3262cf1af54e6e01445a8f6e3e8665fba63da03acccb7a7f79c623f3b"
+  },
+  {
+    "path": "g1-low-friction.png",
+    "bytes": 82608,
+    "sha256": "14f4af6f92c3e5655cf9434a5b3e6979235a46add32af5e72fc7732ac9e37b86"
+  },
+  {
+    "path": "g1-rebuild-failed.png",
+    "bytes": 78606,
+    "sha256": "3c3c1697c0b83ac9e5d7547383244ca67f71b14a5d4af18b9482a0a848661991"
+  },
+  {
+    "path": "integrity.json",
+    "bytes": 141,
+    "sha256": "46435c4dad95aade672ea924fef0870d4ebf622b4892a48844e9bbdd2ae19966"
+  },
+  {
+    "path": "preflight-checks.json",
+    "bytes": 1674,
+    "sha256": "dc253fecfe2a51cc7982a2bb3e2f8ebf09431804098123428be89580dd901a8b"
+  },
+  {
+    "path": "raw-evidence.zip",
+    "bytes": 6049504,
+    "sha256": "23bfd0d0477f93a9f502e900a7b128fea0c9d87fb005074cfe073a20e84b21e6"
+  },
+  {
+    "path": "summary.json",
+    "bytes": 18330,
+    "sha256": "10dc16f8eb107b0223ec1e0001fe43a174dc568d00ca7fd871bb37a0abfd29e4"
+  },
+  {
+    "path": "test-cleanup-delta.json",
+    "bytes": 428,
+    "sha256": "a7490fff08206700378bede7409a19a55a4bb7f7d6eb4968078aa5068219ba10"
+  },
+  {
+    "path": "tree-after.png",
+    "bytes": 196636,
+    "sha256": "9b978f899c9379037cc00b1ecce8086e48dcdf78eddacefce7ab762a399e0899"
+  },
+  {
+    "path": "tree-before.png",
+    "bytes": 191838,
+    "sha256": "1995226ebcfac3ff88b2eaa520fbc9a024e1799f8d8c2c823c7fc58d0bd2b73d"
+  },
+  {
+    "path": "viewport-shapes.png",
+    "bytes": 203075,
+    "sha256": "889aa5348a2cc2e615986d554b59b4f4f9571ea211fa4fb272678888e8a7e39d"
+  }
+]

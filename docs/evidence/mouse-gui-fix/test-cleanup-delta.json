@@ -1,0 +1,10 @@
+{
+  "original_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+  "test_cleanup_commit": "df049af78999ab60b0e102191bd6842a00021fbd",
+  "changed_tracked_files": [
+    "tests/editor_plugin/mouse_acceptance.py",
+    "tests/freebase/gui_probe.gd"
+  ],
+  "engine_sha256": "fc1bd592b5e771c65d52968f99835b4f2b7fe7b7cbc141e202cb63e01c95ec4d",
+  "extension_sha256": "001d5ac28ef4efa68323e62b8053f3e8c8e6ae0f5230ce3102e191ff58b10e7f"
+}

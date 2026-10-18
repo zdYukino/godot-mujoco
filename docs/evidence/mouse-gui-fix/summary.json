@@ -1,0 +1,698 @@
+[
+  {
+    "label": "build",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 1.54,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "native",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 7.27,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "dynamic",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 8.49,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "g1",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 17.47,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "editor",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 7.67,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "freebase",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 19.95,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "clock",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 10.54,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "live",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 30.15,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "negative-audit",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 0.72,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "portable-assets-0",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 9.71,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "portable-runtime-0",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 58.78,
+    "strict_status": "PASS",
+    "diagnostics": [],
+    "isolated_negative": [
+      {
+        "case": "missing_model",
+        "command": [
+          "/workspace/shared/tools/bin/godot",
+          "--headless",
+          "--path",
+          "/workspace/shared/validation/mouse-fix/full/portable-runtime-0/relocated",
+          "--script",
+          "res://world_rejection_test.gd",
+          "--",
+          "missing_model"
+        ],
+        "exit": 0,
+        "log": "missing_model.log",
+        "result": {
+          "case": "missing_model",
+          "checks": [
+            {
+              "name": "rejected before space configuration",
+              "passed": true
+            },
+            {
+              "name": "exact structured diagnostic",
+              "passed": true
+            },
+            {
+              "name": "failed entry does not claim ownership",
+              "passed": true
+            },
+            {
+              "name": "corrected entry recovers original start mode",
+              "passed": true
+            },
+            {
+              "name": "recovered world loads complete robot",
+              "passed": true
+            },
+            {
+              "name": "cleanup releases ownership",
+              "passed": true
+            }
+          ],
+          "failed": 0
+        },
+        "passed": true
+      },
+      {
+        "case": "ownership",
+        "command": [
+          "/workspace/shared/tools/bin/godot",
+          "--headless",
+          "--path",
+          "/workspace/shared/validation/mouse-fix/full/portable-runtime-0/relocated",
+          "--script",
+          "res://world_rejection_test.gd",
+          "--",
+          "ownership"
+        ],
+        "exit": 0,
+        "log": "ownership.log",
+        "result": {
+          "case": "ownership",
+          "checks": [
+            {
+              "name": "live owner fixture loaded",
+              "passed": true
+            },
+            {
+              "name": "second owner rejected before configuration",
+              "passed": true
+            },
+            {
+              "name": "exact structured diagnostic",
+              "passed": true
+            },
+            {
+              "name": "rejection preserves owner model state revision and pause",
+              "passed": true
+            },
+            {
+              "name": "failed owner exit preserves live world",
+              "passed": true
+            },
+            {
+              "name": "conflict recovers after owner disposal",
+              "passed": true
+            },
+            {
+              "name": "recovered world loads complete robot",
+              "passed": true
+            },
+            {
+              "name": "cleanup releases ownership",
+              "passed": true
+            }
+          ],
+          "failed": 0
+        },
+        "passed": true
+      }
+    ]
+  },
+  {
+    "label": "pressure-0",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 26.47,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "pressure-audit-0",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 0.72,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "portable-assets-1",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 9.71,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "portable-runtime-1",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 59.11,
+    "strict_status": "PASS",
+    "diagnostics": [],
+    "isolated_negative": [
+      {
+        "case": "missing_model",
+        "command": [
+          "/workspace/shared/tools/bin/godot",
+          "--headless",
+          "--path",
+          "/workspace/shared/validation/mouse-fix/full/portable-runtime-1/relocated",
+          "--script",
+          "res://world_rejection_test.gd",
+          "--",
+          "missing_model"
+        ],
+        "exit": 0,
+        "log": "missing_model.log",
+        "result": {
+          "case": "missing_model",
+          "checks": [
+            {
+              "name": "rejected before space configuration",
+              "passed": true
+            },
+            {
+              "name": "exact structured diagnostic",
+              "passed": true
+            },
+            {
+              "name": "failed entry does not claim ownership",
+              "passed": true
+            },
+            {
+              "name": "corrected entry recovers original start mode",
+              "passed": true
+            },
+            {
+              "name": "recovered world loads complete robot",
+              "passed": true
+            },
+            {
+              "name": "cleanup releases ownership",
+              "passed": true
+            }
+          ],
+          "failed": 0
+        },
+        "passed": true
+      },
+      {
+        "case": "ownership",
+        "command": [
+          "/workspace/shared/tools/bin/godot",
+          "--headless",
+          "--path",
+          "/workspace/shared/validation/mouse-fix/full/portable-runtime-1/relocated",
+          "--script",
+          "res://world_rejection_test.gd",
+          "--",
+          "ownership"
+        ],
+        "exit": 0,
+        "log": "ownership.log",
+        "result": {
+          "case": "ownership",
+          "checks": [
+            {
+              "name": "live owner fixture loaded",
+              "passed": true
+            },
+            {
+              "name": "second owner rejected before configuration",
+              "passed": true
+            },
+            {
+              "name": "exact structured diagnostic",
+              "passed": true
+            },
+            {
+              "name": "rejection preserves owner model state revision and pause",
+              "passed": true
+            },
+            {
+              "name": "failed owner exit preserves live world",
+              "passed": true
+            },
+            {
+              "name": "conflict recovers after owner disposal",
+              "passed": true
+            },
+            {
+              "name": "recovered world loads complete robot",
+              "passed": true
+            },
+            {
+              "name": "cleanup releases ownership",
+              "passed": true
+            }
+          ],
+          "failed": 0
+        },
+        "passed": true
+      }
+    ]
+  },
+  {
+    "label": "pressure-1",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 25.64,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "pressure-audit-1",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 0.72,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "portable-assets-2",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 9.71,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "portable-runtime-2",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 60.44,
+    "strict_status": "PASS",
+    "diagnostics": [],
+    "isolated_negative": [
+      {
+        "case": "missing_model",
+        "command": [
+          "/workspace/shared/tools/bin/godot",
+          "--headless",
+          "--path",
+          "/workspace/shared/validation/mouse-fix/full/portable-runtime-2/relocated",
+          "--script",
+          "res://world_rejection_test.gd",
+          "--",
+          "missing_model"
+        ],
+        "exit": 0,
+        "log": "missing_model.log",
+        "result": {
+          "case": "missing_model",
+          "checks": [
+            {
+              "name": "rejected before space configuration",
+              "passed": true
+            },
+            {
+              "name": "exact structured diagnostic",
+              "passed": true
+            },
+            {
+              "name": "failed entry does not claim ownership",
+              "passed": true
+            },
+            {
+              "name": "corrected entry recovers original start mode",
+              "passed": true
+            },
+            {
+              "name": "recovered world loads complete robot",
+              "passed": true
+            },
+            {
+              "name": "cleanup releases ownership",
+              "passed": true
+            }
+          ],
+          "failed": 0
+        },
+        "passed": true
+      },
+      {
+        "case": "ownership",
+        "command": [
+          "/workspace/shared/tools/bin/godot",
+          "--headless",
+          "--path",
+          "/workspace/shared/validation/mouse-fix/full/portable-runtime-2/relocated",
+          "--script",
+          "res://world_rejection_test.gd",
+          "--",
+          "ownership"
+        ],
+        "exit": 0,
+        "log": "ownership.log",
+        "result": {
+          "case": "ownership",
+          "checks": [
+            {
+              "name": "live owner fixture loaded",
+              "passed": true
+            },
+            {
+              "name": "second owner rejected before configuration",
+              "passed": true
+            },
+            {
+              "name": "exact structured diagnostic",
+              "passed": true
+            },
+            {
+              "name": "rejection preserves owner model state revision and pause",
+              "passed": true
+            },
+            {
+              "name": "failed owner exit preserves live world",
+              "passed": true
+            },
+            {
+              "name": "conflict recovers after owner disposal",
+              "passed": true
+            },
+            {
+              "name": "recovered world loads complete robot",
+              "passed": true
+            },
+            {
+              "name": "cleanup releases ownership",
+              "passed": true
+            }
+          ],
+          "failed": 0
+        },
+        "passed": true
+      }
+    ]
+  },
+  {
+    "label": "pressure-2",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 26.09,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "pressure-audit-2",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 0.72,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "editor-gui-0-import",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 4.81,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "editor-gui-0",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 20.74,
+    "strict_status": "PASS",
+    "diagnostics": [],
+    "assertions": {
+      "passed": 163,
+      "failed": 0
+    }
+  },
+  {
+    "label": "editor-gui-1-import",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 4.81,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "editor-gui-1",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 20.76,
+    "strict_status": "PASS",
+    "diagnostics": [],
+    "assertions": {
+      "passed": 163,
+      "failed": 0
+    }
+  },
+  {
+    "label": "editor-gui-2-import",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 4.83,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "editor-gui-2",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 20.35,
+    "strict_status": "PASS",
+    "diagnostics": [],
+    "assertions": {
+      "passed": 163,
+      "failed": 0
+    }
+  },
+  {
+    "label": "editor-gui-3-import",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 4.81,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "editor-gui-3",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 20.77,
+    "strict_status": "PASS",
+    "diagnostics": [],
+    "assertions": {
+      "passed": 163,
+      "failed": 0
+    }
+  },
+  {
+    "label": "editor-gui-4-import",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 4.82,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "editor-gui-4",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 20.39,
+    "strict_status": "PASS",
+    "diagnostics": [],
+    "assertions": {
+      "passed": 163,
+      "failed": 0
+    }
+  },
+  {
+    "label": "smoke-isolated",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 5.63,
+    "strict_status": "PASS",
+    "diagnostics": [],
+    "isolated_negative": {
+      "positive_exit": 0,
+      "negative_exit": 0,
+      "positive_passed": true,
+      "negative": {
+        "checks": 3,
+        "failed": 0,
+        "rejected": true,
+        "unchanged": true
+      }
+    }
+  },
+  {
+    "label": "mouse-gui",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 70.37,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "g1-gui",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 1,
+    "seconds": 101.64,
+    "strict_status": "FAIL",
+    "diagnostics": [
+      {
+        "file": "g1-gui-driver.log",
+        "line": 2,
+        "text": "{'mouse_exit': 0, 'game_exit': 0, 'passed': 20, 'failed': 0, 'diagnostics': [{'file': 'gui/runtime.log', 'line': 558, 'text': \"SCRIPT ERROR: Invalid access to property or key 'world' on a base object of type 'previously freed'.\"}]}"
+      },
+      {
+        "file": "g1-gui/gui/runtime.log",
+        "line": 558,
+        "text": "SCRIPT ERROR: Invalid access to property or key 'world' on a base object of type 'previously freed'."
+      }
+    ]
+  },
+  {
+    "label": "mouse-gui-final",
+    "source_commit": "df049af78999ab60b0e102191bd6842a00021fbd",
+    "exit": 0,
+    "seconds": 70.92,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "g1-gui-final",
+    "source_commit": "df049af78999ab60b0e102191bd6842a00021fbd",
+    "exit": 0,
+    "seconds": 100.89,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "legacy-chaos",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 0.73,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "legacy-debug-data",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 0.73,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "f5-plain-dummy",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 32.43,
+    "strict_status": "FAIL",
+    "diagnostics": [],
+    "automation_error": "Xlib BadMatch while setting focus; see f5-progress.log; retained as strict failure",
+    "embedded_lifecycle_verified": false,
+    "visual_status": "not separately established"
+  },
+  {
+    "label": "f5-mujoco-dummy",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 32.61,
+    "strict_status": "PARTIAL",
+    "diagnostics": [],
+    "automation_error": "",
+    "embedded_lifecycle_verified": true,
+    "visual_status": "PARTIAL: 15-second startup observation was gray; longer final observation recorded separately"
+  },
+  {
+    "label": "f5-plain-dummy-final",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 38.37,
+    "strict_status": "PASS",
+    "diagnostics": [],
+    "automation_error": "",
+    "embedded_lifecycle_verified": true,
+    "visual_status": "PASS: actual desktop capture cycle-0-15s.png shows green cube"
+  },
+  {
+    "label": "f5-mujoco-dummy-final",
+    "source_commit": "370dc334cbda7f7ded8891ed8cc5d3c7c5cf0037",
+    "exit": 0,
+    "seconds": 83.49,
+    "strict_status": "PASS",
+    "diagnostics": [],
+    "automation_error": "",
+    "embedded_lifecycle_verified": true,
+    "visual_status": "PASS: actual desktop capture cycle-0-60s.png shows two G1 models and rigid obstacle"
+  }
+]

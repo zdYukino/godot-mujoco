@@ -1,0 +1,65 @@
+[
+  {
+    "directory": "before",
+    "checks": 5,
+    "passed": 2,
+    "failed": 3,
+    "status_note": "preflight iteration; strict logs and process exit must also be checked"
+  },
+  {
+    "directory": "after-complete",
+    "checks": 19,
+    "passed": 15,
+    "failed": 4,
+    "status_note": "preflight iteration; strict logs and process exit must also be checked"
+  },
+  {
+    "directory": "complete-vulkan",
+    "checks": 24,
+    "passed": 20,
+    "failed": 4,
+    "status_note": "preflight iteration; strict logs and process exit must also be checked"
+  },
+  {
+    "directory": "release",
+    "checks": 24,
+    "passed": 24,
+    "failed": 0,
+    "status_note": "preflight iteration; strict logs and process exit must also be checked"
+  },
+  {
+    "directory": "release-restart",
+    "checks": 0,
+    "passed": 0,
+    "failed": 0,
+    "status_note": "preflight iteration; strict logs and process exit must also be checked"
+  },
+  {
+    "directory": "restart-final",
+    "checks": 0,
+    "passed": 0,
+    "failed": 0,
+    "status_note": "preflight iteration; strict logs and process exit must also be checked"
+  },
+  {
+    "directory": "restart-inspect",
+    "checks": 2,
+    "passed": 2,
+    "failed": 0,
+    "status_note": "preflight iteration; strict logs and process exit must also be checked"
+  },
+  {
+    "directory": "g1-gui",
+    "checks": 20,
+    "passed": 17,
+    "failed": 3,
+    "status_note": "preflight iteration; strict logs and process exit must also be checked"
+  },
+  {
+    "directory": "g1-release/gui",
+    "checks": 20,
+    "passed": 19,
+    "failed": 1,
+    "status_note": "preflight iteration; strict logs and process exit must also be checked"
+  }
+]

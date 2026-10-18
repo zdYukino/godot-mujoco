@@ -1,5 +1,7 @@
 # godot-mujoco
 
+最新验证：[真实鼠标Tree修复、G1 GUI与图形宿主配置](docs/mouse-gui-fix.zh-CN.md)（开发候选，尚非稳定基线）。
+
 在 Godot 中使用 MuJoCo 物理、编辑 MJCF，并将可搬迁模型放入普通 Godot 场景。
 
 **本分支范围：Linux x86_64，Godot 4.7.2 .NET 官方二进制，MuJoCo 3.16.0。** 不把其他平台或历史版本的记录视为当前验证结果。原生扩展无需修改 Godot 引擎。
