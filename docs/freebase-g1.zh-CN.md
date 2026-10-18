@@ -19,7 +19,7 @@ var ok = doc.import_g1(urdf_path, true, true)
 
 自由关节有 7 个 qpos：位置 xyz + 四元数 wxyz；6 个 qvel：线速度 xyz + MuJoCo 局部角速度 xyz。不要将 7 维位置当作 6 维速度，或将局部角速度当作 Godot 世界角速度。
 
-Godot Y-up→MuJoCo Z-up 为 `(x,y,z)→(x,-z,y)`；反向位置为 `(x,y,z)→(x,z,-y)`。运行时 `robot.state().joints.floating_base` 保留 MuJoCo 数组语义，`robot.state().bodies.pelvis.transform` 是转换后的 Godot 世界位姿。根 Node3D 跟随真实 body；网格世界位姿继续来自真实 geom，不重复叠加根位移。
+Godot Y-up→MuJoCo Z-up 为 `(x,y,z)→(x,-z,y)`；反向位置为 `(x,y,z)→(x,z,-y)`。运行时 `robot.state().joints.floating_base` 保留 MuJoCo 数组语义，`robot.state().bodies.pelvis.transform` 是转换后的 Godot 世界位姿。根 Node3D 跟随真实 body；卸载/退出树时恢复保存的初始放置变换，避免同一节点重加时累计仿真位姿。网格世界位姿继续来自真实 geom，不重复叠加根位移。
 
 ## 可复现实验
 

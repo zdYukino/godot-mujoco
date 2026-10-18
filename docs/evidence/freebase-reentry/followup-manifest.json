@@ -1,0 +1,23 @@
+{
+  "freebase-reentry-portable/import.log": "1a00ab9637412b138189398ec09329a79580360b82605647de65400c361b81a4",
+  "freebase-reentry-portable/relocated-import.log": "d8a3067376dc9670929b95ac2a498c33c6c17b5ac570bc367eed2862d601461c",
+  "freebase-reentry-portable/recovery-integrity.log": "d1a8af055e1e403511fcad25284daf9f047c68a45b339fcd8c5e57a75ffaf21f",
+  "freebase-reentry-portable/editor-scene-restart.log": "241cd5256dd5eeaea56ef6ab6e1b2e28290b17af1bf2b41e6a13d5685b5dfdf5",
+  "freebase-reentry-portable/relocated-runtime.log": "19f904b6ad0657509497896662aa0db1a1f3abfc40100cb4534dc6171600a35d",
+  "freebase-reentry-portable/runtime.log": "a39f971941b7119e1cbc9e34ae8db2732e40d2af9bd68f0931755d7286fd614a",
+  "freebase-reentry-portable/results.json": "b312764ea6a78bb65f4c4717800c2f70502b900addde72cdc4b62cc661e79969",
+  "freebase-reentry-portable/author.log": "5bebdbacb4e6f7866417315fbefabf5591d0154552c3fb8bd4d92e18cd02d868",
+  "freebase-reentry-portable/editor-flow.log": "e6e68bd6028262602e4875aa9847defee484d7eb38864083009c51441931ad95",
+  "freebase-reentry-portable/negative-suite.log": "332c12e4c96e7b0821373841340436372085bae10fc8184d4bf7ec32b77be6e2",
+  "freebase-reentry-portable/csharp.log": "e58cb243698d4ca93edc59893b83d9abf1233fb1b97cb19ae4cd15c581af462c",
+  "freebase-reentry-portable/live-edit.log": "03560bbf3dc407a99b993a884caff9909c5369b9123dec0eefc3e0c8fbba74fb",
+  "freebase-reentry-portable/dotnet-build.log": "b30485f9fc34ed826c0692248b87ee856c4178a4418ce6f1d74948963d093df8",
+  "freebase-reentry-portable/negative/missing_model.log": "1fef1d4e67452927087e29dc1a5381b76c31e1fdaa3ee18c24a247cf466eff18",
+  "freebase-reentry-portable/negative/results.json": "9533eed1edc7cbe406103f9d98102966e6053534d106c421535ac548db8aa0b3",
+  "freebase-reentry-portable/negative/ownership.log": "72cc313377023681b1fc0148e5b71b0366dc679288dc67bc4600b9025b416bf8",
+  "freebase-reentry-clock/import.log": "bad60185d1c860274f0429482393d0833eea9c3ab74bac964458c348bc6b8805",
+  "freebase-reentry-clock/runtime.log": "0953b7edf808059a32acf9faf04af635ee32f1daae24c543e92ffb08fe04ef3b",
+  "freebase-reentry-clock/results.json": "ac8e5d5a62806aa6a3680a2e825faaeed54e78363834f951bca549fde59b3bc5",
+  "freebase-reentry-clock/csharp.log": "5dd729a15104029c16b852672327e1fd7b5ad8496963ca84be378e5767d742f3",
+  "freebase-reentry-clock/dotnet-build.log": "5444c722d482a6b84c154bcd03c1a6c67f4a8b3bcca5d308297b4b484973a542"
+}

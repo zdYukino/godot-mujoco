@@ -25,6 +25,8 @@ var space := RID()
 var last_error := ""
 var visuals := {}
 var scales := {}
+var spawn_transform := Transform3D.IDENTITY
+var physical_root_synced := false
 
 func _ready() -> void:
 	if Engine.is_editor_hint():
@@ -55,6 +57,8 @@ func load_model() -> bool:
 	if not world.set_paused(true):
 		last_error = "Loading must occur outside physics callbacks"
 		return false
+	spawn_transform = global_transform
+	physical_root_synced = false
 	var label := str(get_path()) + "#" + str(get_instance_id())
 	model_rid = PhysicsServer3D.call("scene_load_model",space,model.snapshot,model.resource_path.get_base_dir(),label,global_transform)
 	world.set_paused(was_paused)
@@ -68,7 +72,12 @@ func load_model() -> bool:
 	build_visuals(PhysicsServer3D.call("scene_geometry",space,model_rid),true)
 	return true
 
+func restore_spawn_transform() -> void:
+	if physical_root_synced and is_inside_tree(): global_transform = spawn_transform
+	physical_root_synced = false
+
 func unload_model() -> void:
+	restore_spawn_transform()
 	cancel_pending_edit()
 	LiveBridge.detach(self)
 	if model_rid.is_valid():
@@ -78,6 +87,7 @@ func unload_model() -> void:
 	clear_visuals()
 
 func _exit_tree() -> void:
+	restore_spawn_transform()
 	cancel_pending_edit()
 	LiveBridge.detach(self)
 	if model_rid.is_valid():
@@ -129,6 +139,7 @@ func _physics_process(_delta: float) -> void:
 	if Engine.is_editor_hint() or not model_rid.is_valid(): return
 	var physical_state := state()
 	if physical_state.get("joints",{}).has("floating_base") and physical_state.get("bodies",{}).has("pelvis"):
+		physical_root_synced = true
 		global_transform = physical_state.bodies.pelvis.transform
 	for geom in physical_state.get("geoms",[]):
 		if visuals.has(geom.name):

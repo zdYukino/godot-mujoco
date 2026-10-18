@@ -10,7 +10,7 @@ URDF 编译可能把固定 pelvis 合并入 world；自由基座派生流程先�
 
 运行 `MjModelInstance` 从真实 pelvis 的 body transform 更新根 Node3D，随后用真实 geom 世界姿态更新网格。没有靠移动网格伪造自由基座。`scene_state().bodies` 暴露质量、惯量、gravcomp 和物理位姿；`scene_info().contact_details` 暴露接触距离、位置、摩擦及两侧 geom/body 名称。
 
-32 项物理验证包括自由下落、qpos/qvel 维度、无驱动/无补偿、质量/惯量有限性、原脚底球接触、低/高摩擦对照、普通 Godot 障碍接触、无 MuJoCo warning 与有限状态。相同初始水平速度 1.5 m/s，120 个 Godot 物理 tick 后低/高摩擦位移约 3.07/1.12 m；最深接触约 2.62 cm，测试界限为 4 cm。该数值是此软接触、松弛倒伏用例的界限，不是所有模型的穿透保证。
+44 项物理验证（含后续同一节点重入回归）包括自由下落、qpos/qvel 维度、无驱动/无补偿、质量/惯量有限性、原脚底球接触、低/高摩擦对照、普通 Godot 障碍接触、无 MuJoCo warning 与有限状态。相同初始水平速度 1.5 m/s，120 个 Godot 物理 tick 后低/高摩擦位移约 3.07/1.12 m；最深接触约 2.62 cm，测试界限为 4 cm。该数值是此软接触、松弛倒伏用例的界限，不是所有模型的穿透保证。
 
 ## 时钟、状态重置、环境重建
 
@@ -35,7 +35,7 @@ UI `MjSimulationControls` 在 host 外，包含游戏/仿真时间、暂停、�
 | `tests/native_backend/run.sh` | milestone-native-final | 0 / 447 |
 | `tests/dynamic_scene/run.sh` | milestone-dynamic-final | 0 / 86 |
 | `tests/editor_plugin/run.sh` | milestone-editor-final | 0 / 160 |
-| `bash tests/freebase/run.sh` | milestone-freebase-final | 0 / 32 |
+| `bash tests/freebase/run.sh` | freebase-reentry-release | 0 / 44 |
 | `bash tests/runtime_clock/run.sh` | milestone-clock-release | 0 / 101 + C# |
 | `tests/portable_runtime/run_runtime.sh` | milestone-portable-full | 0 / 30+30+84+9+41、C#、重启 |
 | `tests/g1_actuation/run.sh` | milestone-g1-full | 0 / native、GDScript、C#；各 29 joints、60 trials、240000 steps |
@@ -55,3 +55,12 @@ portable 的两项故意错误仍只在独立负向子进程验证，分别 6/8 
 实际编辑器测试退出 0、163 项操作/截图检查通过，但日志有两条 Vulkan 探测 ERROR，**严格 GUI gate 判为 FAIL**。保留 [编辑器截图](evidence/freebase-clock/editor-gui.png) 和完整日志，不通过过滤错误来宣称稳定。已知 cold-import 139 仍是独立未解决限制；本次成功的 fresh import 不证明稳定率。
 
 dot 复验：运行 `tests/freebase/run.sh` 生成干净项目后，将 `tests/freebase/prepare_playground.gd` 复制到其 project，运行 `godot --headless --path <project> --script res://prepare_playground.gd`。打开该项目和 `FreebasePlayground.tscn`，分别验证独立窗口及 F5 嵌入显示。初始暂停；右键拖动/滚轮相机应继续响应。输入 N 后点击单步，观察精确仿真时间；恢复到倒伏，再暂停、状态重置、环境重建。添加第二个 G1/普通刚体并重复增删，确认状态重置保留、环境重建丢弃；另一 World3D 不受影响。复验最新树高亮和球柱按钮修复，不把此阶段自动测试代替 dot 的桌面验收。
+
+
+## 自由根节点重入补充
+
+在功能提交后的生命周期检查中补充保存/恢复 authored spawn transform：运行中跟随 pelvis 的根节点在卸载或离开场景树时恢复初始放置变换，下一次加载不把倒伏后的物理姿态再次当作放置偏移。明确卸载后手动设置的新放置仍会在下一次加载时生效。
+
+`freebase-reentry-release` 新目录测试退出 0，44 项通过；新增 3 轮同一节点 unload/load 与 remove/add，检查无累计位姿偏移。初始 32 项日志保留，不重标为 44 项。后续日志见 [自由基座重入证据](evidence/freebase-reentry/)。
+
+该修复后追加复跑 `freebase-reentry-portable`（30+30+84+9+41、C#、隔离负向用例及重启）和 `freebase-reentry-clock`（101+C#），均退出 0；正常日志无 ERROR/泄漏。原始日志打包于 [followup-logs.zip](evidence/freebase-reentry/followup-logs.zip)。中文入口/指南 74 个本地链接目标检查通过。
