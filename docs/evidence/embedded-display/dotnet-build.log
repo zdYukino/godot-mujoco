@@ -1,0 +1,21 @@
+/workspace/shared/validation/application-runtime/relocated/PortableRuntime.csproj : error MSB4242: SDK Resolver Failure: "The SDK resolver "NuGetSdkResolver" failed while attempting to resolve the SDK "Godot.NET.Sdk/4.7.2". Exception: "System.IO.IOException: The system cannot open the device or file specified. : 'NuGet-Migrations'
+/workspace/shared/validation/application-runtime/relocated/PortableRuntime.csproj : error MSB4242:    at System.Threading.Mutex.CreateMutexCore(Boolean initiallyOwned, String name, Boolean& createdNew)
+/workspace/shared/validation/application-runtime/relocated/PortableRuntime.csproj : error MSB4242:    at System.Threading.Mutex..ctor(Boolean initiallyOwned, String name)
+/workspace/shared/validation/application-runtime/relocated/PortableRuntime.csproj : error MSB4242:    at NuGet.Common.Migrations.MigrationRunner.Run(String migrationsDirectory)
+/workspace/shared/validation/application-runtime/relocated/PortableRuntime.csproj : error MSB4242:    at NuGet.Common.Migrations.MigrationRunner.Run()
+/workspace/shared/validation/application-runtime/relocated/PortableRuntime.csproj : error MSB4242:    at Microsoft.Build.NuGetSdkResolver.NuGetSdkResolver.Resolve(SdkReference sdkReference, SdkResolverContext resolverContext, SdkResultFactory factory)
+/workspace/shared/validation/application-runtime/relocated/PortableRuntime.csproj : error MSB4242:    at Microsoft.Build.BackEnd.SdkResolution.SdkResolverService.TryResolveSdkUsingSpecifiedResolvers(IReadOnlyList`1 resolvers, Int32 submissionId, SdkReference sdk, LoggingContext loggingContext, ElementLocation sdkReferenceLocation, String solutionPath, String projectPath, Boolean interactive, Boolean isRunningInVisualStudio, SdkResult& sdkResult, IEnumerable`1& errors, IEnumerable`1& warnings)""
+
+Build FAILED.
+
+/workspace/shared/validation/application-runtime/relocated/PortableRuntime.csproj : error MSB4242: SDK Resolver Failure: "The SDK resolver "NuGetSdkResolver" failed while attempting to resolve the SDK "Godot.NET.Sdk/4.7.2". Exception: "System.IO.IOException: The system cannot open the device or file specified. : 'NuGet-Migrations'
+/workspace/shared/validation/application-runtime/relocated/PortableRuntime.csproj : error MSB4242:    at System.Threading.Mutex.CreateMutexCore(Boolean initiallyOwned, String name, Boolean& createdNew)
+/workspace/shared/validation/application-runtime/relocated/PortableRuntime.csproj : error MSB4242:    at System.Threading.Mutex..ctor(Boolean initiallyOwned, String name)
+/workspace/shared/validation/application-runtime/relocated/PortableRuntime.csproj : error MSB4242:    at NuGet.Common.Migrations.MigrationRunner.Run(String migrationsDirectory)
+/workspace/shared/validation/application-runtime/relocated/PortableRuntime.csproj : error MSB4242:    at NuGet.Common.Migrations.MigrationRunner.Run()
+/workspace/shared/validation/application-runtime/relocated/PortableRuntime.csproj : error MSB4242:    at Microsoft.Build.NuGetSdkResolver.NuGetSdkResolver.Resolve(SdkReference sdkReference, SdkResolverContext resolverContext, SdkResultFactory factory)
+/workspace/shared/validation/application-runtime/relocated/PortableRuntime.csproj : error MSB4242:    at Microsoft.Build.BackEnd.SdkResolution.SdkResolverService.TryResolveSdkUsingSpecifiedResolvers(IReadOnlyList`1 resolvers, Int32 submissionId, SdkReference sdk, LoggingContext loggingContext, ElementLocation sdkReferenceLocation, String solutionPath, String projectPath, Boolean interactive, Boolean isRunningInVisualStudio, SdkResult& sdkResult, IEnumerable`1& errors, IEnumerable`1& warnings)""
+    0 Warning(s)
+    1 Error(s)
+
+Time Elapsed 00:00:00.08

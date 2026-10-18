@@ -5,3 +5,7 @@ config/name="MuJoCo Portable Runtime Acceptance"
 3d/physics_engine="MuJoCo"
 [rendering]
 renderer/rendering_method="gl_compatibility"
+[audio]
+; F5 starts a child process: the editor's CLI audio override is not inherited.
+; This physics acceptance project has no sound and runs on audio-less cloud hosts.
+driver/driver="Dummy"
