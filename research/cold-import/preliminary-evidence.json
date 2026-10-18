@@ -1,0 +1,237 @@
+{
+  "status": "PRELIMINARY; candidate not yet built or validated",
+  "official_binary_sha256": "fc1bd592b5e771c65d52968f99835b4f2b7fe7b7cbc141e202cb63e01c95ec4d",
+  "source_project_commit": "c8d0286ce2c882c863c2b2a82f74b47629a10d29",
+  "load_note": "Build on CPUs0-2; initial layered imports on CPUs3-4",
+  "runs": [
+    {
+      "kind": "empty",
+      "mode": "official",
+      "index": 0,
+      "exit": 0,
+      "shell_exit": 0,
+      "artifacts_complete": true,
+      "passed": true,
+      "seconds": 6.47,
+      "log_sha256": "12dd95b47f15b047fce88eab482dc6b112520e8f1e08a0a36d9fec1619406854"
+    },
+    {
+      "kind": "empty",
+      "mode": "official",
+      "index": 1,
+      "exit": 0,
+      "shell_exit": 0,
+      "artifacts_complete": true,
+      "passed": true,
+      "seconds": 4.694,
+      "log_sha256": "12dd95b47f15b047fce88eab482dc6b112520e8f1e08a0a36d9fec1619406854"
+    },
+    {
+      "kind": "empty",
+      "mode": "helper",
+      "index": 0,
+      "exit": 0,
+      "shell_exit": 0,
+      "artifacts_complete": true,
+      "passed": true,
+      "seconds": 7.706,
+      "log_sha256": "12dd95b47f15b047fce88eab482dc6b112520e8f1e08a0a36d9fec1619406854"
+    },
+    {
+      "kind": "empty",
+      "mode": "helper",
+      "index": 1,
+      "exit": 0,
+      "shell_exit": 0,
+      "artifacts_complete": true,
+      "passed": true,
+      "seconds": 6.691,
+      "log_sha256": "12dd95b47f15b047fce88eab482dc6b112520e8f1e08a0a36d9fec1619406854"
+    },
+    {
+      "kind": "no_class",
+      "mode": "official",
+      "index": 0,
+      "exit": 0,
+      "shell_exit": 0,
+      "artifacts_complete": true,
+      "passed": true,
+      "seconds": 5.663,
+      "log_sha256": "754e4c513f1224a95d58926849e749ca8b7c85698d521d2aa95d07007b7106b4"
+    },
+    {
+      "kind": "no_class",
+      "mode": "official",
+      "index": 1,
+      "exit": 0,
+      "shell_exit": 0,
+      "artifacts_complete": true,
+      "passed": true,
+      "seconds": 5.661,
+      "log_sha256": "754e4c513f1224a95d58926849e749ca8b7c85698d521d2aa95d07007b7106b4"
+    },
+    {
+      "kind": "no_class",
+      "mode": "helper",
+      "index": 0,
+      "exit": 0,
+      "shell_exit": 0,
+      "artifacts_complete": true,
+      "passed": true,
+      "seconds": 7.664,
+      "log_sha256": "754e4c513f1224a95d58926849e749ca8b7c85698d521d2aa95d07007b7106b4"
+    },
+    {
+      "kind": "no_class",
+      "mode": "helper",
+      "index": 1,
+      "exit": 0,
+      "shell_exit": 0,
+      "artifacts_complete": true,
+      "passed": true,
+      "seconds": 7.711,
+      "log_sha256": "754e4c513f1224a95d58926849e749ca8b7c85698d521d2aa95d07007b7106b4"
+    },
+    {
+      "kind": "class",
+      "mode": "official",
+      "index": 0,
+      "exit": -11,
+      "shell_exit": 139,
+      "artifacts_complete": true,
+      "passed": false,
+      "seconds": 5.031,
+      "log_sha256": "9f6c55604a1062a6442bed8e0fde1a4c34923cfae3d326b1e3ce1f081dc81604"
+    },
+    {
+      "kind": "class",
+      "mode": "official",
+      "index": 1,
+      "exit": -11,
+      "shell_exit": 139,
+      "artifacts_complete": true,
+      "passed": false,
+      "seconds": 4.861,
+      "log_sha256": "9f6c55604a1062a6442bed8e0fde1a4c34923cfae3d326b1e3ce1f081dc81604"
+    },
+    {
+      "kind": "class",
+      "mode": "helper",
+      "index": 0,
+      "exit": 0,
+      "shell_exit": 0,
+      "artifacts_complete": true,
+      "passed": true,
+      "seconds": 6.645,
+      "log_sha256": "754e4c513f1224a95d58926849e749ca8b7c85698d521d2aa95d07007b7106b4"
+    },
+    {
+      "kind": "class",
+      "mode": "helper",
+      "index": 1,
+      "exit": 0,
+      "shell_exit": 0,
+      "artifacts_complete": true,
+      "passed": true,
+      "seconds": 7.662,
+      "log_sha256": "754e4c513f1224a95d58926849e749ca8b7c85698d521d2aa95d07007b7106b4"
+    },
+    {
+      "kind": "native",
+      "mode": "official",
+      "index": 0,
+      "exit": -11,
+      "shell_exit": 139,
+      "artifacts_complete": true,
+      "passed": false,
+      "seconds": 5.434,
+      "log_sha256": "2fcfef0a69d4b1489a4590cdebbbefdc5a25e5d7cdab4ccb924605bb502d0476"
+    },
+    {
+      "kind": "native",
+      "mode": "official",
+      "index": 1,
+      "exit": -11,
+      "shell_exit": 139,
+      "artifacts_complete": true,
+      "passed": false,
+      "seconds": 7.087,
+      "log_sha256": "2fcfef0a69d4b1489a4590cdebbbefdc5a25e5d7cdab4ccb924605bb502d0476"
+    },
+    {
+      "kind": "native",
+      "mode": "helper",
+      "index": 0,
+      "exit": 0,
+      "shell_exit": 0,
+      "artifacts_complete": true,
+      "passed": true,
+      "seconds": 8.888,
+      "log_sha256": "2fcfef0a69d4b1489a4590cdebbbefdc5a25e5d7cdab4ccb924605bb502d0476"
+    },
+    {
+      "kind": "native",
+      "mode": "helper",
+      "index": 1,
+      "exit": 0,
+      "shell_exit": 0,
+      "artifacts_complete": true,
+      "passed": true,
+      "seconds": 10.077,
+      "log_sha256": "2fcfef0a69d4b1489a4590cdebbbefdc5a25e5d7cdab4ccb924605bb502d0476"
+    },
+    {
+      "kind": "full",
+      "mode": "official",
+      "index": 0,
+      "exit": -11,
+      "shell_exit": 139,
+      "artifacts_complete": true,
+      "passed": false,
+      "seconds": 6.33,
+      "log_sha256": "ed50144df8b3cb963f1af9998e416a43de6a2cebb0ddedb0066cbf79c7c985af"
+    },
+    {
+      "kind": "full",
+      "mode": "official",
+      "index": 1,
+      "exit": -11,
+      "shell_exit": 139,
+      "artifacts_complete": true,
+      "passed": false,
+      "seconds": 5.596,
+      "log_sha256": "ed50144df8b3cb963f1af9998e416a43de6a2cebb0ddedb0066cbf79c7c985af"
+    },
+    {
+      "kind": "full",
+      "mode": "helper",
+      "index": 0,
+      "exit": 0,
+      "shell_exit": 0,
+      "artifacts_complete": true,
+      "passed": true,
+      "seconds": 8.956,
+      "log_sha256": "ed50144df8b3cb963f1af9998e416a43de6a2cebb0ddedb0066cbf79c7c985af"
+    },
+    {
+      "kind": "full",
+      "mode": "helper",
+      "index": 1,
+      "exit": 0,
+      "shell_exit": 0,
+      "artifacts_complete": true,
+      "passed": true,
+      "seconds": 9.034,
+      "log_sha256": "ed50144df8b3cb963f1af9998e416a43de6a2cebb0ddedb0066cbf79c7c985af"
+    }
+  ],
+  "excluded": "Initial worktree native layer lacked ignored extension binaries and is retained as setup failure. Fresh project-layer rerun used verified built extension.",
+  "minimal_gdb": {
+    "debugger_exit": 0,
+    "inferior_signal": "SIGSEGV",
+    "document_pointer_before_deferred_call": "0x0",
+    "thread": 1,
+    "pc": "0x11364af",
+    "extension_terminate_callback_reached": false
+  }
+}
