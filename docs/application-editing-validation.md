@@ -99,3 +99,7 @@ authoring, runtime and editor logs contain no ERROR/leak. Results and full live
 logs are retained under `evidence/runtime-safe/`. Same-node unload/reload obtains
 a new RID generation in its debugger ID, so stale requests cannot target the
 replacement load. Final shell syntax and `git diff --check` exited 0.
+
+The later [isolated-negative test follow-up](portable-isolated-rejections.md) resolves
+the portable audit test-design issue with independent negative subprocesses.
+The historical results above remain unchanged.

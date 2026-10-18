@@ -1,0 +1,102 @@
+[
+  {
+    "case": "missing_model",
+    "command": [
+      "/workspace/shared/tools/bin/godot",
+      "--headless",
+      "--path",
+      "/workspace/shared/validation/portable-isolated-rejections/relocated",
+      "--script",
+      "res://world_rejection_test.gd",
+      "--",
+      "missing_model"
+    ],
+    "exit": 0,
+    "log": "missing_model.log",
+    "result": {
+      "case": "missing_model",
+      "checks": [
+        {
+          "name": "rejected before space configuration",
+          "passed": true
+        },
+        {
+          "name": "exact structured diagnostic",
+          "passed": true
+        },
+        {
+          "name": "failed entry does not claim ownership",
+          "passed": true
+        },
+        {
+          "name": "corrected entry recovers original start mode",
+          "passed": true
+        },
+        {
+          "name": "recovered world loads complete robot",
+          "passed": true
+        },
+        {
+          "name": "cleanup releases ownership",
+          "passed": true
+        }
+      ],
+      "failed": 0
+    },
+    "passed": true
+  },
+  {
+    "case": "ownership",
+    "command": [
+      "/workspace/shared/tools/bin/godot",
+      "--headless",
+      "--path",
+      "/workspace/shared/validation/portable-isolated-rejections/relocated",
+      "--script",
+      "res://world_rejection_test.gd",
+      "--",
+      "ownership"
+    ],
+    "exit": 0,
+    "log": "ownership.log",
+    "result": {
+      "case": "ownership",
+      "checks": [
+        {
+          "name": "live owner fixture loaded",
+          "passed": true
+        },
+        {
+          "name": "second owner rejected before configuration",
+          "passed": true
+        },
+        {
+          "name": "exact structured diagnostic",
+          "passed": true
+        },
+        {
+          "name": "rejection preserves owner model state revision and pause",
+          "passed": true
+        },
+        {
+          "name": "failed owner exit preserves live world",
+          "passed": true
+        },
+        {
+          "name": "conflict recovers after owner disposal",
+          "passed": true
+        },
+        {
+          "name": "recovered world loads complete robot",
+          "passed": true
+        },
+        {
+          "name": "cleanup releases ownership",
+          "passed": true
+        }
+      ],
+      "failed": 0
+    },
+    "passed": true
+  }
+]

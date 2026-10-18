@@ -77,10 +77,13 @@ The GUI variant uses the actual editor Save action.
 
 `run_runtime.sh` also exercises live edits after relocation, original paths
 unavailable, C# control, normal Godot body contact, editor save/create/restart.
-Its strict gate now rejects **every** ERROR/leak, including the two historically
-whitelisted negative ownership/configuration diagnostics. Expected rejection
-behavior is still checked, but cannot make that aggregate run a clean pass.
-`results.json` records strict log failures before the runner returns nonzero.
+Its normal-process gate rejects **every** ERROR/leak. The missing-model and
+ownership-conflict negative cases run in two independent Godot subprocesses under
+`negative/`, each with an exact diagnostic and state-integrity contract. Their
+complete raw logs are retained; additional/missing/duplicate diagnostics, leaks,
+failed assertions and nonzero/timeout exits fail the suite. No log text is removed
+or replaced. See [the isolated-negative follow-up](portable-isolated-rejections.md).
+
 
 Dot GUI checklist:
 

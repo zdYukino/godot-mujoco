@@ -1,0 +1,74 @@
+[
+  {
+    "log": "author.log",
+    "sha256": "e2eb88545ceb22c7966f209705bc079bcd512eb237be4f3cc76507c1d8241cbd",
+    "error": false,
+    "leak": false
+  },
+  {
+    "log": "csharp.log",
+    "sha256": "292f58f22667c994511b05edfa4ce0509ade1e6fdc11eff4931be89dc3f5fd99",
+    "error": false,
+    "leak": false
+  },
+  {
+    "log": "dotnet-build.log",
+    "sha256": "6e19fe95c117bedce268f824895093e97b14470793d4ddea386bb7f7e6340943",
+    "error": false,
+    "leak": false
+  },
+  {
+    "log": "editor-flow.log",
+    "sha256": "36e995090b66575ee4d6414bc48f509805cee718a7d6e047f070e7d82b6a6d5d",
+    "error": false,
+    "leak": false
+  },
+  {
+    "log": "editor-scene-restart.log",
+    "sha256": "90db37895a9ce80a551fdcb416a8eb2549f5d7bfcea253b7d1ad2be73cdf1caf",
+    "error": false,
+    "leak": false
+  },
+  {
+    "log": "import.log",
+    "sha256": "382505ccf30870cc4cf72fd243fd8a6b08e0172c5128eea0d6f84a30b71ed704",
+    "error": false,
+    "leak": false
+  },
+  {
+    "log": "live-edit.log",
+    "sha256": "b7ea6382c5e48146be5e15d904d7366ba7ae40d457f8f8b9d73c3ddb5087bf28",
+    "error": false,
+    "leak": false
+  },
+  {
+    "log": "negative-suite.log",
+    "sha256": "0c526d4eebc55a91e480703751e277c7d72a89f32361f61c4a804c073995df9c",
+    "error": false,
+    "leak": false
+  },
+  {
+    "log": "recovery-integrity.log",
+    "sha256": "d92a383d059b064346d73831a5f86e8819534181367c1a877ac635dcfc2d4578",
+    "error": false,
+    "leak": false
+  },
+  {
+    "log": "relocated-import.log",
+    "sha256": "7d2a044c28f3cec9c99a56bb03ae104bbb7b4d351245583e37f9266fc9d6cf4b",
+    "error": false,
+    "leak": false
+  },
+  {
+    "log": "relocated-runtime.log",
+    "sha256": "bc93e6e38fed758f029fd4386befa8451b8e5b91bca6ff1f021db75fa216ad06",
+    "error": false,
+    "leak": false
+  },
+  {
+    "log": "runtime.log",
+    "sha256": "90c1d913a7d9eb544a5a3b83ec410537b86aa68a9b395044f93644cfa0454e18",
+    "error": false,
+    "leak": false
+  }
+]

@@ -11,33 +11,15 @@ func write(path: String, value: String) -> void:
 func _initialize() -> void: call_deferred("run")
 func run() -> void:
 	var doc: RefCounted = ClassDB.instantiate("MjEditorDocument")
-	var packed: Dictionary = Builder.pack(doc,"res://edge_regression_packages","empty")
-	if not packed.error.is_empty():printerr(packed.error);quit(1);return
-	var resource = load(packed.path)
-	var world = World.new()
-	world.start_paused=false
-	root.add_child(world) # Expected missing-model error; this consumes its first _ready.
-	check(not world.ready_for_models,"missing model fails first entry")
-	root.remove_child(world);world.world_model=resource;root.add_child(world)
-	check(world.ready_for_models and not world.info().paused,"failed-first entry recovers and honors start_paused false")
-	check(world.last_error.is_empty(),"successful recovery clears error")
-	var conflict = World.new();conflict.world_model=resource;conflict.start_paused=false
-	root.add_child(conflict) # Expected ownership conflict.
-	check(not conflict.ready_for_models,"second owner rejected")
-	root.remove_child(conflict)
-	check(world.get_world_3d().get_meta("mj_runtime_owner").get_ref()==world,"failed owner exit preserves active owner")
-	world.free();root.add_child(conflict)
-	check(conflict.ready_for_models and not conflict.info().paused,"ownership conflict recovers after owner disposal")
-	conflict.free()
 	DirAccess.make_dir_recursive_absolute("res://edge_source")
 	var vertices := "v 0 0 0\nv 1 0 0\nv 0 1 0\nv 0 0 1\nf 1 3 2\nf 1 2 4\nf 1 4 3\nf 2 3 4\n"
 	write("res://edge_source/tetra.obj",vertices)
 	write("res://edge_source/model.xml","<mujoco><asset><mesh name='tetra' file='tetra.obj'/></asset><worldbody><body name='b'><geom type='mesh' mesh='tetra'/></body></worldbody></mujoco>")
 	if not doc.import_file("res://edge_source/model.xml"):printerr(doc.get_error());quit(1);return
-	packed=Builder.pack(doc,"res://edge_regression_packages","mesh")
+	var packed: Dictionary=Builder.pack(doc,"res://edge_regression_packages","mesh")
 	if not packed.error.is_empty():printerr(packed.error);quit(1);return
-	resource=ResourceLoader.load(packed.path,"",ResourceLoader.CACHE_MODE_IGNORE)
-	world=World.new();world.world_model=resource;world.start_paused=true
+	var resource=ResourceLoader.load(packed.path,"",ResourceLoader.CACHE_MODE_IGNORE)
+	var world=World.new();world.world_model=resource;world.start_paused=true
 	var model=Instance.new();model.model=resource;world.add_child(model);root.add_child(world)
 	check(model.model_rid.is_valid(),"valid mesh loads into live world")
 	var before:Dictionary=model.state()

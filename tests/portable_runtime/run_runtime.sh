@@ -21,6 +21,7 @@ PY
 timeout --kill-after=5 120 "$ROOT/scripts/import_headless.sh" "$OUT/relocated" > "$OUT/relocated-import.log" 2>&1
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/relocated" --script res://runtime_test.gd > "$OUT/relocated-runtime.log" 2>&1
 timeout --kill-after=5 90 "$GODOT_BIN" --headless --path "$OUT/relocated" --script res://recovery_integrity_test.gd > "$OUT/recovery-integrity.log" 2>&1
+python3 "$ROOT/tests/portable_runtime/world_rejections.py" --godot "$GODOT_BIN" --project "$OUT/relocated" --out "$OUT/negative" > "$OUT/negative-suite.log" 2>&1
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/relocated" --script res://live_edit_test.gd > "$OUT/live-edit.log" 2>&1
 timeout --kill-after=5 180 dotnet build "$OUT/relocated/PortableRuntime.csproj" -c Debug > "$OUT/dotnet-build.log" 2>&1
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/relocated" res://RuntimeBinding.tscn > "$OUT/csharp.log" 2>&1
@@ -39,8 +40,8 @@ assert 'EDITOR_SCENE_RESTART_PASS' in (p/'editor-scene-restart.log').read_text()
 assert 'PORTABLE CSHARP PASS' in (p/'csharp.log').read_text()
 edge=(p/'recovery-integrity.log').read_text()
 e=json.loads(next(x.split(' ',1)[1] for x in edge.splitlines() if x.startswith('RECOVERY_INTEGRITY_RESULT ')));assert e['failed']==0,e;results['recovery-integrity']=e
-expected=['ERROR: Assign a world_model resource to define all global MuJoCo options','ERROR: Only one MjRuntimeWorld may own a World3D; use a separate SubViewport for another world']
-assert [x for x in edge.splitlines() if x.startswith('ERROR:')]==expected
+results['isolated-world-rejections']=json.loads((p/'negative/results.json').read_text())
+assert all(row['passed'] and row['exit']==0 for row in results['isolated-world-rejections'])
 violations=[]
 for f in p.glob('*.log'):
  s=f.read_text()
