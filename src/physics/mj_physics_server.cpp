@@ -1,3 +1,4 @@
+#include "mj_state_transfer.h"
 #include "mj_physics_server.h"
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <algorithm>
@@ -162,19 +163,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s){
  for(int j=0;j<model->njnt;++j)if(model->jnt_type[j]==mjJNT_HINGE && model->jnt_limited[j])
   data->qpos[model->jnt_qposadr[j]]=std::clamp(0.0,model->jnt_range[2*j]+0.001,model->jnt_range[2*j+1]-0.001);
  for(int a=0;a<model->nu;++a)if(model->actuator_trntype[a]==mjTRN_JOINT){int j=model->actuator_trnid[2*a];data->ctrl[a]=data->qpos[model->jnt_qposadr[j]];}
- // Names, not array indices, identify compatible state across insertions/deletions.
- if(s.model && s.data){
-  data->time=s.data->time;
-  for(int j=0;j<model->njnt;++j){const char *name=mj_id2name(model,mjOBJ_JOINT,j);if(!name)continue;
-   int old=mj_name2id(s.model,mjOBJ_JOINT,name);if(old<0||model->jnt_type[j]!=s.model->jnt_type[old])continue;
-   int nq=model->jnt_type[j]==mjJNT_FREE?7:(model->jnt_type[j]==mjJNT_BALL?4:1);
-   int nv=model->jnt_type[j]==mjJNT_FREE?6:(model->jnt_type[j]==mjJNT_BALL?3:1);
-   std::copy_n(s.data->qpos+s.model->jnt_qposadr[old],nq,data->qpos+model->jnt_qposadr[j]);
-   std::copy_n(s.data->qvel+s.model->jnt_dofadr[old],nv,data->qvel+model->jnt_dofadr[j]);
-   std::copy_n(s.data->qacc_warmstart+s.model->jnt_dofadr[old],nv,data->qacc_warmstart+model->jnt_dofadr[j]);
-  }
-  for(int a=0;a<model->nu;++a){const char *name=mj_id2name(model,mjOBJ_ACTUATOR,a);if(!name)continue;int old=mj_name2id(s.model,mjOBJ_ACTUATOR,name);if(old>=0)data->ctrl[a]=s.data->ctrl[old];}
- }
+ gmj_transfer_state(s.model,s.data,model,data);
  mj_forward(model,data);
  for(int i=0;i<model->nq;++i)if(!std::isfinite(data->qpos[i])){mj_deleteData(data);mj_deleteModel(model);s.last_error="Nonfinite candidate state";return false;}
  std::vector<std::pair<RID,int>> mapped(model->ngeom);

@@ -378,3 +378,11 @@ Focused on being a solid MuJoCo integration for Godot:
 - Optional `Node3D` base so the sim can compose with a scene-graph transform.
 - Android/iOS **device runtime** (Godot export + `adb`/`xcrun` smoke on an
   emulator or phone). Compile proof is already in CI — see [Mobile](#mobile-ios--android).
+
+### Linux MJCF editor workspace
+
+The optional **MuJoCo Model Editor** EditorPlugin provides MJCF import, a model
+hierarchy, editable body/geometry/actuator properties, real MuJoCo preview,
+Godot undo/redo and saved editor documents. Enable it in Project Settings →
+Plugins and select the MuJoCo main workspace. See [the workflow and supported
+parameters](docs/mjcf-editor.md) and [editor acceptance steps](tests/editor_plugin/README.md).

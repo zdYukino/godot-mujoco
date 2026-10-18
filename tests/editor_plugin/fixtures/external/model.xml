@@ -1,0 +1,2 @@
+<mujoco><compiler meshdir="meshes"/><include file="parts/assets.xml"/>
+<worldbody><body name="meshbody"><geom name="tetra_geom" type="mesh" mesh="tetra"/></body></worldbody></mujoco>

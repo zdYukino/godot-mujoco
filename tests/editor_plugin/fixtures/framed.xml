@@ -1,0 +1,1 @@
+<mujoco><worldbody><frame pos="1 0 0"><body name="framed"><geom type="box" size=".1 .1 .1"/></body></frame><body name="fromto"><geom name="fromto_geom" type="cylinder" size=".1" fromto="0 0 0 1 1 1"/></body></worldbody></mujoco>

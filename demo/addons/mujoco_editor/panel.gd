@@ -1,0 +1,491 @@
+@tool
+extends VBoxContainer
+var plugin: EditorPlugin
+var state: RefCounted
+var tree: Tree
+var fields: VBoxContainer
+var status: Label
+var live: Label
+var viewport: SubViewport
+var camera: Camera3D
+var meshes := {}
+var selected := {}
+var inputs := {}
+var pending := false
+var refreshing := false
+var serial := 0
+var distance := 5.0
+var yaw := 0.65
+var pitch := 0.3
+var center := Vector3(0, 0.8, 0)
+var orbiting := false
+var recovery_path := "user://mujoco_editor_recovery.json"
+
+func button(parent: Node, text: String, callback: Callable) -> Button:
+	var b := Button.new()
+	b.text = text
+	b.pressed.connect(callback)
+	parent.add_child(b)
+	return b
+
+func _ready() -> void:
+	var toolbar := HFlowContainer.new()
+	add_child(toolbar)
+	button(toolbar, "Import MJCF", func(): file_dialog(false, true))
+	button(toolbar, "Open document", func(): file_dialog(false, false))
+	button(toolbar, "Save document", func(): file_dialog(true, false))
+	button(toolbar, "Recover", func(): open_document(recovery_path))
+	button(toolbar, "Run / Pause", toggle_run)
+	button(toolbar, "Frame all", frame_all)
+	for shape in ["box", "sphere", "cylinder"]:
+		button(toolbar, "+ " + shape, add_primitive.bind(shape))
+	var note := Label.new()
+	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	note.text = "MuJoCo 3.16 • metres / kg / seconds / radians • local properties use MJCF Z-up axes; preview uses Godot Y-up"
+	add_child(note)
+	var split := HSplitContainer.new()
+	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	add_child(split)
+	var left := VBoxContainer.new()
+	left.custom_minimum_size.x = 270
+	split.add_child(left)
+	tree = Tree.new()
+	tree.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	tree.custom_minimum_size.y = 150
+	tree.item_selected.connect(on_select)
+	left.add_child(tree)
+	button(left, "Delete selected body / geom", delete_selected)
+	var view_box := SubViewportContainer.new()
+	view_box.stretch = true
+	view_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	view_box.custom_minimum_size = Vector2(320, 300)
+	view_box.gui_input.connect(camera_input)
+	split.add_child(view_box)
+	viewport = SubViewport.new()
+	viewport.own_world_3d = true
+	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	view_box.add_child(viewport)
+	camera = Camera3D.new()
+	camera.fov = 45
+	camera.near = 0.01
+	viewport.add_child(camera)
+	viewport.size_changed.connect(frame_all)
+	var light := DirectionalLight3D.new()
+	light.rotation_degrees = Vector3(-50, -30, 0)
+	light.light_energy = 0.8
+	viewport.add_child(light)
+	var env := WorldEnvironment.new()
+	env.environment = Environment.new()
+	env.environment.background_mode = Environment.BG_COLOR
+	env.environment.background_color = Color("25313e")
+	env.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.environment.ambient_light_color = Color.WHITE
+	env.environment.ambient_light_energy = 0.4
+	viewport.add_child(env)
+	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size.x = 300
+	split.add_child(scroll)
+	fields = VBoxContainer.new()
+	fields.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(fields)
+	live = Label.new()
+	add_child(live)
+	status = Label.new()
+	status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	add_child(status)
+	state.changed.connect(refresh)
+	refresh()
+	frame_all()
+	if not state.draft.is_empty():
+		select_entity(state.draft.selected.kind, state.draft.selected.name)
+		for key in state.draft.fields:
+			if inputs.has(key):
+				inputs[key].text = state.draft.fields[key]
+		pending = true
+		status.text = "Unapplied fields restored after plugin enable — Apply or Discard"
+	set_process(true)
+
+func shutdown() -> void:
+	save_recovery()
+	state.draft = {}
+	if pending:
+		var draft_fields := {}
+		for key in inputs:
+			draft_fields[key] = inputs[key].text
+		state.draft = {"selected":selected.duplicate(true), "fields":draft_fields}
+	set_process(false)
+	if state.changed.is_connected(refresh):
+		state.changed.disconnect(refresh)
+	meshes.clear()
+
+func save_recovery() -> void:
+	if state.document and (state.dirty or pending):
+		write_document(recovery_path)
+
+func show_error(message: String) -> void:
+	status.text = "FAILED — " + message + ". Existing model and pending fields retained."
+
+func can_leave_fields() -> bool:
+	if pending:
+		show_error("Apply or Discard pending property edits first")
+		return false
+	return true
+
+func execute(command: Dictionary) -> bool:
+	var before: Dictionary = state.document.snapshot()
+	if not state.document.edit(command):
+		show_error(state.document.get_error())
+		return false
+	record_change(before, "MuJoCo " + str(command.get("op", "edit")))
+	return true
+
+func record_change(before: Dictionary, title: String) -> void:
+	var after: Dictionary = state.document.snapshot()
+	var history := plugin.get_undo_redo()
+	history.create_action(title, UndoRedo.MERGE_DISABLE, state)
+	history.add_do_method(state, "restore_snapshot", after)
+	history.add_undo_method(state, "restore_snapshot", before)
+	history.commit_action(false)
+	state.content = after
+	state.dirty = true
+	pending = false
+	refresh()
+	save_recovery()
+
+func import_mjcf(path: String) -> bool:
+	if not can_leave_fields():
+		return false
+	var before: Dictionary = state.document.snapshot()
+	if not state.document.import_file(path):
+		show_error(state.document.get_error())
+		return false
+	record_change(before, "MuJoCo import")
+	frame_all()
+	return true
+
+func file_dialog(save: bool, importing: bool) -> void:
+	if not can_leave_fields():
+		return
+	var dialog := FileDialog.new()
+	dialog.access = FileDialog.ACCESS_FILESYSTEM
+	dialog.file_mode = FileDialog.FILE_MODE_SAVE_FILE if save else FileDialog.FILE_MODE_OPEN_FILE
+	dialog.filters = PackedStringArray(["*.xml ; MJCF model"]) if importing else PackedStringArray(["*.gmj.json ; MuJoCo editor document"])
+	dialog.file_selected.connect(func(path: String):
+		if importing:
+			import_mjcf(path)
+		elif save:
+			save_document(path)
+		else:
+			open_document(path)
+		dialog.queue_free())
+	dialog.canceled.connect(dialog.queue_free)
+	add_child(dialog)
+	dialog.popup_centered_ratio(0.7)
+
+func write_document(path: String) -> bool:
+	# Only editor JSON documents are written. XML and imported assets are never overwritten.
+	if path.get_extension().to_lower() != "json":
+		show_error("Document filename must end in .gmj.json")
+		return false
+	var f := FileAccess.open(path + ".tmp", FileAccess.WRITE)
+	if not f:
+		show_error("Cannot write document " + path)
+		return false
+	var payload: Dictionary = state.document.snapshot()
+	if pending:
+		var draft := {}
+		for key in inputs:
+			draft[key] = inputs[key].text
+		payload["draft"] = {"selected":selected, "fields":draft}
+	f.store_string(JSON.stringify(payload, "\t", true, true))
+	f.close()
+	var result := DirAccess.rename_absolute(path + ".tmp", path)
+	if result != OK:
+		show_error("Cannot atomically replace document: " + error_string(result))
+		return false
+	return true
+
+func save_document(path: String) -> bool:
+	if not can_leave_fields() or not write_document(path):
+		return false
+	state.file_path = path
+	state.dirty = false
+	status.text = "Saved " + path + " • source assets remain external and unchanged"
+	return true
+
+func open_document(path: String) -> bool:
+	if not can_leave_fields():
+		return false
+	var json := JSON.new()
+	if json.parse(FileAccess.get_file_as_string(path)) != OK or not json.data is Dictionary:
+		show_error("Invalid document JSON")
+		return false
+	var before: Dictionary = state.document.snapshot()
+	if not state.document.restore(json.data):
+		show_error(state.document.get_error())
+		return false
+	record_change(before, "MuJoCo open document")
+	state.file_path = path
+	if json.data.has("draft"):
+		select_entity(json.data.draft.selected.kind, json.data.draft.selected.name)
+		for key in json.data.draft.fields:
+			if inputs.has(key):
+				inputs[key].text = json.data.draft.fields[key]
+		pending = true
+		status.text = "Recovered pending fields — Apply or Discard"
+	frame_all()
+	return true
+
+func add_primitive(shape: String) -> void:
+	if not can_leave_fields():
+		return
+	state.document.set_paused(true)
+	serial += 1
+	var entity_name := shape + "_" + str(Time.get_ticks_usec()) + "_" + str(serial)
+	if execute({"op":"add", "shape":shape, "name":entity_name}):
+		select_entity("body", entity_name)
+		frame_all()
+
+func delete_selected() -> void:
+	if not selected.is_empty() and can_leave_fields():
+		state.document.set_paused(true)
+		execute({"op":"delete", "kind":selected.kind, "name":selected.name})
+
+func toggle_run() -> void:
+	if not can_leave_fields():
+		return
+	state.document.set_paused(not state.document.is_paused())
+	status.text = "Paused — structural changes compile only on Apply" if state.document.is_paused() else "Running real MuJoCo simulation; structural editing will pause preview"
+
+func refresh() -> void:
+	if not is_instance_valid(tree):
+		return
+	if pending:
+		rebuild_meshes()
+		status.text = "Model changed by undo/redo; pending field text retained — Apply or Discard"
+		return
+	refreshing = true
+	var info: Dictionary = state.document.inspect()
+	tree.clear()
+	var root := tree.create_item()
+	root.set_text(0, "Model (MJCF)")
+	var bodies := {}
+	var old := selected.duplicate()
+	selected = {}
+	for entity in info.entities:
+		var parent: TreeItem = bodies.get(entity.parent, root)
+		var item := tree.create_item(parent)
+		item.set_text(0, entity.kind + ": " + entity.name)
+		item.set_metadata(0, entity)
+		if entity.kind == "body":
+			bodies[entity.name] = item
+		if entity.kind == old.get("kind") and entity.name == old.get("name"):
+			item.select(0)
+			selected = entity
+	refreshing = false
+	build_fields()
+	rebuild_meshes()
+	status.text = "Paused" if info.paused else "Running"
+	status.text += " • Apply commits pending fields transactionally; Ctrl+Z / Ctrl+Shift+Z use editor history • " + ("Unsaved" if state.dirty else "Saved")
+
+func select_entity(kind: String, entity_name: String) -> void:
+	selected = {"kind":kind, "name":entity_name}
+	refresh()
+
+func on_select() -> void:
+	if refreshing:
+		return
+	if not can_leave_fields():
+		return
+	var item := tree.get_selected()
+	selected = item.get_metadata(0) if item and item.get_metadata(0) is Dictionary else {}
+	build_fields()
+
+func field(key: String, value: Variant, editable: bool, hint: String) -> void:
+	var label := Label.new()
+	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	label.text = key + " — " + hint + ("" if editable else " [read-only]")
+	fields.add_child(label)
+	if editable:
+		var input := LineEdit.new()
+		input.text = JSON.stringify(value)
+		input.text_changed.connect(func(_text): pending = true; status.text = "Pending changes — Apply or Discard; not yet written to physics")
+		fields.add_child(input)
+		inputs[key] = input
+	else:
+		var label_value := Label.new()
+		label_value.text = str(value)
+		label_value.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		fields.add_child(label_value)
+
+func build_fields() -> void:
+	for child in fields.get_children():
+		child.free()
+	inputs.clear()
+	if selected.is_empty():
+		field("Selection", "Select a body, geom, joint or actuator", false, "")
+		return
+	var p: Dictionary = selected.properties
+	var kind: String = selected.kind
+	field("name", selected.name, false, kind)
+	for key in p:
+		var editable := false
+		var hint := "actual compiled value"
+		if kind == "body":
+			editable = selected.name != "world" and key in ["mass", "pos", "quat"]
+			hint = {"mass":"kg; explicit mass scales existing inertia", "inertia":"kg m², principal inertia", "pos":"local MJCF xyz, m", "quat":"local wxyz, unit quaternion"}.get(key, "source inertia mode")
+		elif kind == "geom":
+			editable = key in ["pos", "quat", "friction", "contype", "conaffinity", "margin", "density"] or (key == "size" and p.type in [2, 5, 6])
+			hint = {"size":"MJCF half sizes [x,y,z]; sphere [r,0,0]; cylinder [r,half-height,0], m", "density":"kg/m³; only bodies with inferred inertia", "friction":"[sliding, torsional, rolling]", "pos":"local MJCF xyz, m", "quat":"local wxyz", "margin":"m"}.get(key, "contact bitmask / source value")
+		elif kind == "actuator":
+			editable = key == "control" or (key == "kp" and p.type == "position-compatible") or (key == "kv" and p.type != "general/non-PD")
+			hint = "actuator transmission units; gear shown below; PD gains apply only to compatible affine drives"
+		elif kind == "joint":
+			hint = str(p.unit) + "; mass belongs to body"
+		if key in ["pos", "quat"] and not p.get("pose_editable", true):
+			editable = false
+			hint = "frame/fromto source transform; compiled value read-only"
+		if key == "size" and not p.get("size_editable", true):
+			editable = false
+			hint = "fromto-derived size; read-only"
+		field(key, p[key], editable, hint)
+	if kind == "joint" and p.type in ["hinge", "slide"]:
+		field("set_qpos", p.qpos[0], true, "paused scalar position, " + p.unit)
+	button(fields, "Apply to physics", apply_fields)
+	button(fields, "Discard pending fields", func(): pending = false; refresh())
+
+func apply_fields() -> bool:
+	if selected.is_empty():
+		return false
+	var values := {}
+	for key in inputs:
+		var parser := JSON.new()
+		if parser.parse(inputs[key].text) != OK:
+			show_error("Invalid numeric JSON in " + key)
+			return false
+		var previous: Variant = selected.properties.qpos[0] if key == "set_qpos" else selected.properties[key]
+		if parser.data != previous:
+			values[key] = parser.data
+	if values.is_empty():
+		pending = false
+		return true
+	# A single action cannot mix a direct state write with a structural transaction.
+	if (values.has("control") or values.has("set_qpos")) and values.size() != 1:
+		show_error("Apply control/position separately from structural parameters")
+		return false
+	if values.has("control"):
+		return execute({"op":"control", "name":selected.name, "value":values.control})
+	state.document.set_paused(true)
+	if values.has("set_qpos"):
+		return execute({"op":"qpos", "name":selected.name, "value":values.set_qpos})
+	return execute({"op":"set", "kind":selected.kind, "name":selected.name, "values":values})
+
+func rebuild_meshes() -> void:
+	for mesh in meshes.values():
+		mesh.free()
+	meshes.clear()
+	for geom in state.document.geometry():
+		var instance := MeshInstance3D.new()
+		var size: Vector3 = geom.size
+		match geom.type:
+			0:
+				var m := PlaneMesh.new()
+				m.size = Vector2(maxf(size.x * 2, 10), maxf(size.y * 2, 10))
+				instance.mesh = m
+			2:
+				var m := SphereMesh.new()
+				m.radius = size.x
+				m.height = size.x * 2
+				instance.mesh = m
+			3:
+				var m := CapsuleMesh.new()
+				m.radius = size.x
+				m.height = (size.x + size.y) * 2
+				instance.mesh = m
+			4:
+				var m := SphereMesh.new()
+				m.radius = 1
+				m.height = 2
+				instance.mesh = m
+			5:
+				var m := CylinderMesh.new()
+				m.top_radius = size.x
+				m.bottom_radius = size.x
+				m.height = size.y * 2
+				instance.mesh = m
+			6:
+				var m := BoxMesh.new()
+				m.size = Vector3(size.x, size.z, size.y) * 2
+				instance.mesh = m
+			7:
+				var m := ArrayMesh.new()
+				var arrays := []
+				arrays.resize(Mesh.ARRAY_MAX)
+				arrays[Mesh.ARRAY_VERTEX] = geom.vertices
+				arrays[Mesh.ARRAY_NORMAL] = geom.normals
+				m.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, arrays)
+				instance.mesh = m
+		if not instance.mesh:
+			instance.free()
+			continue
+		var material := StandardMaterial3D.new()
+		material.albedo_color = geom.color
+		material.roughness = 0.85
+		instance.material_override = material
+		viewport.add_child(instance)
+		instance.transform = geom.transform
+		if geom.type == 4:
+			instance.scale = Vector3(size.x, size.z, size.y)
+		meshes[geom.name] = instance
+
+func _process(delta: float) -> void:
+	if not state.document or not visible:
+		return
+	if visible:
+		state.document.advance(delta)
+	for geom in state.document.geometry():
+		if meshes.has(geom.name):
+			meshes[geom.name].transform = geom.transform
+			if geom.type == 4:
+				meshes[geom.name].scale = Vector3(geom.size.x, geom.size.z, geom.size.y)
+	var info: Dictionary = state.document.inspect()
+	var detail := ""
+	for entity in info.entities:
+		if entity.kind == selected.get("kind") and entity.name == selected.get("name"):
+			if entity.kind == "joint":
+				detail = " | live qpos: " + str(entity.properties.qpos) + " " + entity.properties.unit
+			elif entity.kind == "actuator":
+				detail = " | live control: " + str(entity.properties.control)
+	live.text = "t=%.3f s | contacts=%d | %s%s" % [info.time, info.contacts, "PAUSED" if info.paused else "RUNNING", detail]
+
+func frame_all() -> void:
+	var bounds := AABB()
+	var first := true
+	for geom in state.document.geometry():
+		if geom.type == 0 or not meshes.has(geom.name):
+			continue
+		var mesh: MeshInstance3D = meshes[geom.name]
+		var box := mesh.transform * mesh.get_aabb()
+		bounds = box if first else bounds.merge(box)
+		first = false
+	if not first:
+		center = bounds.get_center()
+		var aspect := float(viewport.size.x) / maxf(viewport.size.y, 1)
+		var angle := atan(tan(deg_to_rad(camera.fov) * .5) * minf(aspect, 1.0))
+		distance = maxf(bounds.size.length() * .575 / sin(angle), 1.2)
+	update_camera()
+
+func update_camera() -> void:
+	camera.position = center + Vector3(sin(yaw) * cos(pitch), sin(pitch), cos(yaw) * cos(pitch)) * distance
+	camera.look_at(center)
+
+func camera_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_RIGHT:
+			orbiting = event.pressed
+		if event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+			distance = clampf(distance * (0.85 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.18), .1, 1000)
+	elif event is InputEventMouseMotion and orbiting:
+		yaw -= event.relative.x * .01
+		pitch = clampf(pitch + event.relative.y * .01, -1.4, 1.4)
+	update_camera()

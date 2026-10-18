@@ -1,0 +1,16 @@
+<mujoco model="editor_acceptance">
+ <compiler angle="radian"/>
+ <option timestep="0.002" integrator="implicitfast"/>
+ <worldbody>
+  <geom name="floor" type="plane" size="5 5 .1"/>
+  <body name="arm" pos="0 0 1.5">
+   <joint name="hinge" type="hinge" axis="0 1 0" range="-1.5 1.5"/>
+   <geom name="arm_geom" type="box" size=".1 .1 .4" pos="0 0 -.4" mass="2"/>
+  </body>
+ </worldbody>
+ <actuator>
+  <position name="position_drive" joint="hinge" kp="20" kv="2" ctrlrange="-1.5 1.5"/>
+  <velocity name="velocity_drive" joint="hinge" kv="1"/>
+  <motor name="motor_drive" joint="hinge"/>
+ </actuator>
+</mujoco>

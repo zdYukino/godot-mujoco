@@ -1,0 +1,1 @@
+<mujoco><asset><hfield name="terrain" size="1 1 1 .1" nrow="2" ncol="2"/></asset><worldbody><geom type="hfield" hfield="terrain"/></worldbody></mujoco>

@@ -179,6 +179,7 @@ FetchContent_MakeAvailable(godot-cpp)
 add_library(godot_mujoco SHARED
     src/register_types.cpp
     src/mj_world.cpp
+    src/mj_editor_document.cpp
     src/physics/mj_coordinates.cpp
     src/physics/mj_scene.cpp
     src/physics/mj_physics_server.cpp

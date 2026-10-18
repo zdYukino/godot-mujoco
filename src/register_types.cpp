@@ -1,6 +1,7 @@
 #include "register_types.h"
 
 #include "mj_world.h"
+#include "mj_editor_document.h"
 #include "physics/mj_physics_server.h"
 #include <godot_cpp/classes/physics_server3d_manager.hpp>
 #include <godot_cpp/variant/callable_method_pointer.hpp>
@@ -57,6 +58,7 @@ void initialize_godot_mujoco_module(ModuleInitializationLevel p_level) {
 	// The log handler is process-global; install once at scene init.
 	mju_setLogHandler(gmj_log_handler);
 	GDREGISTER_CLASS(MjWorld);
+	GDREGISTER_CLASS(MjEditorDocument);
 }
 
 void uninitialize_godot_mujoco_module(ModuleInitializationLevel p_level) {
