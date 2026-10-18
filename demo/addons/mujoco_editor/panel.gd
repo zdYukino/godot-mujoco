@@ -1,5 +1,7 @@
 @tool
 extends VBoxContainer
+const PackageBuilder = preload("res://addons/godot_mujoco/model/package_builder.gd")
+var model_provenance: Dictionary = {}
 var plugin: EditorPlugin
 var state: RefCounted
 var tree: Tree
@@ -34,6 +36,8 @@ func _ready() -> void:
 	button(toolbar, "Import MJCF", func(): file_dialog(false, true))
 	button(toolbar, "Open document", func(): file_dialog(false, false))
 	button(toolbar, "Save document", func(): file_dialog(true, false))
+	button(toolbar, "Save project model", save_project_model)
+	button(toolbar, "Open project model", open_project_model_dialog)
 	button(toolbar, "Recover", func(): open_document(recovery_path))
 	button(toolbar, "Run / Pause", toggle_run)
 	button(toolbar, "Frame all", frame_all)
@@ -233,6 +237,49 @@ func open_document(path: String) -> bool:
 				inputs[key].text = json.data.draft.fields[key]
 		pending = true
 		status.text = "Recovered pending fields — Apply or Discard"
+	frame_all()
+	return true
+
+func save_project_model() -> void:
+	if not can_leave_fields():
+		return
+	var result: Dictionary = PackageBuilder.pack(state.document, "res://mujoco_models", "model", model_provenance)
+	if not result.error.is_empty():
+		show_error(result.error)
+		return
+	state.dirty = false
+	EditorInterface.get_resource_filesystem().scan()
+	status.text = "Saved portable project model: " + result.path
+
+func open_project_model_dialog() -> void:
+	if not can_leave_fields():
+		return
+	var dialog := EditorFileDialog.new()
+	dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
+	dialog.access = EditorFileDialog.ACCESS_RESOURCES
+	dialog.filters = PackedStringArray(["*.tres ; MuJoCo project model"])
+	dialog.file_selected.connect(func(path: String): open_project_model(path); dialog.queue_free())
+	dialog.canceled.connect(dialog.queue_free)
+	add_child(dialog)
+	dialog.popup_centered_ratio(.7)
+
+func open_project_model(path: String) -> bool:
+	if not can_leave_fields():
+		return false
+	var resource = ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_IGNORE)
+	if not resource or not resource is PackageBuilder.ModelResource:
+		show_error("Not a MuJoCo model resource")
+		return false
+	var result: Dictionary = resource.open_document()
+	if not result.error.is_empty():
+		show_error(result.error)
+		return false
+	var before: Dictionary = state.document.snapshot()
+	if not state.document.restore(result.document.snapshot()):
+		show_error(state.document.get_error())
+		return false
+	model_provenance = resource.provenance.duplicate(true)
+	record_change(before, "MuJoCo open project model")
 	frame_all()
 	return true
 

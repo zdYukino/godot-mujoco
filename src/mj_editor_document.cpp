@@ -1,4 +1,5 @@
 #include "mj_editor_document.h"
+#include "physics/mj_assets.h"
 #include "physics/mj_physics_server.h"
 #include "physics/mj_state_transfer.h"
 #include <godot_cpp/classes/project_settings.hpp>
@@ -24,10 +25,13 @@ String drive_kind(const mjModel*m,int a){
  }
  return "general/non-PD";
 }
-void assign_names(mjSpec*s){for(auto t:{mjOBJ_BODY,mjOBJ_JOINT,mjOBJ_GEOM,mjOBJ_ACTUATOR}){int i=0;for(auto*e=mjs_firstElement(s,t);e;e=mjs_nextElement(s,e),++i)if(!*mjs_getString(mjs_getName(e))){std::string n="editor_"+std::to_string(int(t))+"_"+std::to_string(i);while(mjs_findElement(s,t,n.c_str()))n+="_";mjs_setName(e,n.c_str());}}}
+void assign_names(mjSpec*s){for(auto t:{mjOBJ_BODY,mjOBJ_JOINT,mjOBJ_GEOM,mjOBJ_ACTUATOR,mjOBJ_TEXTURE}){int i=0;for(auto*e=mjs_firstElement(s,t);e;e=mjs_nextElement(s,e),++i)if(!*mjs_getString(mjs_getName(e))){std::string n="editor_"+std::to_string(int(t))+"_"+std::to_string(i);while(mjs_findElement(s,t,n.c_str()))n+="_";mjs_setName(e,n.c_str());}}}
 Transform3D pose(const mjtNum*p,const mjtNum*m){Basis b;for(int r=0;r<3;++r)for(int c=0;c<3;++c)b[r][c]=m[3*r+c];return Transform3D(mj_to_godot(b),mj_to_godot(Vector3(p[0],p[1],p[2])));}
 }
 void MjEditorDocument::_bind_methods(){
+ ClassDB::bind_method(D_METHOD("asset_manifest"),&MjEditorDocument::asset_manifest);
+ ClassDB::bind_method(D_METHOD("portable_snapshot","mapping"),&MjEditorDocument::portable_snapshot);
+ ClassDB::bind_method(D_METHOD("restore_at","snapshot","directory"),&MjEditorDocument::restore_at);
  ClassDB::bind_method(D_METHOD("import_file","path"),&MjEditorDocument::import_file);
  ClassDB::bind_method(D_METHOD("snapshot"),&MjEditorDocument::snapshot);
  ClassDB::bind_method(D_METHOD("restore","snapshot"),&MjEditorDocument::restore);
@@ -74,8 +78,35 @@ bool MjEditorDocument::import_file(const String&path){
  auto resolve=[&](mjString*file,const String&dir){String f=String::utf8(mjs_getString(file));if(!f.is_empty()&&!f.is_absolute_path()){if(c->strippath)f=f.get_file();String root=dir.is_absolute_path()?dir:base.path_join(dir);mjs_setString(file,root.path_join(f).simplify_path().utf8().get_data());}};
  for(auto*x=mjs_firstElement(c,mjOBJ_MESH);x;x=mjs_nextElement(c,x))resolve(mjs_asMesh(x)->file,md);
  for(auto*x=mjs_firstElement(c,mjOBJ_TEXTURE);x;x=mjs_nextElement(c,x))resolve(mjs_asTexture(x)->file,td);
- c->strippath=false;mjs_setString(c->compiler.meshdir,"");mjs_setString(c->compiler.texturedir,"");
+ c->strippath=false;
+ // Inspect canonical cube-face filenames using XML, then update the original
+ // spec via C setters. Preserve authored frame/fromto metadata for editor guards.
+ assign_names(c);auto*probe=mj_compile(c,nullptr);if(!probe){error=String::utf8(mjs_getError(c));mj_deleteSpec(c);return false;}
+ String canonical=gmj_spec_xml(c);mj_deleteModel(probe);
+ Ref<XMLParser> parser;parser.instantiate();parser->open_buffer(canonical.to_utf8_buffer());
+ const char*faces[]={"fileright","fileleft","fileup","filedown","filefront","fileback"};
+ while(parser->read()==OK)if(parser->get_node_type()==XMLParser::NODE_ELEMENT&&parser->get_node_name()=="texture"){
+  String name=parser->get_named_attribute_value_safe("name");auto*element=mjs_findElement(c,mjOBJ_TEXTURE,name.utf8().get_data());if(!element)continue;auto*t=mjs_asTexture(element);
+  for(int i=0;i<6;++i){String file=parser->get_named_attribute_value_safe(faces[i]);if(file.is_empty())continue;String resolved=file.is_absolute_path()?file:(td.is_absolute_path()?td:base.path_join(td)).path_join(file).simplify_path();mjs_setInStringVec(t->cubefiles,i,resolved.utf8().get_data());}
+ }
+ mjs_setString(c->compiler.meshdir,"");mjs_setString(c->compiler.texturedir,"");
  if(!commit(c,Dictionary(),false))return false;source=absolute;return true;
+}
+Dictionary MjEditorDocument::asset_manifest() const {
+ Dictionary result;Array assets;
+ gmj_asset_xml(xml(),[&](const String &path){if(!assets.has(path))assets.push_back(path);return path;});
+ result["assets"]=assets;return result;
+}
+Dictionary MjEditorDocument::portable_snapshot(const Dictionary &mapping) const {
+ bool valid=true;Dictionary result=snapshot();
+ String portable=gmj_asset_xml(result["xml"],[&](const String &path){if(!mapping.has(path)){valid=false;return path;}String rel=mapping[path];if(rel.is_absolute_path()||rel.contains("..")||!rel.begins_with("assets/"))valid=false;return rel;});
+ if(!valid||portable.is_empty())return {};result["xml"]=portable;return result;
+}
+bool MjEditorDocument::restore_at(const Dictionary &r,const String &directory){
+ if(int(r.get("format",0))!=1||!r.has("xml")||!r.has("state")){error="Invalid portable model snapshot";return false;}
+ String base=ProjectSettings::get_singleton()->globalize_path(directory);bool valid=true;
+ String resolved=gmj_asset_xml(r["xml"],[&](const String&rel){if(rel.is_absolute_path()||rel.contains("..")||!rel.begins_with("assets/")){valid=false;error="Portable model contains an absolute or escaping asset path: "+rel;return rel;}String absolute=base.path_join(rel);if(!FileAccess::file_exists(absolute)){valid=false;error="Missing packaged dependency: "+rel;}return absolute;});
+ if(!valid||resolved.is_empty())return false;Dictionary snapshot=r.duplicate(true);snapshot["xml"]=resolved;return restore(snapshot);
 }
 void MjEditorDocument::set_paused(bool v){paused=v;accumulator=0;}
 void MjEditorDocument::advance(double dt){if(paused||!model||!std::isfinite(dt)||dt<=0)return;accumulator=std::min(.1,accumulator+dt);int count=std::min(100,int(accumulator/model->opt.timestep));for(int i=0;i<count;++i)mj_step(model,data);accumulator-=count*model->opt.timestep;mj_forward(model,data);for(int i=0;i<model->nv;++i)if(!std::isfinite(data->qvel[i])){paused=true;error="Nonfinite preview state; preview paused";break;}}

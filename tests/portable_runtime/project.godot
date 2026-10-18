@@ -1,0 +1,7 @@
+config_version=5
+[application]
+config/name="MuJoCo Portable Runtime Acceptance"
+[physics]
+3d/physics_engine="MuJoCo"
+[rendering]
+renderer/rendering_method="gl_compatibility"

@@ -24,6 +24,9 @@ public:
  bool import_file(const String &path);
  bool restore(const Dictionary &snapshot);
  Dictionary snapshot() const;
+ Dictionary asset_manifest() const;
+ Dictionary portable_snapshot(const Dictionary &mapping) const;
+ bool restore_at(const Dictionary &snapshot, const String &directory);
  bool edit(const Dictionary &command);
  Dictionary inspect() const;
  Array geometry() const;
