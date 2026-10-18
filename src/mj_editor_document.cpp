@@ -30,7 +30,7 @@ void assign_names(mjSpec*s){for(auto t:{mjOBJ_BODY,mjOBJ_JOINT,mjOBJ_GEOM,mjOBJ_
 Transform3D pose(const mjtNum*p,const mjtNum*m){Basis b;for(int r=0;r<3;++r)for(int c=0;c<3;++c)b[r][c]=m[3*r+c];return Transform3D(mj_to_godot(b),mj_to_godot(Vector3(p[0],p[1],p[2])));}
 }
 void MjEditorDocument::_bind_methods(){
- ClassDB::bind_method(D_METHOD("import_g1","path"),&MjEditorDocument::import_g1);
+ ClassDB::bind_method(D_METHOD("import_g1","path","free_base","relaxed"),&MjEditorDocument::import_g1,DEFVAL(false),DEFVAL(false));
  ClassDB::bind_method(D_METHOD("asset_manifest"),&MjEditorDocument::asset_manifest);
  ClassDB::bind_method(D_METHOD("portable_snapshot","mapping"),&MjEditorDocument::portable_snapshot);
  ClassDB::bind_method(D_METHOD("restore_at","snapshot","directory"),&MjEditorDocument::restore_at);
@@ -71,7 +71,7 @@ bool MjEditorDocument::commit(mjSpec*c,const Dictionary &state,bool migrate){
 String MjEditorDocument::xml() const {if(!spec)return {};char error[1024]={};int n=mj_saveXMLString(spec,nullptr,0,error,sizeof(error));if(n<=0)return {};std::vector<char>b(n+1);if(mj_saveXMLString(spec,b.data(),b.size(),error,sizeof(error)))return {};return String::utf8(b.data());}
 Dictionary MjEditorDocument::snapshot() const {Dictionary r,state;r["format"]=1;r["xml"]=xml();r["source"]=source;if(data){state["qpos"]=numbers(data->qpos,model->nq);state["qvel"]=numbers(data->qvel,model->nv);state["ctrl"]=numbers(data->ctrl,model->nu);state["act"]=numbers(data->act,model->na);state["time"]=data->time;std::vector<double> v(mj_stateSize(model,mjSTATE_INTEGRATION));mj_getState(model,data,v.data(),mjSTATE_INTEGRATION);state["integration"]=numbers(v.data(),v.size());}r["state"]=state;return r;}
 bool MjEditorDocument::restore(const Dictionary&r){paused=true;if(int(r.get("format",0))!=1||!r.has("xml")||!r.has("state")){error="Unsupported editor document format";return false;}char e[2048]={};String text=r["xml"];auto*c=mj_parseXMLString(text.utf8().get_data(),nullptr,e,sizeof(e));if(!c){error=String::utf8(e);return false;}if(!commit(c,r["state"],false))return false;source=r.get("source",String());return true;}
-bool MjEditorDocument::import_g1(const String &path){String absolute=ProjectSettings::get_singleton()->globalize_path(path);auto*c=gmj_import_g1(absolute,error);if(!c)return false;if(!commit(c,Dictionary(),false))return false;
+bool MjEditorDocument::import_g1(const String &path,bool free_base,bool relaxed){String absolute=ProjectSettings::get_singleton()->globalize_path(path);auto*c=gmj_import_g1(absolute,error,free_base,relaxed);if(!c)return false;if(!commit(c,Dictionary(),false))return false;
  for(int j=0;j<model->njnt;++j)if(model->jnt_type[j]==mjJNT_HINGE&&model->jnt_limited[j])data->qpos[model->jnt_qposadr[j]]=std::clamp(0.0,model->jnt_range[2*j]+.001,model->jnt_range[2*j+1]-.001);
  for(int a=0;a<model->nu;++a)if(model->actuator_trntype[a]==mjTRN_JOINT)data->ctrl[a]=data->qpos[model->jnt_qposadr[model->actuator_trnid[2*a]]];
  mj_forward(model,data);source=absolute;paused=true;return true;}

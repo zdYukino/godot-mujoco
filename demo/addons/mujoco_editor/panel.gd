@@ -44,7 +44,8 @@ func _ready() -> void:
 	var toolbar := HFlowContainer.new()
 	add_child(toolbar)
 	button(toolbar, "Import MJCF", func(): file_dialog(false, true))
-	button(toolbar, "Import G1 URDF", import_g1_dialog)
+	button(toolbar, "Import fixed G1", import_g1_dialog)
+	button(toolbar, "Import free G1 (relaxed)", func(): import_g1_dialog(true))
 	button(toolbar, "Open document", func(): file_dialog(false, false))
 	button(toolbar, "Save document", func(): file_dialog(true, false))
 	button(toolbar, "Save project model", save_project_model)
@@ -285,7 +286,7 @@ func open_document(path: String) -> bool:
 	frame_all()
 	return true
 
-func import_g1_dialog() -> void:
+func import_g1_dialog(free_base: bool = false) -> void:
 	if not can_leave_fields(): return
 	var dialog := FileDialog.new()
 	dialog.access = FileDialog.ACCESS_FILESYSTEM
@@ -293,10 +294,10 @@ func import_g1_dialog() -> void:
 	dialog.filters = PackedStringArray(["*.urdf ; Original fixed-base Unitree G1 URDF"])
 	dialog.file_selected.connect(func(path: String):
 		var before: Dictionary = state.document.snapshot()
-		if state.document.import_g1(path):
+		if state.document.import_g1(path, free_base, free_base):
 			project_model_path = ""
 			model_provenance = {}
-			record_change(before,"MuJoCo import fixed-base G1")
+			record_change(before,"MuJoCo import free-base relaxed G1" if free_base else "MuJoCo import fixed-base G1")
 			frame_all()
 		else: show_error(state.document.get_error())
 		dialog.queue_free())

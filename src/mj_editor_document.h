@@ -22,7 +22,7 @@ public:
  MjEditorDocument();
  ~MjEditorDocument();
  bool import_file(const String &path);
- bool import_g1(const String &path);
+ bool import_g1(const String &path, bool free_base=false, bool relaxed=false);
  mjSpec *copy_spec() const { return mj_copySpec(spec); }
  const mjModel *native_model() const { return model; }
  const mjData *native_data() const { return data; }

@@ -127,7 +127,10 @@ func show_editor_preview() -> void:
 
 func _physics_process(_delta: float) -> void:
 	if Engine.is_editor_hint() or not model_rid.is_valid(): return
-	for geom in state().get("geoms",[]):
+	var physical_state := state()
+	if physical_state.get("joints",{}).has("floating_base") and physical_state.get("bodies",{}).has("pelvis"):
+		global_transform = physical_state.bodies.pelvis.transform
+	for geom in physical_state.get("geoms",[]):
 		if visuals.has(geom.name):
 			visuals[geom.name].global_transform = geom.transform
 			visuals[geom.name].scale *= scales[geom.name]
