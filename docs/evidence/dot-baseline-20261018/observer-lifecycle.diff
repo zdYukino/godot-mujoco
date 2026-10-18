@@ -1,0 +1,21 @@
+--- /workspace/shared/validation/gui-98baeb8/daily-project-attempt1/acceptance.gd	2026-10-18 20:30:43.905210489 +0800
++++ /workspace/shared/validation/gui-98baeb8/daily-project/acceptance.gd	2026-10-18 20:56:41.794358849 +0800
+@@ -7,4 +7,7 @@
+   if arg.begins_with("--probe-dir="):folder=arg.trim_prefix("--probe-dir=")
+  DirAccess.make_dir_recursive_absolute(folder)
+  EditorInterface.set_main_screen_editor("MuJoCo")
+- plugin.get_tree().process_frame.connect(tick)
++ var observed_tree=plugin.get_tree()
++ plugin.tree_exiting.connect(func():
++  if observed_tree.process_frame.is_connected(tick):observed_tree.process_frame.disconnect(tick))
++ observed_tree.process_frame.connect(tick)
+--- /workspace/shared/validation/gui-98baeb8/daily-project-attempt1/mouse_probe.gd	2026-10-18 20:30:43.906417871 +0800
++++ /workspace/shared/validation/gui-98baeb8/daily-project/mouse_probe.gd	2026-10-18 20:56:28.230733470 +0800
+@@ -30,6 +30,7 @@
+  if n is FileDialog and n.visible: result.append({"dialog":true,"file":rect(n.get_line_edit()),"ok":rect(n.get_ok_button())})
+  for c in n.get_children():controls(c,result)
+ func tick() -> void:
++ if not is_instance_valid(plugin) or not is_instance_valid(plugin.panel):return
+  elapsed+=plugin.get_process_delta_time()
+  if elapsed<0.1:return
+  elapsed=0

@@ -1,0 +1,71 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.0.7-2+deb13u1 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 19.1.7, 256 bits)
+
+MuJoCo: compile time (ms)
+  total:          7.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          7.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          1.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          1.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.4   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.4   (wall clock)
+MuJoCo: compile time (ms)
+  total:          2.7   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          2.7   (wall clock)
+MuJoCo: compile time (ms)
+  total:          1.4   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          1.4   (wall clock)

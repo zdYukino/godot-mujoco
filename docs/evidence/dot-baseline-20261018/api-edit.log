@@ -1,0 +1,69 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+MuJoCo: compile time (ms)
+  total:          0.9   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.9   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.9   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.9   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.8   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.8   (wall clock)
+MuJoCo: compile time (ms)
+  total:          1.8   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          1.8   (wall clock)
+DAILY_API_RESULT {"checks":[{"name":"load existing design resource","passed":true},{"name":"validate package and open native document","passed":true},{"name":"load GUI-authored damping","passed":true},{"name":"invalid mass rejected","passed":true},{"name":"rejection preserves document and original file bytes","passed":true},{"name":"API edits damping","passed":true},{"name":"API adds body and geometry","passed":true},{"name":"publish edited immutable resource revision","passed":true},{"name":"atomically save edited design document","passed":true},{"name":"post-save invalid edit rolls back","passed":true},{"name":"invalid publication path rejected","passed":true},{"name":"failed edit/publication preserve saved and original file bytes","passed":true}],"failed":0,"passed":12}

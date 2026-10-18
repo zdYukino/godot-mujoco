@@ -1,5 +1,7 @@
 # godot-mujoco
 
+当前开发基线：[Linux 编辑运行基线 · 2026-10-18](docs/linux-editor-runtime-baseline.zh-CN.md)，分支 `baseline/linux-editor-runtime-20261018`。dot 独立轻量 GUI 验收通过；重型 G1/多 G1 交用户[手测](docs/linux-baseline-manual-checklist.zh-CN.md)，未计通过。不是稳定 release；用户另已授权 main 在祖先及远端版本核验后非强制快进至此基线。
+
 最新日常路径：[GUI 首次编辑与已初始化项目 headless API 编辑](docs/daily-paths-baseline.zh-CN.md)（24 项通过；cold import 139 按授权列为非阻塞遗留，尚未自行发布稳定基线）。
 
 前次验证：[真实鼠标Tree修复、G1 GUI与图形宿主配置](docs/mouse-gui-fix.zh-CN.md)（开发候选，尚非稳定基线）。
@@ -51,7 +53,7 @@ GODOT_BIN="$GODOT_BIN" scripts/import_headless.sh demo
 
 - dot 对 e16a4ec 独立构建/资产检查通过，但自由基座运行退出 **137（原因未明）**；clock fresh import 退出 **139，未到功能测试**。详见 [独立验收记录](docs/freebase-clock-validation.zh-CN.md)。
 - **cold-import 139 未解决，按最新授权列为非阻塞遗留**：两条日常编辑路径已通过；不能证明问题仅限无窗口模式，不能用缓存重试伪装 fresh pass。见[已知问题](docs/known-issues.zh-CN.md)。
-- 早期宿主 Vulkan ERROR 结果保留为严格失败；正常驱动配置后的云端 GUI/F5 验证已通过。dot 最终候选独立验收仍需核实，preview limit 未解除；其他缺陷不因 cold-import 门槛调整而豁免。
+- 早期宿主 Vulkan ERROR 结果保留为严格失败；正常驱动配置后的云端 GUI/F5 验证已通过。dot 对 98baeb8 的独立轻量 GUI 验收已通过，见当前开发基线；不宣称 preview limit 已解除，重负载未通过，其他缺陷不因 cold-import 门槛调整而豁免。
 - 当前 runtime world 要求主线程物理模式；不支持 `physics/3d/run_on_separate_thread`。同步编译允许暂时阻塞 UI，不承诺后台无停顿。
 - 不在本阶段开发 Area、CharacterBody、Godot 全关节映射、地形、站立或步行。PCK/ZIP 中的模型资源需要文件系统资产方案，未作为支持路径验证。
 - 36 个 Unitree 原始资产保持字节不变；派生模型单独生成。Linux 之外的旧构建配置不代表已验收。

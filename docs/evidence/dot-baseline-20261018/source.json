@@ -1,0 +1,9 @@
+{
+  "source": "Direct Library materialization; report and selected evidence copied byte-for-byte from verified ZIP",
+  "report_library_file_id": "libfile_e6858ea480cc81919825ffd26a9a2481",
+  "zip_library_file_id": "libfile_987db9e8dbac819195db14fc7bd7fed4",
+  "zip_sha256": "116f63271d9790e62871cfb3417a54d278030edca684ec64db724d25136edd14",
+  "zip_bytes": 2801447,
+  "tested_commit": "98baeb824a7aca6f55cfcd3019f86b58eecfec24",
+  "scope": "Lightweight dot GUI/API evidence. Separate automated matrix and two SIGKILL outcomes are parent-verified handoff, not independently reconstructed from this ZIP."
+}

@@ -1,0 +1,179 @@
+{
+  "addons": [
+    {
+      "path": "addons/godot_mujoco/THIRD_PARTY.md",
+      "sha256": "5473c6173a3d22f12a31d9e3162a94d0cb1a4f8d49a4740f4913668cab55b860",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/godot_mujoco/mj_debug_draw.gd.uid",
+      "sha256": "5768317549ed125649f1ce48017d8760aee02ff19d985fd12e0e067ea27b9300",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/godot_mujoco/godot_mujoco.gdextension",
+      "sha256": "5df9c3431800b1b982765eb628119ad11034bcc6136170145ba5cb56de53a0e3",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/godot_mujoco/godot_mujoco.gdextension.uid",
+      "sha256": "5a7d66700db0c002975ebd7d7d326bc6f3e7b051e1cb6d5ce172e4f3454e75bc",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/godot_mujoco/mj_debug_draw.gd",
+      "sha256": "26e626d463fd1a5524bd8ced2a049ded279bf05509c07eb3642b26e6c78dcc0e",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/mujoco_editor/plugin.cfg",
+      "sha256": "c870919af7c37a0fd3a91046f86e8dba389da3407d2aab9758a2768a7e52ba86",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/mujoco_editor/plugin.gd",
+      "sha256": "fe09f8ed06de1900d562b8172d3811b54276c2284532f1f35f3b3de716c491b3",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/mujoco_editor/live_debugger.gd",
+      "sha256": "1250e9dd33bf58c5bd3ff29f55a40175d0a5241b12fcddb8558fe6bebae254ec",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/mujoco_editor/panel.gd",
+      "sha256": "f9bafb03090fd414c5d2d247ec839d5a5f39f2b037e464e9f8bf184424177b68",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/mujoco_editor/editor_state.gd",
+      "sha256": "9fb22cc80a022664e8f0b692a119d6527fa5b81abfd33bb4d5e3f96b783e01aa",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/godot_mujoco/bin/.gitkeep",
+      "sha256": "c8ffc52bebe77fa0cc3ed09f08d25fe4a03fa622c87e36905c513b56d34851f6",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/godot_mujoco/model/orbit_camera.gd",
+      "sha256": "b6739867297e54d635d3086915dcdb2eaf01fdab532f1572ea08618e5ce2f1e6",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/godot_mujoco/model/live_bridge.gd",
+      "sha256": "175775cf8d4615fc9e1cc8b5a382aa6c9463c139ab4344f40c0f2b9a8b472f65",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/godot_mujoco/model/model_visual.gd",
+      "sha256": "4f9881346b2a2b61d6a2d99e1a2c7f28e025906b79e612e203abe471dec4e528",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/godot_mujoco/model/model_instance.gd",
+      "sha256": "1a589e55568dc2ffd62cd416f856c4b99fbb523522817076a399058075b0480b",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/godot_mujoco/model/runtime_world.gd",
+      "sha256": "1f598031105632eb35428689ebba98d5496b05fc43ce5befc96c1b075fe8a529",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/godot_mujoco/model/environment_host.gd",
+      "sha256": "5b64e5dff03593e3868a3388f589eb4935001f880b9910e9fadec94dd798d369",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/godot_mujoco/model/scene_builder.gd",
+      "sha256": "945406e8322fe77a0045a3709f2f8fff9d9ddf47c1b693d493821e074d92f5b1",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/godot_mujoco/model/simulation_controls.gd",
+      "sha256": "21a5a6b17bc565db1133fa18e7f2c13964faa5c224f50bf6e536fb9d3ac63abf",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/godot_mujoco/model/model_resource.gd",
+      "sha256": "051d92695d5e2da487cb9d63b9efe595eb19d6fe01d82a08b09f2cbbb88bbabd",
+      "matches_prepared": true
+    },
+    {
+      "path": "addons/godot_mujoco/model/package_builder.gd",
+      "sha256": "ec857056aa7402d17f2fd9741e25148f4ddff985261497d13bc64f13678b6ad4",
+      "matches_prepared": true
+    }
+  ],
+  "logs": [
+    {
+      "path": "first/editor.log",
+      "exit": "0",
+      "bad_lines": [],
+      "warnings": [
+        "WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver."
+      ]
+    },
+    {
+      "path": "reopen/editor.log",
+      "exit": "0",
+      "bad_lines": [],
+      "warnings": [
+        "WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver."
+      ]
+    },
+    {
+      "path": "api-gui/editor.log",
+      "exit": "0",
+      "bad_lines": [],
+      "warnings": [
+        "WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.",
+        "WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.",
+        "WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.",
+        "WARNING: res://light_failure_probe.tscn:3 - ext_resource, invalid UID: uid://c8743kps5ru18 - using text path instead: res://light_failure_probe.gd",
+        "WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver."
+      ]
+    },
+    {
+      "path": "api-edit.log",
+      "exit": "0",
+      "bad_lines": []
+    },
+    {
+      "path": "api-verify.log",
+      "exit": "0",
+      "bad_lines": []
+    },
+    {
+      "path": "api-gui/runtime-live-closed.log",
+      "exit": "child exit code not directly captured",
+      "bad_lines": []
+    },
+    {
+      "path": "api-gui/runtime-failure-recovery-closed.log",
+      "exit": "child exit code not directly captured",
+      "bad_lines": []
+    },
+    {
+      "path": "api-gui/runtime-f5-main-closed.log",
+      "exit": "Not directly captured; normal-quit marker and child window closure observed",
+      "bad_lines": []
+    }
+  ],
+  "all_21_unchanged": true,
+  "binaries": [
+    {
+      "path": "addons/godot_mujoco/bin/libmujoco.so.3.16.0",
+      "sha256": "d89b5532a1ec9c4ca8744449d648233a2f7ae5d9e7b2ccddd692e11955f6cb04"
+    },
+    {
+      "path": "addons/godot_mujoco/bin/libmujoco.so",
+      "sha256": "d89b5532a1ec9c4ca8744449d648233a2f7ae5d9e7b2ccddd692e11955f6cb04"
+    },
+    {
+      "path": "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so",
+      "sha256": "08eecb11451c50090a54447242cdd4a68ae1018dce5995e8f2a8f1302cf25f38"
+    }
+  ]
+}

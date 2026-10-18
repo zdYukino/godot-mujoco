@@ -2,6 +2,8 @@
 
 当前目标固定为 Linux x86_64、Godot 4.7.2 .NET 官方二进制、MuJoCo 3.16.0。以下中文使用指南是本分支入口；历史报告保留原日期、原版本和原日志，不按当前结果重新解释。
 
+当前开发基线：[Linux 编辑运行 · 2026-10-18](linux-editor-runtime-baseline.zh-CN.md)。另见[已知问题](known-issues.zh-CN.md)和[用户手测清单](linux-baseline-manual-checklist.zh-CN.md)。
+
 ## 使用指南
 
 | 需要做什么 | 文档 |
