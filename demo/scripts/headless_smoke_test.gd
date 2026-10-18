@@ -71,20 +71,19 @@ func _ready() -> void:
 	var multifile_ok := w3.load_model("res://models/composite/scene.xml") and w3.get_nbody() == 2
 	print("multifile_ok=%s (err='%s')" % [str(multifile_ok), w3.get_last_error()])
 
-	# Loud error handling: a wrong-sized set_qpos must be rejected (returns false).
-	var bad_rejected: bool = not world.set_qpos(PackedFloat64Array([1.0, 2.0, 3.0]))
+	# Error-producing qpos rejection is isolated in tests/mjworld_smoke.
 	# UTF-8-safe name round-trip.
 	var name_roundtrip: bool = world.body_name(world.body_id("pendulum")) == "pendulum"
 	# step(0) must be a no-op.
 	var t_before := world.get_time()
 	world.step(0)
 	var step0_noop: bool = world.get_time() == t_before
-	print("checks: strload=%s bad_set_rejected=%s name_roundtrip=%s step0_noop=%s" % [
-		str(strload_ok), str(bad_rejected), str(name_roundtrip), str(step0_noop)])
+	print("checks: strload=%s name_roundtrip=%s step0_noop=%s" % [
+		str(strload_ok), str(name_roundtrip), str(step0_noop)])
 
 	var passed: bool = moved and body_id >= 0 and world.get_nq() == 1 and world.get_nu() == 1 \
 		and world.get_nsensor() == 2 and world.get_njnt() == 1 and sensor_matches_qpos \
-		and strload_ok and multifile_ok and bad_rejected and name_roundtrip and step0_noop
+		and strload_ok and multifile_ok and name_roundtrip and step0_noop
 	if passed:
 		print("SMOKE TEST: PASS")
 		get_tree().quit(0)
