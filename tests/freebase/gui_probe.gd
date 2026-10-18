@@ -54,4 +54,5 @@ func tick() -> void:
  serial+=1
  var f=FileAccess.open(folder.path_join("state.tmp"),FileAccess.WRITE);f.store_string(JSON.stringify(result));f.close();DirAccess.rename_absolute(folder.path_join("state.tmp"),folder.path_join("state.json"))
  if FileAccess.file_exists(folder.path_join("quit")):
+  process_frame.disconnect(tick)
   scene.queue_free();await process_frame;print("FREEBASE_GUI_PROBE_FINISHED");quit(0)

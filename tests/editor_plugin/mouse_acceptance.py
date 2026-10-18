@@ -1,7 +1,7 @@
 import os,sys,time,json,pathlib,subprocess
 from Xlib import X,display,XK
 from Xlib.ext import xtest
-s=display.Display(':91');folder=pathlib.Path(sys.argv[1]);checks=[]
+display_name=os.environ.get('DISPLAY',':91');s=display.Display(display_name);folder=pathlib.Path(sys.argv[1]);checks=[]
 def state():return json.loads((folder/'state.json').read_text())
 def request(**kwargs):
  (folder/'request.tmp').write_text(json.dumps(kwargs));(folder/'request.tmp').replace(folder/'request.json');time.sleep(.4)
@@ -37,7 +37,7 @@ def button(name):
  matches=[c for c in state()['controls'] if c.get('text')==name]
  click(matches[0]['rect'])
 def shot(name):
- move(1550,980);time.sleep(.25);subprocess.run(['import','-display',':91','-window','root',str(folder/(name+'.png'))],check=True)
+ move(1550,980);time.sleep(.25);subprocess.run(['import','-display',display_name,'-window','root',str(folder/(name+'.png'))],check=True)
  (folder/(name+'.json')).write_text(json.dumps(state(),indent=2))
 def check(v,label):
  checks.append({'name':label,'passed':bool(v)});print('PASS' if v else 'FAIL',label,flush=True)
