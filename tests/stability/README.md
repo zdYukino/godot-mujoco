@@ -38,3 +38,8 @@ Use `editor_followup.py --source FROZEN_SOURCE --lifecycle EVIDENCE/lifecycle`
 after the configured-SDK follow-up completes to separately cover portable editor
 acceptance and saved-scene restart. Do not overlap these stages with the cold
 matrix or pressure runs. Original runner failures remain failures.
+
+Pressure runners use `log_checks.pressure_passed`; any backend/script `ERROR:` or
+leak fails even if the engine exits 0 and assertions report no failures. The
+matrix and follow-up drivers propagate recorded failures as a nonzero exit.
+Use `python3 tests/stability/log_checks.py PRESSURE_LOG` to audit a retained log.

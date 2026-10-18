@@ -189,8 +189,24 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s){
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;std::string name="b"+std::to_string(b.rid.get_id());b.mj_body=mj_name2id(model,mjOBJ_BODY,name.c_str());write_body(b);}
  mj_forward(model,data);return true;
 }
-void MjPhysicsServer3D::write_body(MjBody&b){auto*s=space(b.space);if(!s||s->dirty||!s->model||b.mj_body<1||b.mode!=BODY_MODE_RIGID)return;int j=s->model->body_jntadr[b.mj_body];if(j<0)return;int q=s->model->jnt_qposadr[j],v=s->model->jnt_dofadr[j];Vector3 p=godot_to_mj(b.transform.origin);Quaternion quat=godot_to_mj(b.transform.basis.orthonormalized()).get_rotation_quaternion();for(int k=0;k<3;++k)s->data->qpos[q+k]=p[k];s->data->qpos[q+3]=quat.w;s->data->qpos[q+4]=quat.x;s->data->qpos[q+5]=quat.y;s->data->qpos[q+6]=quat.z;Vector3 lv=godot_to_mj(b.linear_velocity),av=godot_to_mj(b.transform.basis.orthonormalized().transposed().xform(b.angular_velocity));for(int k=0;k<3;++k){s->data->qvel[v+k]=lv[k];s->data->qvel[v+3+k]=av[k];}mj_forward(s->model,s->data);}
-void MjPhysicsServer3D::read_body(MjBody&b){auto*s=space(b.space);if(!s||!s->model||b.mj_body<1||b.mode!=BODY_MODE_RIGID)return;int j=s->model->body_jntadr[b.mj_body];if(j<0)return;int q=s->model->jnt_qposadr[j],v=s->model->jnt_dofadr[j];auto*d=s->data;b.transform.origin=mj_to_godot(Vector3(d->qpos[q],d->qpos[q+1],d->qpos[q+2]));Vector3 scale=b.transform.basis.get_scale();b.transform.basis=mj_to_godot(Basis(Quaternion(d->qpos[q+4],d->qpos[q+5],d->qpos[q+6],d->qpos[q+3])));b.linear_velocity=mj_to_godot(Vector3(d->qvel[v],d->qvel[v+1],d->qvel[v+2]));b.angular_velocity=b.transform.basis.xform(mj_to_godot(Vector3(d->qvel[v+3],d->qvel[v+4],d->qvel[v+5])));b.transform.basis.scale_local(scale);}
+void MjPhysicsServer3D::write_body(MjBody&b){auto*s=space(b.space);if(!s||s->dirty||!s->model||b.mj_body<1||b.mode!=BODY_MODE_RIGID)return;int j=s->model->body_jntadr[b.mj_body];if(j<0)return;int q=s->model->jnt_qposadr[j],v=s->model->jnt_dofadr[j];Vector3 p=godot_to_mj(b.transform.origin);Quaternion quat=godot_to_mj(b.transform.basis.orthonormalized()).get_rotation_quaternion().normalized();for(int k=0;k<3;++k)s->data->qpos[q+k]=p[k];s->data->qpos[q+3]=quat.w;s->data->qpos[q+4]=quat.x;s->data->qpos[q+5]=quat.y;s->data->qpos[q+6]=quat.z;Vector3 lv=godot_to_mj(b.linear_velocity),av=godot_to_mj(b.transform.basis.orthonormalized().transposed().xform(b.angular_velocity));for(int k=0;k<3;++k){s->data->qvel[v+k]=lv[k];s->data->qvel[v+3+k]=av[k];}mj_forward(s->model,s->data);}
+void MjPhysicsServer3D::read_body(MjBody &b) {
+ auto *s=space(b.space);
+ if(!s||!s->model||b.mj_body<1||b.mode!=BODY_MODE_RIGID)return;
+ int j=s->model->body_jntadr[b.mj_body];
+ if(j<0)return;
+ int q=s->model->jnt_qposadr[j],v=s->model->jnt_dofadr[j];
+ auto *d=s->data;
+ b.transform.origin=mj_to_godot(Vector3(d->qpos[q],d->qpos[q+1],d->qpos[q+2]));
+ // A free joint stores a rigid pose, never authored scale. Reapplying the
+ // previous basis scale feeds floating-point norm errors into every frame.
+ // Input transforms are still validated before write_body; do not normalize
+ // user scale/shear here to make an unsupported transform appear supported.
+ Quaternion orientation(d->qpos[q+4],d->qpos[q+5],d->qpos[q+6],d->qpos[q+3]);
+ b.transform.basis=mj_to_godot(Basis(orientation.normalized()));
+ b.linear_velocity=mj_to_godot(Vector3(d->qvel[v],d->qvel[v+1],d->qvel[v+2]));
+ b.angular_velocity=b.transform.basis.xform(mj_to_godot(Vector3(d->qvel[v+3],d->qvel[v+4],d->qvel[v+5])));
+}
 void MjPhysicsServer3D::_set_active(bool v){active=v;}
 void MjPhysicsServer3D::_init(){}
 void MjPhysicsServer3D::_sync(){}

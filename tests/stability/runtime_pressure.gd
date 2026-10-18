@@ -40,6 +40,8 @@ func run() -> void:
 		check(robot.state().joints==before.joints and robot.state().controls==before.controls,"removal preserves state "+str(cycle))
 		check(world.info().warning_count==0,"no MuJoCo warnings "+str(cycle))
 		if cycle%3==2:
+			var basis:Basis=world.get_node("Obstacle").basis
+			check((basis.get_scale()-Vector3.ONE).length()<.000002 and abs(basis.determinant()-1.0)<.000002,"ordinary rigid body stays unscaled "+str(cycle))
 			var old:RID=robot.model_rid
 			root.remove_child(world)
 			await process_frame

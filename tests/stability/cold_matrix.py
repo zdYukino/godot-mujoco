@@ -37,3 +37,5 @@ with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
   if crashes>=2:
    rows.append({'mode':'parallel','skipped':10-i-2,'reason':'two fresh SIGSEGVs under bounded pair load'});break
 (a.out/'results.json').write_text(json.dumps(rows,indent=2)+'\n')
+
+raise SystemExit(1 if any(not row.get("passed", True) for row in rows) else 0)

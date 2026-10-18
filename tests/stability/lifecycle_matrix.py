@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Bounded independent GUI, portable, and runtime-pressure trials."""
 import argparse,concurrent.futures,json,os,pathlib,shutil,subprocess,time
+from log_checks import pressure_passed
 p=argparse.ArgumentParser();p.add_argument('--source',type=pathlib.Path,required=True);p.add_argument('--out',type=pathlib.Path,required=True);a=p.parse_args();a.out.mkdir(parents=True,exist_ok=False)
 manifest=json.loads((a.out.parent/'frozen-manifest.json').read_text());rows=[];cpus=sorted(os.sched_getaffinity(0));groups=[cpus[:2],cpus[2:4] or cpus[:2]]
 def run(kind,index,slot):
@@ -17,7 +18,7 @@ def run(kind,index,slot):
    project=d/'relocated';shutil.copy2(pathlib.Path(__file__).parent/'runtime_pressure.gd',project/'runtime_pressure.gd')
    rc=execute('pressure',['godot','--headless','--path',str(project),'--script','res://runtime_pressure.gd'],300)
    if rc==0:
-    text=(d/'pressure.log').read_text();result=json.loads(next(x.split(' ',1)[1] for x in text.splitlines() if x.startswith('PRESSURE_RESULT ')));rc=0 if result['failed']==0 and 'ERROR:' not in text and 'leaked' not in text else 1
+    text=(d/'pressure.log').read_text();rc=0 if pressure_passed(text) else 1
  else:
   project=d/'project';shutil.copytree(a.source/'tests/editor_plugin',project);shutil.copytree(a.source/'demo/addons',project/'addons');assert not(project/'.godot').exists()
   rc=execute('import',[str(a.source/'scripts/import_headless.sh'),str(project)],120)
@@ -31,3 +32,5 @@ jobs=[('runtime',i) for i in range(3)]+[('assets',i) for i in range(3)]+[('gui',
 with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:
  for n in range(0,len(jobs),2):
   batch=jobs[n:n+2];rows.extend(pool.map(lambda args:run(*args),[(kind,i,slot) for slot,(kind,i) in enumerate(batch)]));(a.out/'results.json').write_text(json.dumps(rows,indent=2))
+
+raise SystemExit(1 if any(row["exit"] != 0 for row in rows) else 0)

@@ -12,4 +12,7 @@ def run(i):
   if label=='restart':valid=valid and 'EDITOR_SCENE_RESTART_PASS' in text
   rows.append({'passed':valid,'label':label,'command':cmd,'exit':r.returncode,'seconds':round(time.monotonic()-start,3)});(d/'editor-followup.json').write_text(json.dumps(rows,indent=2));print(json.dumps(rows[-1]),flush=True)
   if r.returncode:break
-with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:list(pool.map(run,[0,1]));run(2)
+ return rows
+with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:batches=list(pool.map(run,[0,1]));batches.append(run(2))
+
+raise SystemExit(1 if any(not row["passed"] for batch in batches for row in batch) else 0)
