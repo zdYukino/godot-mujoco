@@ -435,11 +435,26 @@ func on_select() -> void:
 	if refreshing:
 		return
 	if not can_leave_fields():
+		restore_tree_selection(tree.get_root())
 		return
 	var item := tree.get_selected()
 	selected = item.get_metadata(0) if item and item.get_metadata(0) is Dictionary else {}
 	build_fields()
 	highlight_selection()
+
+func restore_tree_selection(item: TreeItem) -> void:
+	if not item: return
+	var data: Variant = item.get_metadata(0)
+	if data is Dictionary and data.get("kind") == selected.get("kind") and data.get("name") == selected.get("name"):
+		# Tree changes its visual selection before item_selected is emitted.
+		# Restore it without rebuilding the form or re-entering this callback.
+		refreshing = true
+		tree.deselect_all()
+		item.select(0)
+		tree.set_selected(item, 0)
+		refreshing = false
+		return
+	for child in item.get_children(): restore_tree_selection(child)
 
 func field(key: String, value: Variant, editable: bool, hint: String) -> void:
 	var label := Label.new()

@@ -90,6 +90,7 @@ func run(plugin: EditorPlugin) -> void:
 	plugin._make_visible(true)
 	check(panel.import_mjcf("res://fixtures/pendulum.xml"), "editor imports actual MJCF")
 	await capture(plugin, "01-imported-mjcf.png")
+	selection_rejection_regression(panel, doc)
 	check(doc.inspect().version == "3.16.0", "runtime version pinned")
 	check(entity(doc, "joint", "hinge").type == "hinge", "joint type and name")
 	check(entity(doc, "body", "arm").mass == 2, "compiled body mass")
@@ -271,3 +272,33 @@ func advanced_properties(panel: Control, doc: RefCounted) -> void:
 	panel.frame_all()
 	var point: Vector2 = panel.camera.unproject_position(panel.meshes.cylinder_geom.global_position)
 	check(panel.pick_geometry(point) == "cylinder_geom", "actual viewport triangle picking selects cylinder")
+
+func find_item(item: TreeItem, kind: String, label: String) -> TreeItem:
+	var data: Variant = item.get_metadata(0)
+	if data is Dictionary and data.get("kind") == kind and data.get("name") == label: return item
+	for child in item.get_children():
+		var found := find_item(child,kind,label)
+		if found: return found
+	return null
+
+func selection_rejection_regression(panel: Control, doc: RefCounted) -> void:
+	panel.select_entity("joint","hinge")
+	var before: Dictionary = doc.snapshot()
+	for key in {"damping":"0.2","frictionloss":"0.1","range":"[-1,1]"}:
+		panel.inputs[key].text = {"damping":"0.2","frictionloss":"0.1","range":"[-1,1]"}[key]
+		panel.inputs[key].text_changed.emit(panel.inputs[key].text)
+	var field = panel.inputs.damping
+	var arm := find_item(panel.tree.get_root(),"body","arm")
+	for unused in 2:
+		arm.select(0)
+		panel.tree.set_selected(arm,0)
+		panel.tree.item_selected.emit()
+		check(panel.tree.get_selected().get_metadata(0).name=="hinge" and panel.selected.name=="hinge","rejected Tree signal restores actual edited selection")
+	check(panel.pending and panel.inputs.damping==field and panel.inputs.damping.text=="0.2" and panel.inputs.frictionloss.text=="0.1" and panel.inputs.range.text=="[-1,1]","rejected Tree selection retains original draft controls")
+	check(doc.snapshot()==before,"rejected Tree selection leaves physics unchanged")
+	form_button(panel,"Discard pending fields").pressed.emit()
+	arm=find_item(panel.tree.get_root(),"body","arm")
+	arm.select(0)
+	panel.tree.set_selected(arm,0)
+	panel.tree.item_selected.emit()
+	check(panel.selected.name=="arm" and panel.tree.get_selected()==arm and panel.inputs.has("mass"),"selection proceeds normally after Discard")
