@@ -63,5 +63,103 @@ original source directories and the original project out of the recorded paths,
 then cold-imports and advances the relocated model using MuJoCo. Neither the
 original absolute assets nor original project are available during this test.
 
-Runtime scene integration is the next phase of this same milestone; this asset
-checkpoint by itself does not claim shared-space runtime scene support.
+## Reusable scenes and shared native physics
+
+1. Select **MuJoCo** under Project Settings → Physics → 3D → Physics Engine,
+   restart Godot, and enable the MuJoCo editor plugin.
+2. **Import MJCF**, **Import G1 URDF**, or **Open project model**. Edit fields and
+   **Apply to physics**. G1 import reads the original 29-DOF URDF without altering
+   it, fixes its base, and synthesizes bounded position drives (initial kp=100,
+   kv=10). This is an explicit G1 adapter, not a general URDF importer.
+3. **Save project model**, then **Create runtime scene**, and save a `.tscn`.
+   The scene references one explicit immutable resource revision. Saving another
+   revision does not modify existing scene references. Pending/unsaved edits block
+   scene creation; saving a legacy JSON file does not publish a runtime revision.
+4. Open the generated scene in Godot's normal 3D editor. It contains an
+   `MjRuntimeWorld` root and an `MjModelInstance` child. Add more model instances
+   beneath that world and assign their resources. Position fixed-base G1 at about
+   Y=1.1 above a floor (the imported base origin is at its pelvis).
+5. Add normal Godot `StaticBody3D` terrain and `RigidBody3D` obstacles. They use the
+   **same World3D space and native mjModel** as imported models, with real contacts.
+   The acceptance scene uses box terrain and an ordinary falling box. The G1
+   adapter uses collision bits 2/1 to avoid self-contact; the obstacle's mask is 3.
+6. Save, close, reopen, and run the scene. Copy the whole project to move it;
+   neither the original external XML nor original robot asset directory is needed.
+
+`MjRuntimeWorld.world_model` owns the complete MuJoCo option profile (including
+integrator, timestep, gravity, solver and tolerances). Each loaded resource must
+match every `mjOption` field exactly. Conflicts are rejected before replacing the
+live model, with the conflicting field named in `last_error`. Ordinary Godot
+project/default-area gravity changes cannot override this authored profile.
+One runtime-world owner is permitted per World3D; use a separate SubViewport and
+World3D for independently configured worlds. Configuration happens paused before
+model insertion. Authored timesteps are accumulated exactly against Godot's frame
+step, with a minimum of 0.0001 seconds for the synchronous stepping budget.
+
+Each instance owns a model RID, a unique native name prefix and independent joint,
+control and activation state. Whole-spec composition retains multiple free roots,
+world geometry and attached model entities. A compiled element-count check rejects
+composition that loses joints, geoms, actuators, equality constraints, tendons or
+sensors. Existing compatible state survives insertion/removal. Native model
+removal requested from physics callbacks is deferred until callback flushing ends.
+No PhysicsServer3D full-joint compatibility is implied by MJCF constraint retention.
+
+The node transform is the **initial placement**, not a continuously driven physics
+pose. Do not scale model nodes: edit source geometry/mass explicitly. To replace a
+loaded resource, call `unload_model()`, assign `model`, then `load_model()` outside
+physics callbacks; assignment while loaded is rejected. Preview nodes never step
+or mutate the shared resource. Actual runtime visual transforms come from MuJoCo.
+Mesh and primitive geometry is shown with flat colors; texture/material rendering
+parity and filesystem-free PCK export are not claimed.
+
+GDScript control (native names are relative to this instance):
+
+```gdscript
+var robot = $MuJoCoWorld/Model
+robot.set_control("left_elbow_joint_position", 0.8)
+var angle = robot.state().joints.left_elbow_joint.qpos[0]
+$MuJoCoWorld.set_paused(true)
+```
+
+C# calls the same stable GDScript node API; native extension classes do not require
+custom generated C# wrappers:
+
+```csharp
+var robot = GetNode<Node>("MuJoCoWorld/Model");
+bool accepted = robot.Call("set_control", "left_elbow_joint_position", 0.8).AsBool();
+var state = robot.Call("state").AsGodotDictionary();
+```
+
+The runtime rejects global userdata, mocap bodies and keyframes explicitly;
+CharacterBody3D, Area3D and complete Godot joint compatibility remain out of scope.
+The original G1 is a fixed-base control/contact fixture, **not walking acceptance**.
+
+## Full runtime acceptance
+
+```sh
+OUT=/tmp/gmj-runtime-new tests/portable_runtime/run_runtime.sh
+```
+
+This authors an edited G1 (mass, kp/kv, angle and control), saves an ordinary Godot
+scene with two independent instances plus normal bodies, exits, then starts a new
+runtime process. It checks actual joint movement and model/native-body contacts,
+option conflicts, rollback, instance destruction during callbacks and multiple free
+roots. It then copies the project without caches, renames the original project,
+removes the relocated original robot assets, cold-imports and repeats all checks.
+A separate .NET process checks C# control and actual motion. Finally the editor
+opens the relocated package, emits the real Apply/Save/Create-scene signals and
+checks saved references plus retained original source archive bytes.
+
+For real-renderer evidence, after the runner completes:
+
+```sh
+godot --editor --path "$OUT/relocated" --rendering-method gl_compatibility \
+  -- --mj-editor-test --capture-dir=/tmp/gmj-images
+godot --path "$OUT/relocated" --rendering-method gl_compatibility \
+  --script res://capture_runtime.gd -- --capture=/tmp/gmj-images/runtime.png
+```
+
+The generated `RuntimeScene.tscn` is also the project's main scene for independent
+manual inspection. Dot must independently build/pull, move the project, use the
+actual editor controls, save/restart/run and inspect the contacts before promotion
+to main. Cloud automation and screenshots do not replace that gate.

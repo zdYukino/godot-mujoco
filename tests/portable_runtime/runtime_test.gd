@@ -88,6 +88,10 @@ func run() -> void:
 	var again = World.new();again.world_model=model_resource;again.start_paused=true
 	root.add_child(again)
 	check(again.ready_for_models,"world lifecycle can reconfigure after disposal")
+	root.remove_child(again)
+	again.start_paused=false
+	root.add_child(again)
+	check(again.ready_for_models and not again.info().paused,"world reentry runs ready lifecycle")
 	again.free()
 	var failed := 0
 	for c in checks:if not c.passed:failed+=1

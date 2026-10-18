@@ -47,5 +47,27 @@ func run() -> void:
 	check(DirAccess.rename_absolute(packaged_asset, packaged_asset + ".missing") == OK, "hide packaged dependency")
 	check(not resource.open_document().error.is_empty(), "missing packaged dependency diagnosed")
 	check(DirAccess.rename_absolute(packaged_asset + ".missing", packaged_asset) == OK, "restore packaged dependency")
+	# Exercise the pinned MuJoCo C string-vector boundary with six cube faces.
+	var attributes := ""
+	var faces := ["right","left","up","down","front","back"]
+	for i in faces.size():
+		var face := source.get_base_dir().path_join("face_"+faces[i]+".png")
+		var texture := Image.create(4,4,false,Image.FORMAT_RGB8)
+		texture.fill(Color.from_hsv(float(i)/6,1,1))
+		check(texture.save_png(face)==OK,"write cube fixture "+faces[i])
+		attributes += " file"+faces[i]+"='"+face+"'"
+	var cube_source := source.get_base_dir().path_join("cube.xml")
+	var cube_file := FileAccess.open(cube_source,FileAccess.WRITE)
+	cube_file.store_string("<mujoco><asset><texture name='cube' type='cube'"+attributes+"/><material name='mat' texture='cube'/></asset><worldbody><body name='cube'><geom type='box' size='.1 .1 .1' material='mat'/></body></worldbody></mujoco>")
+	cube_file.close()
+	var cube_doc:RefCounted=ClassDB.instantiate("MjEditorDocument")
+	check(cube_doc.import_file(cube_source),"cube faces import without host STL access")
+	var cube_package:Dictionary=Builder.pack(cube_doc,"res://models","cube")
+	check(cube_package.error.is_empty(),"six cube faces pack")
+	if cube_package.error.is_empty():
+		var cube_resource=ResourceLoader.load(cube_package.path)
+		check(cube_resource.dependencies.size()==6,"six distinct cube dependencies retained")
+		var cube_path:=FileAccess.open("res://cube-package-path.txt",FileAccess.WRITE)
+		cube_path.store_string(cube_package.path);cube_path.close()
 	print("PACKAGE_RESULT ",JSON.stringify({"failed":failures}))
 	quit(0 if failures==0 else 1)

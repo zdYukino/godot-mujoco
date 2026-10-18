@@ -93,6 +93,9 @@ cmake --build build-release -j
 
 ## Run
 
+For project-owned MJCF bundles, reusable Godot model instances, shared native-body
+contacts and GDScript/C# control, see [Portable models and runtime scenes](docs/portable-models.md).
+
 For the native backend's runtime G1/obstacle import, pause/commit/delete controls
 and independent screenshot acceptance, see [dynamic world](docs/dynamic-world.md)
 and [its runnable scene](tests/dynamic_scene/README.md).

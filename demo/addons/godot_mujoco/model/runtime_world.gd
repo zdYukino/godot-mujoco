@@ -46,6 +46,7 @@ func _exit_tree() -> void:
 	if world and world.has_meta("mj_runtime_owner"):
 		world.remove_meta("mj_runtime_owner")
 	ready_for_models = false
+	request_ready()
 
 func set_paused(value: bool) -> bool:
 	return ready_for_models and PhysicsServer3D.call("scene_pause", space, value)

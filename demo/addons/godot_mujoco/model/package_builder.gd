@@ -28,7 +28,7 @@ static func source_files(path: String, visited: Dictionary) -> String:
 			if not error.is_empty(): return error
 	return ""
 
-static func pack(document: RefCounted, parent := "res://mujoco_models", label := "model", previous_provenance: Dictionary = {}) -> Dictionary:
+static func pack(document: RefCounted, parent := "res://mujoco_models", label := "model", previous_provenance: Dictionary = {}, previous_bundle := "") -> Dictionary:
 	# Only a project-owned directory may be published. Existing immutable packages
 	# are never overwritten: model-content hash handles duplicate names/imports.
 	if not parent.begins_with("res://") or parent.contains(".."):
@@ -58,6 +58,16 @@ static func pack(document: RefCounted, parent := "res://mujoco_models", label :=
 	# separately for provenance. They are not runtime path dependencies.
 	DirAccess.make_dir_recursive_absolute(stage.path_join("sources"))
 	provenance["sources"] = provenance.get("sources", {})
+	# A relocated edit retains archived original source bytes, even when the
+	# provenance's absolute original source no longer exists.
+	if not previous_bundle.is_empty():
+		for original in provenance.sources:
+			var hash: String = provenance.sources[original]
+			var archived := previous_bundle.path_join("sources/" + hash + ".xml")
+			if not FileAccess.file_exists(archived) or FileAccess.get_sha256(archived) != hash:
+				return failure(stage, "Missing or damaged source archive: " + archived)
+			if DirAccess.copy_absolute(archived, stage.path_join("sources/" + hash + ".xml")) != OK:
+				return failure(stage, "Cannot preserve source archive: " + archived)
 	var sources := {}
 	var original_source: String = document.snapshot().source
 	if FileAccess.file_exists(original_source):
@@ -68,6 +78,8 @@ static func pack(document: RefCounted, parent := "res://mujoco_models", label :=
 			var hash := FileAccess.get_sha256(source)
 			if DirAccess.copy_absolute(source, stage.path_join("sources/" + hash + ".xml")) != OK:
 				return failure(stage, "Cannot preserve source: " + source)
+			if FileAccess.get_sha256(stage.path_join("sources/" + hash + ".xml")) != hash:
+				return failure(stage, "Source changed while copying: " + source)
 			provenance.sources[source] = hash
 	var portable: Dictionary = document.portable_snapshot(mapping)
 	if portable.is_empty():
@@ -97,6 +109,9 @@ static func pack(document: RefCounted, parent := "res://mujoco_models", label :=
 		var existing = ResourceLoader.load(destination.path_join("model.tres"), "", ResourceLoader.CACHE_MODE_IGNORE)
 		if not existing or not existing is ModelResource or existing.snapshot != portable or not existing.validate_package().is_empty():
 			return failure(stage, "Existing package conflicts or is damaged: " + destination)
+		for hash in provenance.sources.values():
+			if FileAccess.get_sha256(destination.path_join("sources/" + hash + ".xml")) != hash:
+				return failure(stage, "Existing package source archive conflicts: " + destination)
 		remove_staging(stage)
 	else:
 		if DirAccess.rename_absolute(stage, destination) != OK:

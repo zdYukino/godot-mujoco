@@ -168,6 +168,8 @@ func import_mjcf(path: String) -> bool:
 	if not state.document.import_file(path):
 		show_error(state.document.get_error())
 		return false
+	project_model_path = ""
+	model_provenance = {}
 	record_change(before, "MuJoCo import")
 	frame_all()
 	return true
@@ -233,6 +235,8 @@ func open_document(path: String) -> bool:
 	if not state.document.restore(json.data):
 		show_error(state.document.get_error())
 		return false
+	project_model_path = ""
+	model_provenance = {}
 	record_change(before, "MuJoCo open document")
 	state.file_path = path
 	if json.data.has("draft"):
@@ -254,6 +258,8 @@ func import_g1_dialog() -> void:
 	dialog.file_selected.connect(func(path: String):
 		var before: Dictionary = state.document.snapshot()
 		if state.document.import_g1(path):
+			project_model_path = ""
+			model_provenance = {}
 			record_change(before,"MuJoCo import fixed-base G1")
 			frame_all()
 		else: show_error(state.document.get_error())
@@ -276,7 +282,7 @@ func create_runtime_scene_dialog() -> void:
 		var resource = ResourceLoader.load(project_model_path)
 		var error := SceneBuilder.save(resource,path)
 		if error == OK:
-			EditorInterface.get_resource_filesystem().scan()
+			refresh_project_files()
 			status.text = "Saved runtime scene: " + path + ". Select MuJoCo physics, restart, and instantiate this scene."
 		else: show_error("Cannot save runtime scene: " + error_string(error))
 		dialog.queue_free())
@@ -287,14 +293,15 @@ func create_runtime_scene_dialog() -> void:
 func save_project_model() -> void:
 	if not can_leave_fields():
 		return
-	var result: Dictionary = PackageBuilder.pack(state.document, "res://mujoco_models", "model", model_provenance)
+	var result: Dictionary = PackageBuilder.pack(state.document, "res://mujoco_models", "model", model_provenance, project_model_path.get_base_dir() if not project_model_path.is_empty() else "")
 	if not result.error.is_empty():
 		show_error(result.error)
 		return
 	state.dirty = false
 	project_model_path = result.path
 	project_model_snapshot = state.document.snapshot().duplicate(true)
-	EditorInterface.get_resource_filesystem().scan()
+	model_provenance = ResourceLoader.load(project_model_path).provenance.duplicate(true)
+	refresh_project_files()
 	status.text = "Saved portable project model: " + result.path
 
 func open_project_model_dialog() -> void:
@@ -592,3 +599,12 @@ func camera_input(event: InputEvent) -> void:
 		yaw -= event.relative.x * .01
 		pitch = clampf(pitch + event.relative.y * .01, -1.4, 1.4)
 	update_camera()
+
+func refresh_project_files() -> void:
+	# File publication can happen during editor deferred work or an ongoing scan.
+	# Wait for a normal frame and serialize scans to avoid progress-dialog reentry.
+	await get_tree().process_frame
+	var filesystem := EditorInterface.get_resource_filesystem()
+	while filesystem.is_scanning():
+		await get_tree().process_frame
+	filesystem.scan()

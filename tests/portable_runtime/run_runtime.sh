@@ -22,11 +22,17 @@ timeout --kill-after=5 120 "$ROOT/scripts/import_headless.sh" "$OUT/relocated" >
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/relocated" --script res://runtime_test.gd > "$OUT/relocated-runtime.log" 2>&1
 timeout --kill-after=5 180 dotnet build "$OUT/relocated/PortableRuntime.csproj" -c Debug > "$OUT/dotnet-build.log" 2>&1
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/relocated" res://RuntimeBinding.tscn > "$OUT/csharp.log" 2>&1
+cp "$ROOT/tests/portable_runtime/editor_acceptance.gd" "$OUT/relocated/acceptance.gd"
+printf '\n[editor_plugins]\nenabled=PackedStringArray("res://addons/mujoco_editor/plugin.cfg")\n' >> "$OUT/relocated/project.godot"
+timeout --kill-after=5 120 "$GODOT_BIN" --headless --editor --path "$OUT/relocated" -- --mj-editor-test > "$OUT/editor-flow.log" 2>&1
+timeout --kill-after=5 90 "$GODOT_BIN" --headless --path "$OUT/relocated" --script res://restart_editor_scene.gd > "$OUT/editor-scene-restart.log" 2>&1
 python3 - "$OUT" <<'PY'
 import pathlib,json,sys
 p=pathlib.Path(sys.argv[1]);results={}
 for name in ['runtime','relocated-runtime']:
  s=(p/(name+'.log')).read_text();r=json.loads(next(x.split(' ',1)[1] for x in s.splitlines() if x.startswith('RUNTIME_RESULT ')));assert r['failed']==0,r;results[name]=r
+editor=json.loads(next(x.split(' ',1)[1] for x in (p/'editor-flow.log').read_text().splitlines() if x.startswith('PORTABLE_EDITOR_RESULT ')));assert editor['failed']==0,editor;results['editor']=editor
+assert 'EDITOR_SCENE_RESTART_PASS' in (p/'editor-scene-restart.log').read_text()
 assert 'PORTABLE CSHARP PASS' in (p/'csharp.log').read_text()
 for f in p.glob('*.log'):
  s=f.read_text();assert 'ERROR:' not in s and 'ObjectDB instances leaked' not in s,f

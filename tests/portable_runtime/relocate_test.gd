@@ -8,5 +8,8 @@ func _initialize() -> void:
 	var doc: RefCounted = result.document
 	doc.set_paused(false)
 	doc.advance(.02)
+	var cube = ResourceLoader.load(FileAccess.get_file_as_string("res://cube-package-path.txt"))
+	if cube.dependencies.size()!=6 or not cube.open_document().error.is_empty():
+		printerr("Relocated cube textures failed");quit(1);return
 	print("RELOCATED_MODEL_PASS ",doc.inspect())
 	quit(0)
