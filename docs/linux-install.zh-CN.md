@@ -34,7 +34,7 @@ ldd demo/addons/godot_mujoco/bin/libmujoco.so.3.16.0
 ## 打开仓库 demo
 
 ```bash
-export GODOT_BIN=/absolute/path/to/Godot_v4.7.2-stable_mono_linux.x86_64
+export GODOT_BIN="/absolute/path/to/Godot_v4.7.2-stable_mono_linux.x86_64"
 "$GODOT_BIN" --version
 "$GODOT_BIN" --editor --path demo --rendering-method gl_compatibility
 ```
@@ -46,7 +46,7 @@ export GODOT_BIN=/absolute/path/to/Godot_v4.7.2-stable_mono_linux.x86_64
 关闭目标项目编辑器，备份同名 addon，再从已经构建的仓库根目录执行：
 
 ```bash
-TARGET_PROJECT=/absolute/path/to/your-godot-project
+TARGET_PROJECT="/absolute/path/to/your-godot-project"
 mkdir -p "$TARGET_PROJECT/addons"
 cp -a demo/addons/godot_mujoco "$TARGET_PROJECT/addons/"
 cp -a demo/addons/mujoco_editor "$TARGET_PROJECT/addons/"

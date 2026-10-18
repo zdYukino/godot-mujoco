@@ -41,7 +41,7 @@ cmake --version                    # 必须 >= 3.24
 cmake -S . -B build -DMUJOCO_VERSION=3.16.0
 cmake --build build -j2
 
-export GODOT_BIN=/absolute/path/to/Godot_v4.7.2-stable_mono_linux.x86_64
+export GODOT_BIN="/absolute/path/to/Godot_v4.7.2-stable_mono_linux.x86_64"
 "$GODOT_BIN" --version
 "$GODOT_BIN" --editor --path demo --rendering-method gl_compatibility
 ```
@@ -55,7 +55,7 @@ export GODOT_BIN=/absolute/path/to/Godot_v4.7.2-stable_mono_linux.x86_64
 先关闭目标项目编辑器，备份同名 addon，再从已构建仓库复制：
 
 ```bash
-TARGET_PROJECT=/absolute/path/to/your-godot-project
+TARGET_PROJECT="/absolute/path/to/your-godot-project"
 mkdir -p "$TARGET_PROJECT/addons"
 cp -a demo/addons/godot_mujoco "$TARGET_PROJECT/addons/"
 cp -a demo/addons/mujoco_editor "$TARGET_PROJECT/addons/"
