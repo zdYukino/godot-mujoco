@@ -1,0 +1,134 @@
+{
+  "checks": [
+    {
+      "name": "import explicit free-base relaxed G1",
+      "passed": true
+    },
+    {
+      "name": "portable derived model preserves source assets",
+      "passed": true
+    },
+    {
+      "name": "free base qpos7 qvel6",
+      "passed": true
+    },
+    {
+      "name": "relaxed joints have no hidden position drives",
+      "passed": true
+    },
+    {
+      "name": "finite physical inertia and mass, zero gravity compensation",
+      "passed": true
+    },
+    {
+      "name": "root physically falls under gravity",
+      "passed": true
+    },
+    {
+      "name": "root vertical velocity follows gravity",
+      "passed": true
+    },
+    {
+      "name": "Node3D follows physical pelvis rather than mesh-only motion",
+      "passed": true
+    },
+    {
+      "name": "MuJoCo Z maps to Godot Y",
+      "passed": true
+    },
+    {
+      "name": "derive friction fixture without changing upstream",
+      "passed": true
+    },
+    {
+      "name": "locate original G1 sole collision spheres",
+      "passed": true
+    },
+    {
+      "name": "author sole height and initial horizontal velocity",
+      "passed": true
+    },
+    {
+      "name": "pack friction contact trial",
+      "passed": true
+    },
+    {
+      "name": "initial soles establish physical ground contact 0.001",
+      "passed": true
+    },
+    {
+      "name": "finite G1 contact simulation without MuJoCo warnings",
+      "passed": true
+    },
+    {
+      "name": "contact penetration under 4 cm bound: -0.02619181762061",
+      "passed": true
+    },
+    {
+      "name": "derive friction fixture without changing upstream",
+      "passed": true
+    },
+    {
+      "name": "locate original G1 sole collision spheres",
+      "passed": true
+    },
+    {
+      "name": "author sole height and initial horizontal velocity",
+      "passed": true
+    },
+    {
+      "name": "pack friction contact trial",
+      "passed": true
+    },
+    {
+      "name": "initial soles establish physical ground contact 1.0",
+      "passed": true
+    },
+    {
+      "name": "finite G1 contact simulation without MuJoCo warnings",
+      "passed": true
+    },
+    {
+      "name": "contact penetration under 4 cm bound: -0.02567866304501",
+      "passed": true
+    },
+    {
+      "name": "G1 low friction slides further than high friction: [2.90415891006704, 1.1233007941475]",
+      "passed": true
+    },
+    {
+      "name": "derive friction fixture without changing upstream",
+      "passed": true
+    },
+    {
+      "name": "locate original G1 sole collision spheres",
+      "passed": true
+    },
+    {
+      "name": "author sole height and initial horizontal velocity",
+      "passed": true
+    },
+    {
+      "name": "pack friction contact trial",
+      "passed": true
+    },
+    {
+      "name": "initial soles establish physical ground contact 0.001",
+      "passed": true
+    },
+    {
+      "name": "finite G1 contact simulation without MuJoCo warnings",
+      "passed": true
+    },
+    {
+      "name": "contact penetration under 4 cm bound: -0.01890315631119",
+      "passed": true
+    },
+    {
+      "name": "G1 collides with ordinary Godot obstacle",
+      "passed": true
+    }
+  ],
+  "failed": 0,
+  "passed": 32
+}

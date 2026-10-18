@@ -6,9 +6,14 @@ extends Node3D
 var space := RID()
 var last_error := ""
 var ready_for_models := false
+signal command_finished(result: Dictionary)
+var command_request := 0
+var game_elapsed := 0.0
+var last_command_result := {}
 
 func _enter_tree() -> void:
 	if Engine.is_editor_hint(): return
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	if ProjectSettings.get_setting("physics/3d/run_on_separate_thread", false):
 		last_error = "MjRuntimeWorld currently requires the default main-thread physics mode"
 		push_error(last_error)
@@ -42,9 +47,12 @@ func _enter_tree() -> void:
 func _ready() -> void:
 	if not Engine.is_editor_hint() and ready_for_models:
 		set_paused(start_paused)
+		capture_snapshot()
 
 func _exit_tree() -> void:
 	if Engine.is_editor_hint(): return
+	if command_request != 0: PhysicsServer3D.call("scene_cancel_world_command",command_request)
+	command_request = 0
 	# Even a failed first entry consumed _ready; recovery must run it again.
 	request_ready()
 	if not ready_for_models: return
@@ -59,3 +67,39 @@ func set_paused(value: bool) -> bool:
 
 func info() -> Dictionary:
 	return PhysicsServer3D.call("scene_info", space) if ready_for_models else {"last_error":last_error}
+
+# These APIs enqueue work; model/data mutation occurs only at the native step boundary.
+func request_command(command: String, count: int = 1) -> bool:
+	if not ready_for_models or command_request != 0:
+		last_error = "Wait for the pending simulation command"
+		return false
+	command_request = PhysicsServer3D.call("scene_request_world_command",space,command,count)
+	if command_request == 0:
+		last_error = "Simulation command queue is full"
+		return false
+	last_error = ""
+	return true
+
+func request_pause(paused: bool) -> bool:
+	return request_command("pause" if paused else "resume")
+
+func step_simulation(count: int = 1) -> bool:
+	return request_command("step",count)
+
+func capture_snapshot() -> bool:
+	return request_command("capture")
+
+func reset_simulation() -> bool:
+	# Retain topology, resources and runtime additions. This does not save design data.
+	return request_command("reset")
+
+func _process(delta: float) -> void:
+	if Engine.is_editor_hint(): return
+	game_elapsed += delta
+	if command_request == 0: return
+	var result: Dictionary = PhysicsServer3D.call("scene_world_command_result",command_request)
+	if result.is_empty(): return
+	command_request = 0
+	last_error = result.error
+	last_command_result = result
+	command_finished.emit(result)

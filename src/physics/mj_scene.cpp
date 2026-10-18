@@ -17,6 +17,9 @@ bool rigid_pose(const Transform3D &t){return t.is_finite() && t.basis.is_orthogo
 Transform3D geom_pose(const mjData *d,int g){const auto *p=d->geom_xpos+3*g,*m=d->geom_xmat+9*g;Basis b;for(int r=0;r<3;++r)for(int c=0;c<3;++c)b[r][c]=m[3*r+c];return Transform3D(mj_to_godot(b),mj_to_godot(Vector3(p[0],p[1],p[2])));}
 }
 void MjPhysicsServer3D::_bind_methods(){
+ ClassDB::bind_method(D_METHOD("scene_request_world_command","space","command","count"),&MjPhysicsServer3D::scene_request_world_command,DEFVAL(1));
+ ClassDB::bind_method(D_METHOD("scene_world_command_result","request"),&MjPhysicsServer3D::scene_world_command_result);
+ ClassDB::bind_method(D_METHOD("scene_cancel_world_command","request"),&MjPhysicsServer3D::scene_cancel_world_command);
  ClassDB::bind_method(D_METHOD("scene_request_model_edit","space","object","snapshot","directory","expected_revision"),&MjPhysicsServer3D::scene_request_model_edit);
  ClassDB::bind_method(D_METHOD("scene_cancel_model_edit","request"),&MjPhysicsServer3D::scene_cancel_model_edit);
  ClassDB::bind_method(D_METHOD("scene_edit_result","request"),&MjPhysicsServer3D::scene_edit_result);
@@ -33,7 +36,7 @@ void MjPhysicsServer3D::_bind_methods(){
  ClassDB::bind_method(D_METHOD("scene_geometry","space","object"),&MjPhysicsServer3D::scene_geometry);
  ClassDB::bind_method(D_METHOD("scene_set_control","space","object","joint","target"),&MjPhysicsServer3D::scene_set_control);
 }
-bool MjPhysicsServer3D::scene_pause(const RID &r,bool value){auto*s=space(r);if(!s||flushing)return false;if(!rebuild(*s))return false;s->paused=value;return true;}
+bool MjPhysicsServer3D::scene_pause(const RID &r,bool value){auto*s=space(r);if(!s||flushing)return false;if(!rebuild(*s))return false;if(s->paused!=value)s->accumulator=0;s->paused=value;return true;}
 RID MjPhysicsServer3D::scene_insert(MjSpace &s,mjSpec *spec,const String &label,const Transform3D &pose,bool whole_model,const Dictionary &initial){
  std::unique_ptr<MjImported> object=std::make_unique<MjImported>();object->spec=spec;object->whole_model=whole_model;object->initial=initial;
  if(s.authored_options&&!whole_model){s.last_error="Configured worlds require portable model instances; use ordinary Godot bodies for obstacles";return {};}
@@ -70,12 +73,12 @@ bool MjPhysicsServer3D::scene_remove(const RID &r,const RID &id){
  handles.free(id);return true;
 }
 Dictionary MjPhysicsServer3D::scene_info(const RID &r) const {
- Dictionary result;auto*s=space(r);if(!s)return result;result["authored_options"]=s->authored_options;if(s->authored_options)result["options"]=gmj_options(s->options);result["paused"]=s->paused;result["revision"]=int64_t(s->revision);result["last_error"]=s->last_error;
+ Dictionary result;auto*s=space(r);if(!s)return result;result["authored_options"]=s->authored_options;if(s->authored_options)result["options"]=gmj_options(s->options);result["paused"]=s->paused;result["has_checkpoint"]=!s->checkpoint.is_empty();result["timestep"]=s->model?s->model->opt.timestep:0.0;result["revision"]=int64_t(s->revision);result["last_error"]=s->last_error;
  Array objects;for(auto &e:s->imported){Dictionary o;o["rid"]=e.second->rid;o["label"]=e.second->label;o["prefix"]=String(e.second->prefix.c_str());objects.push_back(o);}result["objects"]=objects;
  if(!s->model)return result;auto*m=s->model;auto*d=s->data;result["nbody"]=m->nbody;result["ngeom"]=m->ngeom;result["njnt"]=m->njnt;result["nu"]=m->nu;result["ncon"]=d->ncon;result["time"]=d->time;result["version"]=String(mj_versionString());
- int warnings=0;for(int i=0;i<mjNWARNING;++i)warnings+=d->warning[i].number;result["warning_count"]=warnings;
+ int warnings=0;for(int i=0;i<mjNWARNING;++i)warnings+=d->warning[i].number;result["warning_count"]=warnings;double force_norm=0,warmstart_norm=0;for(int i=0;i<m->nv;++i){force_norm+=std::abs(d->qfrc_applied[i]);warmstart_norm+=std::abs(d->qacc_warmstart[i]);}for(int i=0;i<6*m->nbody;++i)force_norm+=std::abs(d->xfrc_applied[i]);result["applied_force_norm"]=force_norm;result["warmstart_norm"]=warmstart_norm;
  Array contacts;for(int i=0;i<d->ncon;++i){Array pair;for(int side=0;side<2;++side){int g=d->contact[i].geom[side];RID owner;if(g>=0&&g<int(s->geom_owners.size()))owner=s->geom_owners[g].first;for(auto&e:s->imported)if(belongs(mj_id2name(m,mjOBJ_GEOM,g),e.second->prefix))owner=e.second->rid;pair.push_back(owner);}contacts.push_back(pair);}result["contacts"]=contacts;
- Array details;for(int i=0;i<d->ncon;++i){Dictionary c;auto &contact=d->contact[i];c["distance"]=contact.dist;c["position"]=mj_to_godot(Vector3(contact.pos[0],contact.pos[1],contact.pos[2]));c["friction"]=contact.friction[0];Array names;for(int side=0;side<2;++side){const char *n=mj_id2name(m,mjOBJ_GEOM,contact.geom[side]);names.push_back(n?String(n):String());}c["geoms"]=names;details.push_back(c);}result["contact_details"]=details;return result;
+ Array details;for(int i=0;i<d->ncon;++i){Dictionary c;auto &contact=d->contact[i];c["distance"]=contact.dist;c["position"]=mj_to_godot(Vector3(contact.pos[0],contact.pos[1],contact.pos[2]));c["friction"]=contact.friction[0];Array names;for(int side=0;side<2;++side){const char *n=mj_id2name(m,mjOBJ_GEOM,contact.geom[side]);names.push_back(n?String(n):String());}c["geoms"]=names;Array body_names;for(int side=0;side<2;++side){int g=contact.geom[side];const char *n=g>=0?mj_id2name(m,mjOBJ_BODY,m->geom_bodyid[g]):nullptr;body_names.push_back(n?String(n):String());}c["bodies"]=body_names;details.push_back(c);}result["contact_details"]=details;return result;
 }
 Dictionary MjPhysicsServer3D::scene_state(const RID &r,const RID &id) const {
  Dictionary result;auto*s=space(r);if(!s||!s->model)return result;auto it=s->imported.find(id.get_id());if(it==s->imported.end())return result;
@@ -83,7 +86,7 @@ Dictionary MjPhysicsServer3D::scene_state(const RID &r,const RID &id) const {
  Dictionary joints,controls,parameters,body_parameters;Array geoms;int body_count=0;
  for(int b=1;b<m.nbody;++b)if(belongs(mj_id2name(&m,mjOBJ_BODY,b),prefix)){++body_count;Dictionary props;props["mass"]=m.body_mass[b];props["gravcomp"]=m.body_gravcomp[b];Basis basis;for(int row=0;row<3;++row)for(int col=0;col<3;++col)basis[row][col]=d.xmat[9*b+3*row+col];props["transform"]=Transform3D(mj_to_godot(basis),mj_to_godot(Vector3(d.xpos[3*b],d.xpos[3*b+1],d.xpos[3*b+2])));props["inertia"]=Vector3(m.body_inertia[3*b],m.body_inertia[3*b+1],m.body_inertia[3*b+2]);body_parameters[String(mj_id2name(&m,mjOBJ_BODY,b)+prefix.size())]=props;}
  for(int j=0;j<m.njnt;++j){const char*n=mj_id2name(&m,mjOBJ_JOINT,j);if(!belongs(n,prefix))continue;int nq=m.jnt_type[j]==mjJNT_FREE?7:(m.jnt_type[j]==mjJNT_BALL?4:1),nv=m.jnt_type[j]==mjJNT_FREE?6:(m.jnt_type[j]==mjJNT_BALL?3:1);PackedFloat64Array q,v;for(int k=0;k<nq;++k)q.push_back(d.qpos[m.jnt_qposadr[j]+k]);for(int k=0;k<nv;++k)v.push_back(d.qvel[m.jnt_dofadr[j]+k]);Dictionary state;state["qpos"]=q;state["qvel"]=v;joints[String(n+prefix.size())]=state;}
- for(int a=0;a<m.nu;++a){const char*n=mj_id2name(&m,mjOBJ_ACTUATOR,a);if(belongs(n,prefix)){String name(n+prefix.size());controls[name]=d.ctrl[a];Dictionary p;p["gain"]=m.actuator_gainprm[mjNGAIN*a];p["position_bias"]=m.actuator_biasprm[mjNBIAS*a+1];p["velocity_bias"]=m.actuator_biasprm[mjNBIAS*a+2];parameters[name]=p;}}
+ for(int a=0;a<m.nu;++a){const char*n=mj_id2name(&m,mjOBJ_ACTUATOR,a);if(belongs(n,prefix)){String name(n+prefix.size());controls[name]=d.ctrl[a];Dictionary p;PackedFloat64Array activation;for(int k=0;k<m.actuator_actnum[a];++k)activation.push_back(d.act[m.actuator_actadr[a]+k]);p["activation"]=activation;p["gain"]=m.actuator_gainprm[mjNGAIN*a];p["position_bias"]=m.actuator_biasprm[mjNBIAS*a+1];p["velocity_bias"]=m.actuator_biasprm[mjNBIAS*a+2];parameters[name]=p;}}
  for(int g=0;g<m.ngeom;++g)if(belongs(mj_id2name(&m,mjOBJ_GEOM,g),prefix)){Dictionary geo;geo["name"]=String(mj_id2name(&m,mjOBJ_GEOM,g));geo["transform"]=geom_pose(&d,g);geoms.push_back(geo);}
  result["bodies"]=body_parameters;result["actuator_parameters"]=parameters;result["body_count"]=body_count;result["joints"]=joints;result["controls"]=controls;result["geoms"]=geoms;return result;
 }

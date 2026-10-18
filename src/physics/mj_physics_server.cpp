@@ -187,7 +187,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s){
  if(s.data)mj_deleteData(s.data);if(s.model)mj_deleteModel(s.model);
  s.model=model;s.data=data;s.geom_owners=std::move(mapped);s.dirty=false;s.last_error="";++s.revision;
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;std::string name="b"+std::to_string(b.rid.get_id());b.mj_body=mj_name2id(model,mjOBJ_BODY,name.c_str());write_body(b);}
- mj_forward(model,data);return true;
+ mj_forward(model,data);remember_initial_state(s);return true;
 }
 void MjPhysicsServer3D::write_body(MjBody&b){auto*s=space(b.space);if(!s||s->dirty||!s->model||b.mj_body<1||b.mode!=BODY_MODE_RIGID)return;int j=s->model->body_jntadr[b.mj_body];if(j<0)return;int q=s->model->jnt_qposadr[j],v=s->model->jnt_dofadr[j];Vector3 p=godot_to_mj(b.transform.origin);Quaternion quat=godot_to_mj(b.transform.basis.orthonormalized()).get_rotation_quaternion().normalized();for(int k=0;k<3;++k)s->data->qpos[q+k]=p[k];s->data->qpos[q+3]=quat.w;s->data->qpos[q+4]=quat.x;s->data->qpos[q+5]=quat.y;s->data->qpos[q+6]=quat.z;Vector3 lv=godot_to_mj(b.linear_velocity),av=godot_to_mj(b.transform.basis.orthonormalized().transposed().xform(b.angular_velocity));for(int k=0;k<3;++k){s->data->qvel[v+k]=lv[k];s->data->qvel[v+3+k]=av[k];}mj_forward(s->model,s->data);}
 void MjPhysicsServer3D::read_body(MjBody &b) {
@@ -213,13 +213,15 @@ void MjPhysicsServer3D::_sync(){}
 void MjPhysicsServer3D::_end_sync(){}
 bool MjPhysicsServer3D::_is_flushing_queries() const{return flushing;}
 void MjPhysicsServer3D::_step(float dt){
- process_model_edits(); // Before stepping, including paused worlds: UI only enqueues snapshots.
+ process_model_edits();
+ process_world_commands(); // Before stepping, including paused worlds: UI only enqueues snapshots.
  if(!active||dt<=0)return;last_step=dt;
  // Each Godot fixed tick advances each active space exactly dt. Subdivide, don't
  // accumulate another autonomous clock (MjWorld owns entirely separate models).
- for(auto &entry:spaces){auto&s=*entry.second;if(!s.active||s.paused||!rebuild(s))continue;
+ for(auto &entry:spaces){auto&s=*entry.second;if(s.skip_tick){s.skip_tick=false;continue;}if(!s.active||(s.paused&&s.single_steps==0)||!rebuild(s))continue;
  int steps;
- if(s.authored_options){s.accumulator+=dt;steps=int((s.accumulator+1e-12)/s.options.timestep);s.accumulator-=steps*s.options.timestep;s.model->opt.timestep=s.options.timestep;}
+ if(s.single_steps>0){steps=s.single_steps;s.single_steps=0;s.model->opt.timestep=s.options.timestep;}
+ else if(s.authored_options){s.accumulator+=dt;steps=int((s.accumulator+1e-12)/s.options.timestep);s.accumulator-=steps*s.options.timestep;s.model->opt.timestep=s.options.timestep;}
  else{steps=std::max(1,int(std::ceil(double(dt)/0.002)));s.model->opt.timestep=double(dt)/steps;}
  for(int n=0;n<steps;++n){
  for(auto &be:bodies){auto&b=*be.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID||b.mj_body<1)continue;

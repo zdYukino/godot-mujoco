@@ -1,0 +1,380 @@
+{
+  "backend": "MjPhysicsServer3D",
+  "checks": [
+    {
+      "name": "actual_backend",
+      "passed": true
+    },
+    {
+      "name": "pause_true",
+      "passed": true
+    },
+    {
+      "name": "floor_added",
+      "passed": true
+    },
+    {
+      "name": "original_urdf_imported",
+      "passed": true
+    },
+    {
+      "name": "real_29_joints_and_drives",
+      "passed": true
+    },
+    {
+      "name": "real_g1_bodies_geometries",
+      "passed": true
+    },
+    {
+      "name": "shared_compiled_model_counts",
+      "passed": true
+    },
+    {
+      "name": "render_meshes_from_compiled_physics",
+      "passed": true
+    },
+    {
+      "name": "paused_world_does_not_step",
+      "passed": true
+    },
+    {
+      "name": "joint_control_accepted",
+      "passed": true
+    },
+    {
+      "name": "pause_false",
+      "passed": true
+    },
+    {
+      "name": "pause_true",
+      "passed": true
+    },
+    {
+      "name": "joint_drive_moves_real_joint",
+      "passed": true
+    },
+    {
+      "name": "moving_box_added",
+      "passed": true
+    },
+    {
+      "name": "pause_false",
+      "passed": true
+    },
+    {
+      "name": "pause_true",
+      "passed": true
+    },
+    {
+      "name": "obstacle_has_real_gravity_velocity",
+      "passed": true
+    },
+    {
+      "name": "pause_true",
+      "passed": true
+    },
+    {
+      "name": "second_robot_unique_rid",
+      "passed": true
+    },
+    {
+      "name": "two_robots_share_one_model",
+      "passed": true
+    },
+    {
+      "name": "add_robot_preserves_robot_joint_pose_velocity",
+      "passed": true
+    },
+    {
+      "name": "add_robot_preserves_robot_controls",
+      "passed": true
+    },
+    {
+      "name": "add_robot_preserves_robot_geometry_pose_identity",
+      "passed": true
+    },
+    {
+      "name": "add_robot_preserves_moving_box_joint_pose_velocity",
+      "passed": true
+    },
+    {
+      "name": "add_robot_preserves_moving_box_controls",
+      "passed": true
+    },
+    {
+      "name": "add_robot_preserves_moving_box_geometry_pose_identity",
+      "passed": true
+    },
+    {
+      "name": "transaction_preserves_time",
+      "passed": true
+    },
+    {
+      "name": "native_rigidbody_pose_preserved",
+      "passed": true
+    },
+    {
+      "name": "native_rigidbody_velocity_preserved",
+      "passed": true
+    },
+    {
+      "name": "native_rigidbody_angular_velocity_preserved",
+      "passed": true
+    },
+    {
+      "name": "remove_second_robot",
+      "passed": true
+    },
+    {
+      "name": "removed_robot_stale_rid_empty",
+      "passed": true
+    },
+    {
+      "name": "remove_robot_preserves_robot_joint_pose_velocity",
+      "passed": true
+    },
+    {
+      "name": "remove_robot_preserves_robot_controls",
+      "passed": true
+    },
+    {
+      "name": "remove_robot_preserves_robot_geometry_pose_identity",
+      "passed": true
+    },
+    {
+      "name": "remove_robot_preserves_box_joint_pose_velocity",
+      "passed": true
+    },
+    {
+      "name": "remove_robot_preserves_box_controls",
+      "passed": true
+    },
+    {
+      "name": "remove_robot_preserves_box_geometry_pose_identity",
+      "passed": true
+    },
+    {
+      "name": "invalid_urdf_rejected",
+      "passed": true
+    },
+    {
+      "name": "candidate_compile_failure_rejected",
+      "passed": true
+    },
+    {
+      "name": "failed_compile_rolls_back_revision_and_objects",
+      "passed": true
+    },
+    {
+      "name": "rollback_preserves_robot_joint_pose_velocity",
+      "passed": true
+    },
+    {
+      "name": "rollback_preserves_robot_controls",
+      "passed": true
+    },
+    {
+      "name": "rollback_preserves_robot_geometry_pose_identity",
+      "passed": true
+    },
+    {
+      "name": "rollback_preserves_box_joint_pose_velocity",
+      "passed": true
+    },
+    {
+      "name": "rollback_preserves_box_controls",
+      "passed": true
+    },
+    {
+      "name": "rollback_preserves_box_geometry_pose_identity",
+      "passed": true
+    },
+    {
+      "name": "duplicate_label_rejected",
+      "passed": true
+    },
+    {
+      "name": "stale_remove_rejected",
+      "passed": true
+    },
+    {
+      "name": "pause_false",
+      "passed": true
+    },
+    {
+      "name": "unpaused_edit_rejected",
+      "passed": true
+    },
+    {
+      "name": "pause_true",
+      "passed": true
+    },
+    {
+      "name": "obstacle_collides_with_floor",
+      "passed": true
+    },
+    {
+      "name": "pause_false",
+      "passed": true
+    },
+    {
+      "name": "pause_true",
+      "passed": true
+    },
+    {
+      "name": "g1_and_obstacle_contact_in_same_world",
+      "passed": true
+    },
+    {
+      "name": "contact_simulation_no_mujoco_warnings",
+      "passed": true
+    },
+    {
+      "name": "robot_state_finite_after_contact",
+      "passed": true
+    },
+    {
+      "name": "remove_impact",
+      "passed": true
+    },
+    {
+      "name": "cycle_unique_rid_0",
+      "passed": true
+    },
+    {
+      "name": "cycle_remove_0",
+      "passed": true
+    },
+    {
+      "name": "cycle_no_stale_resources_0",
+      "passed": true
+    },
+    {
+      "name": "cycle_preserves_0_joint_pose_velocity",
+      "passed": true
+    },
+    {
+      "name": "cycle_preserves_0_controls",
+      "passed": true
+    },
+    {
+      "name": "cycle_preserves_0_geometry_pose_identity",
+      "passed": true
+    },
+    {
+      "name": "cycle_unique_rid_1",
+      "passed": true
+    },
+    {
+      "name": "cycle_remove_1",
+      "passed": true
+    },
+    {
+      "name": "cycle_no_stale_resources_1",
+      "passed": true
+    },
+    {
+      "name": "cycle_preserves_1_joint_pose_velocity",
+      "passed": true
+    },
+    {
+      "name": "cycle_preserves_1_controls",
+      "passed": true
+    },
+    {
+      "name": "cycle_preserves_1_geometry_pose_identity",
+      "passed": true
+    },
+    {
+      "name": "cycle_unique_rid_2",
+      "passed": true
+    },
+    {
+      "name": "cycle_remove_2",
+      "passed": true
+    },
+    {
+      "name": "cycle_no_stale_resources_2",
+      "passed": true
+    },
+    {
+      "name": "cycle_preserves_2_joint_pose_velocity",
+      "passed": true
+    },
+    {
+      "name": "cycle_preserves_2_controls",
+      "passed": true
+    },
+    {
+      "name": "cycle_preserves_2_geometry_pose_identity",
+      "passed": true
+    },
+    {
+      "name": "second_space_pause",
+      "passed": true
+    },
+    {
+      "name": "space_identity_isolation",
+      "passed": true
+    },
+    {
+      "name": "other_space_object",
+      "passed": true
+    },
+    {
+      "name": "generic_free_obeys_transaction",
+      "passed": true
+    },
+    {
+      "name": "other_space_replacement",
+      "passed": true
+    },
+    {
+      "name": "freed_space_resources_released",
+      "passed": true
+    },
+    {
+      "name": "remove_all",
+      "passed": true
+    },
+    {
+      "name": "pause_true",
+      "passed": true
+    },
+    {
+      "name": "world_returns_to_empty_baseline",
+      "passed": true
+    }
+  ],
+  "failed": 0,
+  "passed": 86,
+  "extension_sha256": "6c1672874b636fcedfbf58834b4ddeb8ba20b1f091c6e9777e01f3802156f3a4",
+  "ui": {
+    "camera": {
+      "focused_height_px": 697.152465820312,
+      "frame_all_height_px": 309.115203857422,
+      "passed": true,
+      "physics_unchanged": true,
+      "zoomed_height_px": 846.845886230469
+    },
+    "passed": true,
+    "slider_sync": true,
+    "stages": [
+      {
+        "objects": 1,
+        "stage": "before",
+        "visual_objects": 1
+      },
+      {
+        "objects": 3,
+        "stage": "after_add",
+        "visual_objects": 3
+      },
+      {
+        "objects": 1,
+        "stage": "after_delete",
+        "visual_objects": 1
+      }
+    ]
+  }
+}

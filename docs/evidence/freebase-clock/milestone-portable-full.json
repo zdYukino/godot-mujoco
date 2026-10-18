@@ -1,0 +1,911 @@
+{
+  "runtime": {
+    "checks": [
+      {
+        "name": "configured runtime world",
+        "passed": true
+      },
+      {
+        "name": "saved scene loads two instances",
+        "passed": true
+      },
+      {
+        "name": "ordinary bodies and models share space",
+        "passed": true
+      },
+      {
+        "name": "independent model RIDs",
+        "passed": true
+      },
+      {
+        "name": "G1 29 authored joints",
+        "passed": true
+      },
+      {
+        "name": "authored angle retained",
+        "passed": true
+      },
+      {
+        "name": "authored body mass retained",
+        "passed": true
+      },
+      {
+        "name": "PD writes in compiled shared model",
+        "passed": true
+      },
+      {
+        "name": "GDScript control entry",
+        "passed": true
+      },
+      {
+        "name": "controls not shared",
+        "passed": true
+      },
+      {
+        "name": "real model and ordinary RigidBody contact",
+        "passed": true
+      },
+      {
+        "name": "finite shared simulation without MuJoCo warnings",
+        "passed": true
+      },
+      {
+        "name": "controlled joint actually moves",
+        "passed": true
+      },
+      {
+        "name": "second joint independent",
+        "passed": true
+      },
+      {
+        "name": "authored timestep retained",
+        "passed": true
+      },
+      {
+        "name": "third instance loads",
+        "passed": true
+      },
+      {
+        "name": "insertion preserves compatible state",
+        "passed": true
+      },
+      {
+        "name": "destruction frees model RID",
+        "passed": true
+      },
+      {
+        "name": "global option conflict rejected",
+        "passed": true
+      },
+      {
+        "name": "failed composition preserves existing state",
+        "passed": true
+      },
+      {
+        "name": "explicit option conflict gravity",
+        "passed": true
+      },
+      {
+        "name": "explicit option conflict solver",
+        "passed": true
+      },
+      {
+        "name": "explicit option conflict timestep",
+        "passed": true
+      },
+      {
+        "name": "active resource replacement has explicit boundary",
+        "passed": true
+      },
+      {
+        "name": "instance release deferred safely from physics callback",
+        "passed": true
+      },
+      {
+        "name": "multi-root model accepted",
+        "passed": true
+      },
+      {
+        "name": "both free roots retained",
+        "passed": true
+      },
+      {
+        "name": "world geometry and both roots retained",
+        "passed": true
+      },
+      {
+        "name": "world lifecycle can reconfigure after disposal",
+        "passed": true
+      },
+      {
+        "name": "world reentry runs ready lifecycle",
+        "passed": true
+      }
+    ],
+    "failed": 0,
+    "passed": 30
+  },
+  "relocated-runtime": {
+    "checks": [
+      {
+        "name": "configured runtime world",
+        "passed": true
+      },
+      {
+        "name": "saved scene loads two instances",
+        "passed": true
+      },
+      {
+        "name": "ordinary bodies and models share space",
+        "passed": true
+      },
+      {
+        "name": "independent model RIDs",
+        "passed": true
+      },
+      {
+        "name": "G1 29 authored joints",
+        "passed": true
+      },
+      {
+        "name": "authored angle retained",
+        "passed": true
+      },
+      {
+        "name": "authored body mass retained",
+        "passed": true
+      },
+      {
+        "name": "PD writes in compiled shared model",
+        "passed": true
+      },
+      {
+        "name": "GDScript control entry",
+        "passed": true
+      },
+      {
+        "name": "controls not shared",
+        "passed": true
+      },
+      {
+        "name": "real model and ordinary RigidBody contact",
+        "passed": true
+      },
+      {
+        "name": "finite shared simulation without MuJoCo warnings",
+        "passed": true
+      },
+      {
+        "name": "controlled joint actually moves",
+        "passed": true
+      },
+      {
+        "name": "second joint independent",
+        "passed": true
+      },
+      {
+        "name": "authored timestep retained",
+        "passed": true
+      },
+      {
+        "name": "third instance loads",
+        "passed": true
+      },
+      {
+        "name": "insertion preserves compatible state",
+        "passed": true
+      },
+      {
+        "name": "destruction frees model RID",
+        "passed": true
+      },
+      {
+        "name": "global option conflict rejected",
+        "passed": true
+      },
+      {
+        "name": "failed composition preserves existing state",
+        "passed": true
+      },
+      {
+        "name": "explicit option conflict gravity",
+        "passed": true
+      },
+      {
+        "name": "explicit option conflict solver",
+        "passed": true
+      },
+      {
+        "name": "explicit option conflict timestep",
+        "passed": true
+      },
+      {
+        "name": "active resource replacement has explicit boundary",
+        "passed": true
+      },
+      {
+        "name": "instance release deferred safely from physics callback",
+        "passed": true
+      },
+      {
+        "name": "multi-root model accepted",
+        "passed": true
+      },
+      {
+        "name": "both free roots retained",
+        "passed": true
+      },
+      {
+        "name": "world geometry and both roots retained",
+        "passed": true
+      },
+      {
+        "name": "world lifecycle can reconfigure after disposal",
+        "passed": true
+      },
+      {
+        "name": "world reentry runs ready lifecycle",
+        "passed": true
+      }
+    ],
+    "failed": 0,
+    "passed": 30
+  },
+  "live-edit": {
+    "checks": [
+      {
+        "name": "open design model",
+        "passed": true
+      },
+      {
+        "name": "author inertial edit",
+        "passed": true
+      },
+      {
+        "name": "author joint edit",
+        "passed": true
+      },
+      {
+        "name": "save immutable edited design",
+        "passed": true
+      },
+      {
+        "name": "request accepted without direct mutation",
+        "passed": true
+      },
+      {
+        "name": "request leaves active model unchanged before boundary",
+        "passed": true
+      },
+      {
+        "name": "repeated click rejected while pending",
+        "passed": true
+      },
+      {
+        "name": "commit reports revision",
+        "passed": true
+      },
+      {
+        "name": "same instance RID applies inertia",
+        "passed": true
+      },
+      {
+        "name": "paused compatible state and controls exactly preserved",
+        "passed": true
+      },
+      {
+        "name": "paused state and clock restored",
+        "passed": true
+      },
+      {
+        "name": "other instance isolated",
+        "passed": true
+      },
+      {
+        "name": "design snapshot is not overwritten by simulation",
+        "passed": true
+      },
+      {
+        "name": "stale revision request queues",
+        "passed": true
+      },
+      {
+        "name": "stale revision rolls back without state loss",
+        "passed": true
+      },
+      {
+        "name": "stage invalid saved candidate",
+        "passed": true
+      },
+      {
+        "name": "invalid candidate queues for boundary compile",
+        "passed": true
+      },
+      {
+        "name": "candidate compile failure retains original instance",
+        "passed": true
+      },
+      {
+        "name": "failure preserves state and pause",
+        "passed": true
+      },
+      {
+        "name": "queue conflicting options gravity",
+        "passed": true
+      },
+      {
+        "name": "conflicting option rollback gravity",
+        "passed": true
+      },
+      {
+        "name": "queue conflicting options solver",
+        "passed": true
+      },
+      {
+        "name": "conflicting option rollback solver",
+        "passed": true
+      },
+      {
+        "name": "queue conflicting options timestep",
+        "passed": true
+      },
+      {
+        "name": "conflicting option rollback timestep",
+        "passed": true
+      },
+      {
+        "name": "stage incompatible joint design",
+        "passed": true
+      },
+      {
+        "name": "queue incompatible named joint",
+        "passed": true
+      },
+      {
+        "name": "same-name joint type change rejected without state corruption",
+        "passed": true
+      },
+      {
+        "name": "retry after failure",
+        "passed": true
+      },
+      {
+        "name": "retry restores previous design with live state",
+        "passed": true
+      },
+      {
+        "name": "author internal topology insertion",
+        "passed": true
+      },
+      {
+        "name": "publish topology revision",
+        "passed": true
+      },
+      {
+        "name": "queue internal topology insertion",
+        "passed": true
+      },
+      {
+        "name": "new free root initialized and existing joint retained",
+        "passed": true
+      },
+      {
+        "name": "queue internal topology deletion",
+        "passed": true
+      },
+      {
+        "name": "internal topology removal keeps both robot states",
+        "passed": true
+      },
+      {
+        "name": "running edit queues",
+        "passed": true
+      },
+      {
+        "name": "running edit resumes clock",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 0: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 0",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 0",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 1: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 1",
+        "passed": true
+      },
+      {
+        "name": "repeated edit completes 1",
+        "passed": true
+      },
+      {
+        "name": "same node reload gets a new generation ID",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 1",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 2: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 2",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 2",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 3: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 3",
+        "passed": true
+      },
+      {
+        "name": "repeated edit completes 3",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 3",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 4: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 4",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 4",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 5: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 5",
+        "passed": true
+      },
+      {
+        "name": "repeated edit completes 5",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 5",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 6: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 6",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 6",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 7: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 7",
+        "passed": true
+      },
+      {
+        "name": "repeated edit completes 7",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 7",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 8: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 8",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 8",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 9: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 9",
+        "passed": true
+      },
+      {
+        "name": "repeated edit completes 9",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 9",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 10: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 10",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 10",
+        "passed": true
+      },
+      {
+        "name": "repeated instance add 11: ",
+        "passed": true
+      },
+      {
+        "name": "repeated instance edit 11",
+        "passed": true
+      },
+      {
+        "name": "repeated edit completes 11",
+        "passed": true
+      },
+      {
+        "name": "delete pending/completed edit preserves peers 11",
+        "passed": true
+      },
+      {
+        "name": "save updated design reference",
+        "passed": true
+      },
+      {
+        "name": "restart keeps saved design revision",
+        "passed": true
+      },
+      {
+        "name": "restart uses authored initial pose instead of last simulation pose",
+        "passed": true
+      }
+    ],
+    "failed": 0,
+    "passed": 84
+  },
+  "editor": {
+    "checks": [
+      {
+        "name": "open relocated G1 package in editor",
+        "passed": true
+      },
+      {
+        "name": "real Apply signal commits G1 drive edit",
+        "passed": true
+      },
+      {
+        "name": "real Save project model signal publishes resource",
+        "passed": true
+      },
+      {
+        "name": "published resource exists",
+        "passed": true
+      },
+      {
+        "name": "relocated editing retains original source archive bytes",
+        "passed": true
+      },
+      {
+        "name": "runtime scene save dialog opened",
+        "passed": true
+      },
+      {
+        "name": "scene saved through real dialog signal",
+        "passed": true
+      },
+      {
+        "name": "saved scene loads",
+        "passed": true
+      },
+      {
+        "name": "scene pins published resource revision",
+        "passed": true
+      }
+    ],
+    "failed": 0,
+    "passed": 9
+  },
+  "recovery-integrity": {
+    "checks": [
+      {
+        "name": "valid mesh loads into live world",
+        "passed": true
+      },
+      {
+        "name": "persist malformed package deleted_entry",
+        "passed": true
+      },
+      {
+        "name": "reject malformed package deleted_entry",
+        "passed": true
+      },
+      {
+        "name": "runtime rejects deleted_entry",
+        "passed": true
+      },
+      {
+        "name": "live world unchanged deleted_entry",
+        "passed": true
+      },
+      {
+        "name": "persist malformed package unlisted_reference",
+        "passed": true
+      },
+      {
+        "name": "reject malformed package unlisted_reference",
+        "passed": true
+      },
+      {
+        "name": "runtime rejects unlisted_reference",
+        "passed": true
+      },
+      {
+        "name": "live world unchanged unlisted_reference",
+        "passed": true
+      },
+      {
+        "name": "persist malformed package extra_entry",
+        "passed": true
+      },
+      {
+        "name": "reject malformed package extra_entry",
+        "passed": true
+      },
+      {
+        "name": "runtime rejects extra_entry",
+        "passed": true
+      },
+      {
+        "name": "live world unchanged extra_entry",
+        "passed": true
+      },
+      {
+        "name": "persist malformed package absolute_path",
+        "passed": true
+      },
+      {
+        "name": "reject malformed package absolute_path",
+        "passed": true
+      },
+      {
+        "name": "runtime rejects absolute_path",
+        "passed": true
+      },
+      {
+        "name": "live world unchanged absolute_path",
+        "passed": true
+      },
+      {
+        "name": "persist malformed package traversal",
+        "passed": true
+      },
+      {
+        "name": "reject malformed package traversal",
+        "passed": true
+      },
+      {
+        "name": "runtime rejects traversal",
+        "passed": true
+      },
+      {
+        "name": "live world unchanged traversal",
+        "passed": true
+      },
+      {
+        "name": "persist malformed package backslash",
+        "passed": true
+      },
+      {
+        "name": "reject malformed package backslash",
+        "passed": true
+      },
+      {
+        "name": "runtime rejects backslash",
+        "passed": true
+      },
+      {
+        "name": "live world unchanged backslash",
+        "passed": true
+      },
+      {
+        "name": "persist malformed package empty_component",
+        "passed": true
+      },
+      {
+        "name": "reject malformed package empty_component",
+        "passed": true
+      },
+      {
+        "name": "runtime rejects empty_component",
+        "passed": true
+      },
+      {
+        "name": "live world unchanged empty_component",
+        "passed": true
+      },
+      {
+        "name": "persist malformed package compiler_redirect",
+        "passed": true
+      },
+      {
+        "name": "reject malformed package compiler_redirect",
+        "passed": true
+      },
+      {
+        "name": "runtime rejects compiler_redirect",
+        "passed": true
+      },
+      {
+        "name": "live world unchanged compiler_redirect",
+        "passed": true
+      },
+      {
+        "name": "persist malformed package include",
+        "passed": true
+      },
+      {
+        "name": "reject malformed package include",
+        "passed": true
+      },
+      {
+        "name": "runtime rejects include",
+        "passed": true
+      },
+      {
+        "name": "live world unchanged include",
+        "passed": true
+      },
+      {
+        "name": "changed valid mesh rejected by hash",
+        "passed": true
+      },
+      {
+        "name": "persist changed mesh and missing entry",
+        "passed": true
+      },
+      {
+        "name": "deleted entry cannot bypass changed-mesh checksum",
+        "passed": true
+      },
+      {
+        "name": "corrupt package does not mutate loaded model",
+        "passed": true
+      }
+    ],
+    "failed": 0,
+    "passed": 41
+  },
+  "isolated-world-rejections": [
+    {
+      "case": "missing_model",
+      "command": [
+        "/workspace/shared/tools/bin/godot",
+        "--headless",
+        "--path",
+        "/workspace/shared/validation/milestone-portable-full/relocated",
+        "--script",
+        "res://world_rejection_test.gd",
+        "--",
+        "missing_model"
+      ],
+      "exit": 0,
+      "log": "missing_model.log",
+      "result": {
+        "case": "missing_model",
+        "checks": [
+          {
+            "name": "rejected before space configuration",
+            "passed": true
+          },
+          {
+            "name": "exact structured diagnostic",
+            "passed": true
+          },
+          {
+            "name": "failed entry does not claim ownership",
+            "passed": true
+          },
+          {
+            "name": "corrected entry recovers original start mode",
+            "passed": true
+          },
+          {
+            "name": "recovered world loads complete robot",
+            "passed": true
+          },
+          {
+            "name": "cleanup releases ownership",
+            "passed": true
+          }
+        ],
+        "failed": 0
+      },
+      "passed": true
+    },
+    {
+      "case": "ownership",
+      "command": [
+        "/workspace/shared/tools/bin/godot",
+        "--headless",
+        "--path",
+        "/workspace/shared/validation/milestone-portable-full/relocated",
+        "--script",
+        "res://world_rejection_test.gd",
+        "--",
+        "ownership"
+      ],
+      "exit": 0,
+      "log": "ownership.log",
+      "result": {
+        "case": "ownership",
+        "checks": [
+          {
+            "name": "live owner fixture loaded",
+            "passed": true
+          },
+          {
+            "name": "second owner rejected before configuration",
+            "passed": true
+          },
+          {
+            "name": "exact structured diagnostic",
+            "passed": true
+          },
+          {
+            "name": "rejection preserves owner model state revision and pause",
+            "passed": true
+          },
+          {
+            "name": "failed owner exit preserves live world",
+            "passed": true
+          },
+          {
+            "name": "conflict recovers after owner disposal",
+            "passed": true
+          },
+          {
+            "name": "recovered world loads complete robot",
+            "passed": true
+          },
+          {
+            "name": "cleanup releases ownership",
+            "passed": true
+          }
+        ],
+        "failed": 0
+      },
+      "passed": true
+    }
+  ],
+  "strict_log_failures": []
+}

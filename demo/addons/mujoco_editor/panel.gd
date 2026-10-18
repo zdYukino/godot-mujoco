@@ -51,6 +51,7 @@ func _ready() -> void:
 	button(toolbar, "Save project model", save_project_model)
 	button(toolbar, "Open project model", open_project_model_dialog)
 	button(toolbar, "Create runtime scene", create_runtime_scene_dialog)
+	button(toolbar, "Create simulation playground", func(): create_runtime_scene_dialog(true))
 	button(toolbar, "Recover", func(): open_document(recovery_path))
 	button(toolbar, "Run / Pause", toggle_run)
 	button(toolbar, "Frame all", frame_all)
@@ -305,7 +306,7 @@ func import_g1_dialog(free_base: bool = false) -> void:
 	add_child(dialog)
 	dialog.popup_centered_ratio(.7)
 
-func create_runtime_scene_dialog() -> void:
+func create_runtime_scene_dialog(playground: bool = false) -> void:
 	if not can_leave_fields(): return
 	if project_model_path.is_empty() or state.dirty or state.document.snapshot() != project_model_snapshot:
 		show_error("Save project model first so the scene references an explicit immutable revision")
@@ -317,7 +318,7 @@ func create_runtime_scene_dialog() -> void:
 	dialog.current_file = "mujoco_scene.tscn"
 	dialog.file_selected.connect(func(path: String):
 		var resource = ResourceLoader.load(project_model_path)
-		var error := SceneBuilder.save(resource,path)
+		var error := SceneBuilder.save_playground(resource,path) if playground else SceneBuilder.save(resource,path)
 		if error == OK:
 			refresh_project_files()
 			status.text = "Saved runtime scene: " + path + ". Select MuJoCo physics, restart, and instantiate this scene."

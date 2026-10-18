@@ -1,0 +1,410 @@
+{
+  "checks": [
+    {
+      "name": "create clock fixture",
+      "passed": true
+    },
+    {
+      "name": "save clock design",
+      "passed": true
+    },
+    {
+      "name": "save authored environment",
+      "passed": true
+    },
+    {
+      "name": "host configures independent world",
+      "passed": true
+    },
+    {
+      "name": "UI game clock advances while simulation stays paused",
+      "passed": true
+    },
+    {
+      "name": "accept step_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete step_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "exact N native steps while remaining paused",
+      "passed": true
+    },
+    {
+      "name": "accept step_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete step_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "exact N native steps while remaining paused",
+      "passed": true
+    },
+    {
+      "name": "accept step_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete step_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "exact N native steps while remaining paused",
+      "passed": true
+    },
+    {
+      "name": "accept step_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete step_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "exact N native steps while remaining paused",
+      "passed": true
+    },
+    {
+      "name": "invalid step is queued for boundary validation",
+      "passed": true
+    },
+    {
+      "name": "invalid step rolls back",
+      "passed": true
+    },
+    {
+      "name": "accept request_pause",
+      "passed": true
+    },
+    {
+      "name": "complete request_pause: ",
+      "passed": true
+    },
+    {
+      "name": "accept request_pause",
+      "passed": true
+    },
+    {
+      "name": "complete request_pause: ",
+      "passed": true
+    },
+    {
+      "name": "repeated pause freezes simulation",
+      "passed": true
+    },
+    {
+      "name": "request reset",
+      "passed": true
+    },
+    {
+      "name": "repeated reset while pending rejected",
+      "passed": true
+    },
+    {
+      "name": "reset restores time qpos qvel",
+      "passed": true
+    },
+    {
+      "name": "reset synchronizes ordinary Godot body cache",
+      "passed": true
+    },
+    {
+      "name": "accept request_pause",
+      "passed": true
+    },
+    {
+      "name": "complete request_pause: ",
+      "passed": true
+    },
+    {
+      "name": "accept request_pause",
+      "passed": true
+    },
+    {
+      "name": "complete request_pause: ",
+      "passed": true
+    },
+    {
+      "name": "repeated pause freezes simulation",
+      "passed": true
+    },
+    {
+      "name": "request reset",
+      "passed": true
+    },
+    {
+      "name": "repeated reset while pending rejected",
+      "passed": true
+    },
+    {
+      "name": "reset restores time qpos qvel",
+      "passed": true
+    },
+    {
+      "name": "reset synchronizes ordinary Godot body cache",
+      "passed": true
+    },
+    {
+      "name": "accept request_pause",
+      "passed": true
+    },
+    {
+      "name": "complete request_pause: ",
+      "passed": true
+    },
+    {
+      "name": "accept request_pause",
+      "passed": true
+    },
+    {
+      "name": "complete request_pause: ",
+      "passed": true
+    },
+    {
+      "name": "repeated pause freezes simulation",
+      "passed": true
+    },
+    {
+      "name": "request reset",
+      "passed": true
+    },
+    {
+      "name": "repeated reset while pending rejected",
+      "passed": true
+    },
+    {
+      "name": "reset restores time qpos qvel",
+      "passed": true
+    },
+    {
+      "name": "reset synchronizes ordinary Godot body cache",
+      "passed": true
+    },
+    {
+      "name": "accept step_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete step_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "filtered actuator stores dynamic activation",
+      "passed": true
+    },
+    {
+      "name": "accept reset_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete reset_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "reset clears activation forces and warm-start history",
+      "passed": true
+    },
+    {
+      "name": "reset restores controls and clears ordinary constant force",
+      "passed": true
+    },
+    {
+      "name": "accept step_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete step_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "accept reset_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete reset_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "reset retains and initializes runtime addition",
+      "passed": true
+    },
+    {
+      "name": "accept step_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete step_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "accept reset_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete reset_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "reset retains and initializes runtime addition",
+      "passed": true
+    },
+    {
+      "name": "accept step_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete step_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "accept reset_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete reset_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "reset retains and initializes runtime addition",
+      "passed": true
+    },
+    {
+      "name": "author inertia edit while world paused",
+      "passed": true
+    },
+    {
+      "name": "queue paused runtime model edit",
+      "passed": true
+    },
+    {
+      "name": "paused model transaction preserves simulation clock",
+      "passed": true
+    },
+    {
+      "name": "accept reset_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete reset_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "state reset keeps committed design changes",
+      "passed": true
+    },
+    {
+      "name": "accept step_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete step_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "independent World3D clock remains unchanged",
+      "passed": true
+    },
+    {
+      "name": "accept capture_snapshot",
+      "passed": true
+    },
+    {
+      "name": "complete capture_snapshot: ",
+      "passed": true
+    },
+    {
+      "name": "accept step_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete step_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "accept reset_simulation",
+      "passed": true
+    },
+    {
+      "name": "complete reset_simulation: ",
+      "passed": true
+    },
+    {
+      "name": "explicit checkpoint preserves captured time",
+      "passed": true
+    },
+    {
+      "name": "rebuild requires explicit discard policy",
+      "passed": true
+    },
+    {
+      "name": "invalid environment candidate queued",
+      "passed": true
+    },
+    {
+      "name": "failed environment candidate preserves original world and state",
+      "passed": true
+    },
+    {
+      "name": "request environment rebuild",
+      "passed": true
+    },
+    {
+      "name": "repeated environment rebuild rejected",
+      "passed": true
+    },
+    {
+      "name": "environment reload restores saved design and discards runtime additions",
+      "passed": true
+    },
+    {
+      "name": "request environment rebuild",
+      "passed": true
+    },
+    {
+      "name": "repeated environment rebuild rejected",
+      "passed": true
+    },
+    {
+      "name": "environment reload restores saved design and discards runtime additions",
+      "passed": true
+    },
+    {
+      "name": "request environment rebuild",
+      "passed": true
+    },
+    {
+      "name": "repeated environment rebuild rejected",
+      "passed": true
+    },
+    {
+      "name": "environment reload restores saved design and discards runtime additions",
+      "passed": true
+    },
+    {
+      "name": "game UI survives all resets and rebuilds",
+      "passed": true
+    },
+    {
+      "name": "actual Step N control routes to native clock",
+      "passed": true
+    },
+    {
+      "name": "actual reset control restores state",
+      "passed": true
+    },
+    {
+      "name": "editor playground builder saves controls and environment",
+      "passed": true
+    },
+    {
+      "name": "saved playground reopens with connected controls",
+      "passed": true
+    }
+  ],
+  "failed": 0,
+  "passed": 101
+}

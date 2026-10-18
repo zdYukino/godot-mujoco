@@ -1,0 +1,40 @@
+{
+  "platform": "Linux x86_64",
+  "godot": "4.7.2.stable.mono.official.ed1daf0bf",
+  "mujoco": "3.16.0",
+  "extension_sha256": "001d5ac28ef4efa68323e62b8053f3e8c8e6ae0f5230ce3102e191ff58b10e7f",
+  "original_assets_verified": 36,
+  "commands": {
+    "milestone-native-final": {
+      "exit_code": 0
+    },
+    "milestone-dynamic-final": {
+      "exit_code": 0
+    },
+    "milestone-editor-final": {
+      "exit_code": 0
+    },
+    "milestone-freebase-final": {
+      "exit_code": 0
+    },
+    "milestone-clock-release": {
+      "exit_code": 0
+    },
+    "milestone-portable-full": {
+      "exit_code": 0
+    },
+    "milestone-g1-full": {
+      "exit_code": 0
+    }
+  },
+  "standalone_gui": {
+    "exit_code": 0,
+    "strict_gate": "pass"
+  },
+  "editor_gui": {
+    "exit_code": 0,
+    "strict_gate": "FAIL: Vulkan probe ERROR",
+    "checks": 163
+  },
+  "cold_import": "Known independent unresolved limitation; successful fresh runs do not establish reliability."
+}

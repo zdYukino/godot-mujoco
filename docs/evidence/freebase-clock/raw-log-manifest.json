@@ -1,0 +1,266 @@
+{
+  "milestone-native-final/primitives-2.json": {
+    "sha256": "376a2b8a3a9d33664ca5bec23a8bf5ea732dce9f140efabae19af04130ca1650",
+    "bytes": 1730
+  },
+  "milestone-native-final/rotation-3.log": {
+    "sha256": "ba3baa83c8522383bc76108bca86108042cd25669ef149b3d089970ba6ecfde8",
+    "bytes": 13562
+  },
+  "milestone-native-final/import.log": {
+    "sha256": "e6858ac5161fab9e114300476efd82c0faa4353bdee2e1ad2fb969b02094bcce",
+    "bytes": 2378
+  },
+  "milestone-native-final/primitives-1.json": {
+    "sha256": "376a2b8a3a9d33664ca5bec23a8bf5ea732dce9f140efabae19af04130ca1650",
+    "bytes": 1730
+  },
+  "milestone-native-final/primitives-2.log": {
+    "sha256": "7e2d164f77850fbb68f33ffdd82b46ebf64263552352904058062faeaa9290ad",
+    "bytes": 4476
+  },
+  "milestone-native-final/rotation-2.log": {
+    "sha256": "3b87d9c791043c8fe63ca8323ffc747517e901d6c806355ff8ed414be50bf2ac",
+    "bytes": 13562
+  },
+  "milestone-native-final/runtime-1.log": {
+    "sha256": "2e9919ff267a4c775a86166b2cf6c266d0938e12774c888ec5c1d6aa5ab9fb3a",
+    "bytes": 8480
+  },
+  "milestone-native-final/results.json": {
+    "sha256": "8aa3415235870cff19984cc9b7dc8c04f6fa429510d67f9d26bf12157c2acf25",
+    "bytes": 24716
+  },
+  "milestone-native-final/primitives-3.log": {
+    "sha256": "8745a0241d2236f09c1b0b36fa69b72bf226ea7e03450364a2b4c1fd7771b65a",
+    "bytes": 4476
+  },
+  "milestone-native-final/runtime-2.log": {
+    "sha256": "f6bca318df49ef1d4987405d026567974410a265538ceff6f9622b89f26636e0",
+    "bytes": 8480
+  },
+  "milestone-native-final/primitives-1.log": {
+    "sha256": "0ab3a81e3fd8411f6128c67c96adf017f375b319af8ffeea424cc9f7feb95a69",
+    "bytes": 4476
+  },
+  "milestone-native-final/results-3.json": {
+    "sha256": "2cb661a52e6c50bbc5f7749440ab533cdd0b4e47e58d53bd7e6373b79408a015",
+    "bytes": 3946
+  },
+  "milestone-native-final/results-1.json": {
+    "sha256": "2cb661a52e6c50bbc5f7749440ab533cdd0b4e47e58d53bd7e6373b79408a015",
+    "bytes": 3946
+  },
+  "milestone-native-final/primitives-3.json": {
+    "sha256": "376a2b8a3a9d33664ca5bec23a8bf5ea732dce9f140efabae19af04130ca1650",
+    "bytes": 1730
+  },
+  "milestone-native-final/rotation-1.log": {
+    "sha256": "3c70bf0136543354fc2c48ef4c998942f4f5c71fac8ec93bb8e72c31041a57d0",
+    "bytes": 13562
+  },
+  "milestone-native-final/results-2.json": {
+    "sha256": "2cb661a52e6c50bbc5f7749440ab533cdd0b4e47e58d53bd7e6373b79408a015",
+    "bytes": 3946
+  },
+  "milestone-native-final/runtime-3.log": {
+    "sha256": "1c4835984e3133b27ffa924efb82f81bb1bb1c09f6d77ce90024b485ae44256b",
+    "bytes": 8480
+  },
+  "milestone-dynamic-final/import.log": {
+    "sha256": "31204e02deee074bd7088ca84f170082d6b164b09542da98c998736b8a03f8c6",
+    "bytes": 2262
+  },
+  "milestone-dynamic-final/ui-smoke.log": {
+    "sha256": "4dc6ad58b8237dd599ac53d9bd81d7e53d94124d9516107fd8f122cc709cfaba",
+    "bytes": 5759
+  },
+  "milestone-dynamic-final/runtime.log": {
+    "sha256": "38e1cbd147059b689198568f0e7bfbf6ff2e07250efe937d0f863013e91a2e51",
+    "bytes": 17292
+  },
+  "milestone-dynamic-final/results.json": {
+    "sha256": "af25d5671dd97490b774882b9d023e4cbd34b4b8e9aa4ccaa95261a8ee61630a",
+    "bytes": 7624
+  },
+  "milestone-editor-final/import.log": {
+    "sha256": "5200c6714f4fe36ea7aa921e5127f94fea40bb9a10f2df512de5ec54c941bdf5",
+    "bytes": 3141
+  },
+  "milestone-editor-final/runtime.log": {
+    "sha256": "3eb172c3f5550e5abd8789e58390a28e22789ef7de7a8e0c89b302005bd5e895",
+    "bytes": 36664
+  },
+  "milestone-editor-final/results.json": {
+    "sha256": "2fb9da126f925fae06cd3f13021df1177958813ea9f254b636d8f99732b1c3d8",
+    "bytes": 13414
+  },
+  "milestone-freebase-final/import.log": {
+    "sha256": "bad60185d1c860274f0429482393d0833eea9c3ab74bac964458c348bc6b8805",
+    "bytes": 2204
+  },
+  "milestone-freebase-final/runtime.log": {
+    "sha256": "ca2afa1bdc2e424a4f326537f249ed6489e4b37384d3e4028ba2cafc210c49ae",
+    "bytes": 20635
+  },
+  "milestone-freebase-final/results.json": {
+    "sha256": "17cb7d2fc4e68853dcdeb4a8a9d317a8b3c0d7d508ffa181087e3b20a2028f1d",
+    "bytes": 3184
+  },
+  "milestone-clock-release/import.log": {
+    "sha256": "bad60185d1c860274f0429482393d0833eea9c3ab74bac964458c348bc6b8805",
+    "bytes": 2204
+  },
+  "milestone-clock-release/runtime.log": {
+    "sha256": "77f96712cac0f6c97bb4d0fbbe176ae5426801c05a63e59500fa7318de1c3505",
+    "bytes": 33153
+  },
+  "milestone-clock-release/results.json": {
+    "sha256": "ac8e5d5a62806aa6a3680a2e825faaeed54e78363834f951bca549fde59b3bc5",
+    "bytes": 8562
+  },
+  "milestone-clock-release/csharp.log": {
+    "sha256": "a6945bc586069831a6e0a43367a4ce0768e0a0416601b20a91b335c2bab91171",
+    "bytes": 3131
+  },
+  "milestone-clock-release/dotnet-build.log": {
+    "sha256": "f8357f9aff924f3c204cd3c87baca3c041a2d58c021599849ec77d0a0df30604",
+    "bytes": 341
+  },
+  "milestone-portable-full/import.log": {
+    "sha256": "1a00ab9637412b138189398ec09329a79580360b82605647de65400c361b81a4",
+    "bytes": 2842
+  },
+  "milestone-portable-full/relocated-import.log": {
+    "sha256": "4fd127b7f13622ed817eb2c78b8ee4242ff8cb1d1b5b5bde22d8c40e86ac8ff9",
+    "bytes": 4166
+  },
+  "milestone-portable-full/recovery-integrity.log": {
+    "sha256": "c4b7c95cf2a1de96319e702c19657beba8be4e4e8dd72e28431199f1efde13f2",
+    "bytes": 6947
+  },
+  "milestone-portable-full/editor-scene-restart.log": {
+    "sha256": "2364862769572d9e9977f7f37f1e9d93b0be0ab2e6e4d8fceea6d124fe7224ea",
+    "bytes": 2796
+  },
+  "milestone-portable-full/relocated-runtime.log": {
+    "sha256": "b96eea52d9595b5efbc075115110be9418a0378a7ce48d85064006e1119e27d3",
+    "bytes": 16096
+  },
+  "milestone-portable-full/runtime.log": {
+    "sha256": "c859898f22763dd06c606d56459244f6f9d86c8c46b8b861772680aa4d1edc16",
+    "bytes": 16096
+  },
+  "milestone-portable-full/results.json": {
+    "sha256": "699183a95fb69e70a00df168424f832500027428653aa879d808dd21fa4f70ce",
+    "bytes": 21146
+  },
+  "milestone-portable-full/author.log": {
+    "sha256": "2a0c7a4c44f11b418f8c3ef0a38486ee5ada6ea3fa385283e06a67030c2c1ff3",
+    "bytes": 7803
+  },
+  "milestone-portable-full/editor-flow.log": {
+    "sha256": "607f7565f63b88487bac53f09011638b1e5ba70034328a8a99b388a1da229ba6",
+    "bytes": 6760
+  },
+  "milestone-portable-full/negative-suite.log": {
+    "sha256": "55c64162dafaa6733544eec911c1dff67108ac533be28835bcaa2256ee5cd776",
+    "bytes": 109
+  },
+  "milestone-portable-full/csharp.log": {
+    "sha256": "f1ec2d7eaa46c2877114ffb7f4dc39c90bbc5e980e5b3fd324c3ed57975e599e",
+    "bytes": 4782
+  },
+  "milestone-portable-full/live-edit.log": {
+    "sha256": "90a80772acad3760eca69e4aa00589948de7ff2c27881cd0587d9243a9427b76",
+    "bytes": 48142
+  },
+  "milestone-portable-full/dotnet-build.log": {
+    "sha256": "c80644a4c41b4d6b9892409b784173b1400b179ec9e8128817e2a33ffd5d3868",
+    "bytes": 354
+  },
+  "milestone-portable-full/negative/missing_model.log": {
+    "sha256": "5766136542289f54c143fc132145035ec949d856d5518ff0a3e5905d5df59536",
+    "bytes": 3463
+  },
+  "milestone-portable-full/negative/results.json": {
+    "sha256": "0996b927a61e77ce954abfa2d68c205976d5072575f3ebf47883334ffbe146d1",
+    "bytes": 2368
+  },
+  "milestone-portable-full/negative/ownership.log": {
+    "sha256": "d620d831989c4a86371a120059aef24e335bc8c1321e11f9f6102bef61d7e9d7",
+    "bytes": 5933
+  },
+  "milestone-g1-full/import.log": {
+    "sha256": "c4268e9a4b787795694311f7649169a74382a75f4272658a4c8622cf030f00db",
+    "bytes": 3214
+  },
+  "milestone-g1-full/generation.log": {
+    "sha256": "05e897f3e381334f3ce543dd7ac284d8a6c8a93d3efac01a159a7a0cfc415d86",
+    "bytes": 150
+  },
+  "milestone-g1-full/native.log": {
+    "sha256": "e033ce3c306eaaf84f94d8c41e842068259e5a276da801c8f28daf9bcab506b2",
+    "bytes": 167
+  },
+  "milestone-g1-full/csharp.log": {
+    "sha256": "e7258bd80054f44f4f01934c007dbfc8ef1a8b8d1cc9d8cfad944c6fb1464778",
+    "bytes": 630
+  },
+  "milestone-g1-full/dotnet-build.log": {
+    "sha256": "ab7fbdc331fac1c5170550bf3403189c2f234063e64aff90b0b4b3243cd8cca1",
+    "bytes": 337
+  },
+  "milestone-g1-full/gdscript.log": {
+    "sha256": "bcba7d29ef3ac928b6da49d4a399b464c0ef8f58e5fc03aaff5850b64a2dae92",
+    "bytes": 635
+  },
+  "freebase-playground-gui-release.log": {
+    "sha256": "ef827024a2c5fc72e1b0d29ccdfa4dde6e61f396ab9d862c3ccbeab6f1b035f4",
+    "bytes": 6993
+  },
+  "freebase-playground-prepare.log": {
+    "sha256": "9a47a161591c2963b49fae1aef247f16ae77b005b02185a37fd24821e612d957",
+    "bytes": 1790
+  },
+  "milestone-editor-gui.log": {
+    "sha256": "632051fd2744d2c9878c9ed34403a6adf451302edcc11eb8eaae276a59dc11cd",
+    "bytes": 36519
+  },
+  "milestone-editor-gui-results.json": {
+    "sha256": "650e77fd9135c98c702a4b7bf6477f6731a31d211ab9a8dd05129c811b90a86d",
+    "bytes": 11979
+  },
+  "milestone-final-build.log": {
+    "sha256": "89c6695ce8da71a181fff582fcb46560bea2b4a19ef154b74fb8754c5257b2d8",
+    "bytes": 599
+  },
+  "milestone-native-final-driver.log": {
+    "sha256": "1a9b94efcc068e43e2f45eb16276eada764d8a11445fdb01684102739f913bf8",
+    "bytes": 39024
+  },
+  "milestone-dynamic-final-driver.log": {
+    "sha256": "ef83123a3a1e1f1fd65cc2fb1eddbd5c3303b6109ea85ddb9795651dd71246f9",
+    "bytes": 77
+  },
+  "milestone-editor-final-driver.log": {
+    "sha256": "dfdcbd2ca84a1e45cdf5f658ccc4b7909be519c145aab522a090c4e5edb40f66",
+    "bytes": 76
+  },
+  "milestone-freebase-final-driver.log": {
+    "sha256": "64cd4b1f4da145c5b83bc5dbffdb75e6022161fa21d88d360ab8693419cc9ce8",
+    "bytes": 71
+  },
+  "milestone-clock-release-driver.log": {
+    "sha256": "655ba9c9cbfde719e88d1836aa1fb6ee71bd383cb62bf745ad6caacd1118fc27",
+    "bytes": 68
+  },
+  "milestone-portable-full-driver.log": {
+    "sha256": "81bb8bea5fca57d25f91965beadb33d4ebe3a9b2cf254789cd5775d80c556a3b",
+    "bytes": 124
+  },
+  "milestone-g1-full-driver.log": {
+    "sha256": "01f9acdd3531fccb5230918af843734d6f635d9ac24090c6f7f49cf7b6ced20a",
+    "bytes": 1676
+  }
+}

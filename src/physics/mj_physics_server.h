@@ -36,6 +36,7 @@ struct MjBody {
 };
 struct MjSpace {
  bool paused=false; uint64_t revision=0; String last_error;
+ Dictionary born_state, checkpoint; int single_steps=0; bool skip_tick=false;
  bool authored_options=false; mjOption options{};
  std::map<uint64_t,std::unique_ptr<MjImported>> imported;
  RID rid; bool active=false, dirty=true; mjModel *model=nullptr; mjData *data=nullptr;
@@ -73,6 +74,14 @@ public:
  Dictionary scene_edit_result(int64_t request);
  void scene_cancel_model_edit(int64_t request);
  void process_model_edits();
+ int64_t scene_request_world_command(const RID &space,const String &command,int count);
+ Dictionary scene_world_command_result(int64_t request);
+ void scene_cancel_world_command(int64_t request);
+ void process_world_commands();
+ void remember_initial_state(MjSpace &space);
+ struct WorldCommand {int64_t request;RID space;String command;int count;};
+ std::deque<WorldCommand> world_commands;
+ std::map<int64_t,Dictionary> world_command_results;
  struct ModelEdit {int64_t request, expected_revision; RID space, object; Dictionary snapshot; String directory;};
  std::mutex edits_mutex;
  std::deque<ModelEdit> model_edits;
