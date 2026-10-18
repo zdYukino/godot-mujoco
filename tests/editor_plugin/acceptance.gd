@@ -114,7 +114,7 @@ func run(plugin: EditorPlugin) -> void:
 	check(doc.snapshot() == before, "compile failure preserves full state")
 	for shape in ["box", "sphere", "cylinder"]:
 		check(panel.execute({"op":"add","shape":shape,"name":shape}), "create " + shape)
-		check(panel.execute({"op":"set","kind":"geom","name":shape+"_geom","values":{"size":[.3,.4,.5],"density":500,"friction":[.7,.01,.001]}}), "edit geometry " + shape)
+		check(panel.execute({"op":"set","kind":"geom","name":shape+"_geom","values":{"size":([.3,0,0] if shape=="sphere" else [.3,.4,0] if shape=="cylinder" else [.3,.4,.5]),"density":500,"friction":[.7,.01,.001]}}), "edit geometry " + shape)
 		var mass: float = entity(doc,"body",shape).mass
 		var expected := .6*.8*1.0*500 if shape=="box" else 4.0/3.0*PI*pow(.3,3)*500 if shape=="sphere" else PI*pow(.3,2)*.8*500
 		check(abs(mass-expected) < .001, "real density and dimensions " + shape)
@@ -206,6 +206,7 @@ func run(plugin: EditorPlugin) -> void:
 	check(not constrained.edit({"op":"set","kind":"body","name":"framed","values":{"pos":[0,0,0]}}), "ambiguous source frame pose diagnosed")
 	check(not constrained.edit({"op":"set","kind":"geom","name":"fromto_geom","values":{"size":[.2,.4,0]}}), "fromto-derived size diagnosed")
 	constrained = null
+	advanced_properties(panel, doc)
 	var root := plugin.get_tree().root
 	var remembered: RefCounted = plugin.state
 	for i in range(2):
@@ -227,3 +228,46 @@ func run(plugin: EditorPlugin) -> void:
 	file.close()
 	print("EDITOR_RESULT "+JSON.stringify(result))
 	root.get_tree().quit(0 if failed==0 else 1)
+
+func advanced_properties(panel: Control, doc: RefCounted) -> void:
+	var isolated: RefCounted = ClassDB.instantiate("MjEditorDocument")
+	check(isolated.import_file("res://fixtures/pendulum.xml"), "advanced fixture")
+	var changes := {"limited":true,"range":[-.7,.9],"damping":.25,"frictionloss":.1}
+	check(isolated.edit({"op":"set","kind":"joint","name":"hinge","values":changes}), "joint limits damping friction transaction")
+	var joint := entity(isolated,"joint","hinge")
+	check(joint.range == changes.range and joint.damping == .25 and joint.frictionloss == .1, "compiled joint parameters match")
+	var before: Dictionary = isolated.snapshot()
+	for values in [{"range":[1,-1]}, {"damping":-.1}, {"frictionloss":-.1}, {"limited":1}]:
+		check(not isolated.edit({"op":"set","kind":"joint","name":"hinge","values":values}) and same_snapshot(before,isolated.snapshot()), "invalid joint rollback " + str(values))
+	check(isolated.edit({"op":"set","kind":"body","name":"arm","values":{"mass":3.0,"inertia":[.2,.3,.4],"ipos":[0,0,-.3],"iquat":[1,0,0,0]}}), "manual inertia and mass atomic edit")
+	var body := entity(isolated,"body","arm")
+	check(body.mass == 3.0 and body.inertia == [.2,.3,.4] and body.inertia_mode == "manual", "manual inertia overrides geometry")
+	before = isolated.snapshot()
+	for values in [{"inertia":[1,.1,.1]}, {"inertia":[0,.1,.1]}, {"inertia_mode":"automatic","mass":2}]:
+		check(not isolated.edit({"op":"set","kind":"body","name":"arm","values":values}) and same_snapshot(before,isolated.snapshot()), "invalid inertia rollback " + str(values))
+	check(not isolated.edit({"op":"set","kind":"geom","name":"arm_geom","values":{"density":20}}), "manual inertia rejects ignored density")
+	check(isolated.edit({"op":"set","kind":"body","name":"arm","values":{"inertia_mode":"automatic"}}), "return to inferred inertia: " + isolated.get_error())
+	check(abs(entity(isolated,"body","arm").mass-2)<1e-8, "geom explicit mass takes priority over density")
+	check(isolated.edit({"op":"set","kind":"geom","name":"arm_geom","values":{"density":100}}), "density explicitly replaces geom mass")
+	check(abs(entity(isolated,"body","arm").mass-3.2)<1e-8, "density changes inferred body mass")
+	var restored: RefCounted = ClassDB.instantiate("MjEditorDocument")
+	check(restored.restore(isolated.snapshot()) and same_snapshot(restored.snapshot(),isolated.snapshot()), "new parameters save restore")
+	check(isolated.edit({"op":"add","shape":"sphere","name":"round"}), "sphere created for dimensions")
+	before = isolated.snapshot()
+	check(not isolated.edit({"op":"set","kind":"geom","name":"round_geom","values":{"size":[.3,.4,.5]}}) and same_snapshot(before,isolated.snapshot()), "sphere rejects ellipsoid-like dimensions")
+	panel.select_entity("geom","cylinder_geom")
+	before = doc.snapshot()
+	check(panel.transform_selection("move",1), "viewport operation moves selection")
+	var undo: UndoRedo = panel.plugin.get_undo_redo().get_history_undo_redo(panel.plugin.get_undo_redo().get_object_history_id(panel.state))
+	undo.undo()
+	check(same_snapshot(before,doc.snapshot()), "viewport move undo")
+	undo.redo()
+	check(panel.transform_selection("rotate",1), "viewport operation rotates selection")
+	check(panel.transform_selection("size",1), "viewport operation resizes physics geometry")
+	panel.pending = true
+	before = doc.snapshot()
+	check(not panel.transform_selection("move",1) and same_snapshot(before,doc.snapshot()), "viewport operation cannot discard draft")
+	panel.pending = false
+	panel.frame_all()
+	var point: Vector2 = panel.camera.unproject_position(panel.meshes.cylinder_geom.global_position)
+	check(panel.pick_geometry(point) == "cylinder_geom", "actual viewport triangle picking selects cylinder")

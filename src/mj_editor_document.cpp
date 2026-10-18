@@ -140,12 +140,48 @@ bool MjEditorDocument::edit(const Dictionary &cmd){
  if(op!="set")return reject("Unknown edit operation");
  if((values.has("pos")||values.has("quat"))&&mjs_getFrame(e))return reject("Frame-attached pose is read-only; local compiled coordinates differ from source frame coordinates");
  if(t==mjOBJ_GEOM && (values.has("pos")||values.has("quat")||values.has("size")) && std::isfinite(mjs_asGeom(e)->fromto[0]))return reject("fromto geometry pose/size is read-only; reimport a model with explicit pos/quat/size");
+ // Apply inertial policy before field iteration so dictionary order cannot change physics.
+ if(t==mjOBJ_BODY && values.has("inertia_mode")){
+  String mode=values["inertia_mode"];auto*b=mjs_asBody(e);
+  if(mode!="automatic"&&mode!="manual")return reject("inertia_mode must be automatic or manual");
+  if(mode=="automatic"){
+   if(c->compiler.inertiafromgeom==mjINERTIAFROMGEOM_FALSE)return reject("Source compiler disables geometry inertia inference; automatic mode is read-only");
+   if(values.has("mass")||values.has("inertia")||values.has("ipos")||values.has("iquat"))return reject("Automatic inertia cannot be mixed with manual inertial fields");
+   mjsBody defaults{};mjs_defaultBody(&defaults);
+   b->explicitinertial=false;b->mass=defaults.mass;std::copy_n(defaults.inertia,3,b->inertia);std::copy_n(defaults.ipos,3,b->ipos);std::copy_n(defaults.iquat,4,b->iquat);b->ialt=defaults.ialt;
+   for(double &v:b->fullinertia)v=std::numeric_limits<double>::quiet_NaN();
+   // Preserve the source compiler policy for all other bodies.
+  }
+ }
+ if(t==mjOBJ_BODY && (values.has("mass")||values.has("inertia")||values.has("ipos")||values.has("iquat")||String(values.get("inertia_mode",String()))=="manual")){
+  if(c->compiler.inertiafromgeom==mjINERTIAFROMGEOM_TRUE)return reject("Source compiler forces geometry inertia inference; manual inertia is read-only");
+  auto*b=mjs_asBody(e);int id=mj_name2id(model,t,n.utf8().get_data());
+  b->mass=model->body_mass[id];std::copy_n(model->body_inertia+3*id,3,b->inertia);
+  std::copy_n(model->body_ipos+3*id,3,b->ipos);std::copy_n(model->body_iquat+4*id,4,b->iquat);
+  b->explicitinertial=true;b->ialt.type=mjORIENTATION_QUAT;
+  for(double &v:b->fullinertia)v=std::numeric_limits<double>::quiet_NaN();
+  // Preserve the source compiler policy for all other bodies.
+  if(values.has("mass")){double mass;if(!scalar(values["mass"],mass)||mass<=0||b->mass<=0)return reject("Mass must be positive");for(double &v:b->inertia)v*=mass/b->mass;b->mass=mass;}
+ }
  Array keys=values.keys();for(int i=0;i<keys.size();++i){String key=keys[i];Variant v=values[key];double x=0;double a[4]={};bool ok=false;
   if(t==mjOBJ_BODY){auto*b=mjs_asBody(e);int id=mj_name2id(model,t,n.utf8().get_data());
    if(key=="pos"||key=="quat"){int count=key=="pos"?3:4;ok=read_values(v,a,count);if(ok&&key=="quat"){double norm=0;for(double z:a)norm+=z*z;ok=norm>1e-12;if(ok)for(double &z:a)z/=sqrt(norm);}if(ok){std::copy_n(a,count,key=="pos"?b->pos:b->quat);if(key=="quat")b->alt.type=mjORIENTATION_QUAT;}}
-   if(key=="mass"){ok=scalar(v,x)&&x>0&&id>0;if(ok){double ratio=x/model->body_mass[id];b->mass=x;for(int k=0;k<3;++k){b->inertia[k]=model->body_inertia[3*id+k]*ratio;b->ipos[k]=model->body_ipos[3*id+k];}std::copy_n(model->body_iquat+4*id,4,b->iquat);b->explicitinertial=true;b->ialt.type=mjORIENTATION_QUAT;for(double &entry:b->fullinertia)entry=std::numeric_limits<double>::quiet_NaN();c->compiler.inertiafromgeom=mjINERTIAFROMGEOM_AUTO;}}
+   if(key=="mass"||key=="inertia_mode")ok=true; // validated in the policy pass
+   if(key=="inertia"||key=="ipos"||key=="iquat"){
+    int count=key=="iquat"?4:3;ok=read_values(v,a,count);
+    if(key=="inertia"){for(int k=0;k<3;++k)ok=ok&&a[k]>0;for(int k=0;k<3;++k)ok=ok&&a[k]<=a[(k+1)%3]+a[(k+2)%3];}
+    if(key=="iquat"){double norm=0;for(double z:a)norm+=z*z;ok=ok&&norm>1e-12;if(ok)for(double &z:a)z/=sqrt(norm);}
+    if(ok)std::copy_n(a,count,key=="inertia"?b->inertia:key=="ipos"?b->ipos:b->iquat);
+   }
+  } else if(t==mjOBJ_JOINT){auto*j=mjs_asJoint(e);
+   if(j->type!=mjJNT_HINGE&&j->type!=mjJNT_SLIDE)return reject("Only scalar hinge/slide joint properties are editable");
+   if(key=="limited"){ok=v.get_type()==Variant::BOOL;if(ok)j->limited=bool(v)?mjLIMITED_TRUE:mjLIMITED_FALSE;}
+   if(key=="range"){ok=read_values(v,a,2)&&a[0]<a[1];if(ok){double unit=j->type==mjJNT_HINGE&&c->compiler.degree?180.0/3.14159265358979323846:1.;j->range[0]=a[0]*unit;j->range[1]=a[1]*unit;}}
+   if(key=="damping"){ok=scalar(v,x)&&x>=0;for(int k=1;k<=mjNPOLY;++k)if(j->damping[k]!=0)return reject("Polynomial damping is read-only; coefficients are retained");if(ok)j->damping[0]=x;}
+   if(key=="frictionloss"){ok=scalar(v,x)&&x>=0;if(ok)j->frictionloss=x;}
+
   } else if(t==mjOBJ_GEOM){auto*g=mjs_asGeom(e);
-   if(key=="pos"||key=="quat"||key=="size"||key=="friction"){int count=key=="quat"?4:3;ok=read_values(v,a,count);if(key=="size"){ok=ok&&(g->type==mjGEOM_BOX||g->type==mjGEOM_SPHERE||g->type==mjGEOM_CYLINDER);int sz=g->type==mjGEOM_SPHERE?1:g->type==mjGEOM_CYLINDER?2:3;for(int k=0;k<sz;++k)ok=ok&&a[k]>0;}if(key=="friction")for(int k=0;k<3;++k)ok=ok&&a[k]>=0;if(key=="quat"){double norm=0;for(double z:a)norm+=z*z;ok=ok&&norm>1e-12;if(ok)for(double&z:a)z/=sqrt(norm);}if(ok){if(key=="quat")g->alt.type=mjORIENTATION_QUAT;std::copy_n(a,count,key=="pos"?g->pos:key=="quat"?g->quat:key=="size"?g->size:g->friction);if(key=="pos"||key=="quat"||key=="size")for(double &z:g->fromto)z=std::numeric_limits<double>::quiet_NaN();}}
+   if(key=="pos"||key=="quat"||key=="size"||key=="friction"){int count=key=="quat"?4:3;ok=read_values(v,a,count);if(key=="size"){ok=ok&&(g->type==mjGEOM_BOX||g->type==mjGEOM_SPHERE||g->type==mjGEOM_CYLINDER);int sz=g->type==mjGEOM_SPHERE?1:g->type==mjGEOM_CYLINDER?2:3;for(int k=0;k<sz;++k)ok=ok&&a[k]>0;for(int k=sz;k<3;++k)ok=ok&&a[k]==0;}if(key=="friction")for(int k=0;k<3;++k)ok=ok&&a[k]>=0;if(key=="quat"){double norm=0;for(double z:a)norm+=z*z;ok=ok&&norm>1e-12;if(ok)for(double&z:a)z/=sqrt(norm);}if(ok){if(key=="quat")g->alt.type=mjORIENTATION_QUAT;std::copy_n(a,count,key=="pos"?g->pos:key=="quat"?g->quat:key=="size"?g->size:g->friction);if(key=="pos"||key=="quat"||key=="size")for(double &z:g->fromto)z=std::numeric_limits<double>::quiet_NaN();}}
    if(key=="density"||key=="mass"){if(mjs_getParent(e)->explicitinertial)return reject("Body has explicit inertia: geom density/mass would not affect body mass. Edit body mass instead.");ok=scalar(v,x)&&x>0;if(ok){if(key=="density"){g->density=x;g->mass=std::numeric_limits<double>::quiet_NaN();}else g->mass=x;}}
    if(key=="contype"||key=="conaffinity"){ok=scalar(v,x)&&x>=0&&x<=2147483647&&std::floor(x)==x;if(ok){if(key=="contype")g->contype=int(x);else g->conaffinity=int(x);}}
    if(key=="margin"){ok=scalar(v,x)&&x>=0;if(ok)g->margin=x;}
@@ -163,8 +199,8 @@ bool MjEditorDocument::edit(const Dictionary &cmd){
 Dictionary MjEditorDocument::inspect() const {
  Dictionary out;Array entities;out["revision"]=revision;out["paused"]=paused;out["error"]=error;out["source"]=source;out["version"]=String(mj_versionString());if(!model)return out;
  out["time"]=data->time;out["contacts"]=data->ncon;out["tendons_readonly"]=model->ntendon;out["sensors_readonly"]=model->nsensor;
- for(int b=0;b<model->nbody;++b){Dictionary e,props;e["kind"]="body";e["name"]=name(model,mjOBJ_BODY,b);e["parent"]=b?name(model,mjOBJ_BODY,model->body_parentid[b]):String();props["mass"]=model->body_mass[b];props["inertia"]=numbers(model->body_inertia+3*b,3);props["pos"]=numbers(model->body_pos+3*b,3);props["quat"]=numbers(model->body_quat+4*b,4);auto*sb=mjs_findBody(spec,String(e["name"]).utf8().get_data());props["explicit_inertia"]=sb?bool(sb->explicitinertial):false;props["pose_editable"]=sb&&!mjs_getFrame(sb->element);e["properties"]=props;entities.push_back(e);}
- for(int j=0;j<model->njnt;++j){Dictionary e,p;e["kind"]="joint";e["name"]=name(model,mjOBJ_JOINT,j);e["parent"]=name(model,mjOBJ_BODY,model->jnt_bodyid[j]);const char*types[]={"free","ball","slide","hinge"};int t=model->jnt_type[j];p["type"]=types[t];p["qpos"]=numbers(data->qpos+model->jnt_qposadr[j],t==mjJNT_FREE?7:t==mjJNT_BALL?4:1);p["limited"]=bool(model->jnt_limited[j]);p["range"]=numbers(model->jnt_range+2*j,2);p["unit"]=t==mjJNT_HINGE?"rad":t==mjJNT_SLIDE?"m":"position / unit quaternion (read-only)";e["properties"]=p;entities.push_back(e);}
+ for(int b=0;b<model->nbody;++b){Dictionary e,props;e["kind"]="body";e["name"]=name(model,mjOBJ_BODY,b);e["parent"]=b?name(model,mjOBJ_BODY,model->body_parentid[b]):String();props["mass"]=model->body_mass[b];props["inertia"]=numbers(model->body_inertia+3*b,3);props["ipos"]=numbers(model->body_ipos+3*b,3);props["iquat"]=numbers(model->body_iquat+4*b,4);props["pos"]=numbers(model->body_pos+3*b,3);props["quat"]=numbers(model->body_quat+4*b,4);auto*sb=mjs_findBody(spec,String(e["name"]).utf8().get_data());props["explicit_inertia"]=sb?bool(sb->explicitinertial):false;props["inertia_mode"]=sb&&sb->explicitinertial?"manual":"automatic";props["compiler_inertia_policy"]=spec->compiler.inertiafromgeom==mjINERTIAFROMGEOM_AUTO?"automatic":spec->compiler.inertiafromgeom==mjINERTIAFROMGEOM_TRUE?"forced geometry":"disabled geometry";props["pose_editable"]=sb&&!mjs_getFrame(sb->element);e["properties"]=props;entities.push_back(e);}
+ for(int j=0;j<model->njnt;++j){Dictionary e,p;e["kind"]="joint";e["name"]=name(model,mjOBJ_JOINT,j);e["parent"]=name(model,mjOBJ_BODY,model->jnt_bodyid[j]);const char*types[]={"free","ball","slide","hinge"};int t=model->jnt_type[j];p["type"]=types[t];p["qpos"]=numbers(data->qpos+model->jnt_qposadr[j],t==mjJNT_FREE?7:t==mjJNT_BALL?4:1);auto*sj=mjs_asJoint(mjs_findElement(spec,mjOBJ_JOINT,String(e["name"]).utf8().get_data()));p["damping"]=sj->damping[0];p["damping_coefficients"]=numbers(sj->damping,mjNPOLY+1);bool scalar_damping=true;for(int k=1;k<=mjNPOLY;++k)scalar_damping=scalar_damping&&sj->damping[k]==0;p["damping_editable"]=scalar_damping;p["frictionloss"]=sj->frictionloss;p["limited"]=bool(model->jnt_limited[j]);p["range"]=numbers(model->jnt_range+2*j,2);p["unit"]=t==mjJNT_HINGE?"rad":t==mjJNT_SLIDE?"m":"position / unit quaternion (read-only)";e["properties"]=p;entities.push_back(e);}
  for(int g=0;g<model->ngeom;++g){Dictionary e,p;e["kind"]="geom";e["name"]=name(model,mjOBJ_GEOM,g);e["parent"]=name(model,mjOBJ_BODY,model->geom_bodyid[g]);p["type"]=model->geom_type[g];p["size"]=numbers(model->geom_size+3*g,3);p["pos"]=numbers(model->geom_pos+3*g,3);p["quat"]=numbers(model->geom_quat+4*g,4);p["friction"]=numbers(model->geom_friction+3*g,3);p["contype"]=model->geom_contype[g];p["conaffinity"]=model->geom_conaffinity[g];p["margin"]=model->geom_margin[g];auto*sg=mjs_asGeom(mjs_findElement(spec,mjOBJ_GEOM,String(e["name"]).utf8().get_data()));p["pose_editable"]=!mjs_getFrame(sg->element)&&!std::isfinite(sg->fromto[0]);p["size_editable"]=!std::isfinite(sg->fromto[0]);p["density"]=sg->density;p["mass"]=std::isfinite(sg->mass)?Variant(sg->mass):Variant("density-derived");e["properties"]=p;entities.push_back(e);}
  for(int a=0;a<model->nu;++a){Dictionary e,p;e["kind"]="actuator";e["name"]=name(model,mjOBJ_ACTUATOR,a);e["parent"]="";String type=drive_kind(model,a);p["type"]=type;p["control"]=data->ctrl[a];p["ctrl_limited"]=bool(model->actuator_ctrllimited[a]);p["ctrl_range"]=numbers(model->actuator_ctrlrange+2*a,2);p["gain_type"]=model->actuator_gaintype[a];p["bias_type"]=model->actuator_biastype[a];p["dynamics_type"]=model->actuator_dyntype[a];p["gear"]=numbers(model->actuator_gear+6*a,6);p["transmission_type"]=model->actuator_trntype[a];p["target_joint"]=model->actuator_trntype[a]==mjTRN_JOINT?name(model,mjOBJ_JOINT,model->actuator_trnid[2*a]):String("N/A (non-joint transmission)");p["kp"]=type=="position-compatible"?Variant(model->actuator_gainprm[mjNGAIN*a]):Variant("N/A");p["kv"]=type!="general/non-PD"?Variant(-model->actuator_biasprm[mjNBIAS*a+2]):Variant("N/A");e["properties"]=p;entities.push_back(e);}
  out["entities"]=entities;return out;

@@ -24,6 +24,9 @@ var yaw := 0.65
 var pitch := 0.3
 var center := Vector3(0, 0.8, 0)
 var orbiting := false
+var edit_axis := 0
+var move_step := 0.1
+var rotate_step := 5.0
 var recovery_path := "user://mujoco_editor_recovery.json"
 
 func button(parent: Node, text: String, callback: Callable) -> Button:
@@ -48,9 +51,21 @@ func _ready() -> void:
 	button(toolbar, "Frame all", frame_all)
 	for shape in ["box", "sphere", "cylinder"]:
 		button(toolbar, "+ " + shape, add_primitive.bind(shape))
+	var operations := HFlowContainer.new()
+	add_child(operations)
+	var axis := OptionButton.new()
+	for label in ["Local MJCF X", "Local MJCF Y", "Local MJCF Z"]: axis.add_item(label)
+	axis.item_selected.connect(func(index): edit_axis = index)
+	operations.add_child(axis)
+	button(operations, "Move −0.1 m", transform_selection.bind("move", -1.0))
+	button(operations, "Move +0.1 m", transform_selection.bind("move", 1.0))
+	button(operations, "Rotate −5°", transform_selection.bind("rotate", -1.0))
+	button(operations, "Rotate +5°", transform_selection.bind("rotate", 1.0))
+	button(operations, "Size ÷1.1", transform_selection.bind("size", -1.0))
+	button(operations, "Size ×1.1", transform_selection.bind("size", 1.0))
 	var note := Label.new()
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	note.text = "MuJoCo 3.16 • metres / kg / seconds / radians • local properties use MJCF Z-up axes; preview uses Godot Y-up"
+	note.text = "MuJoCo 3.16 • metres / kg / seconds / radians • local properties use MJCF Z-up axes; preview uses Godot Y-up • Left click selects visible geometry; operations use local MJCF axes"
 	add_child(note)
 	var split := HSplitContainer.new()
 	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -401,6 +416,7 @@ func on_select() -> void:
 	var item := tree.get_selected()
 	selected = item.get_metadata(0) if item and item.get_metadata(0) is Dictionary else {}
 	build_fields()
+	highlight_selection()
 
 func field(key: String, value: Variant, editable: bool, hint: String) -> void:
 	var label := Label.new()
@@ -442,8 +458,10 @@ func build_fields() -> void:
 		var editable := false
 		var hint := "actual compiled value"
 		if kind == "body":
-			editable = selected.name != "world" and key in ["mass", "pos", "quat"]
-			hint = {"mass":"kg; explicit mass scales existing inertia", "inertia":"kg m², principal inertia", "pos":"local MJCF xyz, m", "quat":"local wxyz, unit quaternion"}.get(key, "source inertia mode")
+			editable = selected.name != "world" and key in ["mass", "pos", "quat", "inertia", "ipos", "iquat", "inertia_mode"]
+			hint = {"mass":"kg; explicit mass scales existing inertia", "inertia":"positive principal kg m²; triangle inequalities; manual mode", "inertia_mode":"JSON string: automatic (geom mass/density) or manual; manual inertial fields override inference", "ipos":"body-local center of mass, m", "iquat":"body-local principal-axis quaternion wxyz", "pos":"local MJCF xyz, m", "quat":"local wxyz, unit quaternion"}.get(key, "source inertia mode")
+			if key in ["mass", "inertia", "ipos", "iquat"] and p.get("compiler_inertia_policy") == "forced geometry": editable = false
+			if key == "inertia_mode" and p.get("compiler_inertia_policy") != "automatic": editable = false
 		elif kind == "geom":
 			editable = key in ["pos", "quat", "friction", "contype", "conaffinity", "margin", "density"] or (key == "size" and p.type in [2, 5, 6])
 			hint = {"size":"MJCF half sizes [x,y,z]; sphere [r,0,0]; cylinder [r,half-height,0], m", "density":"kg/m³; only bodies with inferred inertia", "friction":"[sliding, torsional, rolling]", "pos":"local MJCF xyz, m", "quat":"local wxyz", "margin":"m"}.get(key, "contact bitmask / source value")
@@ -451,6 +469,8 @@ func build_fields() -> void:
 			editable = key == "control" or (key == "kp" and p.type == "position-compatible") or (key == "kv" and p.type != "general/non-PD")
 			hint = "actuator transmission units; gear shown below; PD gains apply only to compatible affine drives"
 		elif kind == "joint":
+			editable = p.type in ["hinge", "slide"] and key in ["limited", "range", "damping", "frictionloss"]
+			if key == "damping" and not p.get("damping_editable", true): editable = false
 			hint = str(p.unit) + "; mass belongs to body"
 		if key in ["pos", "quat"] and not p.get("pose_editable", true):
 			editable = false
@@ -546,7 +566,9 @@ func rebuild_meshes() -> void:
 		instance.transform = geom.transform
 		if geom.type == 4:
 			instance.scale = Vector3(size.x, size.z, size.y)
+		instance.set_meta("pick_mesh", instance.mesh.generate_triangle_mesh())
 		meshes[geom.name] = instance
+	highlight_selection()
 
 func _process(delta: float) -> void:
 	if not state.document or not visible:
@@ -591,6 +613,8 @@ func update_camera() -> void:
 
 func camera_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			pick_geometry(event.position)
 		if event.button_index == MOUSE_BUTTON_RIGHT:
 			orbiting = event.pressed
 		if event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
@@ -608,3 +632,62 @@ func refresh_project_files() -> void:
 	while filesystem.is_scanning():
 		await get_tree().process_frame
 	filesystem.scan()
+
+func highlight_selection() -> void:
+	for name in meshes:
+		var material: StandardMaterial3D = meshes[name].material_override
+		material.emission_enabled = selected.get("kind") == "geom" and selected.get("name") == name
+		material.emission = Color(.25, .18, .02)
+
+func pick_geometry(point: Vector2) -> String:
+	if not can_leave_fields(): return ""
+	var origin := camera.project_ray_origin(point)
+	var direction := camera.project_ray_normal(point)
+	var nearest := INF
+	var picked := ""
+	for name in meshes:
+		var mesh: MeshInstance3D = meshes[name]
+		var inverse := mesh.global_transform.affine_inverse()
+		var triangle: TriangleMesh = mesh.get_meta("pick_mesh")
+		var hit := triangle.intersect_ray(inverse * origin, inverse.basis * direction)
+		if not hit.is_empty():
+			var distance_to_hit := origin.distance_to(mesh.global_transform * Vector3(hit.position))
+			if distance_to_hit < nearest:
+				nearest = distance_to_hit
+				picked = name
+	if not picked.is_empty(): select_entity("geom", picked)
+	return picked
+
+func transform_selection(operation: String, direction: float) -> bool:
+	if not can_leave_fields() or selected.is_empty(): return false
+	if selected.kind not in ["body", "geom"]:
+		show_error("Select a body or visible geometry")
+		return false
+	var p: Dictionary = selected.properties
+	var values := {}
+	if operation == "size":
+		if selected.kind != "geom" or p.type not in [2,5,6] or not p.get("size_editable", true):
+			show_error("Only explicit box/sphere/cylinder dimensions are editable")
+			return false
+		var size: Array = p.size.duplicate()
+		var count := 1 if p.type == 2 else 2 if p.type == 5 else 3
+		for index in count: size[index] *= 1.1 if direction > 0 else 1.0/1.1
+		values.size = size
+	else:
+		if not p.get("pose_editable", true):
+			show_error("Frame/fromto-derived pose is read-only")
+			return false
+		if operation == "move":
+			var position: Array = p.pos.duplicate()
+			position[edit_axis] += direction * move_step
+			values.pos = position
+		elif operation == "rotate":
+			var a: Array = p.quat
+			var rotation := Quaternion(float(a[1]),float(a[2]),float(a[3]),float(a[0]))
+			var axis := Vector3.ZERO
+			axis[edit_axis] = 1.0
+			rotation = (rotation * Quaternion(axis, deg_to_rad(direction * rotate_step))).normalized()
+			values.quat = [rotation.w,rotation.x,rotation.y,rotation.z]
+		else: return false
+	state.document.set_paused(true)
+	return execute({"op":"set", "kind":selected.kind,"name":selected.name,"values":values})

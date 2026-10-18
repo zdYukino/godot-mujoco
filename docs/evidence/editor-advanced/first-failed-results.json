@@ -1,0 +1,574 @@
+{
+	"checks": [
+		{
+			"name": "editor imports actual MJCF",
+			"passed": true
+		},
+		{
+			"name": "runtime version pinned",
+			"passed": true
+		},
+		{
+			"name": "joint type and name",
+			"passed": true
+		},
+		{
+			"name": "compiled body mass",
+			"passed": true
+		},
+		{
+			"name": "position gain read",
+			"passed": true
+		},
+		{
+			"name": "velocity kp not applicable",
+			"passed": true
+		},
+		{
+			"name": "motor not misclassified PD",
+			"passed": true
+		},
+		{
+			"name": "PD transaction",
+			"passed": true
+		},
+		{
+			"name": "PD gains in compiled model",
+			"passed": true
+		},
+		{
+			"name": "live control",
+			"passed": true
+		},
+		{
+			"name": "real physics updates joint display",
+			"passed": true
+		},
+		{
+			"name": "non-PD edit rejected",
+			"passed": true
+		},
+		{
+			"name": "invalid edit rolls back",
+			"passed": true
+		},
+		{
+			"name": "missing import rejected",
+			"passed": true
+		},
+		{
+			"name": "failed import keeps document",
+			"passed": true
+		},
+		{
+			"name": "candidate compile failure",
+			"passed": true
+		},
+		{
+			"name": "compile failure preserves full state",
+			"passed": true
+		},
+		{
+			"name": "create box",
+			"passed": true
+		},
+		{
+			"name": "edit geometry box",
+			"passed": true
+		},
+		{
+			"name": "real density and dimensions box",
+			"passed": true
+		},
+		{
+			"name": "body mass pose box",
+			"passed": true
+		},
+		{
+			"name": "compiled mass box",
+			"passed": true
+		},
+		{
+			"name": "create sphere",
+			"passed": true
+		},
+		{
+			"name": "edit geometry sphere",
+			"passed": true
+		},
+		{
+			"name": "real density and dimensions sphere",
+			"passed": true
+		},
+		{
+			"name": "body mass pose sphere",
+			"passed": true
+		},
+		{
+			"name": "compiled mass sphere",
+			"passed": true
+		},
+		{
+			"name": "create cylinder",
+			"passed": true
+		},
+		{
+			"name": "edit geometry cylinder",
+			"passed": true
+		},
+		{
+			"name": "real density and dimensions cylinder",
+			"passed": true
+		},
+		{
+			"name": "body mass pose cylinder",
+			"passed": true
+		},
+		{
+			"name": "compiled mass cylinder",
+			"passed": true
+		},
+		{
+			"name": "true MuJoCo cylinder",
+			"passed": true
+		},
+		{
+			"name": "matching cylinder visual",
+			"passed": true
+		},
+		{
+			"name": "matching cylinder height",
+			"passed": true
+		},
+		{
+			"name": "explicit inertia density ambiguity diagnosed",
+			"passed": true
+		},
+		{
+			"name": "delete primitive",
+			"passed": true
+		},
+		{
+			"name": "deleted body absent",
+			"passed": true
+		},
+		{
+			"name": "structural edit preserves compatible state",
+			"passed": true
+		},
+		{
+			"name": "document uses global editor history",
+			"passed": true
+		},
+		{
+			"name": "Godot editor undo",
+			"passed": true
+		},
+		{
+			"name": "undo restores body",
+			"passed": true
+		},
+		{
+			"name": "Godot editor redo",
+			"passed": true
+		},
+		{
+			"name": "redo deletes body",
+			"passed": true
+		},
+		{
+			"name": "Apply button exists set_qpos",
+			"passed": true
+		},
+		{
+			"name": "retired Apply ignores repeated signal set_qpos",
+			"passed": true
+		},
+		{
+			"name": "pressed Apply retains fields set_qpos",
+			"passed": true
+		},
+		{
+			"name": "pressed Apply writes physics set_qpos",
+			"passed": true
+		},
+		{
+			"name": "undo after pressed Apply set_qpos",
+			"passed": true
+		},
+		{
+			"name": "redo after pressed Apply set_qpos",
+			"passed": true
+		},
+		{
+			"name": "undo redo retains form set_qpos",
+			"passed": true
+		},
+		{
+			"name": "pressed invalid Apply preserves draft set_qpos",
+			"passed": true
+		},
+		{
+			"name": "pressed Discard restores fields set_qpos",
+			"passed": true
+		},
+		{
+			"name": "Apply button exists kp",
+			"passed": true
+		},
+		{
+			"name": "retired Apply ignores repeated signal kp",
+			"passed": true
+		},
+		{
+			"name": "pressed Apply retains fields kp",
+			"passed": true
+		},
+		{
+			"name": "pressed Apply writes physics kp",
+			"passed": true
+		},
+		{
+			"name": "undo after pressed Apply kp",
+			"passed": true
+		},
+		{
+			"name": "redo after pressed Apply kp",
+			"passed": true
+		},
+		{
+			"name": "undo redo retains form kp",
+			"passed": true
+		},
+		{
+			"name": "pressed invalid Apply preserves draft kp",
+			"passed": true
+		},
+		{
+			"name": "pressed Discard restores fields kp",
+			"passed": true
+		},
+		{
+			"name": "Apply button exists kv",
+			"passed": true
+		},
+		{
+			"name": "retired Apply ignores repeated signal kv",
+			"passed": true
+		},
+		{
+			"name": "pressed Apply retains fields kv",
+			"passed": true
+		},
+		{
+			"name": "pressed Apply writes physics kv",
+			"passed": true
+		},
+		{
+			"name": "undo after pressed Apply kv",
+			"passed": true
+		},
+		{
+			"name": "redo after pressed Apply kv",
+			"passed": true
+		},
+		{
+			"name": "undo redo retains form kv",
+			"passed": true
+		},
+		{
+			"name": "pressed invalid Apply preserves draft kv",
+			"passed": true
+		},
+		{
+			"name": "pressed Discard restores fields kv",
+			"passed": true
+		},
+		{
+			"name": "Apply button exists pos",
+			"passed": true
+		},
+		{
+			"name": "retired Apply ignores repeated signal pos",
+			"passed": true
+		},
+		{
+			"name": "pressed Apply retains fields pos",
+			"passed": true
+		},
+		{
+			"name": "pressed Apply writes physics pos",
+			"passed": true
+		},
+		{
+			"name": "undo after pressed Apply pos",
+			"passed": true
+		},
+		{
+			"name": "redo after pressed Apply pos",
+			"passed": true
+		},
+		{
+			"name": "undo redo retains form pos",
+			"passed": true
+		},
+		{
+			"name": "pressed invalid Apply preserves draft pos",
+			"passed": true
+		},
+		{
+			"name": "pressed Discard restores fields pos",
+			"passed": true
+		},
+		{
+			"name": "actual property form apply",
+			"passed": true
+		},
+		{
+			"name": "form writes real control",
+			"passed": true
+		},
+		{
+			"name": "invalid UI retains pending edits",
+			"passed": true
+		},
+		{
+			"name": "pending edits block replacement",
+			"passed": true
+		},
+		{
+			"name": "atomic document save",
+			"passed": true
+		},
+		{
+			"name": "change after save",
+			"passed": true
+		},
+		{
+			"name": "reopen document",
+			"passed": true
+		},
+		{
+			"name": "persistence restores full model control and state",
+			"passed": true
+		},
+		{
+			"name": "source XML overwrite rejected",
+			"passed": true
+		},
+		{
+			"name": "native preview released 0",
+			"passed": true
+		},
+		{
+			"name": "session reactivate 0",
+			"passed": true
+		},
+		{
+			"name": "native preview released 1",
+			"passed": true
+		},
+		{
+			"name": "session reactivate 1",
+			"passed": true
+		},
+		{
+			"name": "native preview released 2",
+			"passed": true
+		},
+		{
+			"name": "session reactivate 2",
+			"passed": true
+		},
+		{
+			"name": "relative include plus external OBJ",
+			"passed": true
+		},
+		{
+			"name": "imported mesh actual triangles",
+			"passed": true
+		},
+		{
+			"name": "save external asset document",
+			"passed": true
+		},
+		{
+			"name": "reopen resolved external asset paths",
+			"passed": true
+		},
+		{
+			"name": "unsupported heightfield diagnosed",
+			"passed": true
+		},
+		{
+			"name": "unsupported import rollback",
+			"passed": true
+		},
+		{
+			"name": "restore prior document",
+			"passed": true
+		},
+		{
+			"name": "recovery document opens",
+			"passed": true
+		},
+		{
+			"name": "unapplied draft survives recovery",
+			"passed": true
+		},
+		{
+			"name": "scene switch retains independent document",
+			"passed": true
+		},
+		{
+			"name": "isolated cylinder created",
+			"passed": true
+		},
+		{
+			"name": "duplicate click name rejected",
+			"passed": true
+		},
+		{
+			"name": "running topology rejected",
+			"passed": true
+		},
+		{
+			"name": "cylinder real gravity floor contact",
+			"passed": true
+		},
+		{
+			"name": "framed and fromto MJCF retained",
+			"passed": true
+		},
+		{
+			"name": "ambiguous source frame pose diagnosed",
+			"passed": true
+		},
+		{
+			"name": "fromto-derived size diagnosed",
+			"passed": true
+		},
+		{
+			"name": "advanced fixture",
+			"passed": true
+		},
+		{
+			"name": "joint limits damping friction transaction",
+			"passed": true
+		},
+		{
+			"name": "compiled joint parameters match",
+			"passed": true
+		},
+		{
+			"name": "invalid joint rollback { \"range\": [1, -1] }",
+			"passed": true
+		},
+		{
+			"name": "invalid joint rollback { \"damping\": -0.1 }",
+			"passed": true
+		},
+		{
+			"name": "invalid joint rollback { \"frictionloss\": -0.1 }",
+			"passed": true
+		},
+		{
+			"name": "invalid joint rollback { \"limited\": 1 }",
+			"passed": true
+		},
+		{
+			"name": "manual inertia and mass atomic edit",
+			"passed": true
+		},
+		{
+			"name": "manual inertia overrides geometry",
+			"passed": true
+		},
+		{
+			"name": "invalid inertia rollback { \"inertia\": [1, 0.1, 0.1] }",
+			"passed": true
+		},
+		{
+			"name": "invalid inertia rollback { \"inertia\": [0, 0.1, 0.1] }",
+			"passed": true
+		},
+		{
+			"name": "invalid inertia rollback { \"inertia_mode\": \"automatic\", \"mass\": 2 }",
+			"passed": true
+		},
+		{
+			"name": "manual inertia rejects ignored density",
+			"passed": true
+		},
+		{
+			"name": "return to inferred inertia",
+			"passed": false
+		},
+		{
+			"name": "geom explicit mass takes priority over density",
+			"passed": false
+		},
+		{
+			"name": "density explicitly replaces geom mass",
+			"passed": false
+		},
+		{
+			"name": "density changes inferred body mass",
+			"passed": false
+		},
+		{
+			"name": "new parameters save restore",
+			"passed": false
+		},
+		{
+			"name": "sphere created for dimensions",
+			"passed": true
+		},
+		{
+			"name": "sphere rejects ellipsoid-like dimensions",
+			"passed": true
+		},
+		{
+			"name": "viewport operation moves selection",
+			"passed": true
+		},
+		{
+			"name": "viewport move undo",
+			"passed": true
+		},
+		{
+			"name": "viewport operation rotates selection",
+			"passed": true
+		},
+		{
+			"name": "viewport operation resizes physics geometry",
+			"passed": true
+		},
+		{
+			"name": "viewport operation cannot discard draft",
+			"passed": true
+		},
+		{
+			"name": "actual viewport triangle picking selects cylinder",
+			"passed": true
+		},
+		{
+			"name": "disable plugin releases native model 0",
+			"passed": true
+		},
+		{
+			"name": "enable plugin restores document 0",
+			"passed": true
+		},
+		{
+			"name": "disable plugin releases native model 1",
+			"passed": true
+		},
+		{
+			"name": "enable plugin restores document 1",
+			"passed": true
+		}
+	],
+	"failed": 5,
+	"passed": 137
+}
