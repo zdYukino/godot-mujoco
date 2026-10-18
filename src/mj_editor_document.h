@@ -22,6 +22,10 @@ public:
  MjEditorDocument();
  ~MjEditorDocument();
  bool import_file(const String &path);
+ bool import_g1(const String &path);
+ mjSpec *copy_spec() const { return mj_copySpec(spec); }
+ const mjModel *native_model() const { return model; }
+ const mjData *native_data() const { return data; }
  bool restore(const Dictionary &snapshot);
  Dictionary snapshot() const;
  Dictionary asset_manifest() const;

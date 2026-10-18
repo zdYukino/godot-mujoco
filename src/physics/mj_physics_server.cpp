@@ -43,6 +43,7 @@ int32_t MjPhysicsServer3D::_space_get_contact_count(const RID&) const{return 0;}
 // Godot addresses the world's default environment using its space RID, not an Area RID.
 void MjPhysicsServer3D::_area_set_param(const RID&r,AreaParameter p,const Variant&v) {
  auto*s=space(r); if(!s){mj_unsupported("Area3D parameters");return;} s->params[p]=v;
+ if(s->authored_options&&(p==AREA_PARAM_GRAVITY||p==AREA_PARAM_GRAVITY_VECTOR)){s->last_error="Runtime world model owns gravity; Godot default-area override rejected";return;}
  switch(p){case AREA_PARAM_GRAVITY:s->gravity=double(v);break;case AREA_PARAM_GRAVITY_VECTOR:s->gravity_direction=v;break;case AREA_PARAM_LINEAR_DAMP:s->linear_damp=double(v);break;case AREA_PARAM_ANGULAR_DAMP:s->angular_damp=double(v);break;default:break;} dirty(r);
 }
 Variant MjPhysicsServer3D::_area_get_param(const RID&r,AreaParameter p) const {auto*s=space(r);if(!s)return {};auto i=s->params.find(p);return i==s->params.end()?Variant():i->second;}
@@ -93,7 +94,7 @@ void MjPhysicsServer3D::_free_rid(const RID&source_rid){
  // Model-instance RIDs obey the same paused transaction contract even when
  // released through the generic server API. Do not erase a live spec first.
  for(auto &entry:spaces)if(entry.second->imported.count(r.get_id())){
-  if(!scene_remove(entry.second->rid,r))UtilityFunctions::push_error("MuJoCo model instance removal requires a paused space outside callbacks");
+  if(!(entry.second->imported.at(r.get_id())->whole_model?scene_release_model(entry.second->rid,r):scene_remove(entry.second->rid,r)))UtilityFunctions::push_error("MuJoCo model instance removal requires a paused space outside callbacks");
   return;
  }
  if(flushing){pending_free.insert(r.get_id());return;}
@@ -133,7 +134,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s){
  char error[2048]={};mjSpec *spec=mj_parseXMLString(xml.str().c_str(),nullptr,error,sizeof(error));
  if(!spec){s.last_error=String::utf8(error);return false;}
  mjs_setDeepCopy(spec,1);
- if(!s.imported.empty())spec->option.integrator=mjINT_IMPLICITFAST;
+ if(s.authored_options)spec->option=s.options;else if(!s.imported.empty())spec->option.integrator=mjINT_IMPLICITFAST;
  for(auto &entry:s.imported){
   auto &object=*entry.second;
   auto *frame=mjs_addFrame(mjs_findBody(spec,"world"),nullptr);
@@ -149,14 +150,21 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s){
   bool free_root=false;
   for(auto *j=mjs_firstElement(object.spec,mjOBJ_JOINT);j;j=mjs_nextElement(object.spec,j))
    if(mjs_asJoint(j)->type==mjJNT_FREE)free_root=true;
-  auto *child=free_root?mjs_firstChild(root,mjOBJ_BODY,0):root->element;
-  if(!child || !mjs_attach(frame->element,child,object.prefix.c_str(),"")){
-   s.last_error=String::utf8(mjs_getError(spec));mj_deleteSpec(spec);return false;
-  }
+  auto *child=(!object.whole_model&&free_root)?mjs_firstChild(root,mjOBJ_BODY,0):root->element;
+  auto*attached=child?mjs_attach(frame->element,child,object.prefix.c_str(),""):nullptr;
+  if(!attached){s.last_error=String::utf8(mjs_getError(spec));mj_deleteSpec(spec);return false;}
+  if(object.whole_model){auto*wrapper=mjs_asBody(attached);if(!wrapper||!mjs_bodyToFrame(&wrapper)){s.last_error="Could not flatten attached model world";mj_deleteSpec(spec);return false;}}
+
  }
  // Compile entirely off to the side. Never mutate the active model on failure.
  mjModel *model=mj_compile(spec,nullptr);
  if(!model){s.last_error=String::utf8(mjs_getError(spec));mj_deleteSpec(spec);return false;}
+ // Attachment must retain every named physical element; never silently drop
+ // constraints or actuators when removing the artificial world wrapper.
+ for(auto &entry:s.imported){auto&o=*entry.second;if(!o.whole_model)continue;Dictionary counts=o.initial["counts"];
+  const mjtObj kinds[]={mjOBJ_GEOM,mjOBJ_JOINT,mjOBJ_ACTUATOR,mjOBJ_EQUALITY,mjOBJ_TENDON,mjOBJ_SENSOR};const char*keys[]={"geom","joint","actuator","equality","tendon","sensor"};const mjtSize sizes[]={model->ngeom,model->njnt,model->nu,model->neq,model->ntendon,model->nsensor};
+  for(int k=0;k<6;++k){int found=0;for(int i=0;i<sizes[k];++i){const char*n=mj_id2name(model,kinds[k],i);if(n&&std::string(n).rfind(o.prefix,0)==0)++found;}if(found!=int(counts[keys[k]])){s.last_error="Composition changed model element count: "+String(keys[k]);mj_deleteModel(model);mj_deleteSpec(spec);return false;}}
+ }
  mj_deleteSpec(spec);mjData *data=mj_makeData(model);
  if(!data){mj_deleteModel(model);s.last_error="Could not allocate candidate data";return false;}
  // Initialize new bounded joints inside their URDF limits, with matching targets.
@@ -164,6 +172,14 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s){
   data->qpos[model->jnt_qposadr[j]]=std::clamp(0.0,model->jnt_range[2*j]+0.001,model->jnt_range[2*j+1]-0.001);
  for(int a=0;a<model->nu;++a)if(model->actuator_trntype[a]==mjTRN_JOINT){int j=model->actuator_trnid[2*a];data->ctrl[a]=data->qpos[model->jnt_qposadr[j]];}
  gmj_transfer_state(s.model,s.data,model,data);
+ // Initialize only newly inserted names. Existing instances retain live state.
+ for(auto &entry:s.imported){auto&o=*entry.second;if(!o.whole_model)continue;Dictionary joints=o.initial["joints"],controls=o.initial["controls"],activation=o.initial["activation"];Basis rotation=godot_to_mj(o.pose.basis);Vector3 translation=godot_to_mj(o.pose.origin);
+  Array names=joints.keys();for(int i=0;i<names.size();++i){String short_name=names[i];std::string full=o.prefix+short_name.utf8().get_data();int j=mj_name2id(model,mjOBJ_JOINT,full.c_str());if(j<0||(s.model&&mj_name2id(s.model,mjOBJ_JOINT,full.c_str())>=0))continue;Dictionary state=joints[short_name];Array q=state["qpos"],v=state["qvel"];int qa=model->jnt_qposadr[j],va=model->jnt_dofadr[j];for(int k=0;k<q.size();++k)data->qpos[qa+k]=double(q[k]);for(int k=0;k<v.size();++k)data->qvel[va+k]=double(v[k]);
+   if(model->jnt_type[j]==mjJNT_FREE){Vector3 pos=rotation.xform(Vector3(double(q[0]),double(q[1]),double(q[2])))+translation;Quaternion quat=rotation.get_rotation_quaternion()*Quaternion(double(q[4]),double(q[5]),double(q[6]),double(q[3]));for(int k=0;k<3;++k)data->qpos[qa+k]=pos[k];data->qpos[qa+3]=quat.w;data->qpos[qa+4]=quat.x;data->qpos[qa+5]=quat.y;data->qpos[qa+6]=quat.z;Vector3 velocity=rotation.xform(Vector3(double(v[0]),double(v[1]),double(v[2])));for(int k=0;k<3;++k)data->qvel[va+k]=velocity[k];}
+  }
+  names=controls.keys();for(int i=0;i<names.size();++i){String n=names[i];std::string full=o.prefix+n.utf8().get_data();int a=mj_name2id(model,mjOBJ_ACTUATOR,full.c_str());if(a<0||(s.model&&mj_name2id(s.model,mjOBJ_ACTUATOR,full.c_str())>=0))continue;data->ctrl[a]=double(controls[n]);if(activation.has(n)){Array act=activation[n];for(int k=0;k<std::min(int(act.size()),model->actuator_actnum[a]);++k)data->act[model->actuator_actadr[a]+k]=double(act[k]);}}
+ }
+ mj_normalizeQuat(model,data->qpos);
  mj_forward(model,data);
  for(int i=0;i<model->nq;++i)if(!std::isfinite(data->qpos[i])){mj_deleteData(data);mj_deleteModel(model);s.last_error="Nonfinite candidate state";return false;}
  std::vector<std::pair<RID,int>> mapped(model->ngeom);
@@ -185,7 +201,9 @@ void MjPhysicsServer3D::_step(float dt){
  // Each Godot fixed tick advances each active space exactly dt. Subdivide, don't
  // accumulate another autonomous clock (MjWorld owns entirely separate models).
  for(auto &entry:spaces){auto&s=*entry.second;if(!s.active||s.paused||!rebuild(s))continue;
- const int steps=std::max(1,int(std::ceil(double(dt)/0.002)));s.model->opt.timestep=double(dt)/steps;
+ int steps;
+ if(s.authored_options){s.accumulator+=dt;steps=int((s.accumulator+1e-12)/s.options.timestep);s.accumulator-=steps*s.options.timestep;s.model->opt.timestep=s.options.timestep;}
+ else{steps=std::max(1,int(std::ceil(double(dt)/0.002)));s.model->opt.timestep=double(dt)/steps;}
  for(int n=0;n<steps;++n){
  for(auto &be:bodies){auto&b=*be.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID||b.mj_body<1)continue;
  Vector3 f=b.force+b.constant_force;f+=s.gravity_direction*s.gravity*b.mass*((b.omit_integration?0:b.gravity_scale)-1);Vector3 torque=b.torque+b.constant_torque;f=godot_to_mj(f);torque=godot_to_mj(torque);
@@ -197,6 +215,6 @@ void MjPhysicsServer3D::_step(float dt){
  for(auto &be:bodies){auto&b=*be.second;if(b.space==s.rid){read_body(b);b.force=Vector3();b.torque=Vector3();}}
  }
 }
-void MjPhysicsServer3D::_flush_queries(){flushing=true;std::vector<RID> snapshot;for(auto&b:bodies)snapshot.push_back(b.second->rid);for(auto r:snapshot){auto*b=body(r);if(!b||pending_free.count(r.get_id())||!space(b->space)||!space(b->space)->active)continue;if(b->integration_callback.is_valid()){Callable c=b->integration_callback;Variant u=b->integration_userdata;auto*d=b->direct;if(u.get_type()==Variant::NIL)c.call(d);else c.call(d,u);}b=body(r);if(b&&!pending_free.count(r.get_id())&&b->sync_callback.is_valid()){Callable c=b->sync_callback;c.call(b->direct);}}flushing=false; auto pending=std::move(pending_free);pending_free.clear();for(auto id:pending){auto b=bodies.find(id);if(b!=bodies.end())_free_rid(b->second->rid);else {auto s=spaces.find(id);if(s!=spaces.end())_free_rid(s->second->rid);else {auto sh=shapes.find(id);if(sh!=shapes.end())_free_rid(sh->second->rid);}}}}
+void MjPhysicsServer3D::_flush_queries(){flushing=true;std::vector<RID> snapshot;for(auto&b:bodies)snapshot.push_back(b.second->rid);for(auto r:snapshot){auto*b=body(r);if(!b||pending_free.count(r.get_id())||!space(b->space)||!space(b->space)->active)continue;if(b->integration_callback.is_valid()){Callable c=b->integration_callback;Variant u=b->integration_userdata;auto*d=b->direct;if(u.get_type()==Variant::NIL)c.call(d);else c.call(d,u);}b=body(r);if(b&&!pending_free.count(r.get_id())&&b->sync_callback.is_valid()){Callable c=b->sync_callback;c.call(b->direct);}}flushing=false; auto pending=std::move(pending_free);pending_free.clear();for(auto id:pending){auto b=bodies.find(id);if(b!=bodies.end())_free_rid(b->second->rid);else {auto s=spaces.find(id);if(s!=spaces.end())_free_rid(s->second->rid);else {auto sh=shapes.find(id);if(sh!=shapes.end())_free_rid(sh->second->rid);else {for(auto &entry:spaces){auto imported=entry.second->imported.find(id);if(imported!=entry.second->imported.end()){RID rid=imported->second->rid;_free_rid(rid);break;}}}}}}}
 int32_t MjPhysicsServer3D::_get_process_info(ProcessInfo p){if(p==INFO_ACTIVE_OBJECTS)return bodies.size();if(p==INFO_ISLAND_COUNT)return spaces.size();if(p==INFO_COLLISION_PAIRS){int count=0;for(auto&s:spaces)if(s.second->data)count+=s.second->data->ncon;return count;}return 0;}
 }

@@ -19,6 +19,7 @@ struct MjShape { RID rid; PhysicsServer3D::ShapeType type; Variant data; float m
 struct MjShapeInstance { RID shape; Transform3D transform; bool disabled=false; };
 struct MjImported {
  RID rid; String label; Transform3D pose; mjSpec *spec=nullptr;
+ bool whole_model=false; Dictionary initial;
  std::string prefix;
  ~MjImported() { if(spec) mj_deleteSpec(spec); }
 };
@@ -33,6 +34,7 @@ struct MjBody {
 };
 struct MjSpace {
  bool paused=false; uint64_t revision=0; String last_error;
+ bool authored_options=false; mjOption options{};
  std::map<uint64_t,std::unique_ptr<MjImported>> imported;
  RID rid; bool active=false, dirty=true; mjModel *model=nullptr; mjData *data=nullptr;
  MjDirectSpaceState *direct=nullptr; Vector3 gravity_direction=Vector3(0,-1,0); double gravity=9.8;
@@ -60,7 +62,11 @@ public:
  Dictionary scene_state(const RID &space, const RID &object) const;
  Array scene_geometry(const RID &space, const RID &object) const;
  bool scene_set_control(const RID &space, const RID &object, const String &joint, double target);
- RID scene_insert(MjSpace &space, mjSpec *spec, const String &label, const Transform3D &pose);
+ RID scene_insert(MjSpace &space, mjSpec *spec, const String &label, const Transform3D &pose, bool whole_model=false, const Dictionary &initial=Dictionary());
+ bool scene_configure_model(const RID &space, const Dictionary &snapshot, const String &directory);
+ RID scene_load_model(const RID &space, const Dictionary &snapshot, const String &directory, const String &label, const Transform3D &pose);
+ bool scene_set_actuator(const RID &space, const RID &object, const String &name, double value);
+ bool scene_release_model(const RID &space, const RID &object);
  std::set<uint64_t> pending_free;
  RID_Owner<int> handles;
  std::map<uint64_t,std::unique_ptr<MjShape>> shapes;

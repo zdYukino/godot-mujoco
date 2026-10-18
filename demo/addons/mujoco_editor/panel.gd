@@ -1,6 +1,9 @@
 @tool
 extends VBoxContainer
 const PackageBuilder = preload("res://addons/godot_mujoco/model/package_builder.gd")
+const SceneBuilder = preload("res://addons/godot_mujoco/model/scene_builder.gd")
+var project_model_path := ""
+var project_model_snapshot: Dictionary = {}
 var model_provenance: Dictionary = {}
 var plugin: EditorPlugin
 var state: RefCounted
@@ -34,10 +37,12 @@ func _ready() -> void:
 	var toolbar := HFlowContainer.new()
 	add_child(toolbar)
 	button(toolbar, "Import MJCF", func(): file_dialog(false, true))
+	button(toolbar, "Import G1 URDF", import_g1_dialog)
 	button(toolbar, "Open document", func(): file_dialog(false, false))
 	button(toolbar, "Save document", func(): file_dialog(true, false))
 	button(toolbar, "Save project model", save_project_model)
 	button(toolbar, "Open project model", open_project_model_dialog)
+	button(toolbar, "Create runtime scene", create_runtime_scene_dialog)
 	button(toolbar, "Recover", func(): open_document(recovery_path))
 	button(toolbar, "Run / Pause", toggle_run)
 	button(toolbar, "Frame all", frame_all)
@@ -240,6 +245,45 @@ func open_document(path: String) -> bool:
 	frame_all()
 	return true
 
+func import_g1_dialog() -> void:
+	if not can_leave_fields(): return
+	var dialog := FileDialog.new()
+	dialog.access = FileDialog.ACCESS_FILESYSTEM
+	dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
+	dialog.filters = PackedStringArray(["*.urdf ; Original fixed-base Unitree G1 URDF"])
+	dialog.file_selected.connect(func(path: String):
+		var before: Dictionary = state.document.snapshot()
+		if state.document.import_g1(path):
+			record_change(before,"MuJoCo import fixed-base G1")
+			frame_all()
+		else: show_error(state.document.get_error())
+		dialog.queue_free())
+	dialog.canceled.connect(dialog.queue_free)
+	add_child(dialog)
+	dialog.popup_centered_ratio(.7)
+
+func create_runtime_scene_dialog() -> void:
+	if not can_leave_fields(): return
+	if project_model_path.is_empty() or state.dirty or state.document.snapshot() != project_model_snapshot:
+		show_error("Save project model first so the scene references an explicit immutable revision")
+		return
+	var dialog := EditorFileDialog.new()
+	dialog.access = EditorFileDialog.ACCESS_RESOURCES
+	dialog.file_mode = EditorFileDialog.FILE_MODE_SAVE_FILE
+	dialog.filters = PackedStringArray(["*.tscn ; MuJoCo runtime scene"])
+	dialog.current_file = "mujoco_scene.tscn"
+	dialog.file_selected.connect(func(path: String):
+		var resource = ResourceLoader.load(project_model_path)
+		var error := SceneBuilder.save(resource,path)
+		if error == OK:
+			EditorInterface.get_resource_filesystem().scan()
+			status.text = "Saved runtime scene: " + path + ". Select MuJoCo physics, restart, and instantiate this scene."
+		else: show_error("Cannot save runtime scene: " + error_string(error))
+		dialog.queue_free())
+	dialog.canceled.connect(dialog.queue_free)
+	add_child(dialog)
+	dialog.popup_centered_ratio(.7)
+
 func save_project_model() -> void:
 	if not can_leave_fields():
 		return
@@ -248,6 +292,8 @@ func save_project_model() -> void:
 		show_error(result.error)
 		return
 	state.dirty = false
+	project_model_path = result.path
+	project_model_snapshot = state.document.snapshot().duplicate(true)
 	EditorInterface.get_resource_filesystem().scan()
 	status.text = "Saved portable project model: " + result.path
 
@@ -278,6 +324,7 @@ func open_project_model(path: String) -> bool:
 	if not state.document.restore(result.document.snapshot()):
 		show_error(state.document.get_error())
 		return false
+	project_model_path = path
 	model_provenance = resource.provenance.duplicate(true)
 	record_change(before, "MuJoCo open project model")
 	frame_all()

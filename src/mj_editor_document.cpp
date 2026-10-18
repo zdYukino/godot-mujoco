@@ -1,5 +1,6 @@
 #include "mj_editor_document.h"
 #include "physics/mj_assets.h"
+#include "physics/mj_g1_import.h"
 #include "physics/mj_physics_server.h"
 #include "physics/mj_state_transfer.h"
 #include <godot_cpp/classes/project_settings.hpp>
@@ -25,10 +26,11 @@ String drive_kind(const mjModel*m,int a){
  }
  return "general/non-PD";
 }
-void assign_names(mjSpec*s){for(auto t:{mjOBJ_BODY,mjOBJ_JOINT,mjOBJ_GEOM,mjOBJ_ACTUATOR,mjOBJ_TEXTURE}){int i=0;for(auto*e=mjs_firstElement(s,t);e;e=mjs_nextElement(s,e),++i)if(!*mjs_getString(mjs_getName(e))){std::string n="editor_"+std::to_string(int(t))+"_"+std::to_string(i);while(mjs_findElement(s,t,n.c_str()))n+="_";mjs_setName(e,n.c_str());}}}
+void assign_names(mjSpec*s){for(auto t:{mjOBJ_BODY,mjOBJ_JOINT,mjOBJ_GEOM,mjOBJ_ACTUATOR,mjOBJ_TEXTURE,mjOBJ_EQUALITY,mjOBJ_TENDON,mjOBJ_SENSOR}){int i=0;for(auto*e=mjs_firstElement(s,t);e;e=mjs_nextElement(s,e),++i)if(!*mjs_getString(mjs_getName(e))){std::string n="editor_"+std::to_string(int(t))+"_"+std::to_string(i);while(mjs_findElement(s,t,n.c_str()))n+="_";mjs_setName(e,n.c_str());}}}
 Transform3D pose(const mjtNum*p,const mjtNum*m){Basis b;for(int r=0;r<3;++r)for(int c=0;c<3;++c)b[r][c]=m[3*r+c];return Transform3D(mj_to_godot(b),mj_to_godot(Vector3(p[0],p[1],p[2])));}
 }
 void MjEditorDocument::_bind_methods(){
+ ClassDB::bind_method(D_METHOD("import_g1","path"),&MjEditorDocument::import_g1);
  ClassDB::bind_method(D_METHOD("asset_manifest"),&MjEditorDocument::asset_manifest);
  ClassDB::bind_method(D_METHOD("portable_snapshot","mapping"),&MjEditorDocument::portable_snapshot);
  ClassDB::bind_method(D_METHOD("restore_at","snapshot","directory"),&MjEditorDocument::restore_at);
@@ -69,6 +71,10 @@ bool MjEditorDocument::commit(mjSpec*c,const Dictionary &state,bool migrate){
 String MjEditorDocument::xml() const {if(!spec)return {};char error[1024]={};int n=mj_saveXMLString(spec,nullptr,0,error,sizeof(error));if(n<=0)return {};std::vector<char>b(n+1);if(mj_saveXMLString(spec,b.data(),b.size(),error,sizeof(error)))return {};return String::utf8(b.data());}
 Dictionary MjEditorDocument::snapshot() const {Dictionary r,state;r["format"]=1;r["xml"]=xml();r["source"]=source;if(data){state["qpos"]=numbers(data->qpos,model->nq);state["qvel"]=numbers(data->qvel,model->nv);state["ctrl"]=numbers(data->ctrl,model->nu);state["act"]=numbers(data->act,model->na);state["time"]=data->time;std::vector<double> v(mj_stateSize(model,mjSTATE_INTEGRATION));mj_getState(model,data,v.data(),mjSTATE_INTEGRATION);state["integration"]=numbers(v.data(),v.size());}r["state"]=state;return r;}
 bool MjEditorDocument::restore(const Dictionary&r){paused=true;if(int(r.get("format",0))!=1||!r.has("xml")||!r.has("state")){error="Unsupported editor document format";return false;}char e[2048]={};String text=r["xml"];auto*c=mj_parseXMLString(text.utf8().get_data(),nullptr,e,sizeof(e));if(!c){error=String::utf8(e);return false;}if(!commit(c,r["state"],false))return false;source=r.get("source",String());return true;}
+bool MjEditorDocument::import_g1(const String &path){String absolute=ProjectSettings::get_singleton()->globalize_path(path);auto*c=gmj_import_g1(absolute,error);if(!c)return false;if(!commit(c,Dictionary(),false))return false;
+ for(int j=0;j<model->njnt;++j)if(model->jnt_type[j]==mjJNT_HINGE&&model->jnt_limited[j])data->qpos[model->jnt_qposadr[j]]=std::clamp(0.0,model->jnt_range[2*j]+.001,model->jnt_range[2*j+1]-.001);
+ for(int a=0;a<model->nu;++a)if(model->actuator_trntype[a]==mjTRN_JOINT)data->ctrl[a]=data->qpos[model->jnt_qposadr[model->actuator_trnid[2*a]]];
+ mj_forward(model,data);source=absolute;paused=true;return true;}
 bool MjEditorDocument::import_file(const String&path){
  paused=true;String absolute=ProjectSettings::get_singleton()->globalize_path(path);char e[2048]={};
  if(absolute.get_extension().to_lower()!="xml"){error="Select MJCF .xml; URDF uses the separate G1 workflow";return false;}
@@ -137,7 +143,7 @@ bool MjEditorDocument::edit(const Dictionary &cmd){
  Array keys=values.keys();for(int i=0;i<keys.size();++i){String key=keys[i];Variant v=values[key];double x=0;double a[4]={};bool ok=false;
   if(t==mjOBJ_BODY){auto*b=mjs_asBody(e);int id=mj_name2id(model,t,n.utf8().get_data());
    if(key=="pos"||key=="quat"){int count=key=="pos"?3:4;ok=read_values(v,a,count);if(ok&&key=="quat"){double norm=0;for(double z:a)norm+=z*z;ok=norm>1e-12;if(ok)for(double &z:a)z/=sqrt(norm);}if(ok){std::copy_n(a,count,key=="pos"?b->pos:b->quat);if(key=="quat")b->alt.type=mjORIENTATION_QUAT;}}
-   if(key=="mass"){ok=scalar(v,x)&&x>0&&id>0;if(ok){double ratio=x/model->body_mass[id];b->mass=x;for(int k=0;k<3;++k){b->inertia[k]=model->body_inertia[3*id+k]*ratio;b->ipos[k]=model->body_ipos[3*id+k];}std::copy_n(model->body_iquat+4*id,4,b->iquat);b->explicitinertial=true;c->compiler.inertiafromgeom=mjINERTIAFROMGEOM_AUTO;}}
+   if(key=="mass"){ok=scalar(v,x)&&x>0&&id>0;if(ok){double ratio=x/model->body_mass[id];b->mass=x;for(int k=0;k<3;++k){b->inertia[k]=model->body_inertia[3*id+k]*ratio;b->ipos[k]=model->body_ipos[3*id+k];}std::copy_n(model->body_iquat+4*id,4,b->iquat);b->explicitinertial=true;b->ialt.type=mjORIENTATION_QUAT;for(double &entry:b->fullinertia)entry=std::numeric_limits<double>::quiet_NaN();c->compiler.inertiafromgeom=mjINERTIAFROMGEOM_AUTO;}}
   } else if(t==mjOBJ_GEOM){auto*g=mjs_asGeom(e);
    if(key=="pos"||key=="quat"||key=="size"||key=="friction"){int count=key=="quat"?4:3;ok=read_values(v,a,count);if(key=="size"){ok=ok&&(g->type==mjGEOM_BOX||g->type==mjGEOM_SPHERE||g->type==mjGEOM_CYLINDER);int sz=g->type==mjGEOM_SPHERE?1:g->type==mjGEOM_CYLINDER?2:3;for(int k=0;k<sz;++k)ok=ok&&a[k]>0;}if(key=="friction")for(int k=0;k<3;++k)ok=ok&&a[k]>=0;if(key=="quat"){double norm=0;for(double z:a)norm+=z*z;ok=ok&&norm>1e-12;if(ok)for(double&z:a)z/=sqrt(norm);}if(ok){if(key=="quat")g->alt.type=mjORIENTATION_QUAT;std::copy_n(a,count,key=="pos"?g->pos:key=="quat"?g->quat:key=="size"?g->size:g->friction);if(key=="pos"||key=="quat"||key=="size")for(double &z:g->fromto)z=std::numeric_limits<double>::quiet_NaN();}}
    if(key=="density"||key=="mass"){if(mjs_getParent(e)->explicitinertial)return reject("Body has explicit inertia: geom density/mass would not affect body mass. Edit body mass instead.");ok=scalar(v,x)&&x>0;if(ok){if(key=="density"){g->density=x;g->mass=std::numeric_limits<double>::quiet_NaN();}else g->mass=x;}}
