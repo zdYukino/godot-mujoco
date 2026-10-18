@@ -1,0 +1,1315 @@
+[
+  {
+    "label": "build",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "1200",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "cmake",
+      "--build",
+      "/workspace/shared/builds/godot-mujoco-3.16",
+      "--clean-first",
+      "-j2"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 231.96,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "native",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "900",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "tests/native_backend/run.sh"
+    ],
+    "env_overrides": {
+      "OUT": "/workspace/shared/validation/full-2d7ec/native",
+      "MUJOCO_ROOT": "/workspace/shared/builds/godot-mujoco-3.16/_deps/mujoco-src",
+      "GODOT": "/workspace/shared/tools/bin/godot"
+    },
+    "exit": 0,
+    "seconds": 7.17,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "dynamic",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "900",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "tests/dynamic_scene/run.sh"
+    ],
+    "env_overrides": {
+      "OUT": "/workspace/shared/validation/full-2d7ec/dynamic",
+      "MUJOCO_ROOT": "/workspace/shared/builds/godot-mujoco-3.16/_deps/mujoco-src",
+      "GODOT": "/workspace/shared/tools/bin/godot"
+    },
+    "exit": 0,
+    "seconds": 8.79,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "g1",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "900",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "tests/g1_actuation/run.sh"
+    ],
+    "env_overrides": {
+      "OUT": "/workspace/shared/validation/full-2d7ec/g1",
+      "MUJOCO_ROOT": "/workspace/shared/builds/godot-mujoco-3.16/_deps/mujoco-src",
+      "GODOT": "/workspace/shared/tools/bin/godot"
+    },
+    "exit": 0,
+    "seconds": 13.23,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "editor",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "900",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "tests/editor_plugin/run.sh"
+    ],
+    "env_overrides": {
+      "OUT": "/workspace/shared/validation/full-2d7ec/editor",
+      "MUJOCO_ROOT": "/workspace/shared/builds/godot-mujoco-3.16/_deps/mujoco-src",
+      "GODOT": "/workspace/shared/tools/bin/godot"
+    },
+    "exit": 0,
+    "seconds": 7.98,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "freebase",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "900",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "tests/freebase/run.sh"
+    ],
+    "env_overrides": {
+      "OUT": "/workspace/shared/validation/full-2d7ec/freebase",
+      "MUJOCO_ROOT": "/workspace/shared/builds/godot-mujoco-3.16/_deps/mujoco-src",
+      "GODOT": "/workspace/shared/tools/bin/godot"
+    },
+    "exit": 0,
+    "seconds": 20.1,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "clock",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "900",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "tests/runtime_clock/run.sh"
+    ],
+    "env_overrides": {
+      "OUT": "/workspace/shared/validation/full-2d7ec/clock",
+      "MUJOCO_ROOT": "/workspace/shared/builds/godot-mujoco-3.16/_deps/mujoco-src",
+      "GODOT": "/workspace/shared/tools/bin/godot"
+    },
+    "exit": 0,
+    "seconds": 10.41,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "live",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "900",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "tests/portable_runtime/run_live.sh"
+    ],
+    "env_overrides": {
+      "OUT": "/workspace/shared/validation/full-2d7ec/live",
+      "MUJOCO_ROOT": "/workspace/shared/builds/godot-mujoco-3.16/_deps/mujoco-src",
+      "GODOT": "/workspace/shared/tools/bin/godot"
+    },
+    "exit": 0,
+    "seconds": 31.44,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "negative-audit",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "60",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "python3",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests/portable_runtime",
+      "-p",
+      "test_world_rejection_audit.py"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 0.71,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "portable-assets-0",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "900",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "tests/portable_runtime/run_assets.sh"
+    ],
+    "env_overrides": {
+      "OUT": "/workspace/shared/validation/full-2d7ec/portable-assets-0"
+    },
+    "exit": 0,
+    "seconds": 9.6,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "portable-runtime-0",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "900",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "tests/portable_runtime/run_runtime.sh"
+    ],
+    "env_overrides": {
+      "OUT": "/workspace/shared/validation/full-2d7ec/portable-runtime-0"
+    },
+    "exit": 0,
+    "seconds": 59.73,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "pressure-0",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "300",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--headless",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/portable-runtime-0/relocated",
+      "--script",
+      "res://runtime_pressure.gd"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 26.17,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "pressure-audit-0",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "30",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "python3",
+      "tests/stability/log_checks.py",
+      "/workspace/shared/validation/full-2d7ec/pressure-0-driver.log"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 0.71,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "portable-assets-1",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "900",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "tests/portable_runtime/run_assets.sh"
+    ],
+    "env_overrides": {
+      "OUT": "/workspace/shared/validation/full-2d7ec/portable-assets-1"
+    },
+    "exit": 0,
+    "seconds": 9.6,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "portable-runtime-1",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "900",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "tests/portable_runtime/run_runtime.sh"
+    ],
+    "env_overrides": {
+      "OUT": "/workspace/shared/validation/full-2d7ec/portable-runtime-1"
+    },
+    "exit": 0,
+    "seconds": 59.29,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "pressure-1",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "300",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--headless",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/portable-runtime-1/relocated",
+      "--script",
+      "res://runtime_pressure.gd"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 25.78,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "pressure-audit-1",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "30",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "python3",
+      "tests/stability/log_checks.py",
+      "/workspace/shared/validation/full-2d7ec/pressure-1-driver.log"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 0.71,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "portable-assets-2",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "900",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "tests/portable_runtime/run_assets.sh"
+    ],
+    "env_overrides": {
+      "OUT": "/workspace/shared/validation/full-2d7ec/portable-assets-2"
+    },
+    "exit": 0,
+    "seconds": 9.6,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "portable-runtime-2",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "900",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "tests/portable_runtime/run_runtime.sh"
+    ],
+    "env_overrides": {
+      "OUT": "/workspace/shared/validation/full-2d7ec/portable-runtime-2"
+    },
+    "exit": 0,
+    "seconds": 63.75,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "pressure-2",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "300",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--headless",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/portable-runtime-2/relocated",
+      "--script",
+      "res://runtime_pressure.gd"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 26.16,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "pressure-audit-2",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "30",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "python3",
+      "tests/stability/log_checks.py",
+      "/workspace/shared/validation/full-2d7ec/pressure-2-driver.log"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 0.71,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "editor-gui-0-import",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "120",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "scripts/import_headless.sh",
+      "/workspace/shared/validation/full-2d7ec/editor-gui-0/project"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 5.15,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "editor-gui-0",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "180",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--editor",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/editor-gui-0/project",
+      "--rendering-method",
+      "gl_compatibility",
+      "--audio-driver",
+      "Dummy",
+      "--resolution",
+      "1600x1000",
+      "--",
+      "--mj-editor-test",
+      "--report=/workspace/shared/validation/full-2d7ec/editor-gui-0/results.json",
+      "--capture-dir=/workspace/shared/validation/full-2d7ec/editor-gui-0/screenshots"
+    ],
+    "env_overrides": {
+      "DISPLAY": ":91"
+    },
+    "exit": 0,
+    "seconds": 22.12,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "editor-gui-1-import",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "120",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "scripts/import_headless.sh",
+      "/workspace/shared/validation/full-2d7ec/editor-gui-1/project"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 4.76,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "editor-gui-1",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "180",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--editor",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/editor-gui-1/project",
+      "--rendering-method",
+      "gl_compatibility",
+      "--audio-driver",
+      "Dummy",
+      "--resolution",
+      "1600x1000",
+      "--",
+      "--mj-editor-test",
+      "--report=/workspace/shared/validation/full-2d7ec/editor-gui-1/results.json",
+      "--capture-dir=/workspace/shared/validation/full-2d7ec/editor-gui-1/screenshots"
+    ],
+    "env_overrides": {
+      "DISPLAY": ":91"
+    },
+    "exit": 0,
+    "seconds": 20.53,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "editor-gui-2-import",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "120",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "scripts/import_headless.sh",
+      "/workspace/shared/validation/full-2d7ec/editor-gui-2/project"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 5.16,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "editor-gui-2",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "180",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--editor",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/editor-gui-2/project",
+      "--rendering-method",
+      "gl_compatibility",
+      "--audio-driver",
+      "Dummy",
+      "--resolution",
+      "1600x1000",
+      "--",
+      "--mj-editor-test",
+      "--report=/workspace/shared/validation/full-2d7ec/editor-gui-2/results.json",
+      "--capture-dir=/workspace/shared/validation/full-2d7ec/editor-gui-2/screenshots"
+    ],
+    "env_overrides": {
+      "DISPLAY": ":91"
+    },
+    "exit": 0,
+    "seconds": 20.94,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "editor-gui-3-import",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "120",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "scripts/import_headless.sh",
+      "/workspace/shared/validation/full-2d7ec/editor-gui-3/project"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 5.17,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "editor-gui-3",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "180",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--editor",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/editor-gui-3/project",
+      "--rendering-method",
+      "gl_compatibility",
+      "--audio-driver",
+      "Dummy",
+      "--resolution",
+      "1600x1000",
+      "--",
+      "--mj-editor-test",
+      "--report=/workspace/shared/validation/full-2d7ec/editor-gui-3/results.json",
+      "--capture-dir=/workspace/shared/validation/full-2d7ec/editor-gui-3/screenshots"
+    ],
+    "env_overrides": {
+      "DISPLAY": ":91"
+    },
+    "exit": 0,
+    "seconds": 20.95,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "editor-gui-4-import",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "120",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "scripts/import_headless.sh",
+      "/workspace/shared/validation/full-2d7ec/editor-gui-4/project"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 4.76,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "editor-gui-4",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "180",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--editor",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/editor-gui-4/project",
+      "--rendering-method",
+      "gl_compatibility",
+      "--audio-driver",
+      "Dummy",
+      "--resolution",
+      "1600x1000",
+      "--",
+      "--mj-editor-test",
+      "--report=/workspace/shared/validation/full-2d7ec/editor-gui-4/results.json",
+      "--capture-dir=/workspace/shared/validation/full-2d7ec/editor-gui-4/screenshots"
+    ],
+    "env_overrides": {
+      "DISPLAY": ":91"
+    },
+    "exit": 0,
+    "seconds": 20.95,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "legacy-smoke",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "120",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--headless",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/g1/godot",
+      "res://HeadlessTest.tscn"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 0.71,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "legacy-chaos",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "120",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--headless",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/g1/godot",
+      "res://ChaosPendulumTest.tscn"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 0.71,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "legacy-debug-data",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "120",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--headless",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/g1/godot",
+      "res://VisualDebugTest.tscn"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 0.71,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "plain-standalone-import",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "120",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "scripts/import_headless.sh",
+      "/workspace/shared/validation/full-2d7ec/plain-standalone"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 4.76,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "plain-standalone",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "90",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/plain-standalone",
+      "--rendering-method",
+      "gl_compatibility",
+      "--audio-driver",
+      "Dummy",
+      "--script",
+      "res://capture_plain.gd",
+      "--",
+      "--capture=/workspace/shared/validation/full-2d7ec/plain-standalone.png"
+    ],
+    "env_overrides": {
+      "DISPLAY": ":91"
+    },
+    "exit": 0,
+    "seconds": 12.87,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "fixed-standalone",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "120",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/portable-runtime-0/relocated",
+      "--rendering-method",
+      "gl_compatibility",
+      "--audio-driver",
+      "Dummy",
+      "--script",
+      "res://capture_runtime.gd",
+      "--",
+      "--capture=/workspace/shared/validation/full-2d7ec/fixed-standalone.png"
+    ],
+    "env_overrides": {
+      "DISPLAY": ":91"
+    },
+    "exit": 0,
+    "seconds": 14.89,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "freebase-prepare",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "120",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--headless",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/freebase/project",
+      "--script",
+      "res://prepare_playground.gd"
+    ],
+    "env_overrides": {},
+    "exit": 0,
+    "seconds": 1.53,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "freebase-standalone",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "120",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/freebase/project",
+      "--rendering-method",
+      "gl_compatibility",
+      "--audio-driver",
+      "Dummy",
+      "--resolution",
+      "1500x950",
+      "--script",
+      "res://capture_playground.gd",
+      "--",
+      "--capture-dir=/workspace/shared/validation/full-2d7ec/freebase-gui-images"
+    ],
+    "env_overrides": {
+      "DISPLAY": ":91"
+    },
+    "exit": 0,
+    "seconds": 25.06,
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  },
+  {
+    "label": "f5-plain-default-audio",
+    "command": [
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--editor",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/plain-f5",
+      "--rendering-method",
+      "gl_compatibility",
+      "--audio-driver",
+      "Dummy",
+      "--resolution",
+      "1600x1000"
+    ],
+    "env_overrides": {
+      "DISPLAY": ":91"
+    },
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 27.36,
+    "forced_stop": false,
+    "automation_error": "",
+    "cycles": [
+      {
+        "cycle": 0,
+        "captures": [
+          {
+            "seconds": 2.12,
+            "file": "cycle-0-2s.png",
+            "children": []
+          },
+          {
+            "seconds": 15.12,
+            "file": "cycle-0-15s.png",
+            "children": [
+              {
+                "pid": 59755,
+                "command": "/workspace/shared/tools/Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64 --path /workspace/shared/validation/full-2d7ec/plain-f5 --remote-debug tcp://127.0.0.1:6007 --editor-pid 59446 --scene res://Main.tscn --wid 6291535 --display-driver x11 --position 224,176 --resolution 1152x648 "
+              }
+            ]
+          }
+        ],
+        "children_after_f8": []
+      }
+    ],
+    "child_exit_codes": "not directly observable; F8 disappearance and combined logs retained"
+  },
+  {
+    "label": "f5-plain-dummy",
+    "command": [
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--editor",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/plain-f5",
+      "--rendering-method",
+      "gl_compatibility",
+      "--audio-driver",
+      "Dummy",
+      "--resolution",
+      "1600x1000"
+    ],
+    "env_overrides": {
+      "DISPLAY": ":91"
+    },
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 81.5,
+    "forced_stop": false,
+    "automation_error": "",
+    "cycles": [
+      {
+        "cycle": 0,
+        "captures": [
+          {
+            "seconds": 2.12,
+            "file": "cycle-0-2s.png",
+            "children": []
+          },
+          {
+            "seconds": 15.12,
+            "file": "cycle-0-15s.png",
+            "children": [
+              {
+                "pid": 60118,
+                "command": "/workspace/shared/tools/Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64 --path /workspace/shared/validation/full-2d7ec/plain-f5 --remote-debug tcp://127.0.0.1:6007 --editor-pid 59811 --scene res://Main.tscn --wid 6291535 --display-driver x11 --position 224,176 --resolution 1152x648 "
+              }
+            ]
+          },
+          {
+            "seconds": 60.12,
+            "file": "cycle-0-60s.png",
+            "children": [
+              {
+                "pid": 60118,
+                "command": "/workspace/shared/tools/Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64 --path /workspace/shared/validation/full-2d7ec/plain-f5 --remote-debug tcp://127.0.0.1:6007 --editor-pid 59811 --scene res://Main.tscn --wid 6291535 --display-driver x11 --position 224,176 --resolution 1152x648 "
+              }
+            ]
+          }
+        ],
+        "children_after_f8": []
+      },
+      {
+        "cycle": 1,
+        "captures": [
+          {
+            "seconds": 2.12,
+            "file": "cycle-1-2s.png",
+            "children": [
+              {
+                "pid": 60223,
+                "command": "/workspace/shared/tools/Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64 --path /workspace/shared/validation/full-2d7ec/plain-f5 --remote-debug tcp://127.0.0.1:6007 --editor-pid 59811 --scene res://Main.tscn --wid 6291580 --display-driver x11 --position 224,176 --resolution 1152x648 "
+              }
+            ]
+          }
+        ],
+        "children_after_f8": []
+      },
+      {
+        "cycle": 2,
+        "captures": [
+          {
+            "seconds": 2.07,
+            "file": "cycle-2-2s.png",
+            "children": [
+              {
+                "pid": 60247,
+                "command": "/workspace/shared/tools/Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64 --path /workspace/shared/validation/full-2d7ec/plain-f5 --remote-debug tcp://127.0.0.1:6007 --editor-pid 59811 --scene res://Main.tscn --wid 6291593 --display-driver x11 --position 224,176 --resolution 1152x648 "
+              }
+            ]
+          }
+        ],
+        "children_after_f8": []
+      }
+    ],
+    "child_exit_codes": "not directly observable; F8 disappearance and combined logs retained"
+  },
+  {
+    "label": "f5-mujoco-dummy",
+    "command": [
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "/workspace/shared/tools/bin/godot",
+      "--editor",
+      "--path",
+      "/workspace/shared/validation/full-2d7ec/portable-runtime-0/relocated",
+      "--rendering-method",
+      "gl_compatibility",
+      "--audio-driver",
+      "Dummy",
+      "--resolution",
+      "1600x1000"
+    ],
+    "env_overrides": {
+      "DISPLAY": ":91"
+    },
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 81.72,
+    "forced_stop": false,
+    "automation_error": "",
+    "cycles": [
+      {
+        "cycle": 0,
+        "captures": [
+          {
+            "seconds": 2.12,
+            "file": "cycle-0-2s.png",
+            "children": []
+          },
+          {
+            "seconds": 15.12,
+            "file": "cycle-0-15s.png",
+            "children": [
+              {
+                "pid": 60613,
+                "command": "/workspace/shared/tools/Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64 --path /workspace/shared/validation/full-2d7ec/portable-runtime-0/relocated --remote-debug tcp://127.0.0.1:6007 --editor-pid 60277 --scene res://RuntimeScene.tscn --wid 6291535 --display-driver x11 --position 224,176 --resolution 1152x648 "
+              }
+            ]
+          },
+          {
+            "seconds": 60.13,
+            "file": "cycle-0-60s.png",
+            "children": [
+              {
+                "pid": 60613,
+                "command": "/workspace/shared/tools/Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64 --path /workspace/shared/validation/full-2d7ec/portable-runtime-0/relocated --remote-debug tcp://127.0.0.1:6007 --editor-pid 60277 --scene res://RuntimeScene.tscn --wid 6291535 --display-driver x11 --position 224,176 --resolution 1152x648 "
+              }
+            ]
+          }
+        ],
+        "children_after_f8": []
+      },
+      {
+        "cycle": 1,
+        "captures": [
+          {
+            "seconds": 2.12,
+            "file": "cycle-1-2s.png",
+            "children": [
+              {
+                "pid": 60754,
+                "command": "/workspace/shared/tools/Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64 --path /workspace/shared/validation/full-2d7ec/portable-runtime-0/relocated --remote-debug tcp://127.0.0.1:6007 --editor-pid 60277 --scene res://RuntimeScene.tscn --wid 6291564 --display-driver x11 --position 224,176 --resolution 1152x648 "
+              }
+            ]
+          }
+        ],
+        "children_after_f8": []
+      },
+      {
+        "cycle": 2,
+        "captures": [
+          {
+            "seconds": 2.13,
+            "file": "cycle-2-2s.png",
+            "children": [
+              {
+                "pid": 60803,
+                "command": "/workspace/shared/tools/Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64 --path /workspace/shared/validation/full-2d7ec/portable-runtime-0/relocated --remote-debug tcp://127.0.0.1:6007 --editor-pid 60277 --scene res://RuntimeScene.tscn --wid 6291575 --display-driver x11 --position 224,176 --resolution 1152x648 "
+              }
+            ]
+          }
+        ],
+        "children_after_f8": []
+      }
+    ],
+    "child_exit_codes": "not directly observable; F8 disappearance and combined logs retained"
+  },
+  {
+    "label": "smoke-isolated",
+    "command": [
+      "timeout",
+      "--kill-after=5",
+      "240",
+      "nice",
+      "-n",
+      "10",
+      "taskset",
+      "-c",
+      "0,1",
+      "bash",
+      "tests/mjworld_smoke/run.sh"
+    ],
+    "env_overrides": {
+      "OUT": "/workspace/shared/validation/full-2d7ec/smoke-isolated"
+    },
+    "exit": 0,
+    "seconds": 5.18,
+    "source_commit": "5b9b7af47782065c123b2f42687e0502ca788194",
+    "terminated_owned_children": [],
+    "killed_after_term": []
+  }
+]

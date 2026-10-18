@@ -1,0 +1,8 @@
+{
+  "source": "parent thread relayed dot independent acceptance; raw attachments not yet supplied in this turn",
+  "candidate": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+  "runtime_cached": {"clock_checks":118,"csharp":"pass","additional_boundary_assertions":33,"native_single_round":[44,25,80],"mjworld_chaos":"pass","mjworld_debug_data":"pass","fresh_import_covered":false},
+  "prior_independent_limits": {"freebase_exit":137,"freebase_cause":"unknown","clock_fresh_import_exit":139,"clock_functional_tests_reached":false},
+  "legacy_smoke": {"exit":0,"marker":"SMOKE TEST: PASS","error":"ERROR: MjWorld.set_qpos: set_qpos expects 1 values, got 3","strict_status":"FAIL"},
+  "tree_selection": {"strict_status":"FAIL / prior fix only partial","steps":"Select hinge, change damping to 0.2 without Apply, mouse-click parent body arm above it, move pointer away","observed":"property panel remains hinge and pending draft survives, but no selected tree highlight; repeatable","control":"clicking later sphere body restores hinge highlight","hypothesis":"mouse event ordering, not established root cause","coverage_gap":"160 automated checks use direct Tree signal; actual mouse ordering absent","evidence":"dot retained no-hover and comparison screenshots, attachments pending","action_this_round":"record only; no product fix"}
+}

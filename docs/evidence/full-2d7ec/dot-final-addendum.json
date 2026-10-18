@@ -1,0 +1,17 @@
+{
+  "source": "parent relay after main evidence archive, raw attachments not supplied",
+  "dot_worker_stop": "10:27, preview limit",
+  "actual_lightweight_gui_passed": [
+    "sphere/cylinder size and undo",
+    "Step 9 = 0.018 seconds",
+    "UI continues while simulation paused",
+    "snapshot reset",
+    "environment rebuild",
+    "editor running Apply and PD controls",
+    "scene assignment undo/redo, save and restart"
+  ],
+  "tree_highlight": "FAIL remains",
+  "G1_GUI": "NOT COMPLETED",
+  "overall_GUI": "NOT ALL PASS",
+  "approval": "No active approval wait in this worker; supplied approval ID is not a current blocker"
+}

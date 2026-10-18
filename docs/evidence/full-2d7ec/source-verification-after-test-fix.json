@@ -1,0 +1,7 @@
+{
+  "base": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+  "test_fix": "5b9b7af47782065c123b2f42687e0502ca788194",
+  "changed_existing": [
+    "demo/scripts/headless_smoke_test.gd"
+  ]
+}

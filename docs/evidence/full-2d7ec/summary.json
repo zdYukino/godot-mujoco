@@ -1,0 +1,777 @@
+[
+  {
+    "label": "build",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 231.96,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "native",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 7.17,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "dynamic",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 8.79,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "g1",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 13.23,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "editor",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 7.98,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "freebase",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 20.1,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "clock",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 10.41,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "live",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 31.44,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "negative-audit",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 0.71,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "portable-assets-0",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 9.6,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "portable-runtime-0",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 59.73,
+    "strict_status": "PASS",
+    "diagnostics": [],
+    "isolated_negative": [
+      {
+        "case": "missing_model",
+        "command": [
+          "/workspace/shared/tools/bin/godot",
+          "--headless",
+          "--path",
+          "/workspace/shared/validation/full-2d7ec/portable-runtime-0/relocated",
+          "--script",
+          "res://world_rejection_test.gd",
+          "--",
+          "missing_model"
+        ],
+        "exit": 0,
+        "log": "missing_model.log",
+        "result": {
+          "case": "missing_model",
+          "checks": [
+            {
+              "name": "rejected before space configuration",
+              "passed": true
+            },
+            {
+              "name": "exact structured diagnostic",
+              "passed": true
+            },
+            {
+              "name": "failed entry does not claim ownership",
+              "passed": true
+            },
+            {
+              "name": "corrected entry recovers original start mode",
+              "passed": true
+            },
+            {
+              "name": "recovered world loads complete robot",
+              "passed": true
+            },
+            {
+              "name": "cleanup releases ownership",
+              "passed": true
+            }
+          ],
+          "failed": 0
+        },
+        "passed": true
+      },
+      {
+        "case": "ownership",
+        "command": [
+          "/workspace/shared/tools/bin/godot",
+          "--headless",
+          "--path",
+          "/workspace/shared/validation/full-2d7ec/portable-runtime-0/relocated",
+          "--script",
+          "res://world_rejection_test.gd",
+          "--",
+          "ownership"
+        ],
+        "exit": 0,
+        "log": "ownership.log",
+        "result": {
+          "case": "ownership",
+          "checks": [
+            {
+              "name": "live owner fixture loaded",
+              "passed": true
+            },
+            {
+              "name": "second owner rejected before configuration",
+              "passed": true
+            },
+            {
+              "name": "exact structured diagnostic",
+              "passed": true
+            },
+            {
+              "name": "rejection preserves owner model state revision and pause",
+              "passed": true
+            },
+            {
+              "name": "failed owner exit preserves live world",
+              "passed": true
+            },
+            {
+              "name": "conflict recovers after owner disposal",
+              "passed": true
+            },
+            {
+              "name": "recovered world loads complete robot",
+              "passed": true
+            },
+            {
+              "name": "cleanup releases ownership",
+              "passed": true
+            }
+          ],
+          "failed": 0
+        },
+        "passed": true
+      }
+    ]
+  },
+  {
+    "label": "pressure-0",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 26.17,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "pressure-audit-0",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 0.71,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "portable-assets-1",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 9.6,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "portable-runtime-1",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 59.29,
+    "strict_status": "PASS",
+    "diagnostics": [],
+    "isolated_negative": [
+      {
+        "case": "missing_model",
+        "command": [
+          "/workspace/shared/tools/bin/godot",
+          "--headless",
+          "--path",
+          "/workspace/shared/validation/full-2d7ec/portable-runtime-1/relocated",
+          "--script",
+          "res://world_rejection_test.gd",
+          "--",
+          "missing_model"
+        ],
+        "exit": 0,
+        "log": "missing_model.log",
+        "result": {
+          "case": "missing_model",
+          "checks": [
+            {
+              "name": "rejected before space configuration",
+              "passed": true
+            },
+            {
+              "name": "exact structured diagnostic",
+              "passed": true
+            },
+            {
+              "name": "failed entry does not claim ownership",
+              "passed": true
+            },
+            {
+              "name": "corrected entry recovers original start mode",
+              "passed": true
+            },
+            {
+              "name": "recovered world loads complete robot",
+              "passed": true
+            },
+            {
+              "name": "cleanup releases ownership",
+              "passed": true
+            }
+          ],
+          "failed": 0
+        },
+        "passed": true
+      },
+      {
+        "case": "ownership",
+        "command": [
+          "/workspace/shared/tools/bin/godot",
+          "--headless",
+          "--path",
+          "/workspace/shared/validation/full-2d7ec/portable-runtime-1/relocated",
+          "--script",
+          "res://world_rejection_test.gd",
+          "--",
+          "ownership"
+        ],
+        "exit": 0,
+        "log": "ownership.log",
+        "result": {
+          "case": "ownership",
+          "checks": [
+            {
+              "name": "live owner fixture loaded",
+              "passed": true
+            },
+            {
+              "name": "second owner rejected before configuration",
+              "passed": true
+            },
+            {
+              "name": "exact structured diagnostic",
+              "passed": true
+            },
+            {
+              "name": "rejection preserves owner model state revision and pause",
+              "passed": true
+            },
+            {
+              "name": "failed owner exit preserves live world",
+              "passed": true
+            },
+            {
+              "name": "conflict recovers after owner disposal",
+              "passed": true
+            },
+            {
+              "name": "recovered world loads complete robot",
+              "passed": true
+            },
+            {
+              "name": "cleanup releases ownership",
+              "passed": true
+            }
+          ],
+          "failed": 0
+        },
+        "passed": true
+      }
+    ]
+  },
+  {
+    "label": "pressure-1",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 25.78,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "pressure-audit-1",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 0.71,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "portable-assets-2",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 9.6,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "portable-runtime-2",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 63.75,
+    "strict_status": "PASS",
+    "diagnostics": [],
+    "isolated_negative": [
+      {
+        "case": "missing_model",
+        "command": [
+          "/workspace/shared/tools/bin/godot",
+          "--headless",
+          "--path",
+          "/workspace/shared/validation/full-2d7ec/portable-runtime-2/relocated",
+          "--script",
+          "res://world_rejection_test.gd",
+          "--",
+          "missing_model"
+        ],
+        "exit": 0,
+        "log": "missing_model.log",
+        "result": {
+          "case": "missing_model",
+          "checks": [
+            {
+              "name": "rejected before space configuration",
+              "passed": true
+            },
+            {
+              "name": "exact structured diagnostic",
+              "passed": true
+            },
+            {
+              "name": "failed entry does not claim ownership",
+              "passed": true
+            },
+            {
+              "name": "corrected entry recovers original start mode",
+              "passed": true
+            },
+            {
+              "name": "recovered world loads complete robot",
+              "passed": true
+            },
+            {
+              "name": "cleanup releases ownership",
+              "passed": true
+            }
+          ],
+          "failed": 0
+        },
+        "passed": true
+      },
+      {
+        "case": "ownership",
+        "command": [
+          "/workspace/shared/tools/bin/godot",
+          "--headless",
+          "--path",
+          "/workspace/shared/validation/full-2d7ec/portable-runtime-2/relocated",
+          "--script",
+          "res://world_rejection_test.gd",
+          "--",
+          "ownership"
+        ],
+        "exit": 0,
+        "log": "ownership.log",
+        "result": {
+          "case": "ownership",
+          "checks": [
+            {
+              "name": "live owner fixture loaded",
+              "passed": true
+            },
+            {
+              "name": "second owner rejected before configuration",
+              "passed": true
+            },
+            {
+              "name": "exact structured diagnostic",
+              "passed": true
+            },
+            {
+              "name": "rejection preserves owner model state revision and pause",
+              "passed": true
+            },
+            {
+              "name": "failed owner exit preserves live world",
+              "passed": true
+            },
+            {
+              "name": "conflict recovers after owner disposal",
+              "passed": true
+            },
+            {
+              "name": "recovered world loads complete robot",
+              "passed": true
+            },
+            {
+              "name": "cleanup releases ownership",
+              "passed": true
+            }
+          ],
+          "failed": 0
+        },
+        "passed": true
+      }
+    ]
+  },
+  {
+    "label": "pressure-2",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 26.16,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "pressure-audit-2",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 0.71,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "editor-gui-0-import",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 5.15,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "editor-gui-0",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 22.12,
+    "strict_status": "FAIL",
+    "diagnostics": [
+      {
+        "file": "editor-gui-0-driver.log",
+        "line": 6,
+        "text": "ERROR: Required Vulkan instance extension VK_KHR_surface not found."
+      },
+      {
+        "file": "editor-gui-0-driver.log",
+        "line": 8,
+        "text": "ERROR: Condition \"err != OK\" is true. Returning: err"
+      }
+    ],
+    "assertions": {
+      "passed": 163,
+      "failed": 0
+    }
+  },
+  {
+    "label": "editor-gui-1-import",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 4.76,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "editor-gui-1",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 20.53,
+    "strict_status": "FAIL",
+    "diagnostics": [
+      {
+        "file": "editor-gui-1-driver.log",
+        "line": 6,
+        "text": "ERROR: Required Vulkan instance extension VK_KHR_surface not found."
+      },
+      {
+        "file": "editor-gui-1-driver.log",
+        "line": 8,
+        "text": "ERROR: Condition \"err != OK\" is true. Returning: err"
+      }
+    ],
+    "assertions": {
+      "passed": 163,
+      "failed": 0
+    }
+  },
+  {
+    "label": "editor-gui-2-import",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 5.16,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "editor-gui-2",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 20.94,
+    "strict_status": "FAIL",
+    "diagnostics": [
+      {
+        "file": "editor-gui-2-driver.log",
+        "line": 6,
+        "text": "ERROR: Required Vulkan instance extension VK_KHR_surface not found."
+      },
+      {
+        "file": "editor-gui-2-driver.log",
+        "line": 8,
+        "text": "ERROR: Condition \"err != OK\" is true. Returning: err"
+      }
+    ],
+    "assertions": {
+      "passed": 163,
+      "failed": 0
+    }
+  },
+  {
+    "label": "editor-gui-3-import",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 5.17,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "editor-gui-3",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 20.95,
+    "strict_status": "FAIL",
+    "diagnostics": [
+      {
+        "file": "editor-gui-3-driver.log",
+        "line": 6,
+        "text": "ERROR: Required Vulkan instance extension VK_KHR_surface not found."
+      },
+      {
+        "file": "editor-gui-3-driver.log",
+        "line": 8,
+        "text": "ERROR: Condition \"err != OK\" is true. Returning: err"
+      }
+    ],
+    "assertions": {
+      "passed": 163,
+      "failed": 0
+    }
+  },
+  {
+    "label": "editor-gui-4-import",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 4.76,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "editor-gui-4",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 20.95,
+    "strict_status": "FAIL",
+    "diagnostics": [
+      {
+        "file": "editor-gui-4-driver.log",
+        "line": 6,
+        "text": "ERROR: Required Vulkan instance extension VK_KHR_surface not found."
+      },
+      {
+        "file": "editor-gui-4-driver.log",
+        "line": 8,
+        "text": "ERROR: Condition \"err != OK\" is true. Returning: err"
+      }
+    ],
+    "assertions": {
+      "passed": 163,
+      "failed": 0
+    }
+  },
+  {
+    "label": "legacy-smoke",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 0.71,
+    "strict_status": "FAIL",
+    "diagnostics": [
+      {
+        "file": "legacy-smoke-driver.log",
+        "line": 51,
+        "text": "ERROR: MjWorld.set_qpos: set_qpos expects 1 values, got 3"
+      }
+    ]
+  },
+  {
+    "label": "legacy-chaos",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 0.71,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "legacy-debug-data",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 0.71,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "plain-standalone-import",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 4.76,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "plain-standalone",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 12.87,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "fixed-standalone",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 14.89,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "freebase-prepare",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 1.53,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "freebase-standalone",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 25.06,
+    "strict_status": "PASS",
+    "diagnostics": []
+  },
+  {
+    "label": "f5-plain-default-audio",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 27.36,
+    "strict_status": "FAIL",
+    "diagnostics": [
+      {
+        "file": "f5-plain-default-audio-driver.log",
+        "line": 6,
+        "text": "ERROR: Required Vulkan instance extension VK_KHR_surface not found."
+      },
+      {
+        "file": "f5-plain-default-audio-driver.log",
+        "line": 8,
+        "text": "ERROR: Condition \"err != OK\" is true. Returning: err"
+      }
+    ]
+  },
+  {
+    "label": "f5-plain-dummy",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 81.5,
+    "strict_status": "FAIL",
+    "diagnostics": [
+      {
+        "file": "f5-plain-dummy-driver.log",
+        "line": 6,
+        "text": "ERROR: Required Vulkan instance extension VK_KHR_surface not found."
+      },
+      {
+        "file": "f5-plain-dummy-driver.log",
+        "line": 8,
+        "text": "ERROR: Condition \"err != OK\" is true. Returning: err"
+      }
+    ]
+  },
+  {
+    "label": "f5-mujoco-dummy",
+    "source_commit": "2d7ec74514758b1fc7922a3560c837897df5f5ab",
+    "exit": 0,
+    "seconds": 81.72,
+    "strict_status": "FAIL",
+    "diagnostics": [
+      {
+        "file": "f5-mujoco-dummy-driver.log",
+        "line": 6,
+        "text": "ERROR: Required Vulkan instance extension VK_KHR_surface not found."
+      },
+      {
+        "file": "f5-mujoco-dummy-driver.log",
+        "line": 8,
+        "text": "ERROR: Condition \"err != OK\" is true. Returning: err"
+      }
+    ]
+  },
+  {
+    "label": "smoke-isolated",
+    "source_commit": "5b9b7af47782065c123b2f42687e0502ca788194",
+    "exit": 0,
+    "seconds": 5.18,
+    "strict_status": "PASS",
+    "diagnostics": [],
+    "isolated_negative": {
+      "positive_exit": 0,
+      "negative_exit": 0,
+      "positive_passed": true,
+      "negative": {
+        "checks": 3,
+        "failed": 0,
+        "rejected": true,
+        "unchanged": true
+      }
+    }
+  }
+]
