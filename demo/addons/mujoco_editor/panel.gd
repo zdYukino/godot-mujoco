@@ -438,11 +438,18 @@ func on_select() -> void:
 		return
 	if not can_leave_fields():
 		restore_tree_selection(tree.get_root())
+		# Native Tree mouse handling can still clear later rows after this signal.
+		# Resolve again after input dispatch, using current state rather than a stale item.
+		call_deferred("restore_pending_tree_selection")
 		return
 	var item := tree.get_selected()
 	selected = item.get_metadata(0) if item and item.get_metadata(0) is Dictionary else {}
 	build_fields()
 	highlight_selection()
+
+func restore_pending_tree_selection() -> void:
+	if pending and is_instance_valid(tree) and not selected.is_empty():
+		restore_tree_selection(tree.get_root())
 
 func restore_tree_selection(item: TreeItem) -> void:
 	if not item: return
