@@ -1,0 +1,43 @@
+[gd_resource type="Resource" script_class="MjModelResource" format=3 uid="uid://dmmq5mmcq0aa4"]
+
+[ext_resource type="Script" uid="uid://dsbfgnqp6yhty" path="res://addons/godot_mujoco/model/model_resource.gd" id="1_jji6q"]
+
+[resource]
+script = ExtResource("1_jji6q")
+snapshot = {
+"format": 1,
+"source": "/workspace/shared/validation/daily-paths/project/fixtures/pendulum.xml",
+"state": {
+"act": [],
+"ctrl": [0.0, 0.0, 0.0],
+"integration": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"qpos": [0.0],
+"qvel": [0.0],
+"time": 0.0
+},
+"xml": "<mujoco model=\"editor_acceptance\">
+  <compiler angle=\"radian\"/>
+
+  <option integrator=\"implicitfast\"/>
+
+  <worldbody>
+    <geom name=\"floor\" size=\"5 5 0.1\" type=\"plane\"/>
+    <body name=\"arm\" pos=\"0 0 1.5\">
+      <joint name=\"hinge\" range=\"-1.5 1.5\" damping=\"0.2\" axis=\"0 1 0\"/>
+      <geom name=\"arm_geom\" size=\"0.1 0.1 0.4\" pos=\"0 0 -0.4\" type=\"box\" mass=\"2\"/>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <general name=\"position_drive\" joint=\"hinge\" ctrlrange=\"-1.5 1.5\" input=\"pos\" biastype=\"affine\" gainprm=\"20\" biasprm=\"0 -20 -2\"/>
+    <general name=\"velocity_drive\" joint=\"hinge\" input=\"vel\" biastype=\"affine\" biasprm=\"0 0 -1\"/>
+    <general name=\"motor_drive\" joint=\"hinge\"/>
+  </actuator></mujoco>"
+}
+provenance = {
+"assets": {},
+"source": "/workspace/shared/validation/daily-paths/project/fixtures/pendulum.xml",
+"sources": {
+"/workspace/shared/validation/daily-paths/project/fixtures/pendulum.xml": "eb623a17a81a0b48f6200ccea8bbda070257552d85c3f098ce87184b9e3b7322"
+}
+}

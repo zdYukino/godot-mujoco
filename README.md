@@ -1,6 +1,8 @@
 # godot-mujoco
 
-最新验证：[真实鼠标Tree修复、G1 GUI与图形宿主配置](docs/mouse-gui-fix.zh-CN.md)（开发候选，尚非稳定基线）。
+最新日常路径：[GUI 首次编辑与已初始化项目 headless API 编辑](docs/daily-paths-baseline.zh-CN.md)（24 项通过；cold import 139 按授权列为非阻塞遗留，尚未自行发布稳定基线）。
+
+前次验证：[真实鼠标Tree修复、G1 GUI与图形宿主配置](docs/mouse-gui-fix.zh-CN.md)（开发候选，尚非稳定基线）。
 
 在 Godot 中使用 MuJoCo 物理、编辑 MJCF，并将可搬迁模型放入普通 Godot 场景。
 
@@ -48,8 +50,8 @@ GODOT_BIN="$GODOT_BIN" scripts/import_headless.sh demo
 [本阶段报告](docs/freebase-clock-validation.zh-CN.md) 包含命令、退出码、日志归档、截图和精确 commit/tree。通过的自动测试不能替代 dot 的独立桌面验收。
 
 - dot 对 e16a4ec 独立构建/资产检查通过，但自由基座运行退出 **137（原因未明）**；clock fresh import 退出 **139，未到功能测试**。详见 [独立验收记录](docs/freebase-clock-validation.zh-CN.md)。
-- **cold-import 139 未解决**：首次导入辅助脚本只是时序缓解，不能用缓存重试伪装 fresh pass。
-- 本次独立游戏窗口通过；编辑器 GUI 仍有宿主 Vulkan 探测 ERROR，虽然退出 0，严格 gate 仍为失败。不能宣称 F5 嵌入问题或稳定基线已全部解决。
+- **cold-import 139 未解决，按最新授权列为非阻塞遗留**：两条日常编辑路径已通过；不能证明问题仅限无窗口模式，不能用缓存重试伪装 fresh pass。见[已知问题](docs/known-issues.zh-CN.md)。
+- 早期宿主 Vulkan ERROR 结果保留为严格失败；正常驱动配置后的云端 GUI/F5 验证已通过。dot 最终候选独立验收仍需核实，preview limit 未解除；其他缺陷不因 cold-import 门槛调整而豁免。
 - 当前 runtime world 要求主线程物理模式；不支持 `physics/3d/run_on_separate_thread`。同步编译允许暂时阻塞 UI，不承诺后台无停顿。
 - 不在本阶段开发 Area、CharacterBody、Godot 全关节映射、地形、站立或步行。PCK/ZIP 中的模型资源需要文件系统资产方案，未作为支持路径验证。
 - 36 个 Unitree 原始资产保持字节不变；派生模型单独生成。Linux 之外的旧构建配置不代表已验收。

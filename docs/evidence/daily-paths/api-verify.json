@@ -1,0 +1,30 @@
+{
+	"checks": [
+		{
+			"name": "load existing design resource",
+			"passed": true
+		},
+		{
+			"name": "validate package and open native document",
+			"passed": true
+		},
+		{
+			"name": "independent process reopens edited resource value",
+			"passed": true
+		},
+		{
+			"name": "independent process reopens added body and geometry",
+			"passed": true
+		},
+		{
+			"name": "independent process reopens edited JSON document",
+			"passed": true
+		},
+		{
+			"name": "JSON and resource agree on edited value and structure",
+			"passed": true
+		}
+	],
+	"failed": 0,
+	"passed": 6
+}

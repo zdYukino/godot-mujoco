@@ -1,0 +1,19 @@
+{
+  "base_commit": "ce7378f24c3b56e2baaa2b3867a77cf60abe7b73",
+  "processes": 8,
+  "exit_codes": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "passed": 24,
+  "failed": 0,
+  "diagnostics": [],
+  "fresh_scope": "first GUI had no project .godot and no headless preimport; existing SDK/XDG cache retained",
+  "api_scope": "initialized project; script/API edits, no interactive headless UI"
+}

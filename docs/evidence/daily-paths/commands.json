@@ -1,0 +1,147 @@
+{
+  "base_commit": "ce7378f24c3b56e2baaa2b3867a77cf60abe7b73",
+  "exit_source": "observed tool process completion results",
+  "gui_env": {
+    "DISPLAY": ":91",
+    "VK_DRIVER_FILES": "/workspace/shared/tools/vulkan/root/usr/share/vulkan/icd.d/lvp_icd.json",
+    "LD_LIBRARY_PATH": "/workspace/shared/tools/vulkan/root/usr/lib/x86_64-linux-gnu",
+    "PYTHONPATH": "/workspace/shared/gui-packages/python"
+  },
+  "commands": [
+    {
+      "label": "first-editor",
+      "argv": [
+        "timeout",
+        "--kill-after=5",
+        "240",
+        "/workspace/shared/tools/bin/godot",
+        "--editor",
+        "--path",
+        "/workspace/shared/validation/daily-paths/project",
+        "--rendering-method",
+        "gl_compatibility",
+        "--audio-driver",
+        "Dummy",
+        "--resolution",
+        "1600x1000",
+        "--",
+        "--mj-editor-test",
+        "--probe-dir=/workspace/shared/validation/daily-paths/first"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "first-mouse",
+      "argv": [
+        "python3",
+        "tests/daily_paths/gui.py",
+        "/workspace/shared/validation/daily-paths/first",
+        "first",
+        "/workspace/shared/validation/daily-paths/project"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "reopen-editor",
+      "argv": [
+        "timeout",
+        "--kill-after=5",
+        "180",
+        "/workspace/shared/tools/bin/godot",
+        "--editor",
+        "--path",
+        "/workspace/shared/validation/daily-paths/project",
+        "--rendering-method",
+        "gl_compatibility",
+        "--audio-driver",
+        "Dummy",
+        "--resolution",
+        "1600x1000",
+        "--",
+        "--mj-editor-test",
+        "--probe-dir=/workspace/shared/validation/daily-paths/reopen"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "reopen-mouse",
+      "argv": [
+        "python3",
+        "tests/daily_paths/gui.py",
+        "/workspace/shared/validation/daily-paths/reopen",
+        "reopen",
+        "/workspace/shared/validation/daily-paths/project"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "api-edit",
+      "argv": [
+        "timeout",
+        "--kill-after=5",
+        "120",
+        "/workspace/shared/tools/bin/godot",
+        "--headless",
+        "--path",
+        "/workspace/shared/validation/daily-paths/project",
+        "--script",
+        "res://api_edit.gd",
+        "--",
+        "--mode=edit",
+        "--report=/workspace/shared/validation/daily-paths/api-edit.json"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "api-verify",
+      "argv": [
+        "timeout",
+        "--kill-after=5",
+        "120",
+        "/workspace/shared/tools/bin/godot",
+        "--headless",
+        "--path",
+        "/workspace/shared/validation/daily-paths/project",
+        "--script",
+        "res://api_edit.gd",
+        "--",
+        "--mode=verify",
+        "--report=/workspace/shared/validation/daily-paths/api-verify.json"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "api-gui-editor",
+      "argv": [
+        "timeout",
+        "--kill-after=5",
+        "180",
+        "/workspace/shared/tools/bin/godot",
+        "--editor",
+        "--path",
+        "/workspace/shared/validation/daily-paths/project",
+        "--rendering-method",
+        "gl_compatibility",
+        "--audio-driver",
+        "Dummy",
+        "--resolution",
+        "1600x1000",
+        "--",
+        "--mj-editor-test",
+        "--probe-dir=/workspace/shared/validation/daily-paths/api-gui"
+      ],
+      "exit": 0
+    },
+    {
+      "label": "api-gui-mouse",
+      "argv": [
+        "python3",
+        "tests/daily_paths/gui.py",
+        "/workspace/shared/validation/daily-paths/api-gui",
+        "api",
+        "/workspace/shared/validation/daily-paths/project"
+      ],
+      "exit": 0
+    }
+  ]
+}

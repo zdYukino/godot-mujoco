@@ -1,5 +1,7 @@
 # 真实鼠标选择修复与 G1 GUI 回归
 
+后续门槛调整：见[日常编辑路径验证](daily-paths-baseline.zh-CN.md)。用户已授权在两条日常路径通过后将 cold import 139 列为非阻塞遗留；以下历史测试结果保持原样，其他独立门槛继续保留。
+
 **结论：真实鼠标Tree缺陷已在云端复现并修复，最终受影响GUI复验通过且零ERROR/泄漏；不发布稳定基线，等待父任务与dot独立门槛核实。**
 
 本轮从 `dd7639c3865febffcd6c38463495ce3726a8d4cf` 继续。应用修复仅7行：pending字段阻止选择切换时，除原有同步恢复外，在输入分发结束后再恢复Tree高亮；执行延迟回调时重新检查pending、当前selection和Tree有效性，不持有可能失效的TreeItem。未修改Godot引擎、native物理算法、原始Unitree资产或日志门禁。
