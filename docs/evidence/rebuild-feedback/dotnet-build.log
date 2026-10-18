@@ -1,0 +1,9 @@
+  Determining projects to restore...
+  Restored /workspace/shared/validation/rebuild-feedback-release/project/ClockBinding.csproj (in 179 ms).
+  ClockBinding -> /workspace/shared/validation/rebuild-feedback-release/project/.godot/mono/temp/bin/Debug/ClockBinding.dll
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.85

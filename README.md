@@ -45,6 +45,7 @@ GODOT_BIN="$GODOT_BIN" scripts/import_headless.sh demo
 
 [本阶段报告](docs/freebase-clock-validation.zh-CN.md) 包含命令、退出码、日志归档、截图和精确 commit/tree。通过的自动测试不能替代 dot 的独立桌面验收。
 
+- dot 对 e16a4ec 独立构建/资产检查通过，但自由基座运行退出 **137（原因未明）**；clock fresh import 退出 **139，未到功能测试**。详见 [独立验收记录](docs/freebase-clock-validation.zh-CN.md)。
 - **cold-import 139 未解决**：首次导入辅助脚本只是时序缓解，不能用缓存重试伪装 fresh pass。
 - 本次独立游戏窗口通过；编辑器 GUI 仍有宿主 Vulkan 探测 ERROR，虽然退出 0，严格 gate 仍为失败。不能宣称 F5 嵌入问题或稳定基线已全部解决。
 - 当前 runtime world 要求主线程物理模式；不支持 `physics/3d/run_on_separate_thread`。同步编译允许暂时阻塞 UI，不承诺后台无停顿。

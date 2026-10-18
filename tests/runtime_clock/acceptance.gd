@@ -139,7 +139,62 @@ func run() -> void:
 	root.add_child(generated);await ticks(3)
 	check(generated.get_node("EnvironmentHost").world.ready_for_models and generated.get_node("SimulationControls").target()==generated.get_node("EnvironmentHost").world,"saved playground reopens with connected controls")
 	generated.queue_free();await ticks(2)
+	await rebuild_feedback_regression(controls,host,second_host)
 	controls.queue_free();host.queue_free();second_host.queue_free();await ticks(3)
 	var failed:=checks.filter(func(c):return not c.passed).size()
 	print("CLOCK_RESULT ",JSON.stringify({"checks":checks,"passed":checks.size()-failed,"failed":failed}))
 	quit(0 if failed==0 else 1)
+
+func rebuild_feedback_regression(controls: Node, host: Node, other_host: Node) -> void:
+	var button: Button
+	for child in controls.get_children():
+		if child is Button and child.text.begins_with("重建已保存环境"): button=child
+	var saved=host.environment_scene
+	var original=host.world
+	var state: Dictionary=original.get_node("Robot").state()
+	var time: float=original.info().time
+	var invalid:=PackedScene.new()
+	var empty:=Node.new();invalid.pack(empty);empty.free()
+	host.environment_scene=invalid
+	button.pressed.emit()
+	check(controls.feedback=="Environment rebuild requested","actual rebuild button displays queued state")
+	button.pressed.emit()
+	await ticks(3)
+	check(controls.feedback.contains("Environment rebuild failed") and controls.status.text.contains(host.last_error) and not host.last_error.is_empty(),"actual rebuild failure displays host error in visible status")
+	check(host.world==original and original.info().time==time and original.get_node("Robot").state()==state,"failed button rebuild preserves original world and state")
+	check(original.last_error.is_empty(),"host error remains visible even when retained world error is empty")
+	host.environment_scene=saved
+	var original_id: int=original.get_instance_id()
+	button.pressed.emit();await ticks(3);await done(host.world);await ticks(1)
+	check(controls.feedback.contains("Environment rebuild succeeded") and controls.status.text.contains("Environment rebuild succeeded") and not controls.feedback.contains("failed"),"successful button retry replaces failure with visible completion")
+	check(host.world.get_instance_id()!=original_id and controls.bound_world==host.world,"world replacement rebinds command completion signal")
+	check(host.world.command_finished.is_connected(controls.on_command_finished),"new world command signal connected")
+	controls.environment_host=other_host
+	check(not host.rebuild_finished.is_connected(controls.on_rebuild_finished) and other_host.rebuild_finished.is_connected(controls.on_rebuild_finished),"host reassignment disconnects old and connects new immediately")
+	var feedback: String=controls.feedback
+	host.rebuild_finished.emit(false,"stale host error")
+	check(controls.feedback==feedback,"old host completion cannot overwrite feedback")
+	for unused in 5: controls.sync_targets()
+	var connections:=0
+	for connection in other_host.rebuild_finished.get_connections():
+		if connection.callable==Callable(controls,"on_rebuild_finished"): connections+=1
+	check(connections==1,"repeated target refresh does not duplicate connection")
+	root.remove_child(controls)
+	check(not other_host.rebuild_finished.is_connected(controls.on_rebuild_finished) and not other_host.world.command_finished.is_connected(controls.on_command_finished),"controls exit disconnects host and world signals")
+	root.add_child(controls)
+	check(other_host.rebuild_finished.is_connected(controls.on_rebuild_finished) and other_host.world.command_finished.is_connected(controls.on_command_finished),"same controls reentry restores single signal subscriptions")
+	var temporary=Host.new();temporary.environment_scene=saved;root.add_child(temporary);await ticks(3)
+	controls.environment_host=temporary
+	temporary.queue_free();await ticks(3)
+	check(not is_instance_valid(controls.bound_host) and not is_instance_valid(controls.bound_world) and controls.status.text.contains("no world"),"host destruction detaches signals and shows no world safely")
+	controls.environment_host=host
+	check(controls.bound_host==host and controls.bound_world==host.world,"controls can recover to surviving host after destruction")
+
+	other_host.environment_scene=invalid
+	check(other_host.request_rebuild_environment(true),"detached host can complete failed rebuild")
+	await ticks(3)
+	controls.environment_host=other_host
+	await ticks(1)
+	check(controls.status.text.contains(other_host.last_error) and controls.feedback.contains("Environment rebuild failed"),"late host binding displays existing failure without requiring a new signal")
+	controls.environment_host=host
+	check(not controls.feedback.contains(other_host.last_error),"switching host clears previous host failure")

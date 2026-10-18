@@ -16,6 +16,8 @@
 
 ## 既有证据与历史记录
 
+- [环境重建控件反馈修复](rebuild-feedback-fix.zh-CN.md)：实际按钮失败原因显示、重试成功及 host/world 信号生命周期；保留 dot 的 137/139 独立验收限制。
+
 - [应用编辑阶段验证](application-editing-validation.md)：F5 调查、属性编辑、运行事务的分阶段结果。
 - [嵌入显示调查](embedded-display-investigation.md)：独立窗口和嵌入窗口证据；不要将关闭嵌入称为修复成功。
 - [原生后端](native-backend-validation.md)、[动态世界](dynamic-world-validation.md)、[刚体姿态稳定性](rigid-transform-stability.md)：对应历史提交的测试，非当前提交重新执行结果。

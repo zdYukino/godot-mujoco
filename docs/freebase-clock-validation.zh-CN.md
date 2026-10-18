@@ -64,3 +64,10 @@ dot 复验：运行 `tests/freebase/run.sh` 生成干净项目后，将 `tests/f
 `freebase-reentry-release` 新目录测试退出 0，44 项通过；新增 3 轮同一节点 unload/load 与 remove/add，检查无累计位姿偏移。初始 32 项日志保留，不重标为 44 项。后续日志见 [自由基座重入证据](evidence/freebase-reentry/)。
 
 该修复后追加复跑 `freebase-reentry-portable`（30+30+84+9+41、C#、隔离负向用例及重启）和 `freebase-reentry-clock`（101+C#），均退出 0；正常日志无 ERROR/泄漏。原始日志打包于 [followup-logs.zip](evidence/freebase-reentry/followup-logs.zip)。中文入口/指南 74 个本地链接目标检查通过。
+
+
+## dot 对 e16a4ec 的独立验收更新
+
+据 dot 独立报告：构建成功，36 个原始资产一致，中文文档 90 个本地链接有效；自由基座运行退出 **137，原因未明**；clock 的 fresh import 退出 **139，未进入功能测试**。这些结果与云端自动测试分别记录，不用云端通过覆盖 dot 失败，不推断 137 为 OOM 或其他特定原因。cold-import 仍是独立限制，不开展受阻的引擎冷导入/内存补丁调试。
+
+随后应用层重建结果反馈缺陷的修复与实际按钮回归见 [控件反馈修复报告](rebuild-feedback-fix.zh-CN.md)。

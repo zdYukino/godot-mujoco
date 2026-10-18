@@ -56,7 +56,7 @@ if (world.Call("step_simulation", 10).AsBool()) {
 
 外部 PackedScene 重新读取保存路径；嵌入 PackedScene 使用本次加载的保存设计，读取父场景新版本需要重启。游戏 UI、控制面板和游戏时钟位于 host 外，不随环境被删除。环境根节点要求 MjRuntimeWorld；任意外部游戏场景或单例不属于自动重建范围。
 
-`MjSimulationControls` 提供上述按钮，Step N 点击时先提交 SpinBox 输入文本。Create simulation playground 生成 host+controls+camera；没有自动地面，需在环境设计中明确添加。
+`MjSimulationControls` 提供上述按钮，Step N 点击时先提交 SpinBox 输入文本。重建请求入队、最终成功、最终失败原因分别显示；失败读取 host 的结果，不依赖被保留 world 的 last_error。更换 host/world、控件退出和重入时更新信号订阅；绑定一个已经失败的 host 时也显示现有错误。Create simulation playground 生成 host+controls+camera；没有自动地面，需在环境设计中明确添加。
 
 ## 验证
 
