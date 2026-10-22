@@ -1,0 +1,922 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+PASS native backend identity 
+MuJoCo: compile time (ms)
+  total:          0.3   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.3   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned small cylinder in large cylinder overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned small cylinder in large cylinder nonempty witness pairs 10
+FAIL aligned small cylinder in large cylinder every query witness lies on query surface 1.05000007152557
+FAIL aligned small cylinder in large cylinder every target witness lies on target surface 1.05000007152557
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned small cylinder in large cylinder rest identity 
+PASS aligned small cylinder in large cylinder finite unit rest normal (-1.0, 0.0, 0.0)
+FAIL aligned small cylinder in large cylinder rest point lies on target surface { "point": (2.65, -2.0, 5.0), "error": 1.05000007152557 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned large cylinder around small cylinder overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned large cylinder around small cylinder nonempty witness pairs 10
+FAIL aligned large cylinder around small cylinder every query witness lies on query surface 1.05000007152557
+FAIL aligned large cylinder around small cylinder every target witness lies on target surface 1.04999995231628
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned large cylinder around small cylinder rest identity 
+PASS aligned large cylinder around small cylinder finite unit rest normal (-1.0, 0.0, 0.0)
+FAIL aligned large cylinder around small cylinder rest point lies on target surface { "point": (1.6, -2.0, 5.0), "error": 1.04999995231628 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned cylinder in large box overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned cylinder in large box nonempty witness pairs 10
+FAIL aligned cylinder in large box every query witness lies on query surface 1.24999988079071
+FAIL aligned cylinder in large box every target witness lies on target surface 1.25000011920929
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned cylinder in large box rest identity 
+PASS aligned cylinder in large box finite unit rest normal (-1.0, 0.0, 0.0)
+FAIL aligned cylinder in large box rest point lies on target surface { "point": (2.65, -2.0, 5.0), "error": 1.25000011920929 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned large box around cylinder overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned large box around cylinder nonempty witness pairs 10
+FAIL aligned large box around cylinder every query witness lies on query surface 1.25000011920929
+FAIL aligned large box around cylinder every target witness lies on target surface 1.24999988079071
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned large box around cylinder rest identity 
+PASS aligned large box around cylinder finite unit rest normal (1.0, 0.0, 0.0)
+FAIL aligned large box around cylinder rest point lies on target surface { "point": (4.6, -2.0, 5.0), "error": 1.24999988079071 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned small box in cylinder overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned small box in cylinder nonempty witness pairs 10
+FAIL aligned small box in cylinder every query witness lies on query surface 0.62456685304642
+FAIL aligned small box in cylinder every target witness lies on target surface 0.57485616207123
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned small box in cylinder rest identity 
+PASS aligned small box in cylinder finite unit rest normal (-1.0, 0.0, 0.0)
+PASS aligned small box in cylinder rest point lies on target surface { "point": (1.6, -2.0, 5.0), "error": 0.00000002384186 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned cylinder around small box overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned cylinder around small box nonempty witness pairs 10
+FAIL aligned cylinder around small box every query witness lies on query surface 0.57485616207123
+FAIL aligned cylinder around small box every target witness lies on target surface 0.62456685304642
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS aligned cylinder around small box rest identity 
+PASS aligned cylinder around small box finite unit rest normal (1.0, 0.0, 0.0)
+PASS aligned cylinder around small box rest point lies on target surface { "point": (3.25, -2.0, 5.0), "error": 0.0 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation small cylinder in large cylinder overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation small cylinder in large cylinder nonempty witness pairs 10
+FAIL shared rotation small cylinder in large cylinder every query witness lies on query surface 0.9768443107605
+FAIL shared rotation small cylinder in large cylinder every target witness lies on target surface 0.52900403738022
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation small cylinder in large cylinder rest identity 
+PASS shared rotation small cylinder in large cylinder finite unit rest normal (0.730282, 0.672461, 0.120354)
+FAIL shared rotation small cylinder in large cylinder rest point lies on target surface { "point": (4.831975, -1.256615, 5.133048), "error": 0.45376834273338 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation large cylinder around small cylinder overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation large cylinder around small cylinder nonempty witness pairs 10
+FAIL shared rotation large cylinder around small cylinder every query witness lies on query surface 0.52850550413132
+FAIL shared rotation large cylinder around small cylinder every target witness lies on target surface 0.97687375545502
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation large cylinder around small cylinder rest identity 
+PASS shared rotation large cylinder around small cylinder finite unit rest normal (0.730282, 0.672461, 0.120354)
+FAIL shared rotation large cylinder around small cylinder rest point lies on target surface { "point": (3.108775, -0.956296, 5.186797), "error": 0.60490167140961 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation cylinder in large box overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation cylinder in large box nonempty witness pairs 10
+FAIL shared rotation cylinder in large box every query witness lies on query surface 1.29097104072571
+FAIL shared rotation cylinder in large box every target witness lies on target surface 0.35848331451416
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation cylinder in large box rest identity 
+PASS shared rotation cylinder in large box finite unit rest normal (0.965356, 0.07162, -0.250914)
+PASS shared rotation cylinder in large box rest point lies on target surface { "point": (5.705664, -1.784802, 4.173517), "error": 0.00000053312016 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation large box around cylinder overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation large box around cylinder nonempty witness pairs 10
+FAIL shared rotation large box around cylinder every query witness lies on query surface 0.35845744609833
+FAIL shared rotation large box around cylinder every target witness lies on target surface 1.290971159935
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation large box around cylinder rest identity 
+PASS shared rotation large box around cylinder finite unit rest normal (-0.965356, -0.07162, 0.250914)
+PASS shared rotation large box around cylinder rest point lies on target surface { "point": (2.539458, -2.019704, 4.996474), "error": 0.00000022182219 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation small box in cylinder overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation small box in cylinder nonempty witness pairs 10
+FAIL shared rotation small box in cylinder every query witness lies on query surface 1.09415149688721
+FAIL shared rotation small box in cylinder every target witness lies on target surface 0.46503838896751
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation small box in cylinder rest identity 
+PASS shared rotation small box in cylinder finite unit rest normal (-0.727213, -0.653502, -0.209993)
+FAIL shared rotation small box in cylinder rest point lies on target surface { "point": (1.165518, -2.715604, 4.698416), "error": 0.46503838896751 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation cylinder around small box overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation cylinder around small box nonempty witness pairs 10
+FAIL shared rotation cylinder around small box every query witness lies on query surface 0.4650385081768
+FAIL shared rotation cylinder around small box every target witness lies on target surface 1.09415173530579
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS shared rotation cylinder around small box rest identity 
+PASS shared rotation cylinder around small box finite unit rest normal (0.727213, 0.653502, 0.209993)
+FAIL shared rotation cylinder around small box rest point lies on target surface { "point": (3.077596, -0.997337, 5.250555), "error": 0.63103234767914 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations small cylinder in large cylinder overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations small cylinder in large cylinder nonempty witness pairs 10
+FAIL different rotations small cylinder in large cylinder every query witness lies on query surface 0.87552088499069
+FAIL different rotations small cylinder in large cylinder every target witness lies on target surface 0.57046717405319
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations small cylinder in large cylinder rest identity 
+PASS different rotations small cylinder in large cylinder finite unit rest normal (0.990769, 0.10889, -0.080751)
+FAIL different rotations small cylinder in large cylinder rest point lies on target surface { "point": (4.841547, -2.514158, 5.27679), "error": 0.34621021151543 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations large cylinder around small cylinder overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations large cylinder around small cylinder nonempty witness pairs 8
+FAIL different rotations large cylinder around small cylinder every query witness lies on query surface 0.40698871016502
+FAIL different rotations large cylinder around small cylinder every target witness lies on target surface 1.4260858297348
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations large cylinder around small cylinder rest identity 
+PASS different rotations large cylinder around small cylinder finite unit rest normal (-0.375749, 0.901606, 0.214288)
+FAIL different rotations large cylinder around small cylinder rest point lies on target surface { "point": (1.609623, -0.786349, 5.369563), "error": 1.4260858297348 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations cylinder in large box overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations cylinder in large box nonempty witness pairs 10
+FAIL different rotations cylinder in large box every query witness lies on query surface 1.26418626308441
+FAIL different rotations cylinder in large box every target witness lies on target surface 0.63392162322998
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations cylinder in large box rest identity 
+PASS different rotations cylinder in large box finite unit rest normal (0.876574, -0.319598, 0.359827)
+PASS different rotations cylinder in large box rest point lies on target surface { "point": (5.367695, -3.050876, 6.157444), "error": 0.0 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations large box around cylinder overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations large box around cylinder nonempty witness pairs 10
+FAIL different rotations large box around cylinder every query witness lies on query surface 0.18335974216461
+FAIL different rotations large box around cylinder every target witness lies on target surface 1.23621606826782
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations large box around cylinder rest identity 
+PASS different rotations large box around cylinder finite unit rest normal (-0.975407, -0.000042, 0.220412)
+PASS different rotations large box around cylinder rest point lies on target surface { "point": (2.612739, -1.784936, 4.872422), "error": 0.00000023841858 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations small box in cylinder overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations small box in cylinder nonempty witness pairs 10
+FAIL different rotations small box in cylinder every query witness lies on query surface 0.98042583465576
+FAIL different rotations small box in cylinder every target witness lies on target surface 0.33661243319511
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations small box in cylinder rest identity 
+PASS different rotations small box in cylinder finite unit rest normal (-0.987182, -0.1595, -0.005522)
+FAIL different rotations small box in cylinder rest point lies on target surface { "point": (1.171073, -1.552997, 4.560932), "error": 0.33661243319511 }
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations cylinder around small box overlap identity 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations cylinder around small box nonempty witness pairs 10
+FAIL different rotations cylinder around small box every query witness lies on query surface 0.52745056152344
+FAIL different rotations cylinder around small box every target witness lies on target surface 1.04766166210175
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS different rotations cylinder around small box rest identity 
+PASS different rotations cylinder around small box finite unit rest normal (0.721304, 0.691734, -0.034999)
+FAIL different rotations cylinder around small box rest point lies on target surface { "point": (3.01817, -1.063966, 5.062973), "error": 0.56232953071594 }
+OVERLAP_WITNESS_RESULT {"checks":[{"detail":"","label":"native backend identity","passed":true},{"detail":"","label":"aligned small cylinder in large cylinder overlap identity","passed":true},{"detail":10,"label":"aligned small cylinder in large cylinder nonempty witness pairs","passed":true},{"detail":1.05000007152557,"label":"aligned small cylinder in large cylinder every query witness lies on query surface","passed":false},{"detail":1.05000007152557,"label":"aligned small cylinder in large cylinder every target witness lies on target surface","passed":false},{"detail":"","label":"aligned small cylinder in large cylinder rest identity","passed":true},{"detail":"(-1.0, 0.0, 0.0)","label":"aligned small cylinder in large cylinder finite unit rest normal","passed":true},{"detail":{"error":1.05000007152557,"point":"(2.65, -2.0, 5.0)"},"label":"aligned small cylinder in large cylinder rest point lies on target surface","passed":false},{"detail":"","label":"aligned large cylinder around small cylinder overlap identity","passed":true},{"detail":10,"label":"aligned large cylinder around small cylinder nonempty witness pairs","passed":true},{"detail":1.05000007152557,"label":"aligned large cylinder around small cylinder every query witness lies on query surface","passed":false},{"detail":1.04999995231628,"label":"aligned large cylinder around small cylinder every target witness lies on target surface","passed":false},{"detail":"","label":"aligned large cylinder around small cylinder rest identity","passed":true},{"detail":"(-1.0, 0.0, 0.0)","label":"aligned large cylinder around small cylinder finite unit rest normal","passed":true},{"detail":{"error":1.04999995231628,"point":"(1.6, -2.0, 5.0)"},"label":"aligned large cylinder around small cylinder rest point lies on target surface","passed":false},{"detail":"","label":"aligned cylinder in large box overlap identity","passed":true},{"detail":10,"label":"aligned cylinder in large box nonempty witness pairs","passed":true},{"detail":1.24999988079071,"label":"aligned cylinder in large box every query witness lies on query surface","passed":false},{"detail":1.25000011920929,"label":"aligned cylinder in large box every target witness lies on target surface","passed":false},{"detail":"","label":"aligned cylinder in large box rest identity","passed":true},{"detail":"(-1.0, 0.0, 0.0)","label":"aligned cylinder in large box finite unit rest normal","passed":true},{"detail":{"error":1.25000011920929,"point":"(2.65, -2.0, 5.0)"},"label":"aligned cylinder in large box rest point lies on target surface","passed":false},{"detail":"","label":"aligned large box around cylinder overlap identity","passed":true},{"detail":10,"label":"aligned large box around cylinder nonempty witness pairs","passed":true},{"detail":1.25000011920929,"label":"aligned large box around cylinder every query witness lies on query surface","passed":false},{"detail":1.24999988079071,"label":"aligned large box around cylinder every target witness lies on target surface","passed":false},{"detail":"","label":"aligned large box around cylinder rest identity","passed":true},{"detail":"(1.0, 0.0, 0.0)","label":"aligned large box around cylinder finite unit rest normal","passed":true},{"detail":{"error":1.24999988079071,"point":"(4.6, -2.0, 5.0)"},"label":"aligned large box around cylinder rest point lies on target surface","passed":false},{"detail":"","label":"aligned small box in cylinder overlap identity","passed":true},{"detail":10,"label":"aligned small box in cylinder nonempty witness pairs","passed":true},{"detail":0.624566853046417,"label":"aligned small box in cylinder every query witness lies on query surface","passed":false},{"detail":0.574856162071228,"label":"aligned small box in cylinder every target witness lies on target surface","passed":false},{"detail":"","label":"aligned small box in cylinder rest identity","passed":true},{"detail":"(-1.0, 0.0, 0.0)","label":"aligned small box in cylinder finite unit rest normal","passed":true},{"detail":{"error":0.0000000238418582654276,"point":"(1.6, -2.0, 5.0)"},"label":"aligned small box in cylinder rest point lies on target surface","passed":true},{"detail":"","label":"aligned cylinder around small box overlap identity","passed":true},{"detail":10,"label":"aligned cylinder around small box nonempty witness pairs","passed":true},{"detail":0.574856162071228,"label":"aligned cylinder around small box every query witness lies on query surface","passed":false},{"detail":0.624566853046417,"label":"aligned cylinder around small box every target witness lies on target surface","passed":false},{"detail":"","label":"aligned cylinder around small box rest identity","passed":true},{"detail":"(1.0, 0.0, 0.0)","label":"aligned cylinder around small box finite unit rest normal","passed":true},{"detail":{"error":0.0,"point":"(3.25, -2.0, 5.0)"},"label":"aligned cylinder around small box rest point lies on target surface","passed":true},{"detail":"","label":"shared rotation small cylinder in large cylinder overlap identity","passed":true},{"detail":10,"label":"shared rotation small cylinder in large cylinder nonempty witness pairs","passed":true},{"detail":0.976844310760498,"label":"shared rotation small cylinder in large cylinder every query witness lies on query surface","passed":false},{"detail":0.529004037380219,"label":"shared rotation small cylinder in large cylinder every target witness lies on target surface","passed":false},{"detail":"","label":"shared rotation small cylinder in large cylinder rest identity","passed":true},{"detail":"(0.730282, 0.672461, 0.120354)","label":"shared rotation small cylinder in large cylinder finite unit rest normal","passed":true},{"detail":{"error":0.453768342733383,"point":"(4.831975, -1.256615, 5.133048)"},"label":"shared rotation small cylinder in large cylinder rest point lies on target surface","passed":false},{"detail":"","label":"shared rotation large cylinder around small cylinder overlap identity","passed":true},{"detail":10,"label":"shared rotation large cylinder around small cylinder nonempty witness pairs","passed":true},{"detail":0.528505504131317,"label":"shared rotation large cylinder around small cylinder every query witness lies on query surface","passed":false},{"detail":0.976873755455017,"label":"shared rotation large cylinder around small cylinder every target witness lies on target surface","passed":false},{"detail":"","label":"shared rotation large cylinder around small cylinder rest identity","passed":true},{"detail":"(0.730282, 0.672461, 0.120354)","label":"shared rotation large cylinder around small cylinder finite unit rest normal","passed":true},{"detail":{"error":0.604901671409607,"point":"(3.108775, -0.956296, 5.186797)"},"label":"shared rotation large cylinder around small cylinder rest point lies on target surface","passed":false},{"detail":"","label":"shared rotation cylinder in large box overlap identity","passed":true},{"detail":10,"label":"shared rotation cylinder in large box nonempty witness pairs","passed":true},{"detail":1.29097104072571,"label":"shared rotation cylinder in large box every query witness lies on query surface","passed":false},{"detail":0.35848331451416,"label":"shared rotation cylinder in large box every target witness lies on target surface","passed":false},{"detail":"","label":"shared rotation cylinder in large box rest identity","passed":true},{"detail":"(0.965356, 0.07162, -0.250914)","label":"shared rotation cylinder in large box finite unit rest normal","passed":true},{"detail":{"error":0.000000533120157797384,"point":"(5.705664, -1.784802, 4.173517)"},"label":"shared rotation cylinder in large box rest point lies on target surface","passed":true},{"detail":"","label":"shared rotation large box around cylinder overlap identity","passed":true},{"detail":10,"label":"shared rotation large box around cylinder nonempty witness pairs","passed":true},{"detail":0.358457446098328,"label":"shared rotation large box around cylinder every query witness lies on query surface","passed":false},{"detail":1.290971159935,"label":"shared rotation large box around cylinder every target witness lies on target surface","passed":false},{"detail":"","label":"shared rotation large box around cylinder rest identity","passed":true},{"detail":"(-0.965356, -0.07162, 0.250914)","label":"shared rotation large box around cylinder finite unit rest normal","passed":true},{"detail":{"error":0.000000221822190837884,"point":"(2.539458, -2.019704, 4.996474)"},"label":"shared rotation large box around cylinder rest point lies on target surface","passed":true},{"detail":"","label":"shared rotation small box in cylinder overlap identity","passed":true},{"detail":10,"label":"shared rotation small box in cylinder nonempty witness pairs","passed":true},{"detail":1.09415149688721,"label":"shared rotation small box in cylinder every query witness lies on query surface","passed":false},{"detail":0.465038388967514,"label":"shared rotation small box in cylinder every target witness lies on target surface","passed":false},{"detail":"","label":"shared rotation small box in cylinder rest identity","passed":true},{"detail":"(-0.727213, -0.653502, -0.209993)","label":"shared rotation small box in cylinder finite unit rest normal","passed":true},{"detail":{"error":0.465038388967514,"point":"(1.165518, -2.715604, 4.698416)"},"label":"shared rotation small box in cylinder rest point lies on target surface","passed":false},{"detail":"","label":"shared rotation cylinder around small box overlap identity","passed":true},{"detail":10,"label":"shared rotation cylinder around small box nonempty witness pairs","passed":true},{"detail":0.465038508176804,"label":"shared rotation cylinder around small box every query witness lies on query surface","passed":false},{"detail":1.09415173530579,"label":"shared rotation cylinder around small box every target witness lies on target surface","passed":false},{"detail":"","label":"shared rotation cylinder around small box rest identity","passed":true},{"detail":"(0.727213, 0.653502, 0.209993)","label":"shared rotation cylinder around small box finite unit rest normal","passed":true},{"detail":{"error":0.631032347679138,"point":"(3.077596, -0.997337, 5.250555)"},"label":"shared rotation cylinder around small box rest point lies on target surface","passed":false},{"detail":"","label":"different rotations small cylinder in large cylinder overlap identity","passed":true},{"detail":10,"label":"different rotations small cylinder in large cylinder nonempty witness pairs","passed":true},{"detail":0.875520884990692,"label":"different rotations small cylinder in large cylinder every query witness lies on query surface","passed":false},{"detail":0.570467174053192,"label":"different rotations small cylinder in large cylinder every target witness lies on target surface","passed":false},{"detail":"","label":"different rotations small cylinder in large cylinder rest identity","passed":true},{"detail":"(0.990769, 0.10889, -0.080751)","label":"different rotations small cylinder in large cylinder finite unit rest normal","passed":true},{"detail":{"error":0.346210211515427,"point":"(4.841547, -2.514158, 5.27679)"},"label":"different rotations small cylinder in large cylinder rest point lies on target surface","passed":false},{"detail":"","label":"different rotations large cylinder around small cylinder overlap identity","passed":true},{"detail":8,"label":"different rotations large cylinder around small cylinder nonempty witness pairs","passed":true},{"detail":0.406988710165024,"label":"different rotations large cylinder around small cylinder every query witness lies on query surface","passed":false},{"detail":1.4260858297348,"label":"different rotations large cylinder around small cylinder every target witness lies on target surface","passed":false},{"detail":"","label":"different rotations large cylinder around small cylinder rest identity","passed":true},{"detail":"(-0.375749, 0.901606, 0.214288)","label":"different rotations large cylinder around small cylinder finite unit rest normal","passed":true},{"detail":{"error":1.4260858297348,"point":"(1.609623, -0.786349, 5.369563)"},"label":"different rotations large cylinder around small cylinder rest point lies on target surface","passed":false},{"detail":"","label":"different rotations cylinder in large box overlap identity","passed":true},{"detail":10,"label":"different rotations cylinder in large box nonempty witness pairs","passed":true},{"detail":1.26418626308441,"label":"different rotations cylinder in large box every query witness lies on query surface","passed":false},{"detail":0.63392162322998,"label":"different rotations cylinder in large box every target witness lies on target surface","passed":false},{"detail":"","label":"different rotations cylinder in large box rest identity","passed":true},{"detail":"(0.876574, -0.319598, 0.359827)","label":"different rotations cylinder in large box finite unit rest normal","passed":true},{"detail":{"error":0.0,"point":"(5.367695, -3.050876, 6.157444)"},"label":"different rotations cylinder in large box rest point lies on target surface","passed":true},{"detail":"","label":"different rotations large box around cylinder overlap identity","passed":true},{"detail":10,"label":"different rotations large box around cylinder nonempty witness pairs","passed":true},{"detail":0.183359742164612,"label":"different rotations large box around cylinder every query witness lies on query surface","passed":false},{"detail":1.23621606826782,"label":"different rotations large box around cylinder every target witness lies on target surface","passed":false},{"detail":"","label":"different rotations large box around cylinder rest identity","passed":true},{"detail":"(-0.975407, -0.000042, 0.220412)","label":"different rotations large box around cylinder finite unit rest normal","passed":true},{"detail":{"error":0.000000238418579101562,"point":"(2.612739, -1.784936, 4.872422)"},"label":"different rotations large box around cylinder rest point lies on target surface","passed":true},{"detail":"","label":"different rotations small box in cylinder overlap identity","passed":true},{"detail":10,"label":"different rotations small box in cylinder nonempty witness pairs","passed":true},{"detail":0.980425834655762,"label":"different rotations small box in cylinder every query witness lies on query surface","passed":false},{"detail":0.336612433195114,"label":"different rotations small box in cylinder every target witness lies on target surface","passed":false},{"detail":"","label":"different rotations small box in cylinder rest identity","passed":true},{"detail":"(-0.987182, -0.1595, -0.005522)","label":"different rotations small box in cylinder finite unit rest normal","passed":true},{"detail":{"error":0.336612433195114,"point":"(1.171073, -1.552997, 4.560932)"},"label":"different rotations small box in cylinder rest point lies on target surface","passed":false},{"detail":"","label":"different rotations cylinder around small box overlap identity","passed":true},{"detail":10,"label":"different rotations cylinder around small box nonempty witness pairs","passed":true},{"detail":0.527450561523438,"label":"different rotations cylinder around small box every query witness lies on query surface","passed":false},{"detail":1.04766166210175,"label":"different rotations cylinder around small box every target witness lies on target surface","passed":false},{"detail":"","label":"different rotations cylinder around small box rest identity","passed":true},{"detail":"(0.721304, 0.691734, -0.034999)","label":"different rotations cylinder around small box finite unit rest normal","passed":true},{"detail":{"error":0.562329530715942,"point":"(3.01817, -1.063966, 5.062973)"},"label":"different rotations cylinder around small box rest point lies on target surface","passed":false}],"failed":48,"godot":"4.7.2-stable (official)","passed":79,"samples":[{"contacts":["(4.4, -2.0, 5.0)","(2.65, -2.0, 5.0)","(3.875184, -2.000367, 5.0)","(2.125184, -2.000367, 5.0)","(3.875184, -1.999633, 5.0)","(2.125184, -1.999633, 5.0)","(3.875, -2.0, 4.475)","(2.125, -2.0, 4.475)","(3.875, -2.0, 5.525)","(2.125, -2.0, 5.525)"],"label":"aligned small cylinder in large cylinder","query_surface_error":1.05000007152557,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(-1.0, 0.0, 0.0)","point":"(2.65, -2.0, 5.0)","rid":"RID(98784247809)","shape":0},"target_surface_error":1.05000007152557},{"contacts":["(3.35, -2.0, 5.0)","(1.6, -2.0, 5.0)","(3.874816, -2.000367, 5.0)","(2.124816, -2.000367, 5.0)","(3.874816, -1.999633, 5.0)","(2.124816, -1.999633, 5.0)","(3.875, -2.0, 4.475)","(2.125, -2.0, 4.475)","(3.875, -2.0, 5.525)","(2.125, -2.0, 5.525)"],"label":"aligned large cylinder around small cylinder","query_surface_error":1.05000007152557,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(-1.0, 0.0, 0.0)","point":"(1.6, -2.0, 5.0)","rid":"RID(111669149697)","shape":0},"target_surface_error":1.04999995231628},{"contacts":["(4.6, -2.0, 5.0)","(2.65, -2.0, 5.0)","(3.975209, -2.000446, 5.0)","(2.025208, -2.000446, 5.0)","(3.975209, -1.999554, 5.0)","(2.025208, -1.999554, 5.0)","(3.001101, -2.0, 4.024612)","(2.9989, -2.0, 5.974611)","(3.001101, -2.0, 5.975388)","(2.9989, -2.0, 4.025389)"],"label":"aligned cylinder in large box","query_surface_error":1.24999988079071,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(-1.0, 0.0, 0.0)","point":"(2.65, -2.0, 5.0)","rid":"RID(124554051585)","shape":0},"target_surface_error":1.25000011920929},{"contacts":["(2.65, -2.0, 5.0)","(4.6, -2.0, 5.0)","(2.025208, -2.000446, 5.0)","(3.975209, -2.000446, 5.0)","(2.025208, -1.999554, 5.0)","(3.975209, -1.999554, 5.0)","(2.9989, -2.0, 5.974611)","(3.001101, -2.0, 4.024612)","(2.9989, -2.0, 4.025389)","(3.001101, -2.0, 5.975388)"],"label":"aligned large box around cylinder","query_surface_error":1.25000011920929,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(1.0, 0.0, 0.0)","point":"(4.6, -2.0, 5.0)","rid":"RID(137438953473)","shape":0},"target_surface_error":1.24999988079071},{"contacts":["(3.25, -2.0, 5.0)","(1.6, -2.0, 5.0)","(3.824856, -2.000402, 5.0)","(2.174856, -2.000402, 5.0)","(3.824856, -1.999598, 5.0)","(2.174856, -1.999598, 5.0)","(3.001698, -2.0, 4.175433)","(2.998301, -2.0, 5.825429)","(3.001698, -2.0, 5.824567)","(2.998301, -2.0, 4.174571)"],"label":"aligned small box in cylinder","query_surface_error":0.624566853046417,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(-1.0, 0.0, 0.0)","point":"(1.6, -2.0, 5.0)","rid":"RID(150323855361)","shape":0},"target_surface_error":0.574856162071228},{"contacts":["(1.6, -2.0, 5.0)","(3.25, -2.0, 5.0)","(2.174856, -2.000402, 5.0)","(3.824856, -2.000402, 5.0)","(2.174856, -1.999598, 5.0)","(3.824856, -1.999598, 5.0)","(2.998301, -2.0, 5.825429)","(3.001698, -2.0, 4.175433)","(2.998301, -2.0, 4.174571)","(3.001698, -2.0, 5.824567)"],"label":"aligned cylinder around small box","query_surface_error":0.574856162071228,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(1.0, 0.0, 0.0)","point":"(3.25, -2.0, 5.0)","rid":"RID(163208757249)","shape":0},"target_surface_error":0.624566853046417},{"contacts":["(2.891225, -3.043704, 4.813203)","(4.831975, -1.256615, 5.133048)","(2.890723, -1.772371, 3.695499)","(3.109706, -2.229295, 6.304286)","(3.134592, -2.377174, 6.266897)","(2.865632, -1.621848, 3.733195)","(2.180595, -1.232432, 5.710719)","(3.819639, -2.767767, 4.28988)","(3.960836, -2.590712, 4.29686)","(2.039426, -1.409609, 5.702448)"],"label":"shared rotation small cylinder in large cylinder","query_surface_error":0.976844310760498,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(0.730282, 0.672461, 0.120354)","point":"(4.831975, -1.256615, 5.133048)","rid":"RID(176093659137)","shape":0},"target_surface_error":0.529004037380219},{"contacts":["(1.168025, -2.743385, 4.866952)","(3.108775, -0.956296, 5.186797)","(2.865408, -1.622826, 3.733103)","(3.134368, -2.378152, 6.266805)","(3.109277, -2.227629, 6.304501)","(2.890294, -1.770705, 3.695714)","(2.039164, -1.409288, 5.70314)","(3.960574, -2.590391, 4.297552)","(3.819405, -2.767568, 4.289281)","(2.180361, -1.232233, 5.71012)"],"label":"shared rotation large cylinder around small cylinder","query_surface_error":0.528505504131317,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(0.730282, 0.672461, 0.120354)","point":"(3.108775, -0.956296, 5.186797)","rid":"RID(188978561025)","shape":0},"target_surface_error":0.976873755455017},{"contacts":["(2.539458, -2.019704, 4.996474)","(5.705664, -1.784802, 4.173517)","(1.846929, -3.14062, 5.24536)","(4.153347, -0.860951, 4.754603)","(4.12244, -0.86456, 4.620934)","(1.878101, -3.13303, 5.378749)","(3.630364, -1.665969, 6.477619)","(2.370881, -2.33424, 3.523907)","(2.367565, -2.337078, 3.523957)","(3.631969, -1.66354, 6.474368)"],"label":"shared rotation cylinder in large box","query_surface_error":1.29097104072571,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(0.965356, 0.07162, -0.250914)","point":"(5.705664, -1.784802, 4.173517)","rid":"RID(201863462913)","shape":0},"target_surface_error":0.35848331451416},{"contacts":["(5.705664, -1.784802, 4.173517)","(2.539458, -2.019704, 4.996474)","(4.15335, -0.860951, 4.754617)","(1.846926, -3.14062, 5.245346)","(1.878091, -3.133033, 5.378711)","(4.12245, -0.864557, 4.620972)","(2.37088, -2.33424, 3.523907)","(3.630364, -1.665969, 6.477619)","(3.631969, -1.66354, 6.474368)","(2.367565, -2.337078, 3.523957)"],"label":"shared rotation large box around cylinder","query_surface_error":0.358457446098328,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(-0.965356, -0.07162, 0.250914)","point":"(2.539458, -2.019704, 4.996474)","rid":"RID(214748364801)","shape":0},"target_surface_error":1.290971159935},{"contacts":["(3.077596, -0.997337, 5.250555)","(1.165518, -2.715604, 4.698416)","(3.947092, -1.166067, 5.367033)","(2.052663, -2.834941, 4.632636)","(2.052511, -2.833726, 4.633519)","(3.947062, -1.16456, 5.366938)","(3.170866, -1.61446, 3.755208)","(2.828666, -2.385373, 6.245576)","(2.829357, -2.384823, 6.245045)","(3.170569, -1.614776, 3.754273)"],"label":"shared rotation small box in cylinder","query_surface_error":1.09415149688721,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(-0.727213, -0.653502, -0.209993)","point":"(1.165518, -2.715604, 4.698416)","rid":"RID(227633266689)","shape":0},"target_surface_error":0.465038388967514},{"contacts":["(1.165517, -2.715604, 4.698416)","(3.077596, -0.997337, 5.250555)","(2.052663, -2.834941, 4.632636)","(3.947092, -1.166066, 5.367033)","(3.947062, -1.16456, 5.366939)","(2.052511, -2.833726, 4.633519)","(2.828666, -2.385373, 6.245576)","(3.170866, -1.61446, 3.755207)","(3.170569, -1.614776, 3.754273)","(2.829357, -2.384823, 6.245045)"],"label":"shared rotation cylinder around small box","query_surface_error":0.465038508176804,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(0.727213, 0.653502, 0.209993)","point":"(3.077596, -0.997337, 5.250555)","rid":"RID(240518168577)","shape":0},"target_surface_error":1.09415173530579},{"contacts":["(2.314388, -2.791903, 5.482761)","(4.841547, -2.514158, 5.27679)","(3.370173, -2.658038, 6.028217)","(2.629261, -1.34305, 3.972017)","(2.630354, -1.341996, 3.971572)","(3.370212, -2.656917, 6.028194)","(3.5637, -3.115203, 5.255371)","(2.435929, -0.884964, 4.745209)","(2.436081, -0.884942, 4.744478)","(3.564291, -3.114891, 5.254943)"],"label":"different rotations small cylinder in large cylinder","query_surface_error":0.875520884990692,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(0.990769, 0.10889, -0.080751)","point":"(4.841547, -2.514158, 5.27679)","rid":"RID(253403070465)","shape":0},"target_surface_error":0.570467174053192},{"contacts":["(2.593896, -3.1481, 4.808238)","(1.609623, -0.786349, 5.369563)","(1.903439, -2.17303, 5.694789)","(4.096816, -1.828189, 4.304851)","(4.097338, -1.827192, 4.306384)","(1.902406, -2.171588, 5.693976)","(3.049123, -0.717918, 4.736353)","(2.950822, -3.281985, 5.26327)"],"label":"different rotations large cylinder around small cylinder","query_surface_error":0.406988710165024,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(-0.375749, 0.901606, 0.214288)","point":"(1.609623, -0.786349, 5.369563)","rid":"RID(266287972353)","shape":0},"target_surface_error":1.4260858297348},{"contacts":["(2.539458, -2.019704, 4.996474)","(5.367695, -3.050876, 6.157444)","(1.892756, -3.117262, 5.3624)","(4.106101, -0.884227, 4.637997)","(4.107385, -0.882702, 4.638144)","(1.893759, -3.115811, 5.361459)","(3.168716, -2.125586, 6.600254)","(2.830971, -1.874035, 3.401387)","(2.832901, -1.87287, 3.3997)","(3.167415, -2.127509, 6.598662)"],"label":"different rotations cylinder in large box","query_surface_error":1.26418626308441,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(0.876574, -0.319598, 0.359827)","point":"(5.367695, -3.050876, 6.157444)","rid":"RID(279172874241)","shape":0},"target_surface_error":0.63392162322998},{"contacts":["(5.705664, -1.784802, 4.173517)","(2.612739, -1.784936, 4.872422)","(3.56996, -1.180441, 6.231069)","(2.429888, -2.821416, 3.768937)","(2.428453, -2.819426, 3.76958)","(3.571702, -1.178717, 6.230416)","(2.246844, -2.797895, 3.856597)","(3.753978, -1.201965, 6.144873)","(3.757815, -1.202877, 6.140859)","(2.241357, -2.797264, 3.857672)"],"label":"different rotations large box around cylinder","query_surface_error":0.183359742164612,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(-0.975407, -0.000042, 0.220412)","point":"(2.612739, -1.784936, 4.872422)","rid":"RID(292057776129)","shape":0},"target_surface_error":1.23621606826782},{"contacts":["(3.639306, -1.154202, 4.574739)","(1.171073, -1.552997, 4.560932)","(3.834786, -1.431753, 5.736094)","(2.164668, -2.569451, 4.263764)","(2.159719, -2.56629, 4.268664)","(3.84083, -1.432503, 5.731469)","(3.661457, -2.461849, 4.045475)","(2.338229, -1.538312, 5.95533)","(2.343897, -1.535792, 5.957073)","(3.656415, -2.464048, 4.042121)"],"label":"different rotations small box in cylinder","query_surface_error":0.980425834655762,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(-0.987182, -0.1595, -0.005522)","point":"(1.171073, -1.552997, 4.560932)","rid":"RID(304942678017)","shape":0},"target_surface_error":0.336612433195114},{"contacts":["(1.152994, -2.852677, 5.153474)","(3.01817, -1.063966, 5.062973)","(2.063638, -2.892038, 5.007493)","(3.936684, -1.109336, 4.992354)","(3.935948, -1.107573, 4.988119)","(2.063735, -2.891054, 5.012032)","(3.58911, -1.635525, 6.092125)","(2.411145, -2.364161, 3.90854)","(2.410666, -2.364725, 3.908079)","(3.589079, -1.63559, 6.091257)"],"label":"different rotations cylinder around small box","query_surface_error":0.527450561523438,"rest":{"collider_id":0,"linear_velocity":"(0.0, 0.0, 0.0)","normal":"(0.721304, 0.691734, -0.034999)","point":"(3.01817, -1.063966, 5.062973)","rid":"RID(317827579905)","shape":0},"target_surface_error":1.04766166210175}],"surface_tolerance":0.003}
