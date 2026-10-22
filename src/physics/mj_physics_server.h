@@ -20,6 +20,7 @@ class MjPhysicsServer3D;
 class MjDirectBodyState;
 class MjDirectSpaceState;
 struct MjAreaScratch;
+struct MjNativeJoint { RID rid,a,b; Vector3 anchor_a,anchor_b; bool pin=false,disable_collisions=true; };
 struct MjShape { RID rid; PhysicsServer3D::ShapeType type; Variant data; float margin=0.04f; };
 struct MjShapeInstance { RID shape; Transform3D transform; bool disabled=false; };
 struct MjImported {
@@ -128,6 +129,11 @@ public:
  void flush_area_queries();
  void retire_area_pairs(const RID &rid, int from_shape=-1);
  void drain_area_commands();
+ std::map<uint64_t,MjNativeJoint> native_joints;
+ bool native_joint_active(const MjNativeJoint &joint,const RID &space) const;
+ bool native_joint_collision_disabled(const RID &a,const RID &b) const;
+ void detach_native_joints(const RID &body);
+ bool commit_native_joint(const MjNativeJoint &joint);
  std::set<uint64_t> pending_free;
  RID_Owner<int> handles;
  std::map<uint64_t,std::unique_ptr<MjShape>> shapes;

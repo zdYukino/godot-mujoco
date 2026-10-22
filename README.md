@@ -14,7 +14,7 @@
 - **模型资源与场景**：保存包含依赖资产的模型包，使用 `MjRuntimeWorld` 和 `MjModelInstance` 组织独立实例；支持整个文件系统项目搬迁。
 - **运行编辑**：明确选择运行实例并应用保存的设计；结构修改在物理步边界编译、迁移兼容状态，失败回滚。
 - **仿真控制**：每个世界独立暂停、精确 N 步、内存快照、状态重置和已保存环境重建；游戏 UI 与输入继续运行。
-- **原生物理后端**：支持普通 Godot 刚体的 box/sphere/plane/cylinder、ray 和[第一阶段原生 overlap 查询](docs/native-overlap-stage1.zh-CN.md)，另有[受限组合连续 sweep](docs/native-continuous-sweep-stage2.zh-CN.md)。新增 [Area3D 第一阶段监测](tests/native_area/README.zh-CN.md)（仅原生 box/sphere/cylinder，无冲量触发，待独立 GUI 验收）。并非完整替代 Godot 的全部物理节点及 API。
+- **原生物理后端**：支持普通 Godot 刚体的 box/sphere/plane/cylinder、ray 和[第一阶段原生 overlap 查询](docs/native-overlap-stage1.zh-CN.md)，另有[受限组合连续 sweep](docs/native-continuous-sweep-stage2.zh-CN.md)。新增 [Area3D 第一阶段监测](tests/native_area/README.zh-CN.md)（仅原生 box/sphere/cylinder，无冲量触发，待独立 GUI 验收）。另有[原生 Pin 软连接](docs/native-pin-stage1.zh-CN.md)（无环图、固定响应；Hinge/limits/motor 未支持）。并非完整替代 Godot 的全部物理节点及 API。
 
 | 项目 | 当前要求 |
 |---|---|
