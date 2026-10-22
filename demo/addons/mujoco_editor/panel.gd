@@ -48,6 +48,8 @@ func _ready() -> void:
 	button(toolbar, "Import free G1 (relaxed)", func(): import_g1_dialog(true))
 	button(toolbar, "Open document", func(): file_dialog(false, false))
 	button(toolbar, "Save document", func(): file_dialog(true, false))
+	button(toolbar,"保存控制预设",func():preset_dialog(true))
+	button(toolbar,"加载控制预设",func():preset_dialog(false))
 	button(toolbar, "Save project model", save_project_model)
 	button(toolbar, "Open project model", open_project_model_dialog)
 	button(toolbar, "Create runtime scene", create_runtime_scene_dialog)
@@ -794,3 +796,30 @@ func assign_saved_model() -> bool:
 	history.commit_action()
 	status.text = "Assigned design revision to local scene. Save the scene to persist it; live runtime application is separate."
 	return true
+
+func preset_dialog(save:bool) -> void:
+	if not can_leave_fields():return
+	var dialog=EditorFileDialog.new();dialog.access=EditorFileDialog.ACCESS_FILESYSTEM
+	dialog.file_mode=EditorFileDialog.FILE_MODE_SAVE_FILE if save else EditorFileDialog.FILE_MODE_OPEN_FILE
+	dialog.filters=PackedStringArray(["*.json ; Control preset"]);add_child(dialog)
+	dialog.file_selected.connect(func(path):
+		if save:save_control_preset(path)
+		else:load_control_preset(path)
+		dialog.queue_free())
+	dialog.canceled.connect(dialog.queue_free);dialog.popup_centered_ratio(.65)
+func save_control_preset(path:String)->bool:
+	if not can_leave_fields():return false
+	var error=preload("control_presets.gd").save_file(state.document,path)
+	if not error.is_empty():show_error(error);return false
+	status.text="预设已保存：编辑文档的目标/PD；未保存仿真姿态或运行实例状态";return true
+func load_control_preset(path:String)->bool:
+	if not can_leave_fields():return false
+	var presets=preload("control_presets.gd")
+	var input=presets.read_file(path)
+	if not input.error.is_empty():show_error(input.error);return false
+	var result=presets.candidate(state.document,input.value)
+	if not result.error.is_empty():show_error(result.error);return false
+	var before:Dictionary=state.document.snapshot()
+	if not state.document.restore(result.snapshot):show_error(state.document.get_error());return false
+	record_change(before,"Load control preset")
+	status.text="预设已加载到编辑文档，可 Undo；运行实例尚未改变。PD需保存模型后显式应用，目标值需选择对应控制并发送。";return true

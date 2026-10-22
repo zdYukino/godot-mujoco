@@ -33,6 +33,8 @@ func run(plugin:EditorPlugin):
  config.name="Invalid";config.dimensions=[0,1]
  check(not panel.create_object(root,config) and not root.has_node("Invalid"),"invalid dimensions no partial node")
  config.dimensions=[NAN,1];check(not panel.create_object(root,config),"nonfinite rejected")
+ config.dimensions=[1e100,1];check(not panel.create_object(root,config),"float32 overflow rejected before node creation")
+ config.dimensions=[1e-100,1];check(not panel.create_object(root,config),"float32 underflow rejected before node creation")
  config.dimensions=[.5,1];config.mass=-1;check(not panel.create_object(root,config),"invalid mass rejected")
  config.mass=1;config.layer=-1;check(not panel.create_object(root,config),"invalid layer rejected")
  config.layer=1;check(not panel.create_object(body,config),"nested physics body rejected")

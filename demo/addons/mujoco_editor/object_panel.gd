@@ -50,9 +50,9 @@ func create_object(parent:Node,config:Dictionary)->bool:
  var count={"box":3,"sphere":1,"cylinder":2}.get(kind,0)
  if count==0 or not values is Array or values.size()!=count:status.text="尺寸数量错误";return false
  for value in values:
-  if typeof(value) not in [TYPE_INT,TYPE_FLOAT] or not is_finite(value) or value<=0:status.text="尺寸必须有限且严格为正";return false
+  if typeof(value) not in [TYPE_INT,TYPE_FLOAT] or not is_finite(value) or value<=0 or not is_finite(PackedFloat32Array([value])[0]) or PackedFloat32Array([value])[0]<=0:status.text="尺寸必须有限且严格为正";return false
  var weight=config.get("mass",0)
- if typeof(weight) not in [TYPE_INT,TYPE_FLOAT] or not is_finite(weight) or weight<=0:status.text="质量必须有限且为正";return false
+ if typeof(weight) not in [TYPE_INT,TYPE_FLOAT] or not is_finite(weight) or weight<=0 or not is_finite(PackedFloat32Array([weight])[0]) or PackedFloat32Array([weight])[0]<=0:status.text="质量必须有限且为正";return false
  for key in ["layer","mask"]:
   var value=config.get(key,-1)
   if not value is int or value<0 or value>4294967295:status.text="碰撞位掩码必须是 uint32";return false
