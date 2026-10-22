@@ -1,0 +1,415 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+PASS native backend identity 
+MuJoCo: compile time (ms)
+  total:          0.3   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.3   (wall clock)
+PASS pause isolated world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS configure lightweight exact-step world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS make Pin returns actual type 
+PASS local/world anchor readback 
+PASS fixed compatibility parameter defaults 
+PASS paused Pin does not advance 
+PASS bounded exact step completes { "request": 1, "command": "step", "success": true, "error": "", "time": 0.5, "paused": true }
+PASS world Pin constrains anchor under gravity (0.000107, -0.000339, 0.0)
+PASS Pin preserves pendulum rotation rather than welding [X: (0.950846, 0.309663, 0.0), Y: (-0.309663, 0.950846, 0.0), Z: (0.0, 0.0, 1.0), O: (0.30977, -0.951185, 0.0)]
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS rebuild paused joint world 
+PASS rebuild preserves body pose and velocity 
+PASS bounded exact step completes { "request": 2, "command": "step", "success": true, "error": "", "time": 0.6, "paused": true }
+PASS constraint survives unrelated rebuild 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS bounded exact step completes { "request": 3, "command": "step", "success": true, "error": "", "time": 0.7, "paused": true }
+PASS updated local and world anchors physically constrain 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS make Pin returns actual type 
+PASS bounded exact step completes { "request": 4, "command": "step", "success": true, "error": "", "time": 1.1, "paused": true }
+PASS dynamic pair anchor positions agree 
+PASS dynamic pair remains free to fall 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS make Pin returns actual type 
+PASS bounded exact step completes { "request": 5, "command": "step", "success": true, "error": "", "time": 1.3, "paused": true }
+PASS static endpoint constrains dynamic anchor 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS bounded exact step completes { "request": 6, "command": "step", "success": true, "error": "", "time": 1.7, "paused": true }
+PASS moving static endpoint updates constraint 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS make Pin returns actual type 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS bounded exact step completes { "request": 7, "command": "step", "success": true, "error": "", "time": 1.73, "paused": true }
+PASS joint collision disable suppresses real pair contacts 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS bounded exact step completes { "request": 8, "command": "step", "success": true, "error": "", "time": 1.76, "paused": true }
+PASS reenabling joint pair collision restores contact 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS clear returns unconfigured joint 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS bounded exact step completes { "request": 9, "command": "step", "success": true, "error": "", "time": 2.06, "paused": true }
+PASS cleared joint no longer constrains body 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS bounded exact step completes { "request": 10, "command": "step", "success": true, "error": "", "time": 2.36, "paused": true }
+PASS cleared joint RID can be reconfigured 
+PASS deleted endpoint clears joint without destroying its RID 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS bounded exact step completes { "request": 11, "command": "step", "success": true, "error": "", "time": 2.65999999999999, "paused": true }
+PASS deleted endpoint leaves dynamic body free 
+PASS endpoint detachment clears joint 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS bounded exact step completes { "request": 12, "command": "step", "success": true, "error": "", "time": 2.85999999999999, "paused": true }
+PASS readded endpoint and reused joint constrain again 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS bounded exact step completes { "request": 13, "command": "step", "success": true, "error": "", "time": 2.86999999999998, "paused": true }
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS callback make then mode change executes FIFO and clears joint 
+PASS save real PinJoint3D scene 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS configure reopened scene world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS reopened node paths create real Pin 
+PASS reopened node derives correct local anchor 
+PASS bounded exact step completes { "request": 14, "command": "step", "success": true, "error": "", "time": 0.5, "paused": true }
+PASS reopened Pin remains constrained while rotating 
+PIN_RESULT {"checks":[{"detail":"","name":"native backend identity","passed":true},{"detail":"","name":"pause isolated world","passed":true},{"detail":"","name":"configure lightweight exact-step world","passed":true},{"detail":"","name":"make Pin returns actual type","passed":true},{"detail":"","name":"local/world anchor readback","passed":true},{"detail":"","name":"fixed compatibility parameter defaults","passed":true},{"detail":"","name":"paused Pin does not advance","passed":true},{"detail":"{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.5, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"(0.000107, -0.000339, 0.0)","name":"world Pin constrains anchor under gravity","passed":true},{"detail":"[X: (0.950846, 0.309663, 0.0), Y: (-0.309663, 0.950846, 0.0), Z: (0.0, 0.0, 1.0), O: (0.30977, -0.951185, 0.0)]","name":"Pin preserves pendulum rotation rather than welding","passed":true},{"detail":"","name":"rebuild paused joint world","passed":true},{"detail":"","name":"rebuild preserves body pose and velocity","passed":true},{"detail":"{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.6, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"constraint survives unrelated rebuild","passed":true},{"detail":"{ \"request\": 3, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.7, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"updated local and world anchors physically constrain","passed":true},{"detail":"","name":"make Pin returns actual type","passed":true},{"detail":"{ \"request\": 4, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.1, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"dynamic pair anchor positions agree","passed":true},{"detail":"","name":"dynamic pair remains free to fall","passed":true},{"detail":"","name":"make Pin returns actual type","passed":true},{"detail":"{ \"request\": 5, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.3, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"static endpoint constrains dynamic anchor","passed":true},{"detail":"{ \"request\": 6, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.7, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"moving static endpoint updates constraint","passed":true},{"detail":"","name":"make Pin returns actual type","passed":true},{"detail":"{ \"request\": 7, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.73, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"joint collision disable suppresses real pair contacts","passed":true},{"detail":"{ \"request\": 8, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.76, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"reenabling joint pair collision restores contact","passed":true},{"detail":"","name":"clear returns unconfigured joint","passed":true},{"detail":"{ \"request\": 9, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.06, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"cleared joint no longer constrains body","passed":true},{"detail":"{ \"request\": 10, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.36, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"cleared joint RID can be reconfigured","passed":true},{"detail":"","name":"deleted endpoint clears joint without destroying its RID","passed":true},{"detail":"{ \"request\": 11, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.65999999999999, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"deleted endpoint leaves dynamic body free","passed":true},{"detail":"","name":"endpoint detachment clears joint","passed":true},{"detail":"{ \"request\": 12, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.85999999999999, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"readded endpoint and reused joint constrain again","passed":true},{"detail":"{ \"request\": 13, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.86999999999998, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"callback make then mode change executes FIFO and clears joint","passed":true},{"detail":"","name":"save real PinJoint3D scene","passed":true},{"detail":"","name":"configure reopened scene world","passed":true},{"detail":"","name":"reopened node paths create real Pin","passed":true},{"detail":"","name":"reopened node derives correct local anchor","passed":true},{"detail":"{ \"request\": 14, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.5, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"reopened Pin remains constrained while rotating","passed":true}],"failed":0,"passed":49}

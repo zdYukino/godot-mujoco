@@ -1,0 +1,21 @@
+[  0%] Built target gmj_core_smoke
+[  0%] Built target generate_bindings
+[ 98%] Built target godot-cpp
+[ 98%] Building CXX object CMakeFiles/godot_mujoco.dir/src/mj_editor_document.cpp.o
+[ 98%] Building CXX object CMakeFiles/godot_mujoco.dir/src/physics/mj_area.cpp.o
+[ 98%] Building CXX object CMakeFiles/godot_mujoco.dir/src/physics/mj_coordinates.cpp.o
+[ 98%] Building CXX object CMakeFiles/godot_mujoco.dir/src/physics/mj_direct_body_state.cpp.o
+[ 98%] Building CXX object CMakeFiles/godot_mujoco.dir/src/physics/mj_direct_space_state.cpp.o
+[ 98%] Building CXX object CMakeFiles/godot_mujoco.dir/src/physics/mj_heightfield.cpp.o
+[ 98%] Building CXX object CMakeFiles/godot_mujoco.dir/src/physics/mj_native_joint.cpp.o
+[ 98%] Building CXX object CMakeFiles/godot_mujoco.dir/src/physics/mj_physics_server.cpp.o
+[ 99%] Building CXX object CMakeFiles/godot_mujoco.dir/src/physics/mj_runtime_clock.cpp.o
+[ 99%] Building CXX object CMakeFiles/godot_mujoco.dir/src/physics/mj_runtime_model.cpp.o
+[ 99%] Building CXX object CMakeFiles/godot_mujoco.dir/src/physics/mj_scene.cpp.o
+[ 99%] Building CXX object CMakeFiles/godot_mujoco.dir/src/physics/mj_unsupported.cpp.o
+[ 99%] Building CXX object CMakeFiles/godot_mujoco.dir/src/register_types.cpp.o
+[100%] Linking CXX shared library libgodot_mujoco.linux.template_debug.x86_64.so
+Staging godot_mujoco extension into /workspace/godot-mujoco/demo/addons/godot_mujoco/bin
+Bundling MuJoCo runtime: /workspace/shared/builds/godot-mujoco-3.16/_deps/mujoco-src/lib/libmujoco.so
+Bundling MuJoCo runtime: /workspace/shared/builds/godot-mujoco-3.16/_deps/mujoco-src/lib/libmujoco.so.3.16.0
+[100%] Built target godot_mujoco
