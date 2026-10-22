@@ -109,15 +109,4 @@ void MjPhysicsServer3D::_joint_set_solver_priority(const RID &p_joint, int32_t p
 int32_t MjPhysicsServer3D::_joint_get_solver_priority(const RID &p_joint) const { mj_unsupported("_joint_get_solver_priority"); return {}; }
 void MjPhysicsServer3D::_joint_disable_collisions_between_bodies(const RID &p_joint, bool p_disable) { mj_unsupported("_joint_disable_collisions_between_bodies"); }
 bool MjPhysicsServer3D::_joint_is_disabled_collisions_between_bodies(const RID &p_joint) const { mj_unsupported("_joint_is_disabled_collisions_between_bodies"); return {}; }
-Vector3 MjDirectBodyState::_get_contact_local_position(int32_t p_contact_idx) const { mj_unsupported("_get_contact_local_position"); return {}; }
-Vector3 MjDirectBodyState::_get_contact_local_normal(int32_t p_contact_idx) const { mj_unsupported("_get_contact_local_normal"); return {}; }
-Vector3 MjDirectBodyState::_get_contact_impulse(int32_t p_contact_idx) const { mj_unsupported("_get_contact_impulse"); return {}; }
-int32_t MjDirectBodyState::_get_contact_local_shape(int32_t p_contact_idx) const { mj_unsupported("_get_contact_local_shape"); return {}; }
-Vector3 MjDirectBodyState::_get_contact_local_velocity_at_position(int32_t p_contact_idx) const { mj_unsupported("_get_contact_local_velocity_at_position"); return {}; }
-RID MjDirectBodyState::_get_contact_collider(int32_t p_contact_idx) const { mj_unsupported("_get_contact_collider"); return {}; }
-Vector3 MjDirectBodyState::_get_contact_collider_position(int32_t p_contact_idx) const { mj_unsupported("_get_contact_collider_position"); return {}; }
-uint64_t MjDirectBodyState::_get_contact_collider_id(int32_t p_contact_idx) const { mj_unsupported("_get_contact_collider_id"); return {}; }
-Object * MjDirectBodyState::_get_contact_collider_object(int32_t p_contact_idx) const { mj_unsupported("_get_contact_collider_object"); return {}; }
-int32_t MjDirectBodyState::_get_contact_collider_shape(int32_t p_contact_idx) const { mj_unsupported("_get_contact_collider_shape"); return {}; }
-Vector3 MjDirectBodyState::_get_contact_collider_velocity_at_position(int32_t p_contact_idx) const { mj_unsupported("_get_contact_collider_velocity_at_position"); return {}; }
 }

@@ -25,6 +25,8 @@ void MjPhysicsServer3D::_bind_methods(){
  ClassDB::bind_method(D_METHOD("scene_cancel_world_command","request"),&MjPhysicsServer3D::scene_cancel_world_command);
  ClassDB::bind_method(D_METHOD("scene_request_model_edit","space","object","snapshot","directory","expected_revision"),&MjPhysicsServer3D::scene_request_model_edit);
  ClassDB::bind_method(D_METHOD("scene_cancel_model_edit","request"),&MjPhysicsServer3D::scene_cancel_model_edit);
+ ClassDB::bind_method(D_METHOD("scene_request_preset","space","object","preset","revision"),&MjPhysicsServer3D::scene_request_preset);
+ ClassDB::bind_method(D_METHOD("scene_cancel_preset","request"),&MjPhysicsServer3D::scene_cancel_preset);
  ClassDB::bind_method(D_METHOD("scene_edit_result","request"),&MjPhysicsServer3D::scene_edit_result);
  ClassDB::bind_method(D_METHOD("scene_configure_model","space","snapshot","directory"),&MjPhysicsServer3D::scene_configure_model);
  ClassDB::bind_method(D_METHOD("scene_load_model","space","snapshot","directory","label","pose"),&MjPhysicsServer3D::scene_load_model);

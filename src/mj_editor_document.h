@@ -32,6 +32,9 @@ public:
  Dictionary portable_snapshot(const Dictionary &mapping) const;
  bool restore_at(const Dictionary &snapshot, const String &directory);
  bool edit(const Dictionary &command);
+ bool restore_spec(const mjSpec *value) { return commit(mj_copySpec(value),Dictionary(),false); }
+ String control_signature() const;
+ Dictionary preset_candidate(const Dictionary &preset) const;
  Dictionary inspect() const;
  Array geometry() const;
  void set_paused(bool value);

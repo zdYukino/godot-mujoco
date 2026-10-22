@@ -32,4 +32,4 @@ Dedicated terrain now includes an [editor panel](docs/heightfield-editor.zh-CN.m
 
 [Lightweight integrated workflow](examples/light_workflow/README.zh-CN.md): two fixed-base models, typed terrain, box contact, controls, pause/step and checkpoint reset. New example awaits independent GUI acceptance.
 
-New feature branch: [ordinary scene body creation](docs/scene-objects.zh-CN.md) and [document control presets](docs/control-presets.zh-CN.md). Independent GUI acceptance pending; atomic runtime batch preset application is not implemented.
+New feature branch: [ordinary scene body creation](docs/scene-objects.zh-CN.md) and [document control presets](docs/control-presets.zh-CN.md). Independent GUI acceptance pending; atomic runtime preset application is available on the new feature branch, pending independent acceptance; see [contract](docs/runtime-presets.zh-CN.md).

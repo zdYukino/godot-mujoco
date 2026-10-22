@@ -2,23 +2,7 @@
 extends RefCounted
 ## Document presets, not simulation checkpoints or automatic runtime broadcasts.
 static func signature(document:RefCounted)->String:
- # inspect() is a UI projection: it omits joint axis/anchor and other model fields.
- # Canonical XML from an isolated copy retains those fields. Normalize only the
- # editable PD gains, so changing gains does not make an otherwise identical
- # model incompatible. Controls and simulation state are not part of XML.
- var copy:RefCounted=ClassDB.instantiate("MjEditorDocument")
- if not copy.restore(document.snapshot()):return ""
- copy.set_paused(true)
- for entity in copy.inspect().entities:
-  if entity.kind!="actuator":continue
-  var p=entity.properties
-  if p.transmission_type!=0:return "" # mjTRN_JOINT only, no tendon/site targets.
-  var gains={}
-  if p.type=="position-compatible":gains.kp=1.0
-  if p.type=="position-compatible":gains.kv=0.0
-  elif p.type=="velocity-compatible":gains.kv=1.0
-  if not gains.is_empty() and not copy.edit({"op":"set","kind":"actuator","name":entity.name,"values":gains}):return ""
- return String(copy.snapshot().xml).sha256_text()
+ return document.control_signature()
 static func capture(document:RefCounted)->Dictionary:
  var drives={}
  for entity in document.inspect().entities:
@@ -34,28 +18,8 @@ static func capture(document:RefCounted)->Dictionary:
  if mapping.is_empty():return {"error":"Cannot establish a complete model compatibility signature"}
  return {"format":2,"kind":"godot-mujoco-control-preset","mapping":mapping,"drives":drives}
 static func candidate(document:RefCounted,preset:Variant)->Dictionary:
- if not document.inspect().paused:return {"error":"Pause the editor model before loading a preset"}
- if not preset is Dictionary or preset.size()!=4 or preset.get("format")!=2 or preset.get("kind")!="godot-mujoco-control-preset" or not preset.get("drives") is Dictionary:
-  return {"error":"Invalid control preset schema"}
- var captured=capture(document)
- if captured.has("error"):return captured
- if preset.get("mapping")!=captured.mapping:return {"error":"Model/joint/actuator mapping or design is incompatible"}
- var expected=captured.drives
- if preset.drives.size()!=expected.size():return {"error":"Actuator set mismatch"}
- for name in expected:
-  if not preset.drives.has(name) or not preset.drives[name] is Dictionary:return {"error":"Missing actuator: "+name}
-  var values:Dictionary=preset.drives[name]
-  if values.size()!=expected[name].size():return {"error":"Unsupported or missing gain fields: "+name}
-  for key in expected[name]:
-   if not values.has(key) or typeof(values[key]) not in [TYPE_INT,TYPE_FLOAT] or not is_finite(values[key]):return {"error":"Invalid numeric field: "+name+"/"+key}
- var copy:RefCounted=ClassDB.instantiate("MjEditorDocument")
- if not copy.restore(document.snapshot()):return {"error":copy.get_error()}
- copy.set_paused(true)
- for name in expected:
-  var values:Dictionary=preset.drives[name].duplicate();var control=values.control;values.erase("control")
-  if not values.is_empty() and not copy.edit({"op":"set","kind":"actuator","name":name,"values":values}):return {"error":copy.get_error()}
-  if not copy.edit({"op":"control","name":name,"value":control}):return {"error":copy.get_error()}
- return {"error":"","snapshot":copy.snapshot()}
+ if not preset is Dictionary:return {"error":"Invalid preset schema"}
+ return document.preset_candidate(preset)
 static func save_file(document:RefCounted,path:String)->String:
  if path.is_empty():return "Choose a preset file"
  var captured=capture(document)

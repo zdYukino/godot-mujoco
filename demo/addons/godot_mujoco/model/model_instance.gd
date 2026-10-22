@@ -6,6 +6,8 @@ const LiveBridge = preload("live_bridge.gd")
 signal edit_finished(result: Dictionary)
 var property_revision := 0
 var edit_request := 0
+var pending_preset:=false
+var last_preset_result:Dictionary={}
 var pending_model: MjModelResource
 var committing_model := false
 var live_id := ""
@@ -103,7 +105,7 @@ func state() -> Dictionary:
 	return PhysicsServer3D.call("scene_state",space,model_rid) if model_rid.is_valid() else {}
 
 func set_control(actuator: String, value: float) -> bool:
-	return model_rid.is_valid() and PhysicsServer3D.call("scene_set_actuator",space,model_rid,actuator,value)
+	return edit_request==0 and model_rid.is_valid() and PhysicsServer3D.call("scene_set_actuator",space,model_rid,actuator,value)
 
 func clear_visuals() -> void:
 	for mesh in visuals.values():
@@ -146,6 +148,18 @@ func _physics_process(_delta: float) -> void:
 			visuals[geom.name].global_transform = geom.transform
 			visuals[geom.name].scale *= scales[geom.name]
 
+func request_control_preset(preset:Dictionary,expected_revision:int)->bool:
+	if Engine.is_editor_hint() or not model_rid.is_valid() or edit_request!=0 or expected_revision<0:
+		last_error="Preset requires a live instance, explicit revision and no pending edit";return false
+	edit_request=PhysicsServer3D.call("scene_request_preset",space,model_rid,preset,expected_revision)
+	if edit_request==0:last_error="Preset queue rejected";return false
+	pending_preset=true;last_error="";last_preset_result={"status":"accepted","request":edit_request}
+	LiveBridge.publish(self);return true
+
+func cancel_control_preset()->bool:
+	if not pending_preset or edit_request==0:return false
+	return PhysicsServer3D.call("scene_cancel_preset",edit_request)
+
 func request_model_edit(candidate: MjModelResource, expected_revision: int = -1) -> bool:
 	if Engine.is_editor_hint() or not model_rid.is_valid() or edit_request != 0:
 		last_error = "Load an instance and wait for the pending edit before retrying"
@@ -156,6 +170,7 @@ func request_model_edit(candidate: MjModelResource, expected_revision: int = -1)
 	last_error = candidate.validate_package()
 	if not last_error.is_empty(): return false
 	if expected_revision < 0: expected_revision = property_revision
+	last_preset_result={}
 	# Copy authored data: future UI/resource changes cannot alter this queued request.
 	pending_model = ResourceLoader.load(candidate.resource_path,"",ResourceLoader.CACHE_MODE_IGNORE)
 	if not pending_model:
@@ -178,19 +193,28 @@ func cancel_pending_edit() -> void:
 		PhysicsServer3D.call("scene_cancel_model_edit",edit_request)
 	edit_request = 0
 	pending_model = null
+	pending_preset=false
+	last_preset_result={}
 
 func _process(_delta: float) -> void:
+	_poll_edit()
+
+func _poll_edit() -> void:
 	if Engine.is_editor_hint() or edit_request == 0: return
 	var result: Dictionary = PhysicsServer3D.call("scene_edit_result",edit_request)
 	if result.is_empty(): return
 	edit_request = 0
-	property_revision = result.revision
+	property_revision = PhysicsServer3D.call("scene_state",space,model_rid).get("property_revision",result.revision)
 	last_error = result.error
-	if result.success:
+	if pending_preset:
+		last_preset_result=result.duplicate(true)
+		last_preset_result.status="completed" if result.success else ("cancelled" if result.get("cancelled",false) else "failed")
+	elif result.success:
 		committing_model = true
 		model = pending_model
 		committing_model = false
 		build_visuals(PhysicsServer3D.call("scene_geometry",space,model_rid),true)
 	pending_model = null
+	pending_preset=false
 	LiveBridge.publish(self)
 	edit_finished.emit(result)

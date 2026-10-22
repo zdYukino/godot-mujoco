@@ -1,0 +1,26 @@
+{
+  "base": "8d3976e1d0fb71588b9b303d6c202708d6737bbe",
+  "godot": "4.7.2.stable.mono.official.ed1daf0bf",
+  "mujoco": "3.16.0",
+  "mujoco_from_source": true,
+  "build_type": "Release",
+  "gui_visual_qa": "not executed: no DISPLAY/Xvfb",
+  "commands": {
+    "configure": "cmake -S . -B /workspace/shared/builds/contact-source -DGMJ_BUILD_MUJOCO_FROM_SOURCE=ON -DFETCHCONTENT_SOURCE_DIR_GODOT-CPP=/workspace/shared/builds/godot-mujoco-3.16/_deps/godot-cpp-src -DGMJ_BUILD_CORE_SMOKE=ON -DCMAKE_BUILD_TYPE=Release",
+    "build": "cmake --build /workspace/shared/builds/contact-source -j 5",
+    "contact": "OUT=/tmp/contact-source-check bash tests/native_contacts/run.sh",
+    "regression": "REPEAT=1 OUT=/tmp/contact-native-regression bash tests/native_backend/run.sh",
+    "core": "/workspace/shared/builds/contact-source/gmj_core_smoke"
+  },
+  "exit_codes": {
+    "configure": 0,
+    "build": 0,
+    "contact": 0,
+    "regression": 0,
+    "core": 0
+  },
+  "sha256": {
+    "libgodot_mujoco.linux.template_debug.x86_64.so": "693a21f0d374be45d7bbc36b22d8b20a3d2d04f9d3f078e369908501ce7c5408",
+    "libmujoco.so.3.16.0": "49bc9bd77036667c1dcc9f41715ea7c4e122346e671feec14f8d50cf4559b83c"
+  }
+}

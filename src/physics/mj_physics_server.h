@@ -25,7 +25,13 @@ struct MjImported {
  std::string prefix;
  ~MjImported() { if(spec) mj_deleteSpec(spec); }
 };
+// One solved manifold point in Godot world coordinates; impulse covers one substep.
+struct MjContact {
+ RID collider; uint64_t object_id=0; int local_shape=-1, collider_shape=-1;
+ Vector3 position, normal, impulse, local_velocity, collider_velocity;
+};
 struct MjBody {
+ int max_contacts=0; std::vector<MjContact> contacts;
  RID rid, space; bool heightfield=false; uint64_t object_id=0; PhysicsServer3D::BodyMode mode=PhysicsServer3D::BODY_MODE_RIGID;
  Transform3D transform; Vector3 linear_velocity, angular_velocity, force, torque, constant_force, constant_torque;
  std::vector<MjShapeInstance> shapes; std::map<int, Variant> params;
@@ -71,6 +77,8 @@ public:
  bool scene_set_actuator(const RID &space, const RID &object, const String &name, double value);
  bool scene_release_model(const RID &space, const RID &object);
  int64_t scene_request_model_edit(const RID &space, const RID &object, const Dictionary &snapshot, const String &directory, int64_t expected_revision);
+ int64_t scene_request_preset(const RID &space,const RID &object,const Dictionary &preset,int64_t revision);
+ bool scene_cancel_preset(int64_t request);
  Dictionary scene_edit_result(int64_t request);
  void scene_cancel_model_edit(int64_t request);
  void process_model_edits();
@@ -90,7 +98,7 @@ public:
  struct WorldCommand {int64_t request;RID space;String command;int count;};
  std::deque<WorldCommand> world_commands;
  std::map<int64_t,Dictionary> world_command_results;
- struct ModelEdit {int64_t request, expected_revision; RID space, object; Dictionary snapshot; String directory;};
+ struct ModelEdit {int64_t request, expected_revision; RID space, object; Dictionary snapshot; String directory; bool preset=false;};
  std::mutex edits_mutex;
  std::deque<ModelEdit> model_edits;
  std::map<int64_t,Dictionary> edit_results;
@@ -107,9 +115,10 @@ public:
  MjShape *shape(const RID &rid) const;
  RID make_shape(ShapeType type, const Variant &data);
  void dirty(const RID &space);
- bool rebuild(MjSpace &space);
+ bool rebuild(MjSpace &space, const Dictionary &control_overrides=Dictionary(), bool validate_dynamics=false);
  void write_body(MjBody &body);
  void read_body(MjBody &body);
+ void collect_contacts(MjSpace &space);
  ~MjPhysicsServer3D();
  RID _world_boundary_shape_create() override;
  RID _separation_ray_shape_create() override;
