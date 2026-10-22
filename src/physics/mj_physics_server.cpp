@@ -70,15 +70,19 @@ void MjPhysicsServer3D::_body_set_space(const RID&r,const RID&s){if(flushing){ar
 RID MjPhysicsServer3D::_body_get_space(const RID&r) const {auto*b=body(r);return b?b->space:RID();}
 void MjPhysicsServer3D::_body_set_mode(const RID&r,BodyMode m){auto*b=body(r);ERR_FAIL_NULL(b);if(m!=BODY_MODE_STATIC&&m!=BODY_MODE_RIGID){mj_unsupported("kinematic/rigid-linear body modes");return;}b->mode=m;dirty(b->space);}
 PhysicsServer3D::BodyMode MjPhysicsServer3D::_body_get_mode(const RID&r) const {auto*b=body(r);return b?b->mode:BODY_MODE_STATIC;}
-void MjPhysicsServer3D::_body_add_shape(const RID&r,const RID&s,const Transform3D&t,bool d){auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_NULL(shape(s));if(!valid_rigid_transform(t))return;b->shapes.push_back({s,t,d});dirty(b->space);}
-void MjPhysicsServer3D::_body_set_shape(const RID&r,int32_t i,const RID&s){auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());ERR_FAIL_NULL(shape(s));b->shapes[i].shape=s;dirty(b->space);}
-void MjPhysicsServer3D::_body_set_shape_transform(const RID&r,int32_t i,const Transform3D&t){auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());if(!valid_rigid_transform(t))return;b->shapes[i].transform=t;dirty(b->space);}
-void MjPhysicsServer3D::_body_set_shape_disabled(const RID&r,int32_t i,bool d){auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());b->shapes[i].disabled=d;dirty(b->space);}
+// All shape-list mutations share one FIFO during callbacks. Validate indices
+// when dequeued, against the result of preceding add/remove/clear operations.
+#define DEFER_BODY_SHAPE(call) if(flushing){area_commands.push_back([=]{call;});return;}
+void MjPhysicsServer3D::_body_add_shape(const RID&r,const RID&s,const Transform3D&t,bool d){DEFER_BODY_SHAPE(_body_add_shape(r,s,t,d));auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_NULL(shape(s));if(!valid_rigid_transform(t))return;b->shapes.push_back({s,t,d});dirty(b->space);}
+void MjPhysicsServer3D::_body_set_shape(const RID&r,int32_t i,const RID&s){DEFER_BODY_SHAPE(_body_set_shape(r,i,s));auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());ERR_FAIL_NULL(shape(s));b->shapes[i].shape=s;dirty(b->space);}
+void MjPhysicsServer3D::_body_set_shape_transform(const RID&r,int32_t i,const Transform3D&t){DEFER_BODY_SHAPE(_body_set_shape_transform(r,i,t));auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());if(!valid_rigid_transform(t))return;b->shapes[i].transform=t;dirty(b->space);}
+void MjPhysicsServer3D::_body_set_shape_disabled(const RID&r,int32_t i,bool d){DEFER_BODY_SHAPE(_body_set_shape_disabled(r,i,d));auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());b->shapes[i].disabled=d;dirty(b->space);}
 int32_t MjPhysicsServer3D::_body_get_shape_count(const RID&r) const {auto*b=body(r);return b?b->shapes.size():0;}
 RID MjPhysicsServer3D::_body_get_shape(const RID&r,int32_t i) const {auto*b=body(r);ERR_FAIL_NULL_V(b,RID());ERR_FAIL_INDEX_V(i,b->shapes.size(),RID());return b->shapes[i].shape;}
 Transform3D MjPhysicsServer3D::_body_get_shape_transform(const RID&r,int32_t i) const {auto*b=body(r);ERR_FAIL_NULL_V(b,Transform3D());ERR_FAIL_INDEX_V(i,b->shapes.size(),Transform3D());return b->shapes[i].transform;}
-void MjPhysicsServer3D::_body_remove_shape(const RID&r,int32_t i){if(flushing){area_commands.push_back([this,r,i]{_body_remove_shape(r,i);});return;}auto*b=body(r);if(!b)return;ERR_FAIL_INDEX(i,b->shapes.size());b->shapes.erase(b->shapes.begin()+i);dirty(b->space);retire_area_pairs(r,i);}
-void MjPhysicsServer3D::_body_clear_shapes(const RID&r){if(flushing){area_commands.push_back([this,r]{_body_clear_shapes(r);});return;}auto*b=body(r);if(!b)return;b->shapes.clear();dirty(b->space);retire_area_pairs(r);}
+void MjPhysicsServer3D::_body_remove_shape(const RID&r,int32_t i){DEFER_BODY_SHAPE(_body_remove_shape(r,i));auto*b=body(r);if(!b)return;ERR_FAIL_INDEX(i,b->shapes.size());b->shapes.erase(b->shapes.begin()+i);dirty(b->space);retire_area_pairs(r,i);}
+void MjPhysicsServer3D::_body_clear_shapes(const RID&r){DEFER_BODY_SHAPE(_body_clear_shapes(r));auto*b=body(r);if(!b)return;b->shapes.clear();dirty(b->space);retire_area_pairs(r);}
+#undef DEFER_BODY_SHAPE
 void MjPhysicsServer3D::_body_attach_object_instance_id(const RID&r,uint64_t id){if(auto*b=body(r))b->object_id=id;}
 uint64_t MjPhysicsServer3D::_body_get_object_instance_id(const RID&r) const {auto*b=body(r);return b?b->object_id:0;}
 void MjPhysicsServer3D::_body_set_collision_layer(const RID&r,uint32_t v){if(auto*b=body(r)){b->layer=v;dirty(b->space);}}

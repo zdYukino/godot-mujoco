@@ -33,7 +33,7 @@ Area 永远不加入活动 MuJoCo 模型，没有质量、自由度、接触约�
 最终测试验证刚体以恒速穿越 Area 且 direct-state 接触数为 0。
 
 普通事件在 `_flush_queries` 统一计算差分后发送；记录只保存 RID、ID、shape index，不跨回调保留指针。
-Area setter 在回调中排队，整批结束后执行。Body 换 space/remove/clear shape 同样排队，避免嵌套通知。
+Area setter 在回调中排队，整批结束后执行。Body 换 space 及所有形状列表修改（add/remove/clear/set/transform/disabled）同样排队；索引在出队时依据前序命令结果解析。队列严格 FIFO，退出回调中新追加的修改排在已有命令之后，禁止递归 drain 插队。回调内 getter 读取尚未执行修改的原状态。
 free 沿用 pending-free 协议；已销毁的接收者停止收到后续事件，已释放目标的未发送 enter 被撤销。
 World detach 同步退休旧配对，解除 Godot tree-entered 订阅，避免同帧重挂时虚假的 enter/exit。
 此 detach 的退出回调也受 flushing/修改队列保护。
@@ -77,3 +77,13 @@ godot --path /tmp/native-area-final/project --script res://gui.gd
 本阶段最终实测：Area 53 passed / 0 failed（加 2 个精确拒绝 ERROR、1 个 unsupported WARNING）；
 contact 48 passed；overlap 三个新进程各 154 passed；原生后端 149 passed；core smoke PASS。
 全部脚本 exit 0，正例日志无 ERROR/leak。证据见 `docs/evidence/native-area/`。
+
+### Body shape 回调顺序修复（基于 af40f02）
+
+`body_shape_order.gd` 精确复现 `[分离 shape0, 重叠 shape1]` 在 enter 回调中
+`remove_shape(0)` → `set_shape_disabled(0,true)` 的索引压缩路径，并覆盖 remove→set/transform/disabled、
+clear→add→set/transform/disabled、add→set/transform/disabled，以及 remove 触发的退出回调追加修改。
+旧产物 22 项中 9 项失败（含错误重入和被 clear 清空的即时 add）；修复后 22/22 通过。
+原有 Area 53 项、contact 48 项、原生后端 149 项亦通过；正例日志无 ERROR/leak。
+本修复没有修改 query/witness；顺序 API 请求不等同于非法请求的事务回滚。
+证据：`docs/evidence/native-area-body-shape-order/`。

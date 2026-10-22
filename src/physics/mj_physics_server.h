@@ -121,6 +121,7 @@ public:
  std::shared_ptr<MjAreaScratch> area_scratch;
  std::map<uint64_t,std::unique_ptr<MjArea>> areas;
  std::deque<std::function<void()>> area_commands;
+ bool draining_area_commands=false;
  MjArea *area(const RID &rid) const;
  void flush_area_queries();
  void retire_area_pairs(const RID &rid, int from_shape=-1);

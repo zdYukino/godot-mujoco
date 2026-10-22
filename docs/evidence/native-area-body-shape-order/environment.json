@@ -1,0 +1,25 @@
+{
+  "base": "af40f02b8137090150d1bcd765f29f783bdaec82",
+  "godot": "4.7.2.stable.mono.official.ed1daf0bf",
+  "mujoco": "3.16.0",
+  "mujoco_from_source": true,
+  "commands": {
+    "build": "cmake --build /workspace/shared/builds/contact-source -j 5",
+    "area": "OUT=/tmp/native-area-order-fix bash tests/native_area/run.sh",
+    "contact": "OUT=/tmp/native-area-order-contact bash tests/native_contacts/run.sh",
+    "backend": "REPEAT=1 OUT=/tmp/native-area-order-backend bash tests/native_backend/run.sh"
+  },
+  "exit_codes": {
+    "build": 0,
+    "area": 0,
+    "contact": 0,
+    "backend": 0
+  },
+  "before_fix": {
+    "passed": 13,
+    "failed": 9,
+    "log": "/tmp/area-order-before.log",
+    "expected_diagnostic_failure": true
+  },
+  "sha256": "525c493967ccd13d122c9ff0b4ffebf5fc2551de1548db362581ecd6e68c96e9"
+}

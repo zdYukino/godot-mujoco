@@ -93,7 +93,14 @@ void MjPhysicsServer3D::retire_area_pairs(const RID &rid,int from_shape){
  flushing=was_flushing;
  if(!flushing)drain_area_commands();
 }
-void MjPhysicsServer3D::drain_area_commands(){auto commands=std::move(area_commands);area_commands.clear();for(auto &command:commands)command();}
+void MjPhysicsServer3D::drain_area_commands(){
+ // A command may emit exit callbacks, which append more commands. Never drain
+ // recursively: those new requests must remain behind the original batch.
+ if(draining_area_commands)return;
+ draining_area_commands=true;
+ while(!area_commands.empty()){auto command=std::move(area_commands.front());area_commands.pop_front();command();}
+ draining_area_commands=false;
+}
 void MjPhysicsServer3D::flush_area_queries(){
  if(areas.empty())return;
  if(!area_scratch)area_scratch=std::make_shared<MjAreaScratch>();
