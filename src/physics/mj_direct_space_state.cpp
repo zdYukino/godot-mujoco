@@ -1,5 +1,6 @@
 #include "mj_physics_server.h"
 #include "mj_sweep.h"
+#include "query_ccd/witness.h"
 
 #include <godot_cpp/core/object.hpp>
 
@@ -83,9 +84,99 @@ PhysicsServer3DExtensionShapeResult shape_result(MjBody &body, int shape) {
  return result;
 }
 struct Overlap {
- MjBody *body; int shape; mjPreContact contact; bool reversed;
+ MjBody *body; int shape; mjPreContact contact; bool reversed; Vector3 target_normal;
 };
 Vector3 contact_point(const Overlap &hit, bool query);
+
+gmj_sweep::Vec support(int type, const mjtNum *size, const mjtNum *matrix, gmj_sweep::Vec n);
+// Analytic signed-distance magnitude to the original primitive surface. This
+// checks actual ownership, not just whether a narrowphase produced a contact.
+double surface_error(const mjModel *model, const mjData *data, int geom, const mjtNum *point) {
+ mjtNum offset[3],p[3]; mju_sub3(offset,point,data->geom_xpos+3*geom);
+ mju_mulMatTVec3(p,data->geom_xmat+9*geom,offset);
+ const mjtNum *size=model->geom_size+3*geom;
+ switch(model->geom_type[geom]) {
+ case mjGEOM_SPHERE:return std::abs(mju_norm3(p)-size[0]);
+ case mjGEOM_PLANE:return std::abs(p[2]);
+ case mjGEOM_CYLINDER: {
+   double a=std::hypot(p[0],p[1])-size[0],b=std::abs(p[2])-size[1];
+   return std::abs(std::hypot(std::max(a,0.0),std::max(b,0.0))+std::min(std::max(a,b),0.0));
+ }
+ default: {
+   double a=std::abs(p[0])-size[0],b=std::abs(p[1])-size[1],c=std::abs(p[2])-size[2];
+   return std::abs(std::hypot(std::max(a,0.0),std::max(b,0.0),std::max(c,0.0))+std::min(std::max({a,b,c}),0.0));
+ }
+ }
+}
+bool valid_witnesses(const mjModel *model, const mjData *data, int a, int b, const mjPreContact &c) {
+ if(!std::isfinite(c.dist) || !std::isfinite(mju_norm3(c.normal)) || std::abs(mju_norm3(c.normal)-1)>1e-6) return false;
+ mjtNum p[3],q[3]; mju_addScl3(p,c.pos,c.normal,-.5*c.dist);mju_addScl3(q,c.pos,c.normal,.5*c.dist);
+ const double ea=surface_error(model,data,a,p), eb=surface_error(model,data,b,q);
+ return std::isfinite(ea) && std::isfinite(eb) &&
+     ea<=1e-6*std::max(1.0,model->geom_rbound[a]) && eb<=1e-6*std::max(1.0,model->geom_rbound[b]);
+}
+// Deep MPR portal displacements need not equal a target feature normal.
+// Derive rest normals from the target's actual surface/normal cone, keeping
+// the independently reconstructed witness pair and penetration depth intact.
+Vector3 witness_normal(const mjModel *model,const mjData *data,int geom,const mjtNum *point,const mjtNum *hint) {
+ mjtNum offset[3],p[3],h[3],n[3]={},world[3];
+ const mjtNum *mat=data->geom_xmat+9*geom,*size=model->geom_size+3*geom;
+ mju_sub3(offset,point,data->geom_xpos+3*geom);mju_mulMatTVec3(p,mat,offset);mju_mulMatTVec3(h,mat,hint);
+ double tolerance=1e-6*std::max(1e-8,model->geom_rbound[geom]);
+ int type=model->geom_type[geom];
+ if(type==mjGEOM_SPHERE) mju_copy3(n,p);
+ else if(type==mjGEOM_PLANE) n[2]=1;
+ else if(type==mjGEOM_BOX) {
+   int nearest=0;
+   for(int i=0;i<3;++i) {
+     if(std::abs(std::abs(p[i])-size[i])<std::abs(std::abs(p[nearest])-size[nearest])) nearest=i;
+     if(std::abs(std::abs(p[i])-size[i])<=tolerance) n[i]=(p[i]<0?-1:1)*std::max(0.0,h[i]*(p[i]<0?-1:1));
+   }
+   if(mju_norm3(n)==0)n[nearest]=p[nearest]<0?-1:1;
+ } else {
+   double radial=std::hypot(p[0],p[1]), side=std::abs(radial-size[0]), cap=std::abs(std::abs(p[2])-size[1]);
+   double x=radial?p[0]/radial:1,y=radial?p[1]/radial:0,z=p[2]<0?-1:1;
+   if(side<=tolerance) {double weight=std::max(0.0,h[0]*x+h[1]*y);n[0]=weight*x;n[1]=weight*y;}
+   if(cap<=tolerance) n[2]=z*std::max(0.0,z*h[2]);
+   if(mju_norm3(n)==0) {if(side<=cap){n[0]=x;n[1]=y;}else n[2]=z;}
+ }
+ mju_normalize3(n);mju_mulMatVec3(world,mat,n);
+ return mj_to_godot(Vector3(world[0],world[1],world[2])).normalized();
+}
+struct SupportGeom { const mjModel *model; const mjData *data; int geom; const mjtNum *origin; };
+void primitive_support(const void *object, const ccd_vec3_t *direction, ccd_vec3_t *result) {
+ const auto &g=*static_cast<const SupportGeom *>(object);
+ auto v=support(g.model->geom_type[g.geom],g.model->geom_size+3*g.geom,g.data->geom_xmat+9*g.geom,
+     {direction->v[0],direction->v[1],direction->v[2]});
+ const mjtNum *p=g.data->geom_xpos+3*g.geom;
+ ccdVec3Set(result,v.x+(p[0]-g.origin[0]),v.y+(p[1]-g.origin[1]),v.z+(p[2]-g.origin[2]));
+}
+void primitive_center(const void *object, ccd_vec3_t *result) {
+ const auto &g=*static_cast<const SupportGeom *>(object);
+ mju_sub3(result->v,g.data->geom_xpos+3*g.geom,g.origin);
+ if(g.geom==0) {
+   // MPR permits any strictly interior reference point. A noncentral query
+   // reference avoids the coincident-center segment shortcut without moving
+   // either physical shape or any of its support vertices.
+   const mjtNum *s=g.model->geom_size;
+   mjtNum local[3],offset[3];
+   if(g.model->geom_type[0]==mjGEOM_BOX) {local[0]=.1*s[0];local[1]=.2*s[1];local[2]=.15*s[2];}
+   else {local[0]=.1*s[0];local[1]=.2*s[0];local[2]=.15*(g.model->geom_type[0]==mjGEOM_SPHERE?s[0]:s[1]);}
+   mju_mulMatVec3(offset,g.data->geom_xmat,local);mju_addTo3(result->v,offset);
+ }
+}
+bool primitive_witness(const mjModel *model, const mjData *data, mjPreContact &contact) {
+ const mjtNum *origin=data->geom_xpos;
+ SupportGeom a{model,data,0,origin},b{model,data,1,origin};
+ ccd_t options{}; options.support1=options.support2=primitive_support;
+ options.center1=options.center2=primitive_center; options.max_iterations=1000;
+ options.mpr_tolerance=1e-10*std::max({1.0,model->geom_rbound[0],model->geom_rbound[1]});
+ ccd_real_t depth; ccd_vec3_t normal,position,p,q;
+ if(gmj_ccdMPRWitness(&a,&b,&options,&depth,&normal,&position,&p,&q)!=0 || !(depth>0)) return false;
+ contact={}; contact.dist=-depth; mju_copy3(contact.normal,normal.v);
+ mju_add3(contact.pos,position.v,origin);
+ return valid_witnesses(model,data,0,1,contact);
+}
 // The scratch model has no ownership or dynamics relationship to the live space.
 // Dispatching MuJoCo narrowphase directly neither runs forward nor steps live data.
 std::vector<Overlap> overlaps(MjDirectSpaceState &state, const RID &rid, const Transform3D &transform,
@@ -127,8 +218,10 @@ std::vector<Overlap> overlaps(MjDirectSpaceState &state, const RID &rid, const T
  if (!data) return hits;
  model->geom_type[0]=type; mju_copy3(model->geom_size,size);
  model->geom_rbound[0]=type==mjGEOM_SPHERE?size[0]:mju_norm3(size);
- Vector3 pos=godot_to_mj(pose.origin); Basis basis=godot_to_mj(pose.basis);
- for (int a=0;a<3;++a) { data->geom_xpos[a]=pos[a]; for(int b=0;b<3;++b) data->geom_xmat[3*a+b]=basis[a][b]; }
+ Vector3 pos=godot_to_mj(pose.origin);
+ Quaternion rotation=godot_to_mj(pose.basis).get_rotation_quaternion().normalized();
+ mjtNum quat[4]={rotation.w,rotation.x,rotation.y,rotation.z};mju_normalize4(quat);mju_quat2Mat(data->geom_xmat,quat);
+ for (int a=0;a<3;++a) data->geom_xpos[a]=pos[a];
  for (int geom=0;geom<space->model->ngeom;++geom) {
    auto *body=query_body(state,*space,geom,mask); if (!body) continue;
    int target=space->model->geom_type[geom];
@@ -144,17 +237,41 @@ std::vector<Overlap> overlaps(MjDirectSpaceState &state, const RID &rid, const T
    if (!collision) continue; // In particular, no plane/plane finite manifold.
    mjPreContact contacts[mjMAXCONPAIR]{};
    int count=collision(model.get(),data.get(),contacts,a,b,margin);
-   // MuJoCo 3.16 native GJK can return no witness for concentric cylinder
-   // pairs (also cylinder/box). Its independent MPR narrowphase resolves
-   // these degeneracies without perturbing geometry or sampling motion.
-   if (!count && (type==mjGEOM_CYLINDER || target==mjGEOM_CYLINDER)) {
-     model->opt.disableflags |= mjDSBL_NATIVECCD;
-     count=collision(model.get(),data.get(),contacts,a,b,margin);
-     model->opt.disableflags &= ~mjDSBL_NATIVECCD;
+   bool invalid=false;
+   for(int i=0;i<count;++i) if(!valid_witnesses(model.get(),data.get(),a,b,contacts[i])) invalid=true;
+   // Raw contact positions are not universally witness midpoints. In
+   // particular, cylinder normal correction and perturbed manifolds break
+   // that assumption. Retain original support vertices and portal barycentric
+   // witnesses instead of swapping/projecting points or perturbing geometry.
+   bool finite_pair=type!=mjGEOM_PLANE && target!=mjGEOM_PLANE;
+   if(finite_pair && (invalid || (!count && (type==mjGEOM_CYLINDER || target==mjGEOM_CYLINDER)))) {
+     mjPreContact repaired{};
+     if(primitive_witness(model.get(),data.get(),repaired)) {
+       contacts[0]=repaired; count=1; reversed=false;
+     } else if(invalid) {
+       // Positive-margin separated witnesses come directly from the distance
+       // interface, never from a penetration midpoint estimate.
+       mjtNum pair[6];double distance=mj_geomDistance(model.get(),data.get(),0,1,margin+1e-8,pair);
+       repaired.dist=distance;
+       mju_add3(repaired.pos,pair,pair+3);mju_scl3(repaired.pos,repaired.pos,.5);
+       mju_sub3(repaired.normal,pair+3,pair);mju_normalize3(repaired.normal);
+       if(distance>=0 && distance<=margin && valid_witnesses(model.get(),data.get(),0,1,repaired)) {
+         contacts[0]=repaired;count=1;reversed=false;
+       } else {mj_unsupported("primitive contact witness could not be validated");count=0;}
+     }
    }
    for(int i=0;i<count;++i) {
      const auto &c=contacts[i];
-     Overlap hit{body,space->geom_owners[geom].second,c,reversed};
+     Overlap hit{body,space->geom_owners[geom].second,c,reversed,{}};
+     mjtNum target_point[3],hint[3];
+     mju_addScl3(target_point,c.pos,c.normal,(reversed?-1:1)*.5*c.dist);
+     mju_scl3(hint,c.normal,reversed?1:-1);
+     hit.target_normal=witness_normal(model.get(),data.get(),1,target_point,hint);
+     if(!valid_witnesses(model.get(),data.get(),reversed?1:0,reversed?0:1,c) ||
+         !hit.target_normal.is_finite() || Math::abs(hit.target_normal.length_squared()-1)>1e-5) {
+       mj_unsupported("primitive contact witness could not be validated");
+       continue;
+     }
      if(std::isfinite(c.dist) && c.dist<=margin &&
          Vector3(c.normal[0],c.normal[1],c.normal[2]).is_finite() &&
          contact_point(hit,true).is_finite() && contact_point(hit,false).is_finite()) hits.push_back(hit);
@@ -530,9 +647,7 @@ bool MjDirectSpaceState::_rest_info(const RID &shape, const Transform3D &pose, c
  if(!info) return false; *info={};
  auto hits=overlaps(*this,shape,pose,motion,margin,mask,bodies,areas); if(hits.empty()) return false;
  const auto &hit=*std::min_element(hits.begin(),hits.end(),[](const Overlap &a,const Overlap &b){return a.contact.dist<b.contact.dist;});
- double sign=hit.reversed?1:-1;
- Vector3 normal=mj_to_godot(Vector3(hit.contact.normal[0],hit.contact.normal[1],hit.contact.normal[2]))*sign;
- rest_result(*server->space(rid),*hit.body,hit.shape,contact_point(hit,false),normal,*info);
+ rest_result(*server->space(rid),*hit.body,hit.shape,contact_point(hit,false),hit.target_normal,*info);
  return true;
 }
 

@@ -35,7 +35,7 @@
 窄相使用独立、仅有两个 primitive 的临时模型和 data；不会运行 live `mj_collision` 或 `mj_step`，
 不会写活动 data 的 contacts / forces / qpos / qvel。RAII 销毁 scratch spec/model/data。
 MuJoCo 3.16 native GJK 对完全同心 cylinder/cylinder、cylinder/box 可漏报；零命中的 cylinder pair 使用
-MuJoCo 自带 libccd MPR 窄相回退，不扰动几何、不采样运动。超出 Godot real_t 范围的 query 尺寸与非有限 witness 拒绝。
+独立的 support-witness MPR 窄相回退（后续 witness 修复），不扰动几何、不采样运动。超出 Godot real_t 范围的 query 尺寸与非有限 witness 拒绝。
 每次 shape 查询编译一个小 scratch 模型，这是正确性优先的第一阶段实现，未作吞吐量承诺；
 后续可在明确线程与生命周期边界后缓存 scratch 模型。
 
@@ -70,3 +70,22 @@ heightfield/mesh 还需独立 asset-aware distance / sweep 路径及原生所有
 - 最终日志目录：`/workspace/shared/validation/native-overlap-2`、`overlap-backend`、
   `overlap-cylinder`、`overlap-heightfield`；构建日志 `overlap-build-fallback.log` 在 shared 根目录。
 - 首次运行暴露的同心 cylinder 窄相漏报已修复；早期 `native-overlap-1` 是失败诊断日志，不是验收结果。
+
+
+## 后续 witness 修复
+
+集成证据 `fe35dd92875b7463e63611ded9a753c9dad1d9e7` 的 18 组测试揭示此前的 48 项表面归属失败，
+旧 154 项 overlap 回归不能替代该证据。修复基于 sweep 提交 `c39bb79957141be563794b5c1880a44386732c69`。
+
+每个 native contact 先用原始 primitive 的解析表面检查两侧 witness。不能合法还原的流形，或 native
+GJK 漏报的同心 cylinder pair，改用独立 MPR portal 的**原始 support 顶点和同一组重心权重**生成两侧 witness。
+不再把 MuJoCo/libccd 的 contact position 当作天然的 witness 中点，也不交换、投影或移动真实几何来凑表面。
+使用形状内严格内部参考点建立 portal，不改变任何物理姿态或 support 顶点。
+
+MPR 位移方向与 target 的光滑表面法线并不总是相同，因此 `rest_info.normal` 从目标 witness 所在表面特征的
+外向法线锥提取；这不改变 witness 对或其穿透深度。无效多点流形由一个经过验证的穿透 witness 对替代，
+不保证流形点数与旧实现相同，也不宣称全局最小平移恢复。初始深穿透仍命中，并保留非零穿透距离。
+
+小型 BSD libccd 派生 query helper 位于 `src/physics/query_ccd`，CMake 增加三个 C 编译单元；
+MuJoCo 本体、公共服务器接口和 sweep 距离/算法未改。来源、许可和局部改动见该目录 README。
+新增 `tests/native_overlap_witness` 从集成复现扩展至 36 组/325 断言，包括偏心、normal cone 和深度保留。

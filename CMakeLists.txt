@@ -188,10 +188,13 @@ add_library(godot_mujoco SHARED
     src/physics/mj_physics_server.cpp
     src/physics/mj_direct_body_state.cpp
     src/physics/mj_direct_space_state.cpp
+    src/physics/query_ccd/mpr_witness.c
+    src/physics/query_ccd/support.c
+    src/physics/query_ccd/vec3.c
     src/physics/mj_unsupported.cpp)
 
 target_link_libraries(godot_mujoco PRIVATE godot-cpp "${MUJOCO_LINK_LIB}")
-target_include_directories(godot_mujoco PRIVATE "${MUJOCO_INCLUDE_DIR}")
+target_include_directories(godot_mujoco PRIVATE "${MUJOCO_INCLUDE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/src/physics/query_ccd")
 
 # godot-cpp statically links libstdc++ on Linux. Its locale facets and the
 # engine's C++ runtime must not interpose on one another: floating-point
