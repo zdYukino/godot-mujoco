@@ -2,7 +2,6 @@
 namespace godot {
 // Unsupported extension entry points fail explicitly, once per feature.
 RID MjPhysicsServer3D::_separation_ray_shape_create() { mj_unsupported("_separation_ray_shape_create"); return {}; }
-RID MjPhysicsServer3D::_capsule_shape_create() { mj_unsupported("_capsule_shape_create"); return {}; }
 RID MjPhysicsServer3D::_convex_polygon_shape_create() { mj_unsupported("_convex_polygon_shape_create"); return {}; }
 RID MjPhysicsServer3D::_concave_polygon_shape_create() { mj_unsupported("_concave_polygon_shape_create"); return {}; }
 RID MjPhysicsServer3D::_heightmap_shape_create() { mj_unsupported("_heightmap_shape_create"); return {}; }
@@ -54,21 +53,6 @@ void MjPhysicsServer3D::_soft_body_apply_point_impulse(const RID &p_body, int32_
 void MjPhysicsServer3D::_soft_body_apply_point_force(const RID &p_body, int32_t p_point_index, const Vector3 &p_force) { mj_unsupported("_soft_body_apply_point_force"); }
 void MjPhysicsServer3D::_soft_body_apply_central_impulse(const RID &p_body, const Vector3 &p_impulse) { mj_unsupported("_soft_body_apply_central_impulse"); }
 void MjPhysicsServer3D::_soft_body_apply_central_force(const RID &p_body, const Vector3 &p_force) { mj_unsupported("_soft_body_apply_central_force"); }
-RID MjPhysicsServer3D::_joint_create() { mj_unsupported("_joint_create"); return {}; }
-void MjPhysicsServer3D::_joint_clear(const RID &p_joint) { mj_unsupported("_joint_clear"); }
-void MjPhysicsServer3D::_joint_make_pin(const RID &p_joint, const RID &p_body_A, const Vector3 &p_local_A, const RID &p_body_B, const Vector3 &p_local_B) { mj_unsupported("_joint_make_pin"); }
-void MjPhysicsServer3D::_pin_joint_set_param(const RID &p_joint, PhysicsServer3D::PinJointParam p_param, float p_value) { mj_unsupported("_pin_joint_set_param"); }
-float MjPhysicsServer3D::_pin_joint_get_param(const RID &p_joint, PhysicsServer3D::PinJointParam p_param) const { mj_unsupported("_pin_joint_get_param"); return {}; }
-void MjPhysicsServer3D::_pin_joint_set_local_a(const RID &p_joint, const Vector3 &p_local_A) { mj_unsupported("_pin_joint_set_local_a"); }
-Vector3 MjPhysicsServer3D::_pin_joint_get_local_a(const RID &p_joint) const { mj_unsupported("_pin_joint_get_local_a"); return {}; }
-void MjPhysicsServer3D::_pin_joint_set_local_b(const RID &p_joint, const Vector3 &p_local_B) { mj_unsupported("_pin_joint_set_local_b"); }
-Vector3 MjPhysicsServer3D::_pin_joint_get_local_b(const RID &p_joint) const { mj_unsupported("_pin_joint_get_local_b"); return {}; }
-void MjPhysicsServer3D::_joint_make_hinge(const RID &p_joint, const RID &p_body_A, const Transform3D &p_hinge_A, const RID &p_body_B, const Transform3D &p_hinge_B) { mj_unsupported("_joint_make_hinge"); }
-void MjPhysicsServer3D::_joint_make_hinge_simple(const RID &p_joint, const RID &p_body_A, const Vector3 &p_pivot_A, const Vector3 &p_axis_A, const RID &p_body_B, const Vector3 &p_pivot_B, const Vector3 &p_axis_B) { mj_unsupported("_joint_make_hinge_simple"); }
-void MjPhysicsServer3D::_hinge_joint_set_param(const RID &p_joint, PhysicsServer3D::HingeJointParam p_param, float p_value) { mj_unsupported("_hinge_joint_set_param"); }
-float MjPhysicsServer3D::_hinge_joint_get_param(const RID &p_joint, PhysicsServer3D::HingeJointParam p_param) const { mj_unsupported("_hinge_joint_get_param"); return {}; }
-void MjPhysicsServer3D::_hinge_joint_set_flag(const RID &p_joint, PhysicsServer3D::HingeJointFlag p_flag, bool p_enabled) { mj_unsupported("_hinge_joint_set_flag"); }
-bool MjPhysicsServer3D::_hinge_joint_get_flag(const RID &p_joint, PhysicsServer3D::HingeJointFlag p_flag) const { mj_unsupported("_hinge_joint_get_flag"); return {}; }
 void MjPhysicsServer3D::_joint_make_slider(const RID &p_joint, const RID &p_body_A, const Transform3D &p_local_ref_A, const RID &p_body_B, const Transform3D &p_local_ref_B) { mj_unsupported("_joint_make_slider"); }
 void MjPhysicsServer3D::_slider_joint_set_param(const RID &p_joint, PhysicsServer3D::SliderJointParam p_param, float p_value) { mj_unsupported("_slider_joint_set_param"); }
 float MjPhysicsServer3D::_slider_joint_get_param(const RID &p_joint, PhysicsServer3D::SliderJointParam p_param) const { mj_unsupported("_slider_joint_get_param"); return {}; }
@@ -80,9 +64,4 @@ void MjPhysicsServer3D::_generic_6dof_joint_set_param(const RID &p_joint, Vector
 float MjPhysicsServer3D::_generic_6dof_joint_get_param(const RID &p_joint, Vector3::Axis p_axis, PhysicsServer3D::G6DOFJointAxisParam p_param) const { mj_unsupported("_generic_6dof_joint_get_param"); return {}; }
 void MjPhysicsServer3D::_generic_6dof_joint_set_flag(const RID &p_joint, Vector3::Axis p_axis, PhysicsServer3D::G6DOFJointAxisFlag p_flag, bool p_enable) { mj_unsupported("_generic_6dof_joint_set_flag"); }
 bool MjPhysicsServer3D::_generic_6dof_joint_get_flag(const RID &p_joint, Vector3::Axis p_axis, PhysicsServer3D::G6DOFJointAxisFlag p_flag) const { mj_unsupported("_generic_6dof_joint_get_flag"); return {}; }
-PhysicsServer3D::JointType MjPhysicsServer3D::_joint_get_type(const RID &p_joint) const { mj_unsupported("_joint_get_type"); return {}; }
-void MjPhysicsServer3D::_joint_set_solver_priority(const RID &p_joint, int32_t p_priority) { mj_unsupported("_joint_set_solver_priority"); }
-int32_t MjPhysicsServer3D::_joint_get_solver_priority(const RID &p_joint) const { mj_unsupported("_joint_get_solver_priority"); return {}; }
-void MjPhysicsServer3D::_joint_disable_collisions_between_bodies(const RID &p_joint, bool p_disable) { mj_unsupported("_joint_disable_collisions_between_bodies"); }
-bool MjPhysicsServer3D::_joint_is_disabled_collisions_between_bodies(const RID &p_joint) const { mj_unsupported("_joint_is_disabled_collisions_between_bodies"); return {}; }
 }

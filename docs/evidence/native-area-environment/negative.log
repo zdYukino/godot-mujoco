@@ -1,0 +1,19 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Area environment value must be finite
+   at: set_area_environment_param (/workspace/godot-mujoco/src/physics/mj_area.cpp:56)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://negative.gd:5)
+ERROR: Area damping and point unit distance must be nonnegative
+   at: set_area_environment_param (/workspace/godot-mujoco/src/physics/mj_area.cpp:57)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://negative.gd:7)
+ERROR: Area gravity vector must be finite
+   at: set_area_environment_param (/workspace/godot-mujoco/src/physics/mj_area.cpp:53)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://negative.gd:9)
+ERROR: Area override mode must be 0..4
+   at: set_area_environment_param (/workspace/godot-mujoco/src/physics/mj_area.cpp:52)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://negative.gd:11)
+AREA_ENVIRONMENT_NEGATIVE_RESULT true

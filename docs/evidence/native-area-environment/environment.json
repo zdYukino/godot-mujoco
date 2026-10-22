@@ -1,0 +1,41 @@
+{
+  "branch_start": "0a42c4a21eda49b574595284f1ff4dee0dbb1687",
+  "aligned_integration": "2442976827fa1590de1777143ecc41cdac227025",
+  "dependencies": {
+    "P0": "a92cd39be9b48ac352eaa93fc26fcc29b364c10b",
+    "COM_contact": "43a0ab827a890577460f57083be5e336d8c0ef2e"
+  },
+  "godot": "4.7.2.stable.mono.official.ed1daf0bf",
+  "mujoco": "3.16.0",
+  "mujoco_from_source": true,
+  "build_type": "Release",
+  "commands": {
+    "build": "cmake --build /workspace/shared/builds/contact-source -j 5",
+    "environment": "OUT=/tmp/area-env-release-final bash tests/native_area_environment/run.sh",
+    "P0": "OUT=/tmp/area-env-release-p0 bash tests/native_semantics/run.sh",
+    "monitor": "OUT=/tmp/area-env-release-monitor bash tests/native_area/run.sh",
+    "contact": "OUT=/tmp/area-env-release-contact bash tests/native_contacts/run.sh",
+    "core": "/workspace/shared/builds/contact-source/gmj_core_smoke"
+  },
+  "exit_codes": {
+    "build": 0,
+    "environment": 0,
+    "P0": 0,
+    "monitor": 0,
+    "contact": 0,
+    "core": 0
+  },
+  "gui": "headless smoke passed; desktop not run: no DISPLAY/Xvfb",
+  "integration_checks_before_getter_snapshot_refinement": {
+    "witness": 325,
+    "sweep_per_process": 76,
+    "sweep_processes": 3,
+    "backend": 149,
+    "all_exit_zero": true,
+    "note": "These are alignment checks, not counted as final-artifact runs; query sources are unchanged by the subsequent getter-only refinement."
+  },
+  "sha256": {
+    "libgodot_mujoco.linux.template_debug.x86_64.so": "64a622b7747f767d90c34b268f9024c8ecfcc9b53071b7e772eafe01fffbbd5e",
+    "libmujoco.so.3.16.0": "49bc9bd77036667c1dcc9f41715ea7c4e122346e671feec14f8d50cf4559b83c"
+  }
+}

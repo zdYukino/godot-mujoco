@@ -1,0 +1,2372 @@
+{
+  "checks": [
+    {
+      "detail": "",
+      "label": "native backend identity",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned small cylinder in large cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "aligned small cylinder in large cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 2.0265579792067e-07,
+      "label": "aligned small cylinder in large cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 2.38418582654276e-08,
+      "label": "aligned small cylinder in large cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned small cylinder in large cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned small cylinder in large cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.447219, 0.0, -0.894425)",
+      "label": "aligned small cylinder in large cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.447219, 0.0, -0.894425)",
+      "label": "aligned small cylinder in large cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 2.38418582654276e-08,
+        "point": "(3.626106, -2.0, 3.747806)"
+      },
+      "label": "aligned small cylinder in large cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned large cylinder around small cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "aligned large cylinder around small cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 9.53674330617105e-08,
+      "label": "aligned large cylinder around small cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 1.13248823652157e-07,
+      "label": "aligned large cylinder around small cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned large cylinder around small cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned large cylinder around small cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.447207, 0.0, -0.89443)",
+      "label": "aligned large cylinder around small cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.447207, 0.0, -0.89443)",
+      "label": "aligned large cylinder around small cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 1.13248823652157e-07,
+        "point": "(3.156523, -2.0, 4.686949)"
+      },
+      "label": "aligned large cylinder around small cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned cylinder in large box overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "aligned cylinder in large box nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 9.53674330617105e-08,
+      "label": "aligned cylinder in large box every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 0.0,
+      "label": "aligned cylinder in large box every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned cylinder in large box deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned cylinder in large box rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.0, 0.0, -1.0)",
+      "label": "aligned cylinder in large box finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.0, 0.0, -1.0)",
+      "label": "aligned cylinder in large box rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 0.0,
+        "point": "(3.0, -1.742857, 3.5)"
+      },
+      "label": "aligned cylinder in large box rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned large box around cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "aligned large box around cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 0.0,
+      "label": "aligned large box around cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 4.76837165308552e-08,
+      "label": "aligned large box around cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned large box around cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned large box around cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.000004, 0.071393, -0.997448)",
+      "label": "aligned large box around cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.000004, 0.071393, -0.997448)",
+      "label": "aligned large box around cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 4.76837165308552e-08,
+        "point": "(3.000001, -1.7, 4.65)"
+      },
+      "label": "aligned large box around cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned small box in cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "aligned small box in cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 0.0,
+      "label": "aligned small box in cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 2.38418582654276e-08,
+      "label": "aligned small box in cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned small box in cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned small box in cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.464254, 0.0, -0.885702)",
+      "label": "aligned small box in cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.464254, 0.0, -0.885702)",
+      "label": "aligned small box in cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 2.38418582654276e-08,
+        "point": "(3.649956, -1.999997, 3.760017)"
+      },
+      "label": "aligned small box in cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned cylinder around small box overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "aligned cylinder around small box nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 9.53674330617105e-08,
+      "label": "aligned cylinder around small box every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 5.96046447753906e-08,
+      "label": "aligned cylinder around small box every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned cylinder around small box deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "aligned cylinder around small box rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.447204, 0.0, -0.894432)",
+      "label": "aligned cylinder around small box finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.447204, 0.0, -0.894432)",
+      "label": "aligned cylinder around small box rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 5.96046447753906e-08,
+        "point": "(3.25, -1.7, 4.8)"
+      },
+      "label": "aligned cylinder around small box rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation small cylinder in large cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "shared rotation small cylinder in large cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 2.78296909073106e-07,
+      "label": "shared rotation small cylinder in large cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 9.53674330617105e-08,
+      "label": "shared rotation small cylinder in large cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation small cylinder in large cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation small cylinder in large cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.532987, 0.611225, -0.585089)",
+      "label": "shared rotation small cylinder in large cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.532987, 0.611225, -0.585089)",
+      "label": "shared rotation small cylinder in large cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 9.53674330617105e-08,
+        "point": "(3.951126, -1.359943, 4.142278)"
+      },
+      "label": "shared rotation small cylinder in large cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation large cylinder around small cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "shared rotation large cylinder around small cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 3.57627868652344e-07,
+      "label": "shared rotation large cylinder around small cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 5.9604645663569e-09,
+      "label": "shared rotation large cylinder around small cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation large cylinder around small cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation large cylinder around small cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.532985, 0.611223, -0.585092)",
+      "label": "shared rotation large cylinder around small cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.532985, 0.611223, -0.585092)",
+      "label": "shared rotation large cylinder around small cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 5.9604645663569e-09,
+        "point": "(3.391489, -2.00173, 4.75662)"
+      },
+      "label": "shared rotation large cylinder around small cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation cylinder in large box overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "shared rotation cylinder in large box nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 3.81469732246842e-07,
+      "label": "shared rotation cylinder in large box every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 2.38418579101562e-07,
+      "label": "shared rotation cylinder in large box every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation cylinder in large box deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation cylinder in large box rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.253451, 0.398609, -0.881404)",
+      "label": "shared rotation cylinder in large box finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.253451, 0.398609, -0.881404)",
+      "label": "shared rotation cylinder in large box rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 2.38418579101562e-07,
+        "point": "(3.596689, -1.437718, 3.724038)"
+      },
+      "label": "shared rotation cylinder in large box rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation large box around cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "shared rotation large box around cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 2.38418579101562e-07,
+      "label": "shared rotation large box around cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 4.76837165308552e-08,
+      "label": "shared rotation large box around cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation large box around cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation large box around cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.253454, 0.398611, -0.881402)",
+      "label": "shared rotation large box around cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.253454, 0.398611, -0.881402)",
+      "label": "shared rotation large box around cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 4.76837165308552e-08,
+        "point": "(3.293653, -2.076144, 4.652912)"
+      },
+      "label": "shared rotation large box around cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation small box in cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "shared rotation small box in cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 5.54555469989282e-07,
+      "label": "shared rotation small box in cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 2.14576715507064e-07,
+      "label": "shared rotation small box in cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation small box in cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation small box in cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.542454, 0.617456, -0.569642)",
+      "label": "shared rotation small box in cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.542454, 0.617456, -0.569642)",
+      "label": "shared rotation small box in cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 2.14576715507064e-07,
+        "point": "(3.96438, -1.35122, 4.163903)"
+      },
+      "label": "shared rotation small box in cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation cylinder around small box overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "shared rotation cylinder around small box nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 3.33786005057846e-07,
+      "label": "shared rotation cylinder around small box every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 3.34861937290043e-07,
+      "label": "shared rotation cylinder around small box every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation cylinder around small box deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "shared rotation cylinder around small box rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.532983, 0.611222, -0.585095)",
+      "label": "shared rotation cylinder around small box finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.532983, 0.611222, -0.585095)",
+      "label": "shared rotation cylinder around small box rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 3.34861937290043e-07,
+        "point": "(3.426857, -1.993556, 4.898748)"
+      },
+      "label": "shared rotation cylinder around small box rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations small cylinder in large cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "different rotations small cylinder in large cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 5.30481315763609e-07,
+      "label": "different rotations small cylinder in large cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 4.76837165308552e-08,
+      "label": "different rotations small cylinder in large cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations small cylinder in large cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations small cylinder in large cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.134863, 0.852202, -0.505533)",
+      "label": "different rotations small cylinder in large cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.134863, 0.852202, -0.505533)",
+      "label": "different rotations small cylinder in large cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 4.76837165308552e-08,
+        "point": "(2.775928, -0.552769, 4.136659)"
+      },
+      "label": "different rotations small cylinder in large cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations large cylinder around small cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "different rotations large cylinder around small cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 5.72204612581118e-07,
+      "label": "different rotations large cylinder around small cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 1.90734866123421e-07,
+      "label": "different rotations large cylinder around small cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations large cylinder around small cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations large cylinder around small cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.530396, 0.606664, -0.592148)",
+      "label": "different rotations large cylinder around small cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.530396, 0.606664, -0.592148)",
+      "label": "different rotations large cylinder around small cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 1.90734866123421e-07,
+        "point": "(3.290437, -1.759065, 4.735242)"
+      },
+      "label": "different rotations large cylinder around small cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations cylinder in large box overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "different rotations cylinder in large box nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 3.57627882863198e-08,
+      "label": "different rotations cylinder in large box every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 0.0,
+      "label": "different rotations cylinder in large box every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations cylinder in large box deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations cylinder in large box rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.134863, 0.852202, -0.505533)",
+      "label": "different rotations cylinder in large box finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.134863, 0.852202, -0.505533)",
+      "label": "different rotations cylinder in large box rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 0.0,
+        "point": "(2.762442, -0.467548, 4.086106)"
+      },
+      "label": "different rotations cylinder in large box rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations large box around cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "different rotations large box around cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 4.76837158203125e-07,
+      "label": "different rotations large box around cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 1.90734866123421e-07,
+      "label": "different rotations large box around cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations large box around cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations large box around cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.121823, 0.836963, -0.533528)",
+      "label": "different rotations large box around cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.121823, 0.836963, -0.533528)",
+      "label": "different rotations large box around cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 1.90734866123421e-07,
+        "point": "(3.091277, -1.894102, 4.560735)"
+      },
+      "label": "different rotations large box around cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations small box in cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "different rotations small box in cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 5.54555469989282e-07,
+      "label": "different rotations small box in cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 1.90734866123421e-07,
+      "label": "different rotations small box in cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations small box in cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations small box in cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.134863, 0.852202, -0.505533)",
+      "label": "different rotations small box in cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.134863, 0.852202, -0.505533)",
+      "label": "different rotations small box in cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 1.90734866123421e-07,
+        "point": "(2.70212, -0.66268, 3.971066)"
+      },
+      "label": "different rotations small box in cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations cylinder around small box overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "different rotations cylinder around small box nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 9.53674330617105e-08,
+      "label": "different rotations cylinder around small box every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 2.98023223876953e-07,
+      "label": "different rotations cylinder around small box every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations cylinder around small box deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "different rotations cylinder around small box rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.532982, 0.611219, -0.585099)",
+      "label": "different rotations cylinder around small box finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.532982, 0.611219, -0.585099)",
+      "label": "different rotations cylinder around small box rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 2.98023223876953e-07,
+        "point": "(3.273988, -1.685937, 4.862905)"
+      },
+      "label": "different rotations cylinder around small box rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned small cylinder in large cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "offset aligned small cylinder in large cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 1.72853475532975e-07,
+      "label": "offset aligned small cylinder in large cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 9.53674330617105e-08,
+      "label": "offset aligned small cylinder in large cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned small cylinder in large cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned small cylinder in large cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.471673, 0.0, 0.881774)",
+      "label": "offset aligned small cylinder in large cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.471673, 0.0, 0.881774)",
+      "label": "offset aligned small cylinder in large cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 9.53674330617105e-08,
+        "point": "(2.462658, -1.9745, 6.000483)"
+      },
+      "label": "offset aligned small cylinder in large cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned large cylinder around small cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "offset aligned large cylinder around small cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 4.76837165308552e-08,
+      "label": "offset aligned large cylinder around small cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 4.76837165308552e-08,
+      "label": "offset aligned large cylinder around small cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned large cylinder around small cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned large cylinder around small cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.0, 1.0, 0.0)",
+      "label": "offset aligned large cylinder around small cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.0, 1.0, 0.0)",
+      "label": "offset aligned large cylinder around small cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 4.76837165308552e-08,
+        "point": "(3.0984, -1.53, 4.8128)"
+      },
+      "label": "offset aligned large cylinder around small cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned cylinder in large box overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 4,
+      "label": "offset aligned cylinder in large box nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 4.76837165308552e-08,
+      "label": "offset aligned cylinder in large box every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 0.0,
+      "label": "offset aligned cylinder in large box every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned cylinder in large box deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned cylinder in large box rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.0, 0.0, 1.0)",
+      "label": "offset aligned cylinder in large box finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.0, 0.0, 1.0)",
+      "label": "offset aligned cylinder in large box rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 0.0,
+        "point": "(3.000003, -1.7, 6.266)"
+      },
+      "label": "offset aligned cylinder in large box rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned large box around cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 4,
+      "label": "offset aligned large box around cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 0.0,
+      "label": "offset aligned large box around cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 7.15255765726397e-08,
+      "label": "offset aligned large box around cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned large box around cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned large box around cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.000002, 0.0, 1.0)",
+      "label": "offset aligned large box around cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.000002, 0.0, 1.0)",
+      "label": "offset aligned large box around cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 7.15255765726397e-08,
+        "point": "(3.122999, -2.13, 5.116)"
+      },
+      "label": "offset aligned large box around cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned small box in cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 4,
+      "label": "offset aligned small box in cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 5.96046447753906e-08,
+      "label": "offset aligned small box in cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 9.53674330617105e-08,
+      "label": "offset aligned small box in cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned small box in cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned small box in cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.000009, 0.0, 1.0)",
+      "label": "offset aligned small box in cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.000009, 0.0, 1.0)",
+      "label": "offset aligned small box in cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 9.53674330617105e-08,
+        "point": "(3.123013, -2.3, 6.166)"
+      },
+      "label": "offset aligned small box in cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned cylinder around small box overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 4,
+      "label": "offset aligned cylinder around small box nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 9.53674330617105e-08,
+      "label": "offset aligned cylinder around small box every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 5.96046447753906e-08,
+      "label": "offset aligned cylinder around small box every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned cylinder around small box deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset aligned cylinder around small box rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.0, 0.0, 1.0)",
+      "label": "offset aligned cylinder around small box finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.0, 0.0, 1.0)",
+      "label": "offset aligned cylinder around small box rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 5.96046447753906e-08,
+        "point": "(2.999992, -1.53, 4.966)"
+      },
+      "label": "offset aligned cylinder around small box rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation small cylinder in large cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "offset shared rotation small cylinder in large cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 1.90734866123421e-07,
+      "label": "offset shared rotation small cylinder in large cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 1.43051153145279e-07,
+      "label": "offset shared rotation small cylinder in large cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation small cylinder in large cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation small cylinder in large cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.37217, -0.494284, 0.785604)",
+      "label": "offset shared rotation small cylinder in large cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.37217, -0.494284, 0.785604)",
+      "label": "offset shared rotation small cylinder in large cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 1.43051153145279e-07,
+        "point": "(2.402534, -2.312143, 5.903404)"
+      },
+      "label": "offset shared rotation small cylinder in large cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation large cylinder around small cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "offset shared rotation large cylinder around small cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 2.86102306290559e-07,
+      "label": "offset shared rotation large cylinder around small cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 1.90734866123421e-07,
+      "label": "offset shared rotation large cylinder around small cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation large cylinder around small cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation large cylinder around small cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.683146, 0.718859, 0.128658)",
+      "label": "offset shared rotation large cylinder around small cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.683146, 0.718859, 0.128658)",
+      "label": "offset shared rotation large cylinder around small cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 1.90734866123421e-07,
+        "point": "(2.945831, -1.527473, 4.466702)"
+      },
+      "label": "offset shared rotation large cylinder around small cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation cylinder in large box overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 4,
+      "label": "offset shared rotation cylinder in large box nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 3.81469732246842e-07,
+      "label": "offset shared rotation cylinder in large box every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 0.0,
+      "label": "offset shared rotation cylinder in large box every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation cylinder in large box deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation cylinder in large box rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.253451, -0.398609, 0.881404)",
+      "label": "offset shared rotation cylinder in large box finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.253451, -0.398609, 0.881404)",
+      "label": "offset shared rotation cylinder in large box rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 0.0,
+        "point": "(2.492229, -2.260606, 6.091711)"
+      },
+      "label": "offset shared rotation cylinder in large box rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation large box around cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 4,
+      "label": "offset shared rotation large box around cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 4.76837158203125e-07,
+      "label": "offset shared rotation large box around cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 4.26496143290933e-07,
+      "label": "offset shared rotation large box around cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation large box around cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation large box around cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.253452, -0.398609, 0.881404)",
+      "label": "offset shared rotation large box around cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.253452, -0.398609, 0.881404)",
+      "label": "offset shared rotation large box around cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 4.26496143290933e-07,
+        "point": "(2.829348, -1.753856, 5.113089)"
+      },
+      "label": "offset shared rotation large box around cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation small box in cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 4,
+      "label": "offset shared rotation small box in cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 3.34861937290043e-07,
+      "label": "offset shared rotation small box in cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 5.72204612581118e-07,
+      "label": "offset shared rotation small box in cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation small box in cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation small box in cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.253452, -0.398609, 0.881404)",
+      "label": "offset shared rotation small box in cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.253452, -0.398609, 0.881404)",
+      "label": "offset shared rotation small box in cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 5.72204612581118e-07,
+        "point": "(2.568739, -2.178199, 6.037524)"
+      },
+      "label": "offset shared rotation small box in cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation cylinder around small box overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 4,
+      "label": "offset shared rotation cylinder around small box nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 9.53674330617105e-08,
+      "label": "offset shared rotation cylinder around small box every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 5.96046447753906e-08,
+      "label": "offset shared rotation cylinder around small box every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation cylinder around small box deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset shared rotation cylinder around small box rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.253451, -0.398609, 0.881404)",
+      "label": "offset shared rotation cylinder around small box finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.253451, -0.398609, 0.881404)",
+      "label": "offset shared rotation cylinder around small box rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 5.96046447753906e-08,
+        "point": "(2.81616, -1.736645, 4.946897)"
+      },
+      "label": "offset shared rotation cylinder around small box rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations small cylinder in large cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "offset different rotations small cylinder in large cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 4.53348093287786e-07,
+      "label": "offset different rotations small cylinder in large cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 5.00678993375914e-07,
+      "label": "offset different rotations small cylinder in large cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations small cylinder in large cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations small cylinder in large cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.745938, 0.248506, 0.617916)",
+      "label": "offset different rotations small cylinder in large cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.745938, 0.248506, 0.617916)",
+      "label": "offset different rotations small cylinder in large cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 5.00678993375914e-07,
+        "point": "(2.101645, -1.627169, 5.717144)"
+      },
+      "label": "offset different rotations small cylinder in large cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations large cylinder around small cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "offset different rotations large cylinder around small cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 1.90734866123421e-07,
+      "label": "offset different rotations large cylinder around small cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 1.90734866123421e-07,
+      "label": "offset different rotations large cylinder around small cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations large cylinder around small cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations large cylinder around small cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.683143, 0.718861, 0.128661)",
+      "label": "offset different rotations large cylinder around small cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.683143, 0.718861, 0.128661)",
+      "label": "offset different rotations large cylinder around small cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 1.90734866123421e-07,
+        "point": "(2.81075, -1.495241, 4.820187)"
+      },
+      "label": "offset different rotations large cylinder around small cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations cylinder in large box overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "offset different rotations cylinder in large box nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 1.13248823652157e-07,
+      "label": "offset different rotations cylinder in large box every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 9.5367431640625e-07,
+      "label": "offset different rotations cylinder in large box every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations cylinder in large box deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations cylinder in large box rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(0.511271, 0.49688, 0.701222)",
+      "label": "offset different rotations cylinder in large box finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(0.511271, 0.49688, 0.701222)",
+      "label": "offset different rotations cylinder in large box rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 9.5367431640625e-07,
+        "point": "(3.953093, -1.440829, 6.024127)"
+      },
+      "label": "offset different rotations cylinder in large box rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations large box around cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "offset different rotations large box around cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 4.76837158203125e-07,
+      "label": "offset different rotations large box around cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 2.86102306290559e-07,
+      "label": "offset different rotations large box around cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations large box around cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations large box around cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.253553, -0.398655, 0.881354)",
+      "label": "offset different rotations large box around cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.253553, -0.398655, 0.881354)",
+      "label": "offset different rotations large box around cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 2.86102306290559e-07,
+        "point": "(2.975338, -1.957669, 5.183608)"
+      },
+      "label": "offset different rotations large box around cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations small box in cylinder overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "offset different rotations small box in cylinder nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 2.83122062683105e-07,
+      "label": "offset different rotations small box in cylinder every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 2.62260442696061e-07,
+      "label": "offset different rotations small box in cylinder every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations small box in cylinder deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations small box in cylinder rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.68465, 0.28867, 0.669272)",
+      "label": "offset different rotations small box in cylinder finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.68465, 0.28867, 0.669272)",
+      "label": "offset different rotations small box in cylinder rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 2.62260442696061e-07,
+        "point": "(2.202753, -1.667642, 5.846406)"
+      },
+      "label": "offset different rotations small box in cylinder rest point lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations cylinder around small box overlap identity",
+      "passed": true
+    },
+    {
+      "detail": 2,
+      "label": "offset different rotations cylinder around small box nonempty witness pairs",
+      "passed": true
+    },
+    {
+      "detail": 9.53674330617105e-08,
+      "label": "offset different rotations cylinder around small box every query witness lies on query surface",
+      "passed": true
+    },
+    {
+      "detail": 1.78813934326172e-07,
+      "label": "offset different rotations cylinder around small box every target witness lies on target surface",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations cylinder around small box deep penetration retains nonzero witness separation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "offset different rotations cylinder around small box rest identity",
+      "passed": true
+    },
+    {
+      "detail": "(-0.442287, -0.547458, 0.710402)",
+      "label": "offset different rotations cylinder around small box finite unit rest normal",
+      "passed": true
+    },
+    {
+      "detail": "(-0.442287, -0.547458, 0.710402)",
+      "label": "offset different rotations cylinder around small box rest normal belongs to target outward normal cone",
+      "passed": true
+    },
+    {
+      "detail": {
+        "error": 1.78813934326172e-07,
+        "point": "(2.960248, -2.035958, 5.055658)"
+      },
+      "label": "offset different rotations cylinder around small box rest point lies on target surface",
+      "passed": true
+    }
+  ],
+  "failed": 0,
+  "godot": "4.7.2-stable (official)",
+  "passed": 325,
+  "samples": [
+    {
+      "contacts": [
+        "(2.843473, -2.0, 5.313049)",
+        "(3.626106, -2.0, 3.747806)"
+      ],
+      "label": "aligned small cylinder in large cylinder",
+      "query_surface_error": 2.0265579792067e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.447219, 0.0, -0.894425)",
+        "point": "(3.626106, -2.0, 3.747806)",
+        "rid": "RID(98784247809)",
+        "shape": 0
+      },
+      "target_surface_error": 2.38418582654276e-08
+    },
+    {
+      "contacts": [
+        "(2.37391, -2.0, 6.252203)",
+        "(3.156523, -2.0, 4.686949)"
+      ],
+      "label": "aligned large cylinder around small cylinder",
+      "query_surface_error": 9.53674330617105e-08,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.447207, 0.0, -0.89443)",
+        "point": "(3.156523, -2.0, 4.686949)",
+        "rid": "RID(111669149697)",
+        "shape": 0
+      },
+      "target_surface_error": 1.13248823652157e-07
+    },
+    {
+      "contacts": [
+        "(3.0, -1.742857, 5.35)",
+        "(3.0, -1.742857, 3.5)"
+      ],
+      "label": "aligned cylinder in large box",
+      "query_surface_error": 9.53674330617105e-08,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.0, 0.0, -1.0)",
+        "point": "(3.0, -1.742857, 3.5)",
+        "rid": "RID(124554051585)",
+        "shape": 0
+      },
+      "target_surface_error": 0.0
+    },
+    {
+      "contacts": [
+        "(2.851035, -1.832415, 6.5)",
+        "(3.000001, -1.7, 4.65)"
+      ],
+      "label": "aligned large box around cylinder",
+      "query_surface_error": 0.0,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.000004, 0.071393, -0.997448)",
+        "point": "(3.000001, -1.7, 4.65)",
+        "rid": "RID(137438953473)",
+        "shape": 0
+      },
+      "target_surface_error": 4.76837165308552e-08
+    },
+    {
+      "contacts": [
+        "(2.75, -2.0, 5.2)",
+        "(3.649956, -1.999997, 3.760017)"
+      ],
+      "label": "aligned small box in cylinder",
+      "query_surface_error": 0.0,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.464254, 0.0, -0.885702)",
+        "point": "(3.649956, -1.999997, 3.760017)",
+        "rid": "RID(150323855361)",
+        "shape": 0
+      },
+      "target_surface_error": 2.38418582654276e-08
+    },
+    {
+      "contacts": [
+        "(2.496799, -1.699999, 6.306441)",
+        "(3.25, -1.7, 4.8)"
+      ],
+      "label": "aligned cylinder around small box",
+      "query_surface_error": 9.53674330617105e-08,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.447204, 0.0, -0.894432)",
+        "point": "(3.25, -1.7, 4.8)",
+        "rid": "RID(163208757249)",
+        "shape": 0
+      },
+      "target_surface_error": 5.96046447753906e-08
+    },
+    {
+      "contacts": [
+        "(3.018398, -2.429586, 5.166184)",
+        "(3.951126, -1.359943, 4.142278)"
+      ],
+      "label": "shared rotation small cylinder in large cylinder",
+      "query_surface_error": 2.78296909073106e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.532987, 0.611225, -0.585089)",
+        "point": "(3.951126, -1.359943, 4.142278)",
+        "rid": "RID(176093659137)",
+        "shape": 0
+      },
+      "target_surface_error": 9.53674330617105e-08
+    },
+    {
+      "contacts": [
+        "(3.415169, -4.077773, 5.600411)",
+        "(3.391489, -2.00173, 4.75662)"
+      ],
+      "label": "shared rotation large cylinder around small cylinder",
+      "query_surface_error": 3.57627868652344e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.532985, 0.611223, -0.585092)",
+        "point": "(3.391489, -2.00173, 4.75662)",
+        "rid": "RID(188978561025)",
+        "shape": 0
+      },
+      "target_surface_error": 5.9604645663569e-09
+    },
+    {
+      "contacts": [
+        "(3.116236, -2.35517, 5.269895)",
+        "(3.596689, -1.437718, 3.724038)"
+      ],
+      "label": "shared rotation cylinder in large box",
+      "query_surface_error": 3.81469732246842e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.253451, 0.398609, -0.881404)",
+        "point": "(3.596689, -1.437718, 3.724038)",
+        "rid": "RID(201863462913)",
+        "shape": 0
+      },
+      "target_surface_error": 2.38418579101562e-07
+    },
+    {
+      "contacts": [
+        "(3.849486, -3.89186, 6.090522)",
+        "(3.293653, -2.076144, 4.652912)"
+      ],
+      "label": "shared rotation large box around cylinder",
+      "query_surface_error": 2.38418579101562e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.253454, 0.398611, -0.881402)",
+        "point": "(3.293653, -2.076144, 4.652912)",
+        "rid": "RID(214748364801)",
+        "shape": 0
+      },
+      "target_surface_error": 4.76837165308552e-08
+    },
+    {
+      "contacts": [
+        "(2.983031, -2.437759, 5.024057)",
+        "(3.96438, -1.35122, 4.163903)"
+      ],
+      "label": "shared rotation small box in cylinder",
+      "query_surface_error": 5.54555469989282e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.542454, 0.617456, -0.569642)",
+        "point": "(3.96438, -1.35122, 4.163903)",
+        "rid": "RID(227633266689)",
+        "shape": 0
+      },
+      "target_surface_error": 2.14576715507064e-07
+    },
+    {
+      "contacts": [
+        "(2.529183, -3.023004, 5.884192)",
+        "(3.426857, -1.993556, 4.898748)"
+      ],
+      "label": "shared rotation cylinder around small box",
+      "query_surface_error": 3.33786005057846e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.532983, 0.611222, -0.585095)",
+        "point": "(3.426857, -1.993556, 4.898748)",
+        "rid": "RID(240518168577)",
+        "shape": 0
+      },
+      "target_surface_error": 3.34861937290043e-07
+    },
+    {
+      "contacts": [
+        "(3.067357, -2.394317, 5.22908)",
+        "(2.775928, -0.552769, 4.136659)"
+      ],
+      "label": "different rotations small cylinder in large cylinder",
+      "query_surface_error": 5.30481315763609e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.134863, 0.852202, -0.505533)",
+        "point": "(2.775928, -0.552769, 4.136659)",
+        "rid": "RID(253403070465)",
+        "shape": 0
+      },
+      "target_surface_error": 4.76837165308552e-08
+    },
+    {
+      "contacts": [
+        "(2.300738, -2.894049, 5.821719)",
+        "(3.290437, -1.759065, 4.735242)"
+      ],
+      "label": "different rotations large cylinder around small cylinder",
+      "query_surface_error": 5.72204612581118e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.530396, 0.606664, -0.592148)",
+        "point": "(3.290437, -1.759065, 4.735242)",
+        "rid": "RID(266287972353)",
+        "shape": 0
+      },
+      "target_surface_error": 1.90734866123421e-07
+    },
+    {
+      "contacts": [
+        "(3.067358, -2.394316, 5.22908)",
+        "(2.762442, -0.467548, 4.086106)"
+      ],
+      "label": "different rotations cylinder in large box",
+      "query_surface_error": 3.57627882863198e-08,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.134863, 0.852202, -0.505533)",
+        "point": "(2.762442, -0.467548, 4.086106)",
+        "rid": "RID(279172874241)",
+        "shape": 0
+      },
+      "target_surface_error": 0.0
+    },
+    {
+      "contacts": [
+        "(3.796871, -3.935612, 6.055606)",
+        "(3.091277, -1.894102, 4.560735)"
+      ],
+      "label": "different rotations large box around cylinder",
+      "query_surface_error": 4.76837158203125e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.121823, 0.836963, -0.533528)",
+        "point": "(3.091277, -1.894102, 4.560735)",
+        "rid": "RID(292057776129)",
+        "shape": 0
+      },
+      "target_surface_error": 1.90734866123421e-07
+    },
+    {
+      "contacts": [
+        "(2.983031, -2.437759, 5.024057)",
+        "(2.70212, -0.66268, 3.971066)"
+      ],
+      "label": "different rotations small box in cylinder",
+      "query_surface_error": 5.54555469989282e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.134863, 0.852202, -0.505533)",
+        "point": "(2.70212, -0.66268, 3.971066)",
+        "rid": "RID(304942678017)",
+        "shape": 0
+      },
+      "target_surface_error": 1.90734866123421e-07
+    },
+    {
+      "contacts": [
+        "(2.308191, -2.793505, 5.923141)",
+        "(3.273988, -1.685937, 4.862905)"
+      ],
+      "label": "different rotations cylinder around small box",
+      "query_surface_error": 9.53674330617105e-08,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.532982, 0.611219, -0.585099)",
+        "point": "(3.273988, -1.685937, 4.862905)",
+        "rid": "RID(317827579905)",
+        "shape": 0
+      },
+      "target_surface_error": 2.98023223876953e-07
+    },
+    {
+      "contacts": [
+        "(3.165086, -1.9745, 4.691379)",
+        "(2.462658, -1.9745, 6.000483)"
+      ],
+      "label": "offset aligned small cylinder in large cylinder",
+      "query_surface_error": 1.72853475532975e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.471673, 0.0, 0.881774)",
+        "point": "(2.462658, -1.9745, 6.000483)",
+        "rid": "RID(330712481793)",
+        "shape": 0
+      },
+      "target_surface_error": 9.53674330617105e-08
+    },
+    {
+      "contacts": [
+        "(3.0984, -3.7, 4.8128)",
+        "(3.0984, -1.53, 4.8128)"
+      ],
+      "label": "offset aligned large cylinder around small cylinder",
+      "query_surface_error": 4.76837165308552e-08,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.0, 1.0, 0.0)",
+        "point": "(3.0984, -1.53, 4.8128)",
+        "rid": "RID(343597383681)",
+        "shape": 0
+      },
+      "target_surface_error": 4.76837165308552e-08
+    },
+    {
+      "contacts": [
+        "(3.000003, -1.7, 4.65)",
+        "(3.000003, -1.7, 6.266)",
+        "(3.000003, -2.3, 4.65)",
+        "(3.000003, -2.3, 6.266)"
+      ],
+      "label": "offset aligned cylinder in large box",
+      "query_surface_error": 4.76837165308552e-08,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.0, 0.0, 1.0)",
+        "point": "(3.000003, -1.7, 6.266)",
+        "rid": "RID(356482285569)",
+        "shape": 0
+      },
+      "target_surface_error": 0.0
+    },
+    {
+      "contacts": [
+        "(3.122999, -2.13, 3.5)",
+        "(3.122999, -2.13, 5.116)",
+        "(3.122999, -1.53, 3.5)",
+        "(3.122999, -1.53, 5.116)"
+      ],
+      "label": "offset aligned large box around cylinder",
+      "query_surface_error": 0.0,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.000002, 0.0, 1.0)",
+        "point": "(3.122999, -2.13, 5.116)",
+        "rid": "RID(369367187457)",
+        "shape": 0
+      },
+      "target_surface_error": 7.15255765726397e-08
+    },
+    {
+      "contacts": [
+        "(3.123013, -2.3, 4.8)",
+        "(3.123013, -2.3, 6.166)",
+        "(3.123013, -1.7, 4.8)",
+        "(3.123013, -1.7, 6.166)"
+      ],
+      "label": "offset aligned small box in cylinder",
+      "query_surface_error": 5.96046447753906e-08,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.000009, 0.0, 1.0)",
+        "point": "(3.123013, -2.3, 6.166)",
+        "rid": "RID(382252089345)",
+        "shape": 0
+      },
+      "target_surface_error": 9.53674330617105e-08
+    },
+    {
+      "contacts": [
+        "(2.999992, -1.53, 3.6)",
+        "(2.999992, -1.53, 4.966)",
+        "(2.999992, -2.13, 3.6)",
+        "(2.999992, -2.13, 4.966)"
+      ],
+      "label": "offset aligned cylinder around small box",
+      "query_surface_error": 9.53674330617105e-08,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.0, 0.0, 1.0)",
+        "point": "(2.999992, -1.53, 4.966)",
+        "rid": "RID(395136991233)",
+        "shape": 0
+      },
+      "target_surface_error": 5.96046447753906e-08
+    },
+    {
+      "contacts": [
+        "(2.925316, -1.611343, 4.763636)",
+        "(2.402534, -2.312143, 5.903404)"
+      ],
+      "label": "offset shared rotation small cylinder in large cylinder",
+      "query_surface_error": 1.90734866123421e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.37217, -0.494284, 0.785604)",
+        "point": "(2.402534, -2.312143, 5.903404)",
+        "rid": "RID(408021893121)",
+        "shape": 0
+      },
+      "target_surface_error": 1.43051153145279e-07
+    },
+    {
+      "contacts": [
+        "(4.317638, -2.970995, 4.208347)",
+        "(2.945831, -1.527473, 4.466702)"
+      ],
+      "label": "offset shared rotation large cylinder around small cylinder",
+      "query_surface_error": 2.86102306290559e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.683146, 0.718859, 0.128658)",
+        "point": "(2.945831, -1.527473, 4.466702)",
+        "rid": "RID(420906795009)",
+        "shape": 0
+      },
+      "target_surface_error": 1.90734866123421e-07
+    },
+    {
+      "contacts": [
+        "(3.293652, -2.076144, 4.652911)",
+        "(2.902117, -2.691921, 6.014516)",
+        "(2.883764, -1.644829, 4.730106)",
+        "(2.492229, -2.260606, 6.091711)"
+      ],
+      "label": "offset shared rotation cylinder in large box",
+      "query_surface_error": 3.81469732246842e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.253451, -0.398609, 0.881404)",
+        "point": "(2.492229, -2.260606, 6.091711)",
+        "rid": "RID(433791696897)",
+        "shape": 0
+      },
+      "target_surface_error": 0.0
+    },
+    {
+      "contacts": [
+        "(3.630771, -1.569394, 3.674289)",
+        "(3.239236, -2.185171, 5.035894)",
+        "(3.220883, -1.138079, 3.751484)",
+        "(2.829348, -1.753856, 5.113089)"
+      ],
+      "label": "offset shared rotation large box around cylinder",
+      "query_surface_error": 4.76837158203125e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.253452, -0.398609, 0.881404)",
+        "point": "(2.829348, -1.753856, 5.113089)",
+        "rid": "RID(446676598785)",
+        "shape": 0
+      },
+      "target_surface_error": 4.26496143290933e-07
+    },
+    {
+      "contacts": [
+        "(2.896911, -1.662074, 4.89627)",
+        "(2.568739, -2.178199, 6.037524)",
+        "(3.306799, -2.09339, 4.819076)",
+        "(2.978627, -2.609514, 5.960329)"
+      ],
+      "label": "offset shared rotation small box in cylinder",
+      "query_surface_error": 3.34861937290043e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.253452, -0.398609, 0.881404)",
+        "point": "(2.568739, -2.178199, 6.037524)",
+        "rid": "RID(459561500673)",
+        "shape": 0
+      },
+      "target_surface_error": 5.72204612581118e-07
+    },
+    {
+      "contacts": [
+        "(3.144332, -1.22052, 3.805643)",
+        "(2.81616, -1.736645, 4.946897)",
+        "(3.55422, -1.651835, 3.728449)",
+        "(3.226047, -2.16796, 4.869702)"
+      ],
+      "label": "offset shared rotation cylinder around small box",
+      "query_surface_error": 9.53674330617105e-08,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.253451, -0.398609, 0.881404)",
+        "point": "(2.81616, -1.736645, 4.946897)",
+        "rid": "RID(472446402561)",
+        "shape": 0
+      },
+      "target_surface_error": 5.96046447753906e-08
+    },
+    {
+      "contacts": [
+        "(3.325913, -2.049948, 4.677842)",
+        "(2.101645, -1.627169, 5.717144)"
+      ],
+      "label": "offset different rotations small cylinder in large cylinder",
+      "query_surface_error": 4.53348093287786e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.745938, 0.248506, 0.617916)",
+        "point": "(2.101645, -1.627169, 5.717144)",
+        "rid": "RID(485331304449)",
+        "shape": 0
+      },
+      "target_surface_error": 5.00678993375914e-07
+    },
+    {
+      "contacts": [
+        "(4.292495, -3.054448, 4.541128)",
+        "(2.81075, -1.495241, 4.820187)"
+      ],
+      "label": "offset different rotations large cylinder around small cylinder",
+      "query_surface_error": 1.90734866123421e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.683143, 0.718861, 0.128661)",
+        "point": "(2.81075, -1.495241, 4.820187)",
+        "rid": "RID(498216206337)",
+        "shape": 0
+      },
+      "target_surface_error": 1.90734866123421e-07
+    },
+    {
+      "contacts": [
+        "(3.001607, -2.365533, 4.719139)",
+        "(3.953093, -1.440829, 6.024127)"
+      ],
+      "label": "offset different rotations cylinder in large box",
+      "query_surface_error": 1.13248823652157e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(0.511271, 0.49688, 0.701222)",
+        "point": "(3.953093, -1.440829, 6.024127)",
+        "rid": "RID(511101108225)",
+        "shape": 0
+      },
+      "target_surface_error": 9.5367431640625e-07
+    },
+    {
+      "contacts": [
+        "(3.39384, -1.299481, 3.728225)",
+        "(2.975338, -1.957669, 5.183608)"
+      ],
+      "label": "offset different rotations large box around cylinder",
+      "query_surface_error": 4.76837158203125e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.253553, -0.398655, 0.881354)",
+        "point": "(2.975338, -1.957669, 5.183608)",
+        "rid": "RID(523986010113)",
+        "shape": 0
+      },
+      "target_surface_error": 2.86102306290559e-07
+    },
+    {
+      "contacts": [
+        "(3.27478, -2.120015, 4.797827)",
+        "(2.202753, -1.667642, 5.846406)"
+      ],
+      "label": "offset different rotations small box in cylinder",
+      "query_surface_error": 2.83122062683105e-07,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.68465, 0.28867, 0.669272)",
+        "point": "(2.202753, -1.667642, 5.846406)",
+        "rid": "RID(536870912001)",
+        "shape": 0
+      },
+      "target_surface_error": 2.62260442696061e-07
+    },
+    {
+      "contacts": [
+        "(3.61342, -1.227467, 4.006531)",
+        "(2.960248, -2.035958, 5.055658)"
+      ],
+      "label": "offset different rotations cylinder around small box",
+      "query_surface_error": 9.53674330617105e-08,
+      "rest": {
+        "collider_id": 0,
+        "linear_velocity": "(0.0, 0.0, 0.0)",
+        "normal": "(-0.442287, -0.547458, 0.710402)",
+        "point": "(2.960248, -2.035958, 5.055658)",
+        "rid": "RID(549755813889)",
+        "shape": 0
+      },
+      "target_surface_error": 1.78813934326172e-07
+    }
+  ],
+  "surface_tolerance": 0.003,
+  "extension_sha256": "44bf6f2675b83f91fc2cb911b017981c8ca41805aea3b7f1009f2922c7b5f5a0"
+}

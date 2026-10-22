@@ -1,0 +1,164 @@
+{
+  "version": "3.16.0",
+  "experiment": "two soft connect equalities with z-directed sites at +/-spacing/2; no motor or limit",
+  "cases": [
+    {
+      "pair": "body_to_world",
+      "spacing": 0.1,
+      "torque_axis": "z_axial",
+      "duration": 1.0000000000000007,
+      "per_body_torque": 0.01,
+      "relative_omega": [
+        0,
+        0,
+        0.6249999999999899
+      ],
+      "relative_angle": 0.3128124999999915,
+      "hinge_axis_misalignment": 0,
+      "anchor_error_max": 9.71445146547012e-17,
+      "anchor_error_final": 3.469446951953614e-17,
+      "warnings": 0,
+      "neq": 2,
+      "nefc": 6
+    },
+    {
+      "pair": "body_to_world",
+      "spacing": 0.1,
+      "torque_axis": "x_transverse",
+      "duration": 1.0000000000000007,
+      "per_body_torque": 0.01,
+      "relative_omega": [
+        5.963217776089902e-18,
+        0,
+        0
+      ],
+      "relative_angle": 8.913360469696702e-05,
+      "hinge_axis_misalignment": 8.913362215709988e-05,
+      "anchor_error_max": 4.4589805923420504e-06,
+      "anchor_error_final": 4.456681939680378e-06,
+      "warnings": 0,
+      "neq": 2,
+      "nefc": 6
+    },
+    {
+      "pair": "body_to_world",
+      "spacing": 1,
+      "torque_axis": "z_axial",
+      "duration": 1.0000000000000007,
+      "per_body_torque": 0.01,
+      "relative_omega": [
+        0,
+        0,
+        0.6249999999999899
+      ],
+      "relative_angle": 0.3128124999999915,
+      "hinge_axis_misalignment": 0,
+      "anchor_error_max": 9.992007221626409e-16,
+      "anchor_error_final": 3.3306690738754696e-16,
+      "warnings": 0,
+      "neq": 2,
+      "nefc": 6
+    },
+    {
+      "pair": "body_to_world",
+      "spacing": 1,
+      "torque_axis": "x_transverse",
+      "duration": 1.0000000000000007,
+      "per_body_torque": 0.01,
+      "relative_omega": [
+        -3.925538618666367e-14,
+        0,
+        0
+      ],
+      "relative_angle": 8.915826858074496e-07,
+      "hinge_axis_misalignment": 8.914581543890547e-07,
+      "anchor_error_max": 4.4567890654932665e-07,
+      "anchor_error_final": 4.456789064793222e-07,
+      "warnings": 0,
+      "neq": 2,
+      "nefc": 6
+    },
+    {
+      "pair": "two_free_bodies",
+      "spacing": 0.1,
+      "torque_axis": "z_axial",
+      "duration": 1.0000000000000007,
+      "per_body_torque": 0.01,
+      "relative_omega": [
+        0,
+        0,
+        1.2499999999999798
+      ],
+      "relative_angle": 0.6256249999999874,
+      "hinge_axis_misalignment": 0,
+      "anchor_error_max": 0,
+      "anchor_error_final": 0,
+      "warnings": 0,
+      "neq": 2,
+      "nefc": 6
+    },
+    {
+      "pair": "two_free_bodies",
+      "spacing": 0.1,
+      "torque_axis": "x_transverse",
+      "duration": 1.0000000000000007,
+      "per_body_torque": 0.01,
+      "relative_omega": [
+        1.8359881705417936e-15,
+        0,
+        0
+      ],
+      "relative_angle": 0.0001782542824255697,
+      "hinge_axis_misalignment": 0.00017825429007654084,
+      "anchor_error_max": 8.917326140196622e-06,
+      "anchor_error_final": 8.912714895261084e-06,
+      "warnings": 0,
+      "neq": 2,
+      "nefc": 6
+    },
+    {
+      "pair": "two_free_bodies",
+      "spacing": 1,
+      "torque_axis": "z_axial",
+      "duration": 1.0000000000000007,
+      "per_body_torque": 0.01,
+      "relative_omega": [
+        0,
+        0,
+        1.2499999999999798
+      ],
+      "relative_angle": 0.6256249999999874,
+      "hinge_axis_misalignment": 0,
+      "anchor_error_max": 0,
+      "anchor_error_final": 0,
+      "warnings": 0,
+      "neq": 2,
+      "nefc": 6
+    },
+    {
+      "pair": "two_free_bodies",
+      "spacing": 1,
+      "torque_axis": "x_transverse",
+      "duration": 1.0000000000000007,
+      "per_body_torque": 0.01,
+      "relative_omega": [
+        7.666891617017821e-14,
+        0,
+        0
+      ],
+      "relative_angle": 1.7829163087781094e-06,
+      "hinge_axis_misalignment": 1.7827917643117326e-06,
+      "anchor_error_max": 8.913571658896115e-07,
+      "anchor_error_final": 8.91357165720185e-07,
+      "warnings": 0,
+      "neq": 2,
+      "nefc": 6
+    }
+  ],
+  "transverse_deflection_spacing_point1_over_1": {
+    "body_to_world": 99.97233696417557,
+    "two_free_bodies": 99.9790520440823
+  },
+  "source_sha256": "61a06076bf400a5b7b38bc86a3fed80d75ebf1a26a2013607344e11aff43e8d8",
+  "mujoco_sha256": "d89b5532a1ec9c4ca8744449d648233a2f7ae5d9e7b2ccddd692e11955f6cb04"
+}

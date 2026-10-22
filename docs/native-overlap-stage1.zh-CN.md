@@ -5,15 +5,15 @@
 
 ## 支持契约
 
-- `intersect_point`：原生 sphere、box、cylinder 内部与 world-boundary 负半空间；严格内部，边界点不命中。无 epsilon 扩大。
+- `intersect_point`：原生 sphere、box、cylinder、capsule 内部与 world-boundary 负半空间；严格内部，边界点不命中。无 epsilon 扩大。
 - `intersect_shape` / `collide_shape` / `rest_info`：上述原生形状查询上述原生形状。
   plane/plane 没有有限接触流形，不返回结果。支持全刚性旋转、body 与 shape 局部偏置、多个 shape。
 - 专用 `MjStaticHeightField` **尚不支持这四种 overlap**，跳过并发一次 unsupported warning；原有 heightfield ray 不变。
   普通 `HeightMapShape3D` 仍不支持。导入 MJCF 的 geom 没有 Godot Body RID/shape 所有权，跳过，
   不会伪造 collider。即便导入的是 sphere/box，也不纳入本阶段查询。
-- Area3D 仍未实现；请求 areas 会告警，原生 bodies 结果仍遵循 bodies 参数。
+- Area 监测与环境覆盖已另行实现，但本空间查询仍不返回 Area；请求 areas 会告警，原生 bodies 结果仍遵循 bodies 参数。
 - 初始重叠直接纳入结果。`motion` 不用于 overlap（只检测 transform）；非有限 motion 拒绝。
-  `cast_motion` 仍返回 false 并告警，safe/unsafe 初始化为 0；不宣称连续碰撞或 CharacterBody 支持。
+  `cast_motion` 现有[受限连续平移支持](native-continuous-sweep-stage2.zh-CN.md)及[Capsule 扩展](native-capsule-stage3.zh-CN.md)，不是全组合 sweep、CCD 或 CharacterBody。
 - `margin` 是 MuJoCo 窄相距离阈值，只传一次，不把 target/query 各扩大一份。
   非负且有限；负数/NaN/Inf 拒绝。零 margin 的精确相切受各原生窄相算法浮点容差限制，
   不保证跨形状的相切命中一致；需要接近接触时应显式使用正 margin。

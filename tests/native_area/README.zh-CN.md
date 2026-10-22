@@ -2,13 +2,13 @@
 
 依赖：contact 分支 `fce6d0a9245903369827926080ea412ea6be08d8`；overlap
 `0bc54e2d5f365baf3388cc4dbee8b2d9f2b4442b` 无冲突 cherry-pick 为 `a5add5a`。
-不包含重力/阻尼/priority 覆盖场，不修改 P0 刚体动力学。
+本文记录监测阶段基线；后续 [环境覆盖阶段](../native_area_environment/README.zh-CN.md) 已实现有限形状的 gravity/damping/priority，以下历史拒绝说明由新阶段替代。
 
 ## 支持与边界
 
 - 原生 Area RID、object ID、space、形状列表、刚性 transform、layer/mask、monitorable；
   `Area3D.monitoring` 通过安装/清除 body/area monitor callback 控制。
-- Area 与原生 Body、Area 与 Area 的 box/sphere/cylinder 配对。支持 shape 局部位置/旋转、
+- Area 与原生 Body、Area 与 Area 的 box/sphere/cylinder/capsule 配对。支持 shape 局部位置/旋转、
   多 shape、禁用、替换/移除；无缩放/剪切/镜像。Area shape 不接受 plane、heightfield、mesh 等形状。
   Body 的非上述三种形状、专用 heightfield、导入 MJCF 不纳入本阶段监测；不伪造其身份。
 - 检测方 mask 与目标 layer 相交即可；目标 mask 不反向过滤。Area 目标还须 monitorable，

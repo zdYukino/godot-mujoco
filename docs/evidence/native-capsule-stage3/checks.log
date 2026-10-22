@@ -1,0 +1,151 @@
+PASS native backend
+PASS native capsule shape type
+PASS height includes both hemispheres
+PASS capsule data getter returns independent dictionary
+PASS capsule ray identity (0.0, 1.5, 0.0)
+PASS capsule ray cap/side geometry (0.0, 1.5, 0.0)
+PASS capsule ray identity (0.0, -1.5, 0.0)
+PASS capsule ray cap/side geometry (0.0, -1.5, 0.0)
+PASS capsule ray identity (0.5, 0.0, 0.0)
+PASS capsule ray cap/side geometry (0.5, 0.0, 0.0)
+PASS capsule ray identity (0.0, 0.0, 0.5)
+PASS capsule ray cap/side geometry (0.0, 0.0, 0.5)
+PASS capsule cap and barrel point interior
+PASS rounded cap point exterior
+PASS inside ray default excluded
+PASS inside ray requested zero normal
+PASS combined body rotation and local offset ray
+PASS rotated local offset point
+PASS rotated capsule overlap
+PASS every capsule contact pair belongs to its original surface
+PASS rest target witness and outward normal
+PASS separated capsule misses at zero margin
+PASS capsule query margin counted once
+PASS coincident capsule initial overlap
+PASS capsule point exclusion
+PASS capsule ray exclusion
+PASS capsule shared shape exclusion
+PASS capsule query mask
+PASS target mask independent from layer visibility
+PASS capsule ray layer filtering
+PASS disabled capsule absent immediately
+PASS reenabled capsule visible immediately
+PASS capsule resize rebuild uses full height
+PASS multiple capsule native shape index
+PASS shape removal updates index
+PASS capsule moved to other space absent
+PASS capsule reattached to original space
+PASS freed capsule body absent
+PASS h equals 2r ray is spherical (0.0, 1.0, 0.0)
+PASS h equals 2r ray is spherical (1.0, 0.0, 0.0)
+PASS h equals 2r ray is spherical (0.0, 0.0, 1.0)
+PASS h equals 2r point is spherical
+PASS h equals 2r overlap retained
+PASS capsule continuous primitive sweep
+PASS capsule continuous sweep margin
+PASS capsule zero motion
+PASS capsule moving away
+PASS initial penetration ignored per shape
+PASS capsule sweep exclusion
+PASS capsule sweep mask
+PASS capsule sweep disabled target
+PASS capsule continuous primitive sweep
+PASS capsule continuous sweep margin
+PASS capsule zero motion
+PASS capsule moving away
+PASS initial penetration ignored per shape
+PASS capsule sweep exclusion
+PASS capsule sweep mask
+PASS capsule sweep disabled target
+PASS capsule continuous primitive sweep
+PASS capsule continuous sweep margin
+PASS capsule zero motion
+PASS capsule moving away
+PASS initial penetration ignored per shape
+PASS capsule sweep exclusion
+PASS capsule sweep mask
+PASS capsule sweep disabled target
+PASS capsule continuous primitive sweep
+PASS capsule continuous sweep margin
+PASS capsule zero motion
+PASS capsule moving away
+PASS initial penetration ignored per shape
+PASS capsule sweep exclusion
+PASS capsule sweep mask
+PASS capsule sweep disabled target
+PASS capsule supporting endcap against plane
+PASS rotated capsule support against plane
+PASS degenerate capsule sweep equals sphere
+PASS horizontal capsule leading endcap continuous sweep
+PASS representable capsule endcap grazing
+PASS near grazing capsule misses
+PASS high speed capsule crosses thin wall continuously
+PASS ignore initial penetration but retain later target
+PASS all queries preserve inactive space
+PASS concentric rotated capsule query against sphere identity
+PASS concentric rotated capsule query against sphere both witness surfaces and nonflattened penetration
+PASS concentric rotated capsule query against sphere rest target surface and finite unit normal
+PASS concentric rotated sphere query against capsule identity
+PASS concentric rotated sphere query against capsule both witness surfaces and nonflattened penetration
+PASS concentric rotated sphere query against capsule rest target surface and finite unit normal
+PASS concentric rotated capsule query against box identity
+PASS concentric rotated capsule query against box both witness surfaces and nonflattened penetration
+PASS concentric rotated capsule query against box rest target surface and finite unit normal
+PASS concentric rotated box query against capsule identity
+PASS concentric rotated box query against capsule both witness surfaces and nonflattened penetration
+PASS concentric rotated box query against capsule rest target surface and finite unit normal
+PASS concentric rotated capsule query against cylinder identity
+PASS concentric rotated capsule query against cylinder both witness surfaces and nonflattened penetration
+PASS concentric rotated capsule query against cylinder rest target surface and finite unit normal
+PASS concentric rotated cylinder query against capsule identity
+PASS concentric rotated cylinder query against capsule both witness surfaces and nonflattened penetration
+PASS concentric rotated cylinder query against capsule rest target surface and finite unit normal
+PASS concentric rotated capsule query against capsule identity
+PASS concentric rotated capsule query against capsule both witness surfaces and nonflattened penetration
+PASS concentric rotated capsule query against capsule rest target surface and finite unit normal
+PASS concentric rotated capsule query against capsule identity
+PASS concentric rotated capsule query against capsule both witness surfaces and nonflattened penetration
+PASS concentric rotated capsule query against capsule rest target surface and finite unit normal
+PASS offset rotated capsule query against sphere identity
+PASS offset rotated capsule query against sphere both witness surfaces and nonflattened penetration
+PASS offset rotated capsule query against sphere rest target surface and finite unit normal
+PASS offset rotated sphere query against capsule identity
+PASS offset rotated sphere query against capsule both witness surfaces and nonflattened penetration
+PASS offset rotated sphere query against capsule rest target surface and finite unit normal
+PASS offset rotated capsule query against box identity
+PASS offset rotated capsule query against box both witness surfaces and nonflattened penetration
+PASS offset rotated capsule query against box rest target surface and finite unit normal
+PASS offset rotated box query against capsule identity
+PASS offset rotated box query against capsule both witness surfaces and nonflattened penetration
+PASS offset rotated box query against capsule rest target surface and finite unit normal
+PASS offset rotated capsule query against cylinder identity
+PASS offset rotated capsule query against cylinder both witness surfaces and nonflattened penetration
+PASS offset rotated capsule query against cylinder rest target surface and finite unit normal
+PASS offset rotated cylinder query against capsule identity
+PASS offset rotated cylinder query against capsule both witness surfaces and nonflattened penetration
+PASS offset rotated cylinder query against capsule rest target surface and finite unit normal
+PASS offset rotated capsule query against capsule identity
+PASS offset rotated capsule query against capsule both witness surfaces and nonflattened penetration
+PASS offset rotated capsule query against capsule rest target surface and finite unit normal
+PASS offset rotated capsule query against capsule identity
+PASS offset rotated capsule query against capsule both witness surfaces and nonflattened penetration
+PASS offset rotated capsule query against capsule rest target surface and finite unit normal
+PASS capsule multi-shape results sort by RID and native shape index
+PASS capsule multi-shape repeated ordering is stable
+PASS capsule max_results counts shapes versus contact pairs
+PASS capsule zero capacity returns empty
+PASS failed capsule rebuild does not expose old query geometry
+PASS capsule overlap recovers after rejected rebuild
+PASS free capsule shape RID clears body dependencies and old geometry
+PASS ordinary CapsuleShape3D resource uses native capsule
+PASS dynamic capsule settles at half full height
+PASS capsule automatic mass
+PASS automatic capsule inertia includes hemisphere offsets
+PASS capsule resize preserves live velocity and pose
+PASS degenerate capsule automatic inertia is spherical
+PASS capsule Area sees capsule body across rounded caps
+PASS capsule Area sees concentric capsule Area
+PASS capsule Area sphere degeneration updates exit
+PASS capsule Area resize reenters
+PASS capsule Area frees retire overlaps
+CAPSULE_RESULT {"counts":{"area":5,"degenerate":5,"dynamics":6,"geometry":24,"lifecycle":14,"overlap_pairs":48,"ownership":7,"sweep":41},"failed":0,"godot":"4.7.2-stable (official)","passed":150}

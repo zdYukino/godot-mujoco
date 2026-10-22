@@ -1,0 +1,56 @@
+{
+  "runs": [
+    {
+      "counts": {
+        "area": 5,
+        "degenerate": 5,
+        "dynamics": 6,
+        "geometry": 24,
+        "lifecycle": 14,
+        "overlap_pairs": 48,
+        "ownership": 7,
+        "sweep": 41
+      },
+      "failed": 0,
+      "godot": "4.7.2-stable (official)",
+      "passed": 150
+    },
+    {
+      "counts": {
+        "area": 5,
+        "degenerate": 5,
+        "dynamics": 6,
+        "geometry": 24,
+        "lifecycle": 14,
+        "overlap_pairs": 48,
+        "ownership": 7,
+        "sweep": 41
+      },
+      "failed": 0,
+      "godot": "4.7.2-stable (official)",
+      "passed": 150
+    },
+    {
+      "counts": {
+        "area": 5,
+        "degenerate": 5,
+        "dynamics": 6,
+        "geometry": 24,
+        "lifecycle": 14,
+        "overlap_pairs": 48,
+        "ownership": 7,
+        "sweep": 41
+      },
+      "failed": 0,
+      "godot": "4.7.2-stable (official)",
+      "passed": 150
+    }
+  ],
+  "negative": {
+    "checks": 14,
+    "expected_errors": 11,
+    "failed": 0,
+    "sweep_rejections": 2
+  },
+  "extension_sha256": "44bf6f2675b83f91fc2cb911b017981c8ca41805aea3b7f1009f2922c7b5f5a0"
+}

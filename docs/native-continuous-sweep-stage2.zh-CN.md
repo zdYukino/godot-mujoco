@@ -14,6 +14,8 @@
 
 ## 支持矩阵
 
+下表记录第二阶段原始矩阵；当前集成新增 Capsule 查询/目标及球对 Capsule，最新组合见[Capsule 阶段](native-capsule-stage3.zh-CN.md)。后续 float 认证修复见 `tests/native_sweep_precision/`，不取消不可表示位置的明确拒绝。
+
 | 查询形状 | 目标 sphere | 目标 box | 目标 cylinder | 目标 world-boundary |
 |---|---|---|---|---|
 | sphere | 连续凸距离 | 连续凸距离 | 连续凸距离 | 线性支持平面 |

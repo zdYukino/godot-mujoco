@@ -14,7 +14,7 @@
 - **模型资源与场景**：保存包含依赖资产的模型包，使用 `MjRuntimeWorld` 和 `MjModelInstance` 组织独立实例；支持整个文件系统项目搬迁。
 - **运行编辑**：明确选择运行实例并应用保存的设计；结构修改在物理步边界编译、迁移兼容状态，失败回滚。
 - **仿真控制**：每个世界独立暂停、精确 N 步、内存快照、状态重置和已保存环境重建；游戏 UI 与输入继续运行。
-- **原生物理后端**：支持普通 Godot 刚体的 box/sphere/plane/cylinder、ray 和[第一阶段原生 overlap 查询](docs/native-overlap-stage1.zh-CN.md)，另有[受限组合连续 sweep](docs/native-continuous-sweep-stage2.zh-CN.md)。新增 [Area3D 第一阶段监测](tests/native_area/README.zh-CN.md)（仅原生 box/sphere/cylinder，无冲量触发，待独立 GUI 验收）。并非完整替代 Godot 的全部物理节点及 API。
+- **原生物理后端**：支持普通 Godot 刚体的 box/sphere/plane/cylinder/[capsule](docs/native-capsule-stage3.zh-CN.md)、ray 和[第一阶段原生 overlap 查询](docs/native-overlap-stage1.zh-CN.md)，另有[受限组合连续 sweep](docs/native-continuous-sweep-stage2.zh-CN.md)。新增 [Area3D 第一阶段监测](tests/native_area/README.zh-CN.md)（仅原生 box/sphere/cylinder/capsule，无冲量触发，待独立 GUI 验收）。另有[原生 Pin](docs/native-pin-stage1.zh-CN.md)和[受限被动 Hinge](docs/native-hinge-passive.zh-CN.md)（无环图、固定响应，limits/motor 未支持），以及[Area 环境覆盖](tests/native_area_environment/README.zh-CN.md)。并非完整替代 Godot 的全部物理节点及 API。
 
 | 项目 | 当前要求 |
 |---|---|
@@ -205,11 +205,11 @@ CMake 将 godot-cpp 获取到构建目录并静态链接进扩展，将 MuJoCo �
 
 可复用的[Linux 固定工具链轻量检查](tests/mjworld_smoke/README.md)提供版本/哈希核验、独立正负例、阶段状态和日志归档；它不替代 GUI 或重负载验收。
 
-当前保存的是带已知限制的[Linux 开发稳定基线（2026-10-22）](docs/linux-development-baseline-20261022.zh-CN.md)，不是稳定 release。dot 已完成约定的轻量真实 GUI、保存重开和运行编辑验收；**重型 G1/多 G1 压力未通过，交用户手测**。原始失败日志保留，不用后续重试覆盖。
+主线此前保存的是带已知限制的[Linux 开发稳定基线（2026-10-22）](docs/linux-development-baseline-20261022.zh-CN.md)，不是稳定 release。本功能分支新增后端能力仍待最终集成 dot 验收；以下 GUI 记录不覆盖本轮新增功能。dot 已完成约定的轻量真实 GUI、保存重开和运行编辑验收；**重型 G1/多 G1 压力未通过，交用户手测**。原始失败日志保留，不用后续重试覆盖。
 
 - cold import 退出 **139** 未修复，按当前使用范围作为非阻断遗留；不能证明仅发生在无窗口模式。图形初始化后 API 编辑已有文件是已验证路径。
 - 要求主线程物理；同步候选编译可能阻塞 UI。一个 World3D 仅一个 `MjRuntimeWorld`，其他世界使用独立 World3D。
-- 支持专用静态 `MjStaticHeightField`；不支持通用 `HeightMapShape3D`、动态地形、完整 Godot body/joint 兼容、Area 环境覆写、CharacterBody；文件系统模型包可搬迁，PCK/ZIP 内资产加载未验证。
+- 支持专用静态 `MjStaticHeightField`；不支持通用 `HeightMapShape3D`、动态地形、完整 Godot body/joint 兼容、复杂几何 Area、CharacterBody；文件系统模型包可搬迁，PCK/ZIP 内资产加载未验证。
 - G1 默认固定基座；自由基座导入没有重力补偿、站立或步行控制，倒伏是预期行为。
 - Ubuntu 22.04 及其他宿主需独立核验动态库/驱动；Windows 等其他平台未适配本基线。
 
@@ -234,3 +234,5 @@ CMake 将 godot-cpp 获取到构建目录并静态链接进扩展，将 MuJoCo �
 [运行整份预设事务](docs/runtime-presets.zh-CN.md)：安全边界提交目标与PD、失败回滚及取消；新分支待dot验收。
 
 [原生物理后端推进计划（仅供审查）](docs/native-backend-plan-review.zh-CN.md)：查询、CharacterBody、Area、形状、关节与生命周期依赖及验收门槛，未实施的新能力不算已支持。
+
+[Area 环境覆盖](tests/native_area_environment/README.zh-CN.md)：原生有限形状的重力、阻尼与 priority，保留 P0 积分语义；待独立 GUI 验收。

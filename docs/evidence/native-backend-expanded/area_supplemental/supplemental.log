@@ -1,0 +1,162 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+MuJoCo: compile time (ms)
+  total:          0.3   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.3   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS supplemental exact-step world
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS paused single-step completes
+PASS mixed gravity REPLACE linear COMBINE_REPLACE angular REPLACE_COMBINE physical linear velocity actual=(9.67, 0.0, 0.0) expected=(9.67, 0.0, 0.0)
+PASS mixed gravity REPLACE linear COMBINE_REPLACE angular REPLACE_COMBINE physical angular velocity actual=(0.0, 8.3, 0.0) expected=(0.0, 8.3, 0.0)
+PASS mixed gravity REPLACE linear COMBINE_REPLACE angular REPLACE_COMBINE sampled gravity actual=(2.0, 0.0, 0.0) expected=(2.0, 0.0, 0.0)
+PASS mixed gravity REPLACE linear COMBINE_REPLACE angular REPLACE_COMBINE sampled damping agrees with physical effect
+PASS paused single-step completes
+PASS mixed gravity COMBINE_REPLACE linear REPLACE_COMBINE angular REPLACE physical linear velocity actual=(8.870001, 0.0, 0.0) expected=(8.870001, 0.0, 0.0)
+PASS mixed gravity COMBINE_REPLACE linear REPLACE_COMBINE angular REPLACE physical angular velocity actual=(0.0, 9.3, 0.0) expected=(0.0, 9.3, 0.0)
+PASS mixed gravity COMBINE_REPLACE linear REPLACE_COMBINE angular REPLACE sampled gravity actual=(2.0, 0.0, 0.0) expected=(2.0, 0.0, 0.0)
+PASS mixed gravity COMBINE_REPLACE linear REPLACE_COMBINE angular REPLACE sampled damping agrees with physical effect
+PASS paused single-step completes
+PASS channel stop flags remain independent physical linear velocity actual=(9.45, 0.0, 0.04) expected=(9.45, 0.0, 0.04)
+PASS channel stop flags remain independent physical angular velocity actual=(0.0, 9.5, 0.0) expected=(0.0, 9.5, 0.0)
+PASS channel stop flags remain independent sampled gravity actual=(0.0, 0.0, 4.0) expected=(0.0, 0.0, 4.0)
+PASS channel stop flags remain independent sampled damping agrees with physical effect
+PASS paused single-step completes
+PASS equal priority resolves by ascending RID physical linear velocity actual=(9.67, 0.0, 0.0) expected=(9.67, 0.0, 0.0)
+PASS equal priority resolves by ascending RID physical angular velocity actual=(0.0, 9.5, 0.0) expected=(0.0, 9.5, 0.0)
+PASS equal priority resolves by ascending RID sampled gravity actual=(2.0, 0.0, 0.0) expected=(2.0, 0.0, 0.0)
+PASS equal priority resolves by ascending RID sampled damping agrees with physical effect
+PASS paused single-step completes
+PASS equal priority stable after first Area detach/readd physical linear velocity actual=(9.67, 0.0, 0.0) expected=(9.67, 0.0, 0.0)
+PASS equal priority stable after first Area detach/readd physical angular velocity actual=(0.0, 9.5, 0.0) expected=(0.0, 9.5, 0.0)
+PASS equal priority stable after first Area detach/readd sampled gravity actual=(2.0, 0.0, 0.0) expected=(2.0, 0.0, 0.0)
+PASS equal priority stable after first Area detach/readd sampled damping agrees with physical effect
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS paused single-step completes
+PASS equal priority stable after unrelated native rebuild physical linear velocity actual=(9.67, 0.0, 0.0) expected=(9.67, 0.0, 0.0)
+PASS equal priority stable after unrelated native rebuild physical angular velocity actual=(0.0, 9.5, 0.0) expected=(0.0, 9.5, 0.0)
+PASS equal priority stable after unrelated native rebuild sampled gravity actual=(2.0, 0.0, 0.0) expected=(2.0, 0.0, 0.0)
+PASS equal priority stable after unrelated native rebuild sampled damping agrees with physical effect
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS paused single-step completes
+PASS rotated translated local point center with inverse square distance actual=(-0.0, 0.02, 0.0) expected=(0.0, 0.02, 0.0)
+PASS rotated point sampled field matches actual acceleration actual=(-0.0, 2.0, 0.0) expected=(0.0, 2.0, 0.0)
+PASS paused single-step completes
+PASS rotated local center constant magnitude branch actual=(-0.0, 0.08, 0.0) expected=(0.0, 0.08, 0.0)
+PASS paused single-step completes
+PASS rotated point exact center gives zero acceleration actual=(0.0, 0.0, 0.0) expected=(0.0, 0.0, 0.0)
+AREA_ENVIRONMENT_SUPPLEMENTAL_RESULT {"failed":0,"passed":38}

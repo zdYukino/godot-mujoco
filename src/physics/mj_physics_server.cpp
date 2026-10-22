@@ -21,7 +21,7 @@ MjSpace *MjPhysicsServer3D::space(const RID &r) const { auto i=spaces.find(r.get
 MjShape *MjPhysicsServer3D::shape(const RID &r) const { auto i=shapes.find(r.get_id()); return i==shapes.end()?nullptr:i->second.get(); }
 void MjPhysicsServer3D::dirty(const RID &r) { if(auto *s=space(r)) s->dirty=true; for(auto &entry:bodies)if(entry.second->space==r)entry.second->contacts.clear(); }
 MjPhysicsServer3D::~MjPhysicsServer3D() { _finish(); }
-void MjPhysicsServer3D::_finish() { area_commands.clear();area_scratch.reset(); while(!areas.empty()) _free_rid(areas.begin()->second->rid); while(!bodies.empty()) _free_rid(bodies.begin()->second->rid); while(!spaces.empty()) _free_rid(spaces.begin()->second->rid); while(!shapes.empty()) _free_rid(shapes.begin()->second->rid); }
+void MjPhysicsServer3D::_finish() { while(!native_joints.empty()) _free_rid(native_joints.begin()->second.rid); area_commands.clear();area_scratch.reset(); while(!areas.empty()) _free_rid(areas.begin()->second->rid); while(!bodies.empty()) _free_rid(bodies.begin()->second->rid); while(!spaces.empty()) _free_rid(spaces.begin()->second->rid); while(!shapes.empty()) _free_rid(shapes.begin()->second->rid); }
 RID MjPhysicsServer3D::make_shape(ShapeType type,const Variant &data) { RID r=handles.make_rid(0); auto s=std::make_unique<MjShape>(); s->rid=r;s->type=type;s->data=data; shapes.emplace(r.get_id(),std::move(s)); return r; }
 RID MjPhysicsServer3D::_box_shape_create() { return make_shape(SHAPE_BOX,Vector3(0.5,0.5,0.5)); }
 RID MjPhysicsServer3D::_sphere_shape_create() { return make_shape(SHAPE_SPHERE,0.5); }
@@ -29,18 +29,23 @@ RID MjPhysicsServer3D::_cylinder_shape_create() {
  Dictionary data; data["radius"]=0.5; data["height"]=2.0;
  return make_shape(SHAPE_CYLINDER,data);
 }
+RID MjPhysicsServer3D::_capsule_shape_create() {
+ Dictionary data; data["radius"]=0.5; data["height"]=2.0;
+ return make_shape(SHAPE_CAPSULE,data);
+}
 RID MjPhysicsServer3D::_world_boundary_shape_create() { return make_shape(SHAPE_WORLD_BOUNDARY,Plane(Vector3(0,1,0),0)); }
-void MjPhysicsServer3D::_shape_set_data(const RID&r,const Variant&v) { auto*s=shape(r); ERR_FAIL_NULL(s); if(s->type==SHAPE_BOX) { ERR_FAIL_COND(v.get_type()!=Variant::VECTOR3); Vector3 z=v; ERR_FAIL_COND(!z.is_finite()||z.x<=0||z.y<=0||z.z<=0); } else if(s->type==SHAPE_SPHERE) { ERR_FAIL_COND(!std::isfinite(double(v))||double(v)<=0); } else if(s->type==SHAPE_CYLINDER) {
- ERR_FAIL_COND_MSG(v.get_type()!=Variant::DICTIONARY,"Cylinder data requires radius and height");
+void MjPhysicsServer3D::_shape_set_data(const RID&r,const Variant&v) { auto*s=shape(r); ERR_FAIL_NULL(s); if(s->type==SHAPE_BOX) { ERR_FAIL_COND(v.get_type()!=Variant::VECTOR3); Vector3 z=v; ERR_FAIL_COND(!z.is_finite()||z.x<=0||z.y<=0||z.z<=0); } else if(s->type==SHAPE_SPHERE) { ERR_FAIL_COND(!std::isfinite(double(v))||double(v)<=0); } else if(s->type==SHAPE_CYLINDER || s->type==SHAPE_CAPSULE) {
+ ERR_FAIL_COND_MSG(v.get_type()!=Variant::DICTIONARY,s->type==SHAPE_CAPSULE?"Capsule data requires radius and height":"Cylinder data requires radius and height");
  Dictionary data=v;
  for(const char *key:{"radius","height"}) {
-  ERR_FAIL_COND_MSG(!data.has(key),"Cylinder data requires radius and height");
+  ERR_FAIL_COND_MSG(!data.has(key),s->type==SHAPE_CAPSULE?"Capsule data requires radius and height":"Cylinder data requires radius and height");
   Variant value=data[key];
-  ERR_FAIL_COND_MSG(value.get_type()!=Variant::FLOAT&&value.get_type()!=Variant::INT,"Cylinder dimensions must be numeric");
-  ERR_FAIL_COND_MSG(!std::isfinite(double(value))||double(value)<=0,"Cylinder dimensions must be finite and positive");
+  ERR_FAIL_COND_MSG(value.get_type()!=Variant::FLOAT&&value.get_type()!=Variant::INT,s->type==SHAPE_CAPSULE?"Capsule dimensions must be numeric":"Cylinder dimensions must be numeric");
+  ERR_FAIL_COND_MSG(!std::isfinite(double(value))||double(value)<=0,s->type==SHAPE_CAPSULE?"Capsule dimensions must be finite and positive":"Cylinder dimensions must be finite and positive");
  }
- } else { ERR_FAIL_COND(v.get_type()!=Variant::PLANE); Plane plane=v; ERR_FAIL_COND(!plane.normal.is_finite()||plane.normal.length_squared()<1e-12||!std::isfinite(plane.d)); } s->data=s->type==SHAPE_CYLINDER?Variant(Dictionary(v).duplicate()):v; for(auto &b:bodies) for(auto &i:b.second->shapes) if(i.shape==r) dirty(b.second->space); }
-Variant MjPhysicsServer3D::_shape_get_data(const RID&r) const { auto*s=shape(r);return s?(s->type==SHAPE_CYLINDER?Variant(Dictionary(s->data).duplicate()):s->data):Variant(); }
+ ERR_FAIL_COND_MSG(s->type==SHAPE_CAPSULE && double(data["height"])*.5<double(data["radius"]),"Capsule height must be at least twice radius");
+ } else { ERR_FAIL_COND(v.get_type()!=Variant::PLANE); Plane plane=v; ERR_FAIL_COND(!plane.normal.is_finite()||plane.normal.length_squared()<1e-12||!std::isfinite(plane.d)); } s->data=(s->type==SHAPE_CYLINDER || s->type==SHAPE_CAPSULE)?Variant(Dictionary(v).duplicate()):v; for(auto &b:bodies) for(auto &i:b.second->shapes) if(i.shape==r) dirty(b.second->space); }
+Variant MjPhysicsServer3D::_shape_get_data(const RID&r) const { auto*s=shape(r);return s?((s->type==SHAPE_CYLINDER || s->type==SHAPE_CAPSULE)?Variant(Dictionary(s->data).duplicate()):s->data):Variant(); }
 PhysicsServer3D::ShapeType MjPhysicsServer3D::_shape_get_type(const RID&r) const { auto*s=shape(r);return s?s->type:SHAPE_CUSTOM; }
 void MjPhysicsServer3D::_shape_set_margin(const RID&r,float v) { if(auto*s=shape(r)) s->margin=v; }
 float MjPhysicsServer3D::_shape_get_margin(const RID&r) const { auto*s=shape(r);return s?s->margin:0; }
@@ -56,11 +61,10 @@ int32_t MjPhysicsServer3D::_space_get_contact_count(const RID&) const{return 0;}
 // Godot addresses the world's default environment using its space RID, not an Area RID.
 void MjPhysicsServer3D::_area_set_param(const RID&r,AreaParameter p,const Variant&v) {
  if(auto*a=area(r)){
-  if((p==AREA_PARAM_GRAVITY_OVERRIDE_MODE||p==AREA_PARAM_LINEAR_DAMP_OVERRIDE_MODE||p==AREA_PARAM_ANGULAR_DAMP_OVERRIDE_MODE)&&int(v)!=AREA_SPACE_OVERRIDE_DISABLED){mj_unsupported("Area3D environment overrides; monitoring only");return;}
   if(flushing){area_commands.push_back([this,r,p,v]{_area_set_param(r,p,v);});return;}
-  a->params[p]=v;return;
+  set_area_environment_param(*a,p,v);return;
  }
- auto*s=space(r); if(!s){return;}
+ auto*s=space(r); if(!s)return;
  if(s->authored_options&&(p==AREA_PARAM_GRAVITY||p==AREA_PARAM_GRAVITY_VECTOR)){s->last_error="Runtime world model owns gravity; Godot default-area override rejected";return;}
  if(p==AREA_PARAM_GRAVITY_VECTOR){ERR_FAIL_COND(v.get_type()!=Variant::VECTOR3||!Vector3(v).is_finite());}
  else if(p==AREA_PARAM_GRAVITY||p==AREA_PARAM_LINEAR_DAMP||p==AREA_PARAM_ANGULAR_DAMP){
@@ -86,9 +90,9 @@ Variant MjPhysicsServer3D::_area_get_param(const RID&r,AreaParameter p) const {i
 RID MjPhysicsServer3D::_body_create(){RID r=handles.make_rid(0);auto b=std::make_unique<MjBody>();b->rid=r;b->direct=memnew(MjDirectBodyState);b->direct->server=this;b->direct->rid=r;bodies.emplace(r.get_id(),std::move(b));return r;}
 void MjPhysicsServer3D::_body_set_space(const RID&r,const RID&s){if(flushing){area_commands.push_back([this,r,s]{_body_set_space(r,s);});return;}auto*b=body(r);if(!b)return;if(b->space==s)return;ERR_FAIL_COND(s.is_valid()&&!space(s));if(auto*target=space(s)){ERR_FAIL_COND(!(target->gravity_direction*(target->gravity*b->gravity_scale)).is_finite());
  for(bool angular:{false,true}){auto mode=angular?BODY_PARAM_ANGULAR_DAMP_MODE:BODY_PARAM_LINEAR_DAMP_MODE;auto damp=angular?BODY_PARAM_ANGULAR_DAMP:BODY_PARAM_LINEAR_DAMP;
- ERR_FAIL_COND(int(_body_get_param(r,mode))==0&&!std::isfinite(float(double(_body_get_param(r,damp))+(angular?target->angular_damp:target->linear_damp))));}}dirty(b->space);b->space=s;b->mj_body=-1;b->callback_pending=false;b->sync_pending=false;dirty(s);retire_area_pairs(r);}
+ ERR_FAIL_COND(int(_body_get_param(r,mode))==0&&!std::isfinite(float(double(_body_get_param(r,damp))+(angular?target->angular_damp:target->linear_damp))));}}detach_native_joints(r);dirty(b->space);b->space=s;b->mj_body=-1;b->callback_pending=false;b->sync_pending=false;b->environment_valid=false;dirty(s);retire_area_pairs(r);}
 RID MjPhysicsServer3D::_body_get_space(const RID&r) const {auto*b=body(r);return b?b->space:RID();}
-void MjPhysicsServer3D::_body_set_mode(const RID&r,BodyMode m){auto*b=body(r);ERR_FAIL_NULL(b);if(m!=BODY_MODE_STATIC&&m!=BODY_MODE_RIGID){mj_unsupported("kinematic/rigid-linear body modes");return;}b->mode=m;dirty(b->space);}
+void MjPhysicsServer3D::_body_set_mode(const RID&r,BodyMode m){if(flushing){area_commands.push_back([this,r,m]{_body_set_mode(r,m);});return;}auto*b=body(r);ERR_FAIL_NULL(b);if(m!=BODY_MODE_STATIC&&m!=BODY_MODE_RIGID){mj_unsupported("kinematic/rigid-linear body modes");return;}if(b->mode!=m)detach_native_joints(r);b->mode=m;dirty(b->space);}
 PhysicsServer3D::BodyMode MjPhysicsServer3D::_body_get_mode(const RID&r) const {auto*b=body(r);return b?b->mode:BODY_MODE_STATIC;}
 // All shape-list mutations share one FIFO during callbacks. Validate indices
 // when dequeued, against the result of preceding add/remove/clear operations.
@@ -174,12 +178,13 @@ void MjPhysicsServer3D::_free_rid(const RID&source_rid){
   if(b.rid==r||b.space==r||affected.count(b.rid.get_id()))b.contacts.clear();
   else b.contacts.erase(std::remove_if(b.contacts.begin(),b.contacts.end(),[&](const MjContact &c){return c.collider==r||affected.count(c.collider.get_id());}),b.contacts.end());
  }
+ if(native_joints.count(r.get_id())){if(flushing){area_commands.push_back([this,r]{_free_rid(r);});return;} _joint_clear(r);native_joints.erase(r.get_id());handles.free(r);return;}
  if(flushing){pending_free.insert(r.get_id());return;}
  if(auto*a=area(r)){a->body_callback=Callable();a->area_callback=Callable();}
  retire_area_pairs(r);
- if(auto*b=body(r)){RID terrain_shape=b->heightfield&&!b->shapes.empty()?b->shapes[0].shape:RID();dirty(b->space);if(b->direct)memdelete(b->direct);bodies.erase(r.get_id());heightfield_revisions.erase(r.get_id());if(terrain_shape.is_valid())_free_rid(terrain_shape);}
+ if(auto*b=body(r)){detach_native_joints(r);RID terrain_shape=b->heightfield&&!b->shapes.empty()?b->shapes[0].shape:RID();dirty(b->space);if(b->direct)memdelete(b->direct);bodies.erase(r.get_id());heightfield_revisions.erase(r.get_id());if(terrain_shape.is_valid())_free_rid(terrain_shape);}
  else if(area(r)){areas.erase(r.get_id());}
- else if(space(r)){for(auto &a:areas)if(a.second->space==r)a.second->space=RID();for(auto &i:space(r)->imported)handles.free(i.second->rid);for(auto &b:bodies)if(b.second->space==r){b.second->space=RID();b.second->mj_body=-1;}spaces.erase(r.get_id());}
+ else if(space(r)){for(auto &b:bodies)if(b.second->space==r)detach_native_joints(b.second->rid);for(auto &a:areas)if(a.second->space==r)a.second->space=RID();for(auto &i:space(r)->imported)handles.free(i.second->rid);for(auto &b:bodies)if(b.second->space==r){b.second->space=RID();b.second->mj_body=-1;}spaces.erase(r.get_id());}
  else if(shape(r)){
   std::vector<std::pair<RID,int>> affected;
   for(auto &entry:areas){auto &a=*entry.second;auto &instances=a.shapes;
@@ -202,6 +207,7 @@ static void pose_xml(std::ostream&o,const Transform3D&t){o<<" pos=\"";vector_xml
 static double shape_volume(const MjShape &shape){
  if(shape.type==PhysicsServer3D::SHAPE_BOX){Vector3 e=shape.data;return 8.0*e.x*e.y*e.z;}
  if(shape.type==PhysicsServer3D::SHAPE_SPHERE){double r=shape.data;return (4.0/3.0)*Math_PI*r*r*r;}
+ if(shape.type==PhysicsServer3D::SHAPE_CAPSULE){Dictionary d=shape.data;double r=d["radius"],length=double(d["height"])-2*r;return Math_PI*r*r*(length+4*r/3);}
  if(shape.type==PhysicsServer3D::SHAPE_CYLINDER){Dictionary d=shape.data;double r=d["radius"];return Math_PI*r*r*double(d["height"]);}
  return 0;
 }
@@ -234,6 +240,11 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  xml<<"<geom name=\"g"<<owners.size()<<"\" type=\"";
  if(sh->type==SHAPE_BOX){xml<<"box\" size=\"";Vector3 v=Vector3(sh->data)*scale;vector_xml(xml,Vector3(v.x,v.z,v.y));}
  else if(sh->type==SHAPE_SPHERE){if(!Math::is_equal_approx(scale.x,scale.y)||!Math::is_equal_approx(scale.x,scale.z))mj_unsupported("nonuniform sphere scale");xml<<"sphere\" size=\""<<double(sh->data)*scale.x;}
+ else if(sh->type==SHAPE_CAPSULE){Dictionary d=sh->data;double r=d["radius"],half=double(d["height"])*.5-r;
+  // A zero cylinder segment is a sphere. MuJoCo capsules require a positive half-length.
+  if(half==0)xml<<"sphere\" size=\""<<r;
+  else xml<<"capsule\" size=\""<<r<<' '<<half;
+ }
  else if(sh->type==SHAPE_CYLINDER){Dictionary d=sh->data;xml<<"cylinder\" size=\""<<double(d["radius"])<<' '<<double(d["height"])*0.5;}
  else {Plane p=sh->data;Vector3 n=p.normal.normalized(); t.origin+=t.basis.xform(n*(p.d/p.normal.length())); t.basis=t.basis.orthonormalized()*Basis(Quaternion(Vector3(0,1,0),n)); xml<<"plane\" size=\"0 0 0.1";}
  xml<<"\"";pose_xml(xml,t);
@@ -241,16 +252,19 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  xml<<" contype=\""<<int32_t(b.layer)<<"\" conaffinity=\""<<int32_t(b.mask)<<"\" friction=\""<<std::abs(double(_body_get_param(b.rid,BODY_PARAM_FRICTION)))<<" 0.005 0.0001\"";
  if(b.mode==BODY_MODE_RIGID)xml<<" mass=\""<<b.mass*(shape_volume(*sh)/volume)<<"\"";
  xml<<"/>";owners.push_back({b.rid,j});}
+ for(auto &entry:native_joints){auto &joint=entry.second;if(!native_joint_active(joint,s.rid))continue;for(int side=0;side<2;++side)if((side?joint.b:joint.a)==b.rid)for(int point=0;point<(joint.hinge?2:1);++point){xml<<"<site name=\"pin_"<<entry.first<<"_"<<side<<"_"<<point<<"\" pos=\"";Vector3 local=(side?joint.anchor_b:joint.anchor_a)+(side?joint.axis_b:joint.axis_a)*point;vector_xml(xml,godot_to_mj(local));xml<<"\" size=\".001\"/>";}}
  xml<<"</body>";}
+ for(auto &entry:native_joints){auto &joint=entry.second;if(native_joint_active(joint,s.rid)&&!joint.b.is_valid())for(int point=0;point<(joint.hinge?2:1);++point){xml<<"<site name=\"pin_"<<entry.first<<"_1_"<<point<<"\" pos=\"";vector_xml(xml,godot_to_mj(joint.anchor_b+joint.axis_b*point));xml<<"\" size=\".001\"/>";}}
  xml<<"</worldbody><contact>";std::set<std::pair<uint64_t,uint64_t>> exclusions;
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;for(auto id:b.exceptions){auto i=bodies.find(id);if(i!=bodies.end()&&i->second->space==s.rid&&id!=b.rid.get_id())exclusions.emplace(std::min<uint64_t>(id,b.rid.get_id()),std::max<uint64_t>(id,b.rid.get_id()));}}
+ for(auto &entry:native_joints){auto &j=entry.second;if(native_joint_active(j,s.rid)&&j.b.is_valid()&&j.disable_collisions)exclusions.emplace(std::min(j.a.get_id(),j.b.get_id()),std::max(j.a.get_id(),j.b.get_id()));}
  for(auto p:exclusions)xml<<"<exclude body1=\"b"<<p.first<<"\" body2=\"b"<<p.second<<"\"/>";
  // Explicit native pairs use Godot's signed rough-material combination.
  // Imported MJCF contacts keep their authored MuJoCo combination semantics.
  for(size_t i=0;i<owners.size();++i)for(size_t j=i+1;j<owners.size();++j){
   auto*a=body(owners[i].first);auto*b=body(owners[j].first);
   if(a==b||(a->mode==BODY_MODE_STATIC&&b->mode==BODY_MODE_STATIC)||
-     !((a->layer&b->mask)||(b->layer&a->mask))||a->exceptions.count(b->rid.get_id())||b->exceptions.count(a->rid.get_id()))continue;
+     !((a->layer&b->mask)||(b->layer&a->mask))||native_joint_collision_disabled(a->rid,b->rid)||a->exceptions.count(b->rid.get_id())||b->exceptions.count(a->rid.get_id()))continue;
   double friction=std::abs(std::min(double(_body_get_param(a->rid,BODY_PARAM_FRICTION)),double(_body_get_param(b->rid,BODY_PARAM_FRICTION))));
   xml<<"<pair geom1=\"g"<<i<<"\" geom2=\"g"<<j<<"\" condim=\"3\" friction=\""<<friction<<' '<<friction<<" 0 0 0\"/>";
  }
@@ -261,7 +275,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  xml<<"<hfield name=\"h"<<b.rid.get_id()<<"\" nrow=\""<<d<<"\" ncol=\""<<w<<"\" size=\""<<(w-1)*.5<<' '<<(d-1)*.5<<' '<<std::max(high-low,1e-6)<<" 1\" elevation=\"";
  for(int k=0;k<h.size();++k)xml<<h[k]<<' ';xml<<"\"/>";
  }
- xml<<"</asset></mujoco>";
+ xml<<"</asset><equality>";for(auto &entry:native_joints)if(native_joint_active(entry.second,s.rid))for(int point=0;point<(entry.second.hinge?2:1);++point)xml<<"<connect name=\"pin_"<<entry.first<<"_"<<point<<"\" site1=\"pin_"<<entry.first<<"_0_"<<point<<"\" site2=\"pin_"<<entry.first<<"_1_"<<point<<"\" solref=\".02 1\"/>";xml<<"</equality></mujoco>";
  char error[2048]={};mjSpec *spec=mj_parseXMLString(xml.str().c_str(),nullptr,error,sizeof(error));
  if(!spec){s.last_error=String::utf8(error);return false;}
  mjs_setDeepCopy(spec,1);
@@ -394,9 +408,10 @@ void MjPhysicsServer3D::_step(float dt){
  // per MuJoCo solver subdivision (which changes its numerical meaning).
  for(auto &be:bodies){auto&b=*be.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID||b.mj_body<1)continue;
   b.integration_step=span;b.callback_pending=true;
+  MjEnvironment environment=body_environment(b);b.integration_environment=environment;b.environment_valid=true;
   if(b.omit_integration)continue;
   int j=s.model->body_jntadr[b.mj_body],v=s.model->jnt_dofadr[j];
-  double ld=b.direct->_get_total_linear_damp(),ad=b.direct->_get_total_angular_damp();
+  double ld=environment.linear_damp,ad=environment.angular_damp;
   Vector3 linear=b.linear_velocity*std::max(0.0,1-ld*span),angular=b.angular_velocity*std::max(0.0,1-ad*span);
   Vector3 lv=godot_to_mj(linear-angular.cross(native_com_offset(s.model,b.mj_body,b.transform)));
   Vector3 av=godot_to_mj(b.transform.basis.transposed().xform(angular));
@@ -406,9 +421,9 @@ void MjPhysicsServer3D::_step(float dt){
  for(auto &be:bodies){auto&b=*be.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID||b.mj_body<1)continue;
  Vector3 force=godot_to_mj(b.force),constant=godot_to_mj(b.constant_force);
  Vector3 torque=godot_to_mj(b.torque),constant_torque=godot_to_mj(b.constant_torque);
- Vector3 direction=godot_to_mj(s.gravity_direction);
+ Vector3 gravity=godot_to_mj(b.integration_environment.gravity);
  for(int k=0;k<3;++k){
-  s.data->xfrc_applied[6*b.mj_body+k]=(b.omit_integration?0:double(force[k])+constant[k])+double(direction[k])*s.gravity*b.mass*((b.omit_integration?0:b.gravity_scale)-1);
+  s.data->xfrc_applied[6*b.mj_body+k]=(b.omit_integration?0:double(force[k])+constant[k])+b.mass*((b.omit_integration?0:double(gravity[k]))-s.model->opt.gravity[k]);
   s.data->xfrc_applied[6*b.mj_body+3+k]=b.omit_integration?0:double(torque[k])+constant_torque[k];
  }
  }
