@@ -186,6 +186,7 @@ add_library(godot_mujoco SHARED
     src/physics/mj_heightfield.cpp
     src/physics/mj_runtime_clock.cpp
     src/physics/mj_physics_server.cpp
+    src/physics/mj_area.cpp
     src/physics/mj_direct_body_state.cpp
     src/physics/mj_direct_space_state.cpp
     src/physics/query_ccd/mpr_witness.c
@@ -238,7 +239,7 @@ endif()
 if(GMJ_BUILD_CORE_SMOKE OR GMJ_MOBILE)
     add_executable(gmj_core_smoke src/mobile_core_smoke.cpp)
     target_link_libraries(gmj_core_smoke PRIVATE "${MUJOCO_LINK_LIB}")
-    target_include_directories(gmj_core_smoke PRIVATE "${MUJOCO_INCLUDE_DIR}")
+    target_include_directories(gmj_core_smoke PRIVATE "${MUJOCO_INCLUDE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/src/physics/query_ccd")
     set_target_properties(gmj_core_smoke PROPERTIES
         CXX_STANDARD 17
         CXX_EXTENSIONS OFF)

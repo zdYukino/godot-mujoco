@@ -1,0 +1,308 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS box plane four manifold points
+MONITOR_DIAGNOSTIC {"entered":2,"exited":1,"has_floor":true}
+PASS contact_monitor body_entered and list
+PASS collider identity
+PASS shape indices
+PASS normal faces current body
+PASS world space position
+PASS shared midpoint
+PASS point velocities
+PASS collider identity
+PASS shape indices
+PASS normal faces current body
+PASS world space position
+PASS shared midpoint
+PASS point velocities
+PASS collider identity
+PASS shape indices
+PASS normal faces current body
+PASS world space position
+PASS shared midpoint
+PASS point velocities
+PASS collider identity
+PASS shape indices
+PASS normal faces current body
+PASS world space position
+PASS shared midpoint
+PASS point velocities
+PASS last substep impulse N s
+PASS capacity lowering truncates immediately before next tick
+PASS out of range position normal impulse zero
+PASS out of range velocities zero
+PASS out of range identity empty and shape minus one
+PASS out of range position normal impulse zero
+PASS out of range velocities zero
+PASS out of range identity empty and shape minus one
+PASS out of range position normal impulse zero
+PASS out of range velocities zero
+PASS out of range identity empty and shape minus one
+PASS capacity truncation
+MONITOR_ZERO_DIAGNOSTIC {"contacts":0,"empty":true,"entered":2,"exited":2}
+PASS zero disables and monitor exits
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS exception filters report
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS bilateral masks filter report
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS multiple native shapes
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS deleted collider cleared
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS cross World clears contacts
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS rigid pair identities
+PASS equal opposite dynamic impulses
+PASS dynamic collision observed
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS contact visible in sync callback
+PASS peer deferred free invalidates report immediately
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS body deletion inside sync callback
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS velocity probe real floor identity
+PASS velocity probe has nonzero rotated center of mass
+VELOCITY_DIAGNOSTIC {"com":"(0.360492, -0.0, -0.006729)","expected":"(0.021628, 0.188467, 0.049734)","observed":"(0.021702, 0.185816, 0.049512)","origin":"(20.00504, 0.492372, 0.00407)","position":"(20.4912, -0.003988, -0.698593)","v":"(0.299999, 0.188469, 0.100001)","w":"(-0.000002, 0.399995, -0.000001)"}
+PASS rotated offset COM tangential point velocity
+VELOCITY_DIAGNOSTIC {"com":"(0.360492, -0.0, -0.006729)","expected":"(0.249435, 0.188469, 0.37852)","observed":"(0.249509, 0.185818, 0.378298)","origin":"(20.00504, 0.492372, 0.00407)","position":"(19.66923, -0.003988, -0.12907)","v":"(0.299999, 0.188469, 0.100001)","w":"(-0.000002, 0.399995, -0.000001)"}
+PASS rotated offset COM tangential point velocity
+VELOCITY_DIAGNOSTIC {"com":"(0.360492, -0.0, -0.006729)","expected":"(0.578221, 0.188471, 0.150714)","observed":"(0.578295, 0.18582, 0.150491)","origin":"(20.00504, 0.492372, 0.00407)","position":"(20.23875, -0.003988, 0.692905)","v":"(0.299999, 0.188469, 0.100001)","w":"(-0.000002, 0.399995, -0.000001)"}
+PASS rotated offset COM tangential point velocity
+VELOCITY_DIAGNOSTIC {"com":"(0.360492, -0.0, -0.006729)","expected":"(0.350415, 0.188469, -0.178073)","observed":"(0.350489, 0.185818, -0.178295)","origin":"(20.00504, 0.492372, 0.00407)","position":"(21.06072, -0.003988, 0.123382)","v":"(0.299999, 0.188469, 0.100001)","w":"(-0.000002, 0.399995, -0.000001)"}
+PASS rotated offset COM tangential point velocity
+PASS rotated offset contact observed
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS shape deletion probe has real native collider identity
+PASS deferred shape free immediately invalidates peer snapshot
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS shape deletion inside sync callback executed
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS pause for imported geometry
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS imported obstacle exists
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS imported geometry reports physical contact
+PASS imported geometry never impersonates native Body
+PASS imported geometry never impersonates native Body
+PASS imported geometry never impersonates native Body
+PASS imported geometry never impersonates native Body
+PASS monitor excludes unidentified imported collider
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+CONTACT_RESULT {"failed":0,"passed":68}

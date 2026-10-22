@@ -1,0 +1,113 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+MuJoCo: compile time (ms)
+  total:          0.3   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.3   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS no mutation partially visible during callback: remove_disable
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS one enter/exit, no compressed enabled shape reenter: remove_disable
+PASS ordered final count: remove_disable
+PASS no mutation partially visible during callback: remove_set_transform_disable
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS one enter/exit, no compressed enabled shape reenter: remove_set_transform_disable
+PASS ordered final count: remove_set_transform_disable
+PASS ordered final transform including nested exit callback: remove_set_transform_disable
+PASS ordered final shape RID: remove_set_transform_disable
+PASS no mutation partially visible during callback: clear_add_set_transform_disable
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS one enter/exit, no compressed enabled shape reenter: clear_add_set_transform_disable
+PASS ordered final count: clear_add_set_transform_disable
+PASS ordered final transform including nested exit callback: clear_add_set_transform_disable
+PASS ordered final shape RID: clear_add_set_transform_disable
+PASS no mutation partially visible during callback: add_set_transform_disable
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS one enter/exit, no compressed enabled shape reenter: add_set_transform_disable
+PASS ordered final count: add_set_transform_disable
+PASS ordered final transform including nested exit callback: add_set_transform_disable
+PASS ordered final shape RID: add_set_transform_disable
+PASS no mutation partially visible during callback: nested_exit_queue
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS one enter/exit, no compressed enabled shape reenter: nested_exit_queue
+PASS ordered final count: nested_exit_queue
+PASS ordered final transform including nested exit callback: nested_exit_queue
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+AREA_BODY_SHAPE_ORDER_RESULT {"failed":0,"passed":22}

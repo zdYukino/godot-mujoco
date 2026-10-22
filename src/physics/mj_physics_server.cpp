@@ -21,7 +21,7 @@ MjSpace *MjPhysicsServer3D::space(const RID &r) const { auto i=spaces.find(r.get
 MjShape *MjPhysicsServer3D::shape(const RID &r) const { auto i=shapes.find(r.get_id()); return i==shapes.end()?nullptr:i->second.get(); }
 void MjPhysicsServer3D::dirty(const RID &r) { if(auto *s=space(r)) s->dirty=true; for(auto &entry:bodies)if(entry.second->space==r)entry.second->contacts.clear(); }
 MjPhysicsServer3D::~MjPhysicsServer3D() { _finish(); }
-void MjPhysicsServer3D::_finish() { while(!bodies.empty()) _free_rid(bodies.begin()->second->rid); while(!spaces.empty()) _free_rid(spaces.begin()->second->rid); while(!shapes.empty()) _free_rid(shapes.begin()->second->rid); }
+void MjPhysicsServer3D::_finish() { area_commands.clear();area_scratch.reset(); while(!areas.empty()) _free_rid(areas.begin()->second->rid); while(!bodies.empty()) _free_rid(bodies.begin()->second->rid); while(!spaces.empty()) _free_rid(spaces.begin()->second->rid); while(!shapes.empty()) _free_rid(shapes.begin()->second->rid); }
 RID MjPhysicsServer3D::make_shape(ShapeType type,const Variant &data) { RID r=handles.make_rid(0); auto s=std::make_unique<MjShape>(); s->rid=r;s->type=type;s->data=data; shapes.emplace(r.get_id(),std::move(s)); return r; }
 RID MjPhysicsServer3D::_box_shape_create() { return make_shape(SHAPE_BOX,Vector3(0.5,0.5,0.5)); }
 RID MjPhysicsServer3D::_sphere_shape_create() { return make_shape(SHAPE_SPHERE,0.5); }
@@ -55,7 +55,12 @@ PackedVector3Array MjPhysicsServer3D::_space_get_contacts(const RID&) const{retu
 int32_t MjPhysicsServer3D::_space_get_contact_count(const RID&) const{return 0;}
 // Godot addresses the world's default environment using its space RID, not an Area RID.
 void MjPhysicsServer3D::_area_set_param(const RID&r,AreaParameter p,const Variant&v) {
- auto*s=space(r); if(!s){mj_unsupported("Area3D parameters");return;}
+ if(auto*a=area(r)){
+  if((p==AREA_PARAM_GRAVITY_OVERRIDE_MODE||p==AREA_PARAM_LINEAR_DAMP_OVERRIDE_MODE||p==AREA_PARAM_ANGULAR_DAMP_OVERRIDE_MODE)&&int(v)!=AREA_SPACE_OVERRIDE_DISABLED){mj_unsupported("Area3D environment overrides; monitoring only");return;}
+  if(flushing){area_commands.push_back([this,r,p,v]{_area_set_param(r,p,v);});return;}
+  a->params[p]=v;return;
+ }
+ auto*s=space(r); if(!s){return;}
  if(s->authored_options&&(p==AREA_PARAM_GRAVITY||p==AREA_PARAM_GRAVITY_VECTOR)){s->last_error="Runtime world model owns gravity; Godot default-area override rejected";return;}
  if(p==AREA_PARAM_GRAVITY_VECTOR){ERR_FAIL_COND(v.get_type()!=Variant::VECTOR3||!Vector3(v).is_finite());}
  else if(p==AREA_PARAM_GRAVITY||p==AREA_PARAM_LINEAR_DAMP||p==AREA_PARAM_ANGULAR_DAMP){
@@ -77,23 +82,27 @@ void MjPhysicsServer3D::_area_set_param(const RID&r,AreaParameter p,const Varian
  s->params[p]=v;
  switch(p){case AREA_PARAM_GRAVITY:s->gravity=double(v);break;case AREA_PARAM_GRAVITY_VECTOR:s->gravity_direction=v;break;case AREA_PARAM_LINEAR_DAMP:s->linear_damp=double(v);break;case AREA_PARAM_ANGULAR_DAMP:s->angular_damp=double(v);break;default:break;} dirty(r);
 }
-Variant MjPhysicsServer3D::_area_get_param(const RID&r,AreaParameter p) const {auto*s=space(r);if(!s)return {};auto i=s->params.find(p);return i==s->params.end()?Variant():i->second;}
+Variant MjPhysicsServer3D::_area_get_param(const RID&r,AreaParameter p) const {if(auto*a=area(r)){auto i=a->params.find(p);return i==a->params.end()?Variant():i->second;}auto*s=space(r);if(!s)return {};auto i=s->params.find(p);return i==s->params.end()?Variant():i->second;}
 RID MjPhysicsServer3D::_body_create(){RID r=handles.make_rid(0);auto b=std::make_unique<MjBody>();b->rid=r;b->direct=memnew(MjDirectBodyState);b->direct->server=this;b->direct->rid=r;bodies.emplace(r.get_id(),std::move(b));return r;}
-void MjPhysicsServer3D::_body_set_space(const RID&r,const RID&s){auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_COND(s.is_valid()&&!space(s));if(auto*target=space(s)){ERR_FAIL_COND(!(target->gravity_direction*(target->gravity*b->gravity_scale)).is_finite());
+void MjPhysicsServer3D::_body_set_space(const RID&r,const RID&s){if(flushing){area_commands.push_back([this,r,s]{_body_set_space(r,s);});return;}auto*b=body(r);if(!b)return;if(b->space==s)return;ERR_FAIL_COND(s.is_valid()&&!space(s));if(auto*target=space(s)){ERR_FAIL_COND(!(target->gravity_direction*(target->gravity*b->gravity_scale)).is_finite());
  for(bool angular:{false,true}){auto mode=angular?BODY_PARAM_ANGULAR_DAMP_MODE:BODY_PARAM_LINEAR_DAMP_MODE;auto damp=angular?BODY_PARAM_ANGULAR_DAMP:BODY_PARAM_LINEAR_DAMP;
- ERR_FAIL_COND(int(_body_get_param(r,mode))==0&&!std::isfinite(float(double(_body_get_param(r,damp))+(angular?target->angular_damp:target->linear_damp))));}}dirty(b->space);b->space=s;b->mj_body=-1;b->callback_pending=false;b->sync_pending=false;dirty(s);}
+ ERR_FAIL_COND(int(_body_get_param(r,mode))==0&&!std::isfinite(float(double(_body_get_param(r,damp))+(angular?target->angular_damp:target->linear_damp))));}}dirty(b->space);b->space=s;b->mj_body=-1;b->callback_pending=false;b->sync_pending=false;dirty(s);retire_area_pairs(r);}
 RID MjPhysicsServer3D::_body_get_space(const RID&r) const {auto*b=body(r);return b?b->space:RID();}
 void MjPhysicsServer3D::_body_set_mode(const RID&r,BodyMode m){auto*b=body(r);ERR_FAIL_NULL(b);if(m!=BODY_MODE_STATIC&&m!=BODY_MODE_RIGID){mj_unsupported("kinematic/rigid-linear body modes");return;}b->mode=m;dirty(b->space);}
 PhysicsServer3D::BodyMode MjPhysicsServer3D::_body_get_mode(const RID&r) const {auto*b=body(r);return b?b->mode:BODY_MODE_STATIC;}
-void MjPhysicsServer3D::_body_add_shape(const RID&r,const RID&s,const Transform3D&t,bool d){auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_NULL(shape(s));if(!valid_rigid_transform(t))return;b->shapes.push_back({s,t,d});dirty(b->space);}
-void MjPhysicsServer3D::_body_set_shape(const RID&r,int32_t i,const RID&s){auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());ERR_FAIL_NULL(shape(s));b->shapes[i].shape=s;dirty(b->space);}
-void MjPhysicsServer3D::_body_set_shape_transform(const RID&r,int32_t i,const Transform3D&t){auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());if(!valid_rigid_transform(t))return;b->shapes[i].transform=t;dirty(b->space);}
-void MjPhysicsServer3D::_body_set_shape_disabled(const RID&r,int32_t i,bool d){auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());b->shapes[i].disabled=d;dirty(b->space);}
+// All shape-list mutations share one FIFO during callbacks. Validate indices
+// when dequeued, against the result of preceding add/remove/clear operations.
+#define DEFER_BODY_SHAPE(call) if(flushing){area_commands.push_back([=]{call;});return;}
+void MjPhysicsServer3D::_body_add_shape(const RID&r,const RID&s,const Transform3D&t,bool d){DEFER_BODY_SHAPE(_body_add_shape(r,s,t,d));auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_NULL(shape(s));if(!valid_rigid_transform(t))return;b->shapes.push_back({s,t,d});dirty(b->space);}
+void MjPhysicsServer3D::_body_set_shape(const RID&r,int32_t i,const RID&s){DEFER_BODY_SHAPE(_body_set_shape(r,i,s));auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());ERR_FAIL_NULL(shape(s));b->shapes[i].shape=s;dirty(b->space);}
+void MjPhysicsServer3D::_body_set_shape_transform(const RID&r,int32_t i,const Transform3D&t){DEFER_BODY_SHAPE(_body_set_shape_transform(r,i,t));auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());if(!valid_rigid_transform(t))return;b->shapes[i].transform=t;dirty(b->space);}
+void MjPhysicsServer3D::_body_set_shape_disabled(const RID&r,int32_t i,bool d){DEFER_BODY_SHAPE(_body_set_shape_disabled(r,i,d));auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());b->shapes[i].disabled=d;dirty(b->space);}
 int32_t MjPhysicsServer3D::_body_get_shape_count(const RID&r) const {auto*b=body(r);return b?b->shapes.size():0;}
 RID MjPhysicsServer3D::_body_get_shape(const RID&r,int32_t i) const {auto*b=body(r);ERR_FAIL_NULL_V(b,RID());ERR_FAIL_INDEX_V(i,b->shapes.size(),RID());return b->shapes[i].shape;}
 Transform3D MjPhysicsServer3D::_body_get_shape_transform(const RID&r,int32_t i) const {auto*b=body(r);ERR_FAIL_NULL_V(b,Transform3D());ERR_FAIL_INDEX_V(i,b->shapes.size(),Transform3D());return b->shapes[i].transform;}
-void MjPhysicsServer3D::_body_remove_shape(const RID&r,int32_t i){auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());b->shapes.erase(b->shapes.begin()+i);dirty(b->space);}
-void MjPhysicsServer3D::_body_clear_shapes(const RID&r){auto*b=body(r);ERR_FAIL_NULL(b);b->shapes.clear();dirty(b->space);}
+void MjPhysicsServer3D::_body_remove_shape(const RID&r,int32_t i){DEFER_BODY_SHAPE(_body_remove_shape(r,i));auto*b=body(r);if(!b)return;ERR_FAIL_INDEX(i,b->shapes.size());b->shapes.erase(b->shapes.begin()+i);dirty(b->space);retire_area_pairs(r,i);}
+void MjPhysicsServer3D::_body_clear_shapes(const RID&r){DEFER_BODY_SHAPE(_body_clear_shapes(r));auto*b=body(r);if(!b)return;b->shapes.clear();dirty(b->space);retire_area_pairs(r);}
+#undef DEFER_BODY_SHAPE
 void MjPhysicsServer3D::_body_attach_object_instance_id(const RID&r,uint64_t id){if(auto*b=body(r))b->object_id=id;}
 uint64_t MjPhysicsServer3D::_body_get_object_instance_id(const RID&r) const {auto*b=body(r);return b?b->object_id:0;}
 void MjPhysicsServer3D::_body_set_collision_layer(const RID&r,uint32_t v){if(auto*b=body(r)){b->layer=v;dirty(b->space);}}
@@ -166,9 +175,25 @@ void MjPhysicsServer3D::_free_rid(const RID&source_rid){
   else b.contacts.erase(std::remove_if(b.contacts.begin(),b.contacts.end(),[&](const MjContact &c){return c.collider==r||affected.count(c.collider.get_id());}),b.contacts.end());
  }
  if(flushing){pending_free.insert(r.get_id());return;}
+ if(auto*a=area(r)){a->body_callback=Callable();a->area_callback=Callable();}
+ retire_area_pairs(r);
  if(auto*b=body(r)){RID terrain_shape=b->heightfield&&!b->shapes.empty()?b->shapes[0].shape:RID();dirty(b->space);if(b->direct)memdelete(b->direct);bodies.erase(r.get_id());heightfield_revisions.erase(r.get_id());if(terrain_shape.is_valid())_free_rid(terrain_shape);}
- else if(space(r)){for(auto &i:space(r)->imported)handles.free(i.second->rid);for(auto &b:bodies)if(b.second->space==r){b.second->space=RID();b.second->mj_body=-1;}spaces.erase(r.get_id());}
- else if(shape(r)){for(auto &b:bodies){auto &s=b.second->shapes;auto n=s.size();s.erase(std::remove_if(s.begin(),s.end(),[&](auto&i){return i.shape==r;}),s.end());if(s.size()!=n)dirty(b.second->space);}shapes.erase(r.get_id());}
+ else if(area(r)){areas.erase(r.get_id());}
+ else if(space(r)){for(auto &a:areas)if(a.second->space==r)a.second->space=RID();for(auto &i:space(r)->imported)handles.free(i.second->rid);for(auto &b:bodies)if(b.second->space==r){b.second->space=RID();b.second->mj_body=-1;}spaces.erase(r.get_id());}
+ else if(shape(r)){
+  std::vector<std::pair<RID,int>> affected;
+  for(auto &entry:areas){auto &a=*entry.second;auto &instances=a.shapes;
+   auto first=std::find_if(instances.begin(),instances.end(),[&](const MjShapeInstance&i){return i.shape==r;});
+   if(first!=instances.end())affected.push_back({a.rid,int(first-instances.begin())});
+   instances.erase(std::remove_if(instances.begin(),instances.end(),[&](const MjShapeInstance&i){return i.shape==r;}),instances.end());
+  }
+  for(auto &entry:bodies){auto &b=*entry.second;auto &instances=b.shapes;
+   auto first=std::find_if(instances.begin(),instances.end(),[&](const MjShapeInstance&i){return i.shape==r;});
+   if(first!=instances.end()){affected.push_back({b.rid,int(first-instances.begin())});dirty(b.space);}
+   instances.erase(std::remove_if(instances.begin(),instances.end(),[&](const MjShapeInstance&i){return i.shape==r;}),instances.end());
+  }
+  shapes.erase(r.get_id());for(const auto &entry:affected)retire_area_pairs(entry.first,entry.second);
+ }
  else return;
  handles.free(r);
 }
@@ -392,6 +417,6 @@ void MjPhysicsServer3D::_step(float dt){
  for(auto &be:bodies){auto&b=*be.second;if(b.space==s.rid){read_body(b);b.force=Vector3();b.torque=Vector3();}}
  }
 }
-void MjPhysicsServer3D::_flush_queries(){flushing=true;std::vector<RID> snapshot;for(auto&b:bodies)snapshot.push_back(b.second->rid);for(auto r:snapshot){auto*b=body(r);if(!b||pending_free.count(r.get_id())||!space(b->space)||!space(b->space)->active||(!b->callback_pending&&!b->sync_pending))continue;bool integrated=b->callback_pending;bool sync=b->sync_pending;b->callback_pending=b->sync_pending=false;if(integrated&&b->integration_callback.is_valid()){Callable c=b->integration_callback;Variant u=b->integration_userdata;auto*d=b->direct;if(u.get_type()==Variant::NIL)c.call(d);else c.call(d,u);}b=body(r);if(sync&&b&&!pending_free.count(r.get_id())&&b->sync_callback.is_valid()){Callable c=b->sync_callback;c.call(b->direct);}}flushing=false; auto pending=std::move(pending_free);pending_free.clear();for(auto id:pending){auto b=bodies.find(id);if(b!=bodies.end())_free_rid(b->second->rid);else {auto s=spaces.find(id);if(s!=spaces.end())_free_rid(s->second->rid);else {auto sh=shapes.find(id);if(sh!=shapes.end())_free_rid(sh->second->rid);else {for(auto &entry:spaces){auto imported=entry.second->imported.find(id);if(imported!=entry.second->imported.end()){RID rid=imported->second->rid;_free_rid(rid);break;}}}}}}}
+void MjPhysicsServer3D::_flush_queries(){flushing=true;flush_area_queries();std::vector<RID> snapshot;for(auto&b:bodies)snapshot.push_back(b.second->rid);for(auto r:snapshot){auto*b=body(r);if(!b||pending_free.count(r.get_id())||!space(b->space)||!space(b->space)->active||(!b->callback_pending&&!b->sync_pending))continue;bool integrated=b->callback_pending;bool sync=b->sync_pending;b->callback_pending=b->sync_pending=false;if(integrated&&b->integration_callback.is_valid()){Callable c=b->integration_callback;Variant u=b->integration_userdata;auto*d=b->direct;if(u.get_type()==Variant::NIL)c.call(d);else c.call(d,u);}b=body(r);if(sync&&b&&!pending_free.count(r.get_id())&&b->sync_callback.is_valid()){Callable c=b->sync_callback;c.call(b->direct);}}flushing=false;drain_area_commands(); auto pending=std::move(pending_free);pending_free.clear();for(auto id:pending){auto a=areas.find(id);if(a!=areas.end()){_free_rid(a->second->rid);continue;}auto b=bodies.find(id);if(b!=bodies.end())_free_rid(b->second->rid);else {auto s=spaces.find(id);if(s!=spaces.end())_free_rid(s->second->rid);else {auto sh=shapes.find(id);if(sh!=shapes.end())_free_rid(sh->second->rid);else {for(auto &entry:spaces){auto imported=entry.second->imported.find(id);if(imported!=entry.second->imported.end()){RID rid=imported->second->rid;_free_rid(rid);break;}}}}}}}
 int32_t MjPhysicsServer3D::_get_process_info(ProcessInfo p){if(p==INFO_ACTIVE_OBJECTS)return bodies.size();if(p==INFO_ISLAND_COUNT)return spaces.size();if(p==INFO_COLLISION_PAIRS){int count=0;for(auto&s:spaces)if(s.second->data)count+=s.second->data->ncon;return count;}return 0;}
 }
