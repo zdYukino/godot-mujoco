@@ -92,7 +92,7 @@ void MjPhysicsServer3D::_body_set_space(const RID&r,const RID&s){if(flushing){ar
  for(bool angular:{false,true}){auto mode=angular?BODY_PARAM_ANGULAR_DAMP_MODE:BODY_PARAM_LINEAR_DAMP_MODE;auto damp=angular?BODY_PARAM_ANGULAR_DAMP:BODY_PARAM_LINEAR_DAMP;
  ERR_FAIL_COND(int(_body_get_param(r,mode))==0&&!std::isfinite(float(double(_body_get_param(r,damp))+(angular?target->angular_damp:target->linear_damp))));}}detach_native_joints(r);dirty(b->space);b->space=s;b->mj_body=-1;b->callback_pending=false;b->sync_pending=false;b->environment_valid=false;dirty(s);retire_area_pairs(r);}
 RID MjPhysicsServer3D::_body_get_space(const RID&r) const {auto*b=body(r);return b?b->space:RID();}
-void MjPhysicsServer3D::_body_set_mode(const RID&r,BodyMode m){if(flushing){area_commands.push_back([this,r,m]{_body_set_mode(r,m);});return;}auto*b=body(r);ERR_FAIL_NULL(b);if(m!=BODY_MODE_STATIC&&m!=BODY_MODE_RIGID){mj_unsupported("kinematic/rigid-linear body modes");return;}if(b->mode!=m)detach_native_joints(r);b->mode=m;dirty(b->space);}
+void MjPhysicsServer3D::_body_set_mode(const RID&r,BodyMode m){if(flushing){area_commands.push_back([this,r,m]{_body_set_mode(r,m);});return;}auto*b=body(r);ERR_FAIL_NULL(b);if(m!=BODY_MODE_STATIC&&m!=BODY_MODE_RIGID&&m!=BODY_MODE_KINEMATIC){mj_unsupported("rigid-linear body mode");return;}if(b->mode!=m)detach_native_joints(r);b->mode=m;dirty(b->space);}
 PhysicsServer3D::BodyMode MjPhysicsServer3D::_body_get_mode(const RID&r) const {auto*b=body(r);return b?b->mode:BODY_MODE_STATIC;}
 // All shape-list mutations share one FIFO during callbacks. Validate indices
 // when dequeued, against the result of preceding add/remove/clear operations.
@@ -227,10 +227,10 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  double low=heights[0];for(int k=1;k<heights.size();++k)low=std::min(low,double(heights[k]));
  Transform3D t=b.transform;t.origin+=t.basis.xform(Vector3(0,low,0));
  xml<<"<geom name=\"g"<<owners.size()<<"\" type=\"hfield\" hfield=\"h"<<b.rid.get_id()<<"\"";pose_xml(xml,t);
- xml<<" contype=\""<<int32_t(b.layer)<<"\" conaffinity=\""<<int32_t(b.mask)<<"\" friction=\"1 .005 .0001\"/>";
+ xml<<" contype=\""<<int32_t(b.mode==BODY_MODE_KINEMATIC?0:b.layer)<<"\" conaffinity=\""<<int32_t(b.mode==BODY_MODE_KINEMATIC?0:b.mask)<<"\" friction=\"1 .005 .0001\"/>";
  owners.push_back({b.rid,0});continue;
  }
- xml<<"<body name=\"b"<<b.rid.get_id()<<"\"";pose_xml(xml,b.transform);xml<<">";
+ xml<<"<body name=\"b"<<b.rid.get_id()<<"\"";pose_xml(xml,b.transform);if(b.mode==BODY_MODE_KINEMATIC)xml<<" mocap=\"true\"";xml<<">";
  if(b.mode==BODY_MODE_RIGID)xml<<"<freejoint name=\"native_joint_"<<b.rid.get_id()<<"\"/>";
  int count=0;double volume=0;for(auto&i:b.shapes)if(!i.disabled&&shape(i.shape)&&shape(i.shape)->type!=SHAPE_WORLD_BOUNDARY){++count;volume+=shape_volume(*shape(i.shape));}
  if(count&&(!std::isfinite(volume)||volume<=0)){s.last_error="Native shape volume is not finite and positive";return false;}
@@ -249,7 +249,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  else {Plane p=sh->data;Vector3 n=p.normal.normalized(); t.origin+=t.basis.xform(n*(p.d/p.normal.length())); t.basis=t.basis.orthonormalized()*Basis(Quaternion(Vector3(0,1,0),n)); xml<<"plane\" size=\"0 0 0.1";}
  xml<<"\"";pose_xml(xml,t);
  // A Godot +Y plane normal maps to the MuJoCo primitive's native +Z.
- xml<<" contype=\""<<int32_t(b.layer)<<"\" conaffinity=\""<<int32_t(b.mask)<<"\" friction=\""<<std::abs(double(_body_get_param(b.rid,BODY_PARAM_FRICTION)))<<" 0.005 0.0001\"";
+ xml<<" contype=\""<<int32_t(b.mode==BODY_MODE_KINEMATIC?0:b.layer)<<"\" conaffinity=\""<<int32_t(b.mode==BODY_MODE_KINEMATIC?0:b.mask)<<"\" friction=\""<<std::abs(double(_body_get_param(b.rid,BODY_PARAM_FRICTION)))<<" 0.005 0.0001\"";
  if(b.mode==BODY_MODE_RIGID)xml<<" mass=\""<<b.mass*(shape_volume(*sh)/volume)<<"\"";
  xml<<"/>";owners.push_back({b.rid,j});}
  for(auto &entry:native_joints){auto &joint=entry.second;if(!native_joint_active(joint,s.rid))continue;for(int side=0;side<2;++side)if((side?joint.b:joint.a)==b.rid)for(int point=0;point<(joint.hinge?2:1);++point){xml<<"<site name=\"pin_"<<entry.first<<"_"<<side<<"_"<<point<<"\" pos=\"";Vector3 local=(side?joint.anchor_b:joint.anchor_a)+(side?joint.axis_b:joint.axis_a)*point;vector_xml(xml,godot_to_mj(local));xml<<"\" size=\".001\"/>";}}
@@ -263,7 +263,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  // Imported MJCF contacts keep their authored MuJoCo combination semantics.
  for(size_t i=0;i<owners.size();++i)for(size_t j=i+1;j<owners.size();++j){
   auto*a=body(owners[i].first);auto*b=body(owners[j].first);
-  if(a==b||(a->mode==BODY_MODE_STATIC&&b->mode==BODY_MODE_STATIC)||
+  if(a==b||a->mode==BODY_MODE_KINEMATIC||b->mode==BODY_MODE_KINEMATIC||(a->mode==BODY_MODE_STATIC&&b->mode==BODY_MODE_STATIC)||
      !((a->layer&b->mask)||(b->layer&a->mask))||native_joint_collision_disabled(a->rid,b->rid)||a->exceptions.count(b->rid.get_id())||b->exceptions.count(a->rid.get_id()))continue;
   double friction=std::abs(std::min(double(_body_get_param(a->rid,BODY_PARAM_FRICTION)),double(_body_get_param(b->rid,BODY_PARAM_FRICTION))));
   xml<<"<pair geom1=\"g"<<i<<"\" geom2=\"g"<<j<<"\" condim=\"3\" friction=\""<<friction<<' '<<friction<<" 0 0 0\"/>";
@@ -328,8 +328,15 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  // Complete the transaction on isolated combined data, including all live-state
  // migration and native body pose writes that commit will perform.
  if(validate_dynamics){
-  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID)continue;
+  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid||(b.mode!=BODY_MODE_RIGID&&b.mode!=BODY_MODE_KINEMATIC))continue;
    int body_id=mj_name2id(model,mjOBJ_BODY,("b"+std::to_string(b.rid.get_id())).c_str());if(body_id<1)continue;
+   if(b.mode==BODY_MODE_KINEMATIC) {
+    int id=model->body_mocapid[body_id];if(id<0)continue;
+    Vector3 p=godot_to_mj(b.transform.origin);Quaternion q=godot_to_mj(b.transform.basis).get_rotation_quaternion().normalized();
+    for(int k=0;k<3;++k)data->mocap_pos[3*id+k]=p[k];
+    mjtNum*quat=data->mocap_quat+4*id;quat[0]=q.w;quat[1]=q.x;quat[2]=q.y;quat[3]=q.z;
+    continue;
+   }
    int joint=model->body_jntadr[body_id];if(joint<0)continue;int q=model->jnt_qposadr[joint],v=model->jnt_dofadr[joint];
    Vector3 pos=godot_to_mj(b.transform.origin);Quaternion quat=godot_to_mj(b.transform.basis).get_rotation_quaternion().normalized();
    for(int k=0;k<3;++k)data->qpos[q+k]=pos[k];data->qpos[q+3]=quat.w;data->qpos[q+4]=quat.x;data->qpos[q+5]=quat.y;data->qpos[q+6]=quat.z;
@@ -347,7 +354,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  mj_forward(model,data);
  if(validate_dynamics){
   auto valid=[](const mjtNum*values,int count,bool bounded){for(int i=0;i<count;++i)if(!std::isfinite(values[i])||(bounded&&mju_isBad(values[i])))return false;return true;};
-  if(!valid(data->qpos,model->nq,true)||!valid(data->qvel,model->nv,true)||!valid(data->qacc,model->nv,true)||!valid(data->qacc_smooth,model->nv,true)||
+  if(!valid(data->mocap_pos,3*model->nmocap,true)||!valid(data->mocap_quat,4*model->nmocap,true)||!valid(data->qpos,model->nq,true)||!valid(data->qvel,model->nv,true)||!valid(data->qacc,model->nv,true)||!valid(data->qacc_smooth,model->nv,true)||
      !valid(data->ctrl,model->nu,false)||!valid(data->act,model->na,false)||!valid(data->act_dot,model->na,false)||!valid(data->actuator_force,model->nu,false)||
      !valid(data->qfrc_actuator,model->nv,false)||!valid(data->qfrc_constraint,model->nv,false)||!valid(data->qfrc_bias,model->nv,false))
    return reject_candidate("Unsafe migrated candidate dynamics; preset not committed");
@@ -364,7 +371,18 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  // Validated transactions commit exactly the data already checked above.
  if(!validate_dynamics)mj_forward(model,data);remember_initial_state(s);return true;
 }
-void MjPhysicsServer3D::write_body(MjBody&b){auto*s=space(b.space);if(!s||s->dirty||!s->model||b.mj_body<1||b.mode!=BODY_MODE_RIGID)return;int j=s->model->body_jntadr[b.mj_body];if(j<0)return;int q=s->model->jnt_qposadr[j],v=s->model->jnt_dofadr[j];Vector3 p=godot_to_mj(b.transform.origin);Quaternion quat=godot_to_mj(b.transform.basis.orthonormalized()).get_rotation_quaternion().normalized();for(int k=0;k<3;++k)s->data->qpos[q+k]=p[k];s->data->qpos[q+3]=quat.w;s->data->qpos[q+4]=quat.x;s->data->qpos[q+5]=quat.y;s->data->qpos[q+6]=quat.z;Vector3 lv=godot_to_mj(b.linear_velocity-b.angular_velocity.cross(native_com_offset(s->model,b.mj_body,b.transform))),av=godot_to_mj(b.transform.basis.orthonormalized().transposed().xform(b.angular_velocity));for(int k=0;k<3;++k){s->data->qvel[v+k]=lv[k];s->data->qvel[v+3+k]=av[k];}mj_forward(s->model,s->data);}
+void MjPhysicsServer3D::write_body(MjBody&b){
+ if(b.mode==BODY_MODE_KINEMATIC) {
+  auto*s=space(b.space);if(!s||s->dirty||!s->model||b.mj_body<1)return;
+  int id=s->model->body_mocapid[b.mj_body];if(id<0)return;
+  Vector3 p=godot_to_mj(b.transform.origin);Quaternion q=godot_to_mj(b.transform.basis).get_rotation_quaternion().normalized();
+  for(int k=0;k<3;++k)s->data->mocap_pos[3*id+k]=p[k];
+  mjtNum*quat=s->data->mocap_quat+4*id;quat[0]=q.w;quat[1]=q.x;quat[2]=q.y;quat[3]=q.z;
+  // Kinematic bodies are query obstacles only in this stage: no solver impulse
+  // or inferred surface velocity is injected into dynamic bodies.
+  mj_forward(s->model,s->data);return;
+ }
+auto*s=space(b.space);if(!s||s->dirty||!s->model||b.mj_body<1||b.mode!=BODY_MODE_RIGID)return;int j=s->model->body_jntadr[b.mj_body];if(j<0)return;int q=s->model->jnt_qposadr[j],v=s->model->jnt_dofadr[j];Vector3 p=godot_to_mj(b.transform.origin);Quaternion quat=godot_to_mj(b.transform.basis.orthonormalized()).get_rotation_quaternion().normalized();for(int k=0;k<3;++k)s->data->qpos[q+k]=p[k];s->data->qpos[q+3]=quat.w;s->data->qpos[q+4]=quat.x;s->data->qpos[q+5]=quat.y;s->data->qpos[q+6]=quat.z;Vector3 lv=godot_to_mj(b.linear_velocity-b.angular_velocity.cross(native_com_offset(s->model,b.mj_body,b.transform))),av=godot_to_mj(b.transform.basis.orthonormalized().transposed().xform(b.angular_velocity));for(int k=0;k<3;++k){s->data->qvel[v+k]=lv[k];s->data->qvel[v+3+k]=av[k];}mj_forward(s->model,s->data);}
 void MjPhysicsServer3D::read_body(MjBody &b) {
  auto *s=space(b.space);
  if(!s||!s->model||b.mj_body<1||b.mode!=BODY_MODE_RIGID)return;

@@ -1,0 +1,117 @@
+{
+  "checks": [
+    {
+      "detail": "",
+      "name": "native backend identity",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "pause isolated world",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "configure lightweight exact-step world",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.01, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "{ \"actual\": (2.01, 0.0, 0.0), \"expected\": (2.01, 0.0, 0.0) }",
+      "name": "Capsule Area applies real replacement gravity plus damping to Capsule body",
+      "passed": true
+    },
+    {
+      "detail": "{ \"actual\": (0.0, 3.87, 0.0), \"expected\": (0.0, 3.87, 0.0) }",
+      "name": "Capsule Area applies angular damping to Capsule body",
+      "passed": true
+    },
+    {
+      "detail": "{ \"actual\": (6.0, 0.0, 0.0), \"expected\": (6.0, 0.0, 0.0) }",
+      "name": "Capsule overlap samples Area gravity",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "Capsule body accepts passive Hinge",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.21, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "Hinge anchor resists transverse Area acceleration",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "Area force drives actual constrained Capsule swing",
+      "passed": true
+    },
+    {
+      "detail": "{ \"actual\": (6.0, 0.0, 0.0), \"expected\": (6.0, 0.0, 0.0) }",
+      "name": "constraint does not suppress Area gravity sample",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 3, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.31, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "{ \"actual\": (1.431576, 0.094175, 0.000498), \"expected\": (1.431576, 0.094175, 0.000498) }",
+      "name": "clear Hinge restores free Capsule Area acceleration and damping",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "cleared Capsule leaves old anchor",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 4, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.41, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "Capsule Hinge readdition restores constraint within Area",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 5, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.51, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "{ \"actual\": (1.718218, 0.369402, 0.000465), \"expected\": (1.718218, 0.369402, 0.000465) }",
+      "name": "deleted Hinge releases Capsule while Area stays active",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "combined state finite after clear readd delete",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 6, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.52, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "{ \"actual\": (1.707908, 0.267185, 0.000462), \"expected\": (1.707908, 0.267185, 0.000462) }",
+      "name": "deleting Capsule Area restores world gravity and default damping",
+      "passed": true
+    }
+  ],
+  "failed": 0,
+  "passed": 22,
+  "extension_sha256": "9b6e3626a53184c8b9f3b5eef78d5c475ca476c28deb3477e15a980f0b15303b"
+}

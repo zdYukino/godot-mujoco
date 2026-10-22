@@ -1,0 +1,2 @@
+g++ -std=c++17 -O2 tests/native_sweep/numerics.cpp: SWEEP_NUMERICS PASS 1048 checks
+g++ -std=c++17 -O2 tests/native_sweep/capsule_numerics.cpp: CAPSULE_NUMERICS PASS 445 checks

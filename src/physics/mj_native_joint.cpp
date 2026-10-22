@@ -14,7 +14,7 @@ void MjPhysicsServer3D::detach_native_joints(const RID&r){for(auto&e:native_join
 bool MjPhysicsServer3D::commit_native_joint(const MjNativeJoint&candidate){
  auto it=native_joints.find(candidate.rid.get_id());if(it==native_joints.end()||pending_free.count(candidate.rid.get_id()))return false;
  auto*a=body(candidate.a);auto*b=body(candidate.b);auto*s=a?space(a->space):nullptr;
- if(!a||!s||a->heightfield||pending_free.count(a->rid.get_id())||candidate.a==candidate.b||!candidate.anchor_a.is_finite()||!candidate.anchor_b.is_finite()||
+ if(!a||!s||a->heightfield||(a->mode!=BODY_MODE_STATIC&&a->mode!=BODY_MODE_RIGID)||(b&&b->mode!=BODY_MODE_STATIC&&b->mode!=BODY_MODE_RIGID)||pending_free.count(a->rid.get_id())||candidate.a==candidate.b||!candidate.anchor_a.is_finite()||!candidate.anchor_b.is_finite()||
     (candidate.b.is_valid()&&(!b||b->heightfield||b->space!=a->space||pending_free.count(b->rid.get_id())))||
     (a->mode!=BODY_MODE_RIGID&&(!b||b->mode!=BODY_MODE_RIGID))){ERR_PRINT("Native Pin requires finite anchors and native bodies in one space, with at least one rigid body");return false;}
  // Conservative forest boundary. Duplicate edges and closed loops are rejected

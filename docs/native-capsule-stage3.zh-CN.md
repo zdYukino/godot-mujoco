@@ -2,7 +2,7 @@
 
 基于 `62fb00ae0ab75d2ad8b775f7597bcd0f20cd7ff0` 新建独立分支，先合入
 `fe35dd92875b7463e63611ded9a753c9dad1d9e7` 的已提交 P0/contact 前置代码；
-再合入冻结集成 `2442976827fa1590de1777143ecc41cdac227025` 的 Area FIFO，保留已修复的 overlap witness 测试。此阶段不宣称 CharacterBody 或 body_test_motion 已实现。
+再合入冻结集成 `2442976827fa1590de1777143ecc41cdac227025` 的 Area FIFO，保留已修复的 overlap witness 测试。此阶段本身不含CharacterBody/body_test_motion；当前集成另有[受限阶段4实现](native-character-stage4.zh-CN.md)。
 
 ## 尺寸与模型
 

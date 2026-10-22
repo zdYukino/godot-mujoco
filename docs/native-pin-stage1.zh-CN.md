@@ -4,7 +4,7 @@
 
 ## 实际能力与参数边界
 
-原生 Pin 使用两个独立 site 的 MuJoCo equality/connect，约束两端平移并保留旋转。A 必须为原生 body，B 可为同空间原生 body 或空 RID（世界）。至少一端为 Rigid；支持 Static 端，专用高度场与导入 MJCF 实例不作为端点。局部锚点分别使用各 body 坐标；世界端锚点使用世界坐标。初始不重合时由软约束逐渐拉合，不瞬移。
+原生 Pin 使用两个独立 site 的 MuJoCo equality/connect，约束两端平移并保留旋转。A 必须为原生 body，B 可为同空间原生 body 或空 RID（世界）。至少一端为 Rigid；支持 Static 端；新增KINEMATIC明确不能作为Pin/Hinge端点，拒绝不改变旧连接。专用高度场与导入 MJCF 实例不作为端点。局部锚点分别使用各 body 坐标；世界端锚点使用世界坐标。初始不重合时由软约束逐渐拉合，不瞬移。
 
 固定响应 `solref=".02 1"`，使用 MuJoCo 默认阻抗。它有有限约束误差，不承诺等同 GodotPhysics 的 bias/damping 求解。默认 Godot Pin 参数 bias=.3、damping=1、impulse_clamp=0 仅作为节点初始化兼容值；非默认值及非默认 solver_priority 明确报错、服务器值不变。**这些 Godot 求解参数尚未映射，不是可调支持项。** Godot 节点自身可能缓存被拒绝的 Inspector 值；以错误日志与服务器支持矩阵为准。现已另提供[受限被动 Hinge](native-hinge-passive.zh-CN.md)；limits/motor 与可调求解参数仍未实现。
 

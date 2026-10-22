@@ -1,0 +1,124 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+MuJoCo: compile time (ms)
+  total:          0.3   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.3   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS import empty world 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS configure world 
+PASS compile original mocap pose 
+PASS capture completed { "request": 1, "command": "capture", "success": true, "error": "", "time": 0.0, "paused": true }
+PASS movement reflected before reset 
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS motion sees moved target before reset 
+PASS reset completed { "request": 2, "command": "reset", "success": true, "error": "", "time": 0.0, "paused": true }
+PASS reset preserves kinematic transform cache 
+FAIL reset preserves current query geometry {  }
+FAIL reset does not resurrect compiled original position { "position": (0.0, 0.5, 0.0), "normal": (0.0, 1.0, 0.0), "face_index": -1, "collider_id": 0, "collider": <Object#null>, "shape": 0, "rid": RID(103079215106) }
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+FAIL motion sees current target after reset 
+KINEMATIC_RESET_RESULT {"checks":[{"detail":"","label":"import empty world","passed":true},{"detail":"","label":"configure world","passed":true},{"detail":"","label":"compile original mocap pose","passed":true},{"detail":{"command":"capture","error":"","paused":true,"request":1,"success":true,"time":0.0},"label":"capture completed","passed":true},{"detail":"","label":"movement reflected before reset","passed":true},{"detail":"","label":"motion sees moved target before reset","passed":true},{"detail":{"command":"reset","error":"","paused":true,"request":2,"success":true,"time":0.0},"label":"reset completed","passed":true},{"detail":"","label":"reset preserves kinematic transform cache","passed":true},{"detail":{},"label":"reset preserves current query geometry","passed":false},{"detail":{"collider":"<Object#null>","collider_id":0,"face_index":-1,"normal":"(0.0, 1.0, 0.0)","position":"(0.0, 0.5, 0.0)","rid":"RID(103079215106)","shape":0},"label":"reset does not resurrect compiled original position","passed":false},{"detail":"","label":"motion sees current target after reset","passed":false}],"failed":3,"passed":8}

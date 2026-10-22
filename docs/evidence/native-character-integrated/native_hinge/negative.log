@@ -1,0 +1,201 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+PASS native backend identity 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS pause isolated world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS configure lightweight exact-step world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS passive hinge actual type 
+EXPECT_HINGE_ERROR Native passive Hinge limits and motor enable unsupported
+ERROR: Native passive Hinge limits and motor enable unsupported
+   at: _hinge_joint_set_flag (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:73)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:8)
+PASS unsupported hinge flag remains false 
+EXPECT_HINGE_ERROR Native passive Hinge limits and motor enable unsupported
+ERROR: Native passive Hinge limits and motor enable unsupported
+   at: _hinge_joint_set_flag (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:73)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:8)
+PASS unsupported hinge flag remains false 
+EXPECT_HINGE_ERROR Native passive Hinge custom response, limit and motor parameters unsupported
+ERROR: Native passive Hinge custom response, limit and motor parameters unsupported
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:71)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:13)
+PASS unsupported parameter retains compatibility default 0 
+EXPECT_HINGE_ERROR Native passive Hinge custom response, limit and motor parameters unsupported
+ERROR: Native passive Hinge custom response, limit and motor parameters unsupported
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:71)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:13)
+PASS unsupported parameter retains compatibility default 1 
+EXPECT_HINGE_ERROR Native passive Hinge custom response, limit and motor parameters unsupported
+ERROR: Native passive Hinge custom response, limit and motor parameters unsupported
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:71)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:13)
+PASS unsupported parameter retains compatibility default 2 
+EXPECT_HINGE_ERROR Native passive Hinge custom response, limit and motor parameters unsupported
+ERROR: Native passive Hinge custom response, limit and motor parameters unsupported
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:71)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:13)
+PASS unsupported parameter retains compatibility default 3 
+EXPECT_HINGE_ERROR Native passive Hinge custom response, limit and motor parameters unsupported
+ERROR: Native passive Hinge custom response, limit and motor parameters unsupported
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:71)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:13)
+PASS unsupported parameter retains compatibility default 4 
+EXPECT_HINGE_ERROR Native passive Hinge custom response, limit and motor parameters unsupported
+ERROR: Native passive Hinge custom response, limit and motor parameters unsupported
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:71)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:13)
+PASS unsupported parameter retains compatibility default 5 
+EXPECT_HINGE_ERROR Native passive Hinge custom response, limit and motor parameters unsupported
+ERROR: Native passive Hinge custom response, limit and motor parameters unsupported
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:71)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:13)
+PASS unsupported parameter retains compatibility default 6 
+EXPECT_HINGE_ERROR Native passive Hinge custom response, limit and motor parameters unsupported
+ERROR: Native passive Hinge custom response, limit and motor parameters unsupported
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:71)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:13)
+PASS unsupported parameter retains compatibility default 7 
+EXPECT_HINGE_ERROR Native passive Hinge requires finite rigid frames
+ERROR: Native passive Hinge requires finite rigid frames
+   at: _joint_make_hinge (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:54)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:17)
+EXPECT_HINGE_ERROR Native passive Hinge requires finite rigid frames
+ERROR: Native passive Hinge requires finite rigid frames
+   at: _joint_make_hinge (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:54)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:19)
+EXPECT_HINGE_ERROR Native passive Hinge initially misaligned world axes unsupported
+ERROR: Native passive Hinge initially misaligned world axes unsupported
+   at: _joint_make_hinge_simple (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:62)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:21)
+EXPECT_HINGE_ERROR Native passive Hinge requires finite rigid frames
+ERROR: Native passive Hinge requires finite rigid frames
+   at: _joint_make_hinge (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:54)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:23)
+EXPECT_HINGE_ERROR Native passive Hinge auxiliary anchor not representable
+ERROR: Native passive Hinge auxiliary anchor not representable
+   at: _joint_make_hinge_simple (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:65)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:25)
+EXPECT_HINGE_ERROR Native Pin candidate rejected; previous model retained
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+ERROR: Native Pin candidate rejected; previous model retained
+   at: commit_native_joint (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:27)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:27)
+PASS failed replacements keep hinge type 
+PASS failed replacements preserve live pose and velocity 
+PASS failed replacements preserve pause and simulation time 
+PASS bounded exact step completes { "request": 1, "command": "step", "success": true, "error": "", "time": 0.3, "paused": true }
+PASS old hinge still physically constrains and spins after rejected replacements 
+HINGE_NEGATIVE_RESULT {"checks":[{"detail":"","name":"native backend identity","passed":true},{"detail":"","name":"pause isolated world","passed":true},{"detail":"","name":"configure lightweight exact-step world","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"","name":"unsupported hinge flag remains false","passed":true},{"detail":"","name":"unsupported hinge flag remains false","passed":true},{"detail":"","name":"unsupported parameter retains compatibility default 0","passed":true},{"detail":"","name":"unsupported parameter retains compatibility default 1","passed":true},{"detail":"","name":"unsupported parameter retains compatibility default 2","passed":true},{"detail":"","name":"unsupported parameter retains compatibility default 3","passed":true},{"detail":"","name":"unsupported parameter retains compatibility default 4","passed":true},{"detail":"","name":"unsupported parameter retains compatibility default 5","passed":true},{"detail":"","name":"unsupported parameter retains compatibility default 6","passed":true},{"detail":"","name":"unsupported parameter retains compatibility default 7","passed":true},{"detail":"","name":"failed replacements keep hinge type","passed":true},{"detail":"","name":"failed replacements preserve live pose and velocity","passed":true},{"detail":"","name":"failed replacements preserve pause and simulation time","passed":true},{"detail":"{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.3, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"old hinge still physically constrains and spins after rejected replacements","passed":true}],"failed":0,"passed":19}

@@ -1,0 +1,4 @@
+RECOVERY_PROBE cancel=false hit=true travel=(0.0, 0.101001, 0.0) expected_y=0.101
+RECOVERY_PROBE cancel=true hit=true travel=(0.0, 0.101001, 0.0) expected_y=0.101
+WARNING: MuJoCo minimal backend: unsupported body motion unsafe body pose has no certified contact
+UNSAFE_PROBE hit=false travel=(0.0, 0.0, 0.0) unsafe=0.0 actual_center=(0.0, 0.0, 0.0) contact_interval=[5,7] count=0

@@ -42,7 +42,7 @@ box 的 closest point 是三轴 clamp；有限 cylinder 是径向 disk 投影与
 有限形状和平面的距离是一个线性支持平面函数，直接求根；margin 只计一次。
 同一 shape 在初始姿态满足严格负距离（含 margin）的，按 Godot cast_motion 策略在整次 sweep 中忽略。
 初始恰好接触且向内运动返回 0；恰好接触且分离/切向运动忽略该 shape。零运动成功返回 `[1,1]`。
-这些规则不是穿透恢复；`body_test_motion` 的恢复算法仍未实现。
+这些公共cast_motion规则不是穿透恢复；现有[受限body_test_motion/CharacterBody](native-character-stage4.zh-CN.md)另行执行恢复与body位姿认证。
 
 数值不是无限精度的“证明”：导数/距离在 double 中计算，最终 ABI fraction 为 float。
 对分离的最小值，使用距离的 Lipschitz 界（速度×最小值括区宽度）及
@@ -88,7 +88,7 @@ bash tests/native_sweep/run.sh
 bash tests/native_overlap/run.sh
 ```
 
-未推进 capsule、CharacterBody、body_test_motion、旋转 sweep、动态 CCD、heightfield/MJCF sweep。
+本阶段当时未推进 capsule、CharacterBody、body_test_motion；当前集成已分别增加受限Capsule与Character工作流。旋转 sweep、动态 CCD、heightfield/MJCF sweep仍未实现。
 这些仍需可靠凸体距离/支持平面下界、穿透恢复和各自的所有权/asset 接口；不能因本阶段通过而自动宣称支持。
 
 ### 本阶段实测（2026-10-22）

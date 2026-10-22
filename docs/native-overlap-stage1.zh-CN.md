@@ -13,7 +13,7 @@
   不会伪造 collider。即便导入的是 sphere/box，也不纳入本阶段查询。
 - Area 监测与环境覆盖已另行实现，但本空间查询仍不返回 Area；请求 areas 会告警，原生 bodies 结果仍遵循 bodies 参数。
 - 初始重叠直接纳入结果。`motion` 不用于 overlap（只检测 transform）；非有限 motion 拒绝。
-  `cast_motion` 现有[受限连续平移支持](native-continuous-sweep-stage2.zh-CN.md)及[Capsule 扩展](native-capsule-stage3.zh-CN.md)，不是全组合 sweep、CCD 或 CharacterBody。
+  `cast_motion` 现有[受限连续平移支持](native-continuous-sweep-stage2.zh-CN.md)及[Capsule 扩展](native-capsule-stage3.zh-CN.md)，不是全组合 sweep 或 CCD；Character另有[受限阶段4实现](native-character-stage4.zh-CN.md)。
 - `margin` 是 MuJoCo 窄相距离阈值，只传一次，不把 target/query 各扩大一份。
   非负且有限；负数/NaN/Inf 拒绝。零 margin 的精确相切受各原生窄相算法浮点容差限制，
   不保证跨形状的相切命中一致；需要接近接触时应显式使用正 margin。

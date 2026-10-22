@@ -50,4 +50,8 @@ func run():
   PhysicsServer3D.joint_make_pin(callback_joint,callback_body,Vector3.UP,RID(),Vector3(30,0,0)))
  await step(1);await ticks(2)
  check(sequence_done and PhysicsServer3D.body_get_mode(callback_body)==PhysicsServer3D.BODY_MODE_STATIC and PhysicsServer3D.joint_get_type(callback_joint)==PhysicsServer3D.JOINT_TYPE_MAX,"callback mode then make validates new mode and rejects static-world")
+ var kinematic=body(Vector3(50,0,0),PhysicsServer3D.BODY_MODE_KINEMATIC)
+ expect("Native Pin requires finite anchors")
+ PhysicsServer3D.joint_make_pin(accepted,a,Vector3.ZERO,kinematic,Vector3.ZERO)
+ check(PhysicsServer3D.joint_get_type(accepted)==PhysicsServer3D.JOINT_TYPE_PIN and PhysicsServer3D.pin_joint_get_local_a(accepted)==old_anchor,"new kinematic mode does not silently expand Pin endpoint contract")
  await finish("PIN_NEGATIVE_RESULT")

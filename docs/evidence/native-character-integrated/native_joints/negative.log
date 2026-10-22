@@ -1,0 +1,207 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+PASS native backend identity 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS pause isolated world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS configure lightweight exact-step world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS make Pin returns actual type 
+EXPECT_PIN_ERROR Native Pin uses fixed MuJoCo soft constraint response
+ERROR: Native Pin uses fixed MuJoCo soft constraint response; custom Godot bias/damping/impulse clamp unsupported
+   at: _pin_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:41)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:9)
+PASS unsupported Pin response parameter not falsely stored 
+EXPECT_PIN_ERROR Native Pin uses fixed MuJoCo soft constraint response
+ERROR: Native Pin uses fixed MuJoCo soft constraint response; custom Godot bias/damping/impulse clamp unsupported
+   at: _pin_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:41)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:9)
+PASS unsupported Pin response parameter not falsely stored 
+EXPECT_PIN_ERROR Native Pin uses fixed MuJoCo soft constraint response
+ERROR: Native Pin uses fixed MuJoCo soft constraint response; custom Godot bias/damping/impulse clamp unsupported
+   at: _pin_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:41)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:9)
+PASS unsupported Pin response parameter not falsely stored 
+EXPECT_PIN_ERROR Native Pin requires finite anchors
+ERROR: Native Pin requires finite anchors and native bodies in one space, with at least one rigid body
+   at: commit_native_joint (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:19)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:13)
+PASS nonfinite anchor retains accepted definition 
+EXPECT_PIN_ERROR Native Pin requires finite anchors
+ERROR: Native Pin requires finite anchors and native bodies in one space, with at least one rigid body
+   at: commit_native_joint (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:19)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:16)
+PASS self joint rejects without replacing accepted Pin 
+EXPECT_PIN_ERROR Native Pin requires finite anchors
+ERROR: Native Pin requires finite anchors and native bodies in one space, with at least one rigid body
+   at: commit_native_joint (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:19)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:21)
+PASS cross-space replacement preserves old anchor 
+EXPECT_PIN_ERROR Native Pin closed loops and duplicate edges are unsupported
+ERROR: Native Pin closed loops and duplicate edges are unsupported
+   at: commit_native_joint (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:25)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:25)
+PASS duplicate edge rejected before mutation 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS make Pin returns actual type 
+EXPECT_PIN_ERROR Native Pin closed loops and duplicate edges are unsupported
+ERROR: Native Pin closed loops and duplicate edges are unsupported
+   at: commit_native_joint (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:25)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:30)
+PASS closed world loop rejected before mutation 
+EXPECT_PIN_ERROR Native joint custom solver priority unsupported
+ERROR: Native joint custom solver priority unsupported
+   at: _joint_set_solver_priority (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:43)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:33)
+PASS unsupported priority not falsely stored 
+PASS bounded exact step completes { "request": 1, "command": "step", "success": true, "error": "", "time": 0.3, "paused": true }
+PASS accepted old Pin still physically constrains after all rejected replacements 
+EXPECT_PIN_ERROR Native Pin candidate rejected; previous model retained
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+ERROR: Native Pin candidate rejected; previous model retained
+   at: commit_native_joint (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:27)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:39)
+       [1] step (res://acceptance.gd:37)
+       [2] ticks (res://acceptance.gd:13)
+PASS finite unsafe candidate leaves old joint definition 
+PASS finite unsafe candidate preserves active body pose and velocity 
+PASS finite unsafe candidate preserves pause and simulation time 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS bounded exact step completes { "request": 2, "command": "step", "success": true, "error": "", "time": 0.31, "paused": true }
+EXPECT_PIN_ERROR Native Pin requires finite anchors
+ERROR: Native Pin requires finite anchors and native bodies in one space, with at least one rigid body
+   at: commit_native_joint (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:19)
+PASS callback mode then make validates new mode and rejects static-world 
+EXPECT_PIN_ERROR Native Pin requires finite anchors
+ERROR: Native Pin requires finite anchors and native bodies in one space, with at least one rigid body
+   at: commit_native_joint (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:19)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:55)
+       [1] ticks (res://acceptance.gd:13)
+PASS new kinematic mode does not silently expand Pin endpoint contract 
+PIN_NEGATIVE_RESULT {"checks":[{"detail":"","name":"native backend identity","passed":true},{"detail":"","name":"pause isolated world","passed":true},{"detail":"","name":"configure lightweight exact-step world","passed":true},{"detail":"","name":"make Pin returns actual type","passed":true},{"detail":"","name":"unsupported Pin response parameter not falsely stored","passed":true},{"detail":"","name":"unsupported Pin response parameter not falsely stored","passed":true},{"detail":"","name":"unsupported Pin response parameter not falsely stored","passed":true},{"detail":"","name":"nonfinite anchor retains accepted definition","passed":true},{"detail":"","name":"self joint rejects without replacing accepted Pin","passed":true},{"detail":"","name":"cross-space replacement preserves old anchor","passed":true},{"detail":"","name":"duplicate edge rejected before mutation","passed":true},{"detail":"","name":"make Pin returns actual type","passed":true},{"detail":"","name":"closed world loop rejected before mutation","passed":true},{"detail":"","name":"unsupported priority not falsely stored","passed":true},{"detail":"{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.3, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"accepted old Pin still physically constrains after all rejected replacements","passed":true},{"detail":"","name":"finite unsafe candidate leaves old joint definition","passed":true},{"detail":"","name":"finite unsafe candidate preserves active body pose and velocity","passed":true},{"detail":"","name":"finite unsafe candidate preserves pause and simulation time","passed":true},{"detail":"{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.31, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"callback mode then make validates new mode and rejects static-world","passed":true},{"detail":"","name":"new kinematic mode does not silently expand Pin endpoint contract","passed":true}],"failed":0,"passed":22}

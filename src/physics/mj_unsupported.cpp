@@ -12,7 +12,6 @@ void MjPhysicsServer3D::_body_set_user_flags(const RID &p_body, uint32_t p_flags
 uint32_t MjPhysicsServer3D::_body_get_user_flags(const RID &p_body) const { mj_unsupported("_body_get_user_flags"); return {}; }
 void MjPhysicsServer3D::_body_set_contacts_reported_depth_threshold(const RID &p_body, float p_threshold) { mj_unsupported("_body_set_contacts_reported_depth_threshold"); }
 float MjPhysicsServer3D::_body_get_contacts_reported_depth_threshold(const RID &p_body) const { mj_unsupported("_body_get_contacts_reported_depth_threshold"); return {}; }
-bool MjPhysicsServer3D::_body_test_motion(const RID &p_body, const Transform3D &p_from, const Vector3 &p_motion, float p_margin, int32_t p_max_collisions, bool p_collide_separation_ray, bool p_recovery_as_collision, PhysicsServer3DExtensionMotionResult *p_result) const { mj_unsupported("_body_test_motion"); return {}; }
 RID MjPhysicsServer3D::_soft_body_create() { mj_unsupported("_soft_body_create"); return {}; }
 void MjPhysicsServer3D::_soft_body_update_rendering_server(const RID &p_body, PhysicsServer3DRenderingServerHandler *p_rendering_server_handler) { mj_unsupported("_soft_body_update_rendering_server"); }
 void MjPhysicsServer3D::_soft_body_set_space(const RID &p_body, const RID &p_space) { mj_unsupported("_soft_body_set_space"); }

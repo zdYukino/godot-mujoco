@@ -31,7 +31,7 @@ rows=[x.split(' ',1)[1] for x in s.splitlines() if x.startswith('PIN_RESULT ')];
 r=json.loads(rows[0]);assert r['failed']==0
 s=(p/'negative.log').read_text();errors=[x for x in s.splitlines() if x.startswith('ERROR:')]
 expected=[line.removeprefix('EXPECT_PIN_ERROR ') for line in s.splitlines() if line.startswith('EXPECT_PIN_ERROR ')]
-assert len(errors)==len(expected)==11,(errors,expected)
+assert len(errors)==len(expected)==12,(errors,expected)
 for message in expected:
  matches=[line for line in errors if message in line]
  assert matches,(message,errors)

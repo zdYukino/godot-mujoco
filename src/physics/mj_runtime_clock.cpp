@@ -46,6 +46,13 @@ void MjPhysicsServer3D::process_world_commands(){
    String error=restore(s->born_state,s->model,candidate);
    if(error.is_empty())error=restore(s->checkpoint,s->model,candidate);
    candidate->time=double(s->checkpoint["time"]);
+   // Mocap/kinematic poses are externally controlled design state, not joint
+   // checkpoint state. Keep the live poses so reset cannot resurrect the model's
+   // compile-time mocap pose while Godot still holds the current transform.
+   mju_copy(candidate->mocap_pos,s->data->mocap_pos,3*s->model->nmocap);
+   mju_copy(candidate->mocap_quat,s->data->mocap_quat,4*s->model->nmocap);
+   for(int i=0;i<3*s->model->nmocap;++i)if(!std::isfinite(candidate->mocap_pos[i]))error="Nonfinite reset mocap position";
+   for(int i=0;i<4*s->model->nmocap;++i)if(!std::isfinite(candidate->mocap_quat[i]))error="Nonfinite reset mocap orientation";
    if(error.is_empty()){
     mj_normalizeQuat(s->model,candidate->qpos);mj_forward(s->model,candidate);
     for(int i=0;i<s->model->nv;++i)if(!std::isfinite(candidate->qacc[i])||!std::isfinite(candidate->qvel[i]))error="Nonfinite reset dynamics";

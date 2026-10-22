@@ -1,0 +1,168 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+PASS native backend identity 
+MuJoCo: compile time (ms)
+  total:          0.5   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.5   (wall clock)
+PASS pause isolated world 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.4   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.4   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.4   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.4   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.4   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.4   (wall clock)
+PASS configure lightweight exact-step world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS bounded exact step completes { "request": 1, "command": "step", "success": true, "error": "", "time": 0.01, "paused": true }
+PASS Capsule Area applies real replacement gravity plus damping to Capsule body { "actual": (2.01, 0.0, 0.0), "expected": (2.01, 0.0, 0.0) }
+PASS Capsule Area applies angular damping to Capsule body { "actual": (0.0, 3.87, 0.0), "expected": (0.0, 3.87, 0.0) }
+PASS Capsule overlap samples Area gravity { "actual": (6.0, 0.0, 0.0), "expected": (6.0, 0.0, 0.0) }
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS Capsule body accepts passive Hinge 
+PASS bounded exact step completes { "request": 2, "command": "step", "success": true, "error": "", "time": 0.21, "paused": true }
+PASS Hinge anchor resists transverse Area acceleration 
+PASS Area force drives actual constrained Capsule swing 
+PASS constraint does not suppress Area gravity sample { "actual": (6.0, 0.0, 0.0), "expected": (6.0, 0.0, 0.0) }
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS bounded exact step completes { "request": 3, "command": "step", "success": true, "error": "", "time": 0.31, "paused": true }
+PASS clear Hinge restores free Capsule Area acceleration and damping { "actual": (1.431576, 0.094175, 0.000498), "expected": (1.431576, 0.094175, 0.000498) }
+PASS cleared Capsule leaves old anchor 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS bounded exact step completes { "request": 4, "command": "step", "success": true, "error": "", "time": 0.41, "paused": true }
+PASS Capsule Hinge readdition restores constraint within Area 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS bounded exact step completes { "request": 5, "command": "step", "success": true, "error": "", "time": 0.51, "paused": true }
+PASS deleted Hinge releases Capsule while Area stays active { "actual": (1.718218, 0.369402, 0.000465), "expected": (1.718218, 0.369402, 0.000465) }
+PASS combined state finite after clear readd delete 
+PASS bounded exact step completes { "request": 6, "command": "step", "success": true, "error": "", "time": 0.52, "paused": true }
+PASS deleting Capsule Area restores world gravity and default damping { "actual": (1.707908, 0.267185, 0.000462), "expected": (1.707908, 0.267185, 0.000462) }
+BACKEND_CROSS_RESULT {"checks":[{"detail":"","name":"native backend identity","passed":true},{"detail":"","name":"pause isolated world","passed":true},{"detail":"","name":"configure lightweight exact-step world","passed":true},{"detail":"{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.01, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"{ \"actual\": (2.01, 0.0, 0.0), \"expected\": (2.01, 0.0, 0.0) }","name":"Capsule Area applies real replacement gravity plus damping to Capsule body","passed":true},{"detail":"{ \"actual\": (0.0, 3.87, 0.0), \"expected\": (0.0, 3.87, 0.0) }","name":"Capsule Area applies angular damping to Capsule body","passed":true},{"detail":"{ \"actual\": (6.0, 0.0, 0.0), \"expected\": (6.0, 0.0, 0.0) }","name":"Capsule overlap samples Area gravity","passed":true},{"detail":"","name":"Capsule body accepts passive Hinge","passed":true},{"detail":"{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.21, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"Hinge anchor resists transverse Area acceleration","passed":true},{"detail":"","name":"Area force drives actual constrained Capsule swing","passed":true},{"detail":"{ \"actual\": (6.0, 0.0, 0.0), \"expected\": (6.0, 0.0, 0.0) }","name":"constraint does not suppress Area gravity sample","passed":true},{"detail":"{ \"request\": 3, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.31, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"{ \"actual\": (1.431576, 0.094175, 0.000498), \"expected\": (1.431576, 0.094175, 0.000498) }","name":"clear Hinge restores free Capsule Area acceleration and damping","passed":true},{"detail":"","name":"cleared Capsule leaves old anchor","passed":true},{"detail":"{ \"request\": 4, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.41, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"Capsule Hinge readdition restores constraint within Area","passed":true},{"detail":"{ \"request\": 5, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.51, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"{ \"actual\": (1.718218, 0.369402, 0.000465), \"expected\": (1.718218, 0.369402, 0.000465) }","name":"deleted Hinge releases Capsule while Area stays active","passed":true},{"detail":"","name":"combined state finite after clear readd delete","passed":true},{"detail":"{ \"request\": 6, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.52, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"{ \"actual\": (1.707908, 0.267185, 0.000462), \"expected\": (1.707908, 0.267185, 0.000462) }","name":"deleting Capsule Area restores world gravity and default damping","passed":true}],"failed":0,"passed":22}
