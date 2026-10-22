@@ -2,6 +2,8 @@
 extends EditorPlugin
 const State = preload("editor_state.gd")
 const EditorPanel = preload("panel.gd")
+var heightfield_debugger:EditorDebuggerPlugin
+var heightfield_panel:Control
 var live_debugger: EditorDebuggerPlugin
 var panel: Control
 var state: RefCounted
@@ -13,6 +15,11 @@ func _enter_tree() -> void:
 		return
 	live_debugger = preload("live_debugger.gd").new()
 	add_debugger_plugin(live_debugger)
+	heightfield_debugger=preload("heightfield_debugger.gd").new()
+	add_debugger_plugin(heightfield_debugger)
+	heightfield_panel=preload("heightfield_panel.gd").new()
+	heightfield_panel.plugin=self;heightfield_panel.debugger=heightfield_debugger
+	add_control_to_bottom_panel(heightfield_panel,"MuJoCo 地形")
 	var base := EditorInterface.get_base_control()
 	state = base.get_meta(META) if base.has_meta(META) else State.new()
 	base.set_meta(META, state)
@@ -30,6 +37,10 @@ func _enter_tree() -> void:
 		call_deferred("_run_acceptance")
 
 func _exit_tree() -> void:
+	if heightfield_panel:
+		heightfield_panel.shutdown();remove_control_from_bottom_panel(heightfield_panel);heightfield_panel.free();heightfield_panel=null
+	if heightfield_debugger:
+		heightfield_debugger.shutdown();remove_debugger_plugin(heightfield_debugger);heightfield_debugger=null
 	if live_debugger:
 		live_debugger.shutdown()
 		remove_debugger_plugin(live_debugger)
@@ -58,6 +69,7 @@ func _save_external_data() -> void:
 		panel.save_recovery()
 
 func _get_unsaved_status(_for_scene: String) -> String:
+	if heightfield_panel and heightfield_panel.dirty: return "地形有未应用草稿，请应用到场景或 Discard。"
 	return "MuJoCo document has unsaved edits. Use Save document; recovery is retained under user://." if state and (state.dirty or (panel and panel.pending)) else ""
 
 func _run_acceptance() -> void:

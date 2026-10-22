@@ -154,6 +154,30 @@ func run():
 		failure=PhysicsServer3D.call("scene_heightfield_result",raw)
 		if not failure.is_empty(): break
 	check(not failure.is_empty() and not failure.success and world.info().ngeom==count,"native invalid data rejected without geometry change")
+	var bridge=load("res://addons/godot_mujoco/model/heightfield_bridge.gd")
+	var identity=reopened.live_id
+	var before_revision=reopened.revision
+	var snapshot=grid.snapshot(Transform3D(),1,1)
+	bridge.receive("apply",[{"id":identity,"revision":before_revision,"snapshot":snapshot}])
+	var pending_id=reopened.pending_request
+	check(pending_id!=0,"bridge apply reaches safe queue")
+	bridge.receive("apply",[{"id":identity,"revision":before_revision,"snapshot":snapshot}])
+	check(reopened.pending_request==pending_id,"bridge duplicate retains first request")
+	await settle(reopened,"pending_request")
+	check(reopened.revision==before_revision+1 and reopened.last_error.is_empty(),"bridge completion revision")
+	bridge.receive("apply",[{"id":identity,"revision":before_revision,"snapshot":snapshot}])
+	await settle(reopened,"pending_request")
+	check(not reopened.last_error.is_empty() and reopened.revision==before_revision+1,"bridge stale revision rejected")
+	bridge.receive("apply",[{"id":identity,"snapshot":snapshot}])
+	check(reopened.pending_request==0 and not reopened.last_error.is_empty(),"missing revision cannot bypass validation")
+	bridge.receive("remove",[{"id":identity,"revision":reopened.revision}])
+	await settle(reopened,"pending_request")
+	check(reopened.live_id!=identity and not reopened.body_rid.is_valid(),"remove rotates live identity")
+	bridge.receive("apply",[{"id":identity,"revision":0,"snapshot":snapshot}])
+	check(reopened.pending_request==0,"old live identity cannot readd")
+	bridge.receive("apply",[{"id":reopened.live_id,"revision":0,"snapshot":snapshot}])
+	await settle(reopened,"pending_request")
+	check(reopened.body_rid.is_valid() and reopened.revision==1,"new identity readds independently")
 	# Queue and immediately delete; no orphan request/body may remain.
 	var doomed=Terrain.new();doomed.design=grid;world.add_child(doomed);doomed.queue_free()
 	await process_frame;await process_frame
