@@ -25,7 +25,13 @@ struct MjImported {
  std::string prefix;
  ~MjImported() { if(spec) mj_deleteSpec(spec); }
 };
+// One solved manifold point in Godot world coordinates; impulse covers one substep.
+struct MjContact {
+ RID collider; uint64_t object_id=0; int local_shape=-1, collider_shape=-1;
+ Vector3 position, normal, impulse, local_velocity, collider_velocity;
+};
 struct MjBody {
+ int max_contacts=0; std::vector<MjContact> contacts;
  RID rid, space; bool heightfield=false; uint64_t object_id=0; PhysicsServer3D::BodyMode mode=PhysicsServer3D::BODY_MODE_RIGID;
  Transform3D transform; Vector3 linear_velocity, angular_velocity, force, torque, constant_force, constant_torque;
  std::vector<MjShapeInstance> shapes; std::map<int, Variant> params;
@@ -112,6 +118,7 @@ public:
  bool rebuild(MjSpace &space, const Dictionary &control_overrides=Dictionary(), bool validate_dynamics=false);
  void write_body(MjBody &body);
  void read_body(MjBody &body);
+ void collect_contacts(MjSpace &space);
  ~MjPhysicsServer3D();
  RID _world_boundary_shape_create() override;
  RID _separation_ray_shape_create() override;

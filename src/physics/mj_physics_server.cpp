@@ -19,7 +19,7 @@ MjSpace::~MjSpace() { if(data) mj_deleteData(data); if(model) mj_deleteModel(mod
 MjBody *MjPhysicsServer3D::body(const RID &r) const { auto i=bodies.find(r.get_id()); return i==bodies.end()?nullptr:i->second.get(); }
 MjSpace *MjPhysicsServer3D::space(const RID &r) const { auto i=spaces.find(r.get_id()); return i==spaces.end()?nullptr:i->second.get(); }
 MjShape *MjPhysicsServer3D::shape(const RID &r) const { auto i=shapes.find(r.get_id()); return i==shapes.end()?nullptr:i->second.get(); }
-void MjPhysicsServer3D::dirty(const RID &r) { if(auto *s=space(r)) s->dirty=true; }
+void MjPhysicsServer3D::dirty(const RID &r) { if(auto *s=space(r)) s->dirty=true; for(auto &entry:bodies)if(entry.second->space==r)entry.second->contacts.clear(); }
 MjPhysicsServer3D::~MjPhysicsServer3D() { _finish(); }
 void MjPhysicsServer3D::_finish() { while(!bodies.empty()) _free_rid(bodies.begin()->second->rid); while(!spaces.empty()) _free_rid(spaces.begin()->second->rid); while(!shapes.empty()) _free_rid(shapes.begin()->second->rid); }
 RID MjPhysicsServer3D::make_shape(ShapeType type,const Variant &data) { RID r=handles.make_rid(0); auto s=std::make_unique<MjShape>(); s->rid=r;s->type=type;s->data=data; shapes.emplace(r.get_id(),std::move(s)); return r; }
@@ -93,8 +93,8 @@ void MjPhysicsServer3D::_body_set_omit_force_integration(const RID&r,bool v){if(
 bool MjPhysicsServer3D::_body_is_omitting_force_integration(const RID&r) const {auto*b=body(r);return b&&b->omit_integration;}
 void MjPhysicsServer3D::_body_set_enable_continuous_collision_detection(const RID&,bool v){if(v)mj_unsupported("continuous collision detection");}
 bool MjPhysicsServer3D::_body_is_continuous_collision_detection_enabled(const RID&) const{return false;}
-void MjPhysicsServer3D::_body_set_max_contacts_reported(const RID&,int32_t n){if(n>0)mj_unsupported("Godot contact reporting");}
-int32_t MjPhysicsServer3D::_body_get_max_contacts_reported(const RID&) const{return 0;}
+void MjPhysicsServer3D::_body_set_max_contacts_reported(const RID&r,int32_t n){ERR_FAIL_COND(n<0);if(auto*b=body(r)){b->max_contacts=n;if(b->contacts.size()>size_t(n))b->contacts.resize(n);}}
+int32_t MjPhysicsServer3D::_body_get_max_contacts_reported(const RID&r) const{auto*b=body(r);return b?b->max_contacts:0;}
 void MjPhysicsServer3D::_body_set_axis_lock(const RID&,BodyAxis,bool v){if(v)mj_unsupported("body axis locks");}
 bool MjPhysicsServer3D::_body_is_axis_locked(const RID&,BodyAxis) const{return false;}
 void MjPhysicsServer3D::_body_set_collision_priority(const RID&,float v){if(v!=1)mj_unsupported("collision priority");}
@@ -109,6 +109,11 @@ void MjPhysicsServer3D::_free_rid(const RID&source_rid){
  for(auto &entry:spaces)if(entry.second->imported.count(r.get_id())){
   if(!(entry.second->imported.at(r.get_id())->whole_model?scene_release_model(entry.second->rid,r):scene_remove(entry.second->rid,r)))UtilityFunctions::push_error("MuJoCo model instance removal requires a paused space outside callbacks");
   return;
+ }
+ // Invalidate snapshots before deferred destruction as callbacks may query peers.
+ for(auto &entry:bodies){auto &b=*entry.second;
+  if(b.rid==r||b.space==r)b.contacts.clear();
+  else b.contacts.erase(std::remove_if(b.contacts.begin(),b.contacts.end(),[&](const MjContact &c){return c.collider==r;}),b.contacts.end());
  }
  if(flushing){pending_free.insert(r.get_id());return;}
  if(auto*b=body(r)){RID terrain_shape=b->heightfield&&!b->shapes.empty()?b->shapes[0].shape:RID();dirty(b->space);if(b->direct)memdelete(b->direct);bodies.erase(r.get_id());heightfield_revisions.erase(r.get_id());if(terrain_shape.is_valid())_free_rid(terrain_shape);}
@@ -243,6 +248,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  for(size_t i=0;i<owners.size();++i){int g=mj_name2id(model,mjOBJ_GEOM,("g"+std::to_string(i)).c_str());if(g>=0)mapped[g]=owners[i];}
  if(s.data)mj_deleteData(s.data);if(s.model)mj_deleteModel(s.model);
  s.model=model;s.data=data;s.geom_owners=std::move(mapped);s.dirty=false;s.last_error="";++s.revision;
+ for(auto &entry:bodies)if(entry.second->space==s.rid)entry.second->contacts.clear();
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;std::string name="b"+std::to_string(b.rid.get_id());b.mj_body=mj_name2id(model,mjOBJ_BODY,name.c_str());if(!validate_dynamics)write_body(b);}
  // Validated transactions commit exactly the data already checked above.
  if(!validate_dynamics)mj_forward(model,data);remember_initial_state(s);return true;
@@ -271,6 +277,7 @@ void MjPhysicsServer3D::_sync(){}
 void MjPhysicsServer3D::_end_sync(){}
 bool MjPhysicsServer3D::_is_flushing_queries() const{return flushing;}
 void MjPhysicsServer3D::_step(float dt){
+ for(auto &entry:bodies)entry.second->contacts.clear();
  process_heightfields();
  process_model_edits();
  process_world_commands(); // Before stepping, including paused worlds: UI only enqueues snapshots.
@@ -288,7 +295,7 @@ void MjPhysicsServer3D::_step(float dt){
  for(int k=0;k<3;++k){s.data->xfrc_applied[6*b.mj_body+k]=f[k];s.data->xfrc_applied[6*b.mj_body+3+k]=torque[k];}
  int j=s.model->body_jntadr[b.mj_body],v=s.model->jnt_dofadr[j];double ld=double(_body_get_param(b.rid,BODY_PARAM_LINEAR_DAMP)),ad=double(_body_get_param(b.rid,BODY_PARAM_ANGULAR_DAMP));if(int(_body_get_param(b.rid,BODY_PARAM_LINEAR_DAMP_MODE))==0)ld+=s.linear_damp;if(int(_body_get_param(b.rid,BODY_PARAM_ANGULAR_DAMP_MODE))==0)ad+=s.angular_damp;if(b.omit_integration)ld=ad=0;
  for(int k=0;k<3;++k){s.data->qvel[v+k]*=std::max(0.0,1-ld*s.model->opt.timestep);s.data->qvel[v+3+k]*=std::max(0.0,1-ad*s.model->opt.timestep);}}
- mj_step(s.model,s.data);}
+ mj_step(s.model,s.data);if(n==steps-1)collect_contacts(s);}
  mj_forward(s.model,s.data);
  for(auto &be:bodies){auto&b=*be.second;if(b.space==s.rid){read_body(b);b.force=Vector3();b.torque=Vector3();}}
  }
