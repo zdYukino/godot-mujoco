@@ -242,9 +242,9 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  xml<<" contype=\""<<int32_t(b.layer)<<"\" conaffinity=\""<<int32_t(b.mask)<<"\" friction=\""<<std::abs(double(_body_get_param(b.rid,BODY_PARAM_FRICTION)))<<" 0.005 0.0001\"";
  if(b.mode==BODY_MODE_RIGID)xml<<" mass=\""<<b.mass*(shape_volume(*sh)/volume)<<"\"";
  xml<<"/>";owners.push_back({b.rid,j});}
- for(auto &entry:native_joints){auto &joint=entry.second;if(!native_joint_active(joint,s.rid))continue;for(int side=0;side<2;++side)if((side?joint.b:joint.a)==b.rid){xml<<"<site name=\"pin_"<<entry.first<<"_"<<side<<"\" pos=\"";vector_xml(xml,godot_to_mj(side?joint.anchor_b:joint.anchor_a));xml<<"\" size=\".001\"/>";}}
+ for(auto &entry:native_joints){auto &joint=entry.second;if(!native_joint_active(joint,s.rid))continue;for(int side=0;side<2;++side)if((side?joint.b:joint.a)==b.rid)for(int point=0;point<(joint.hinge?2:1);++point){xml<<"<site name=\"pin_"<<entry.first<<"_"<<side<<"_"<<point<<"\" pos=\"";Vector3 local=(side?joint.anchor_b:joint.anchor_a)+(side?joint.axis_b:joint.axis_a)*point;vector_xml(xml,godot_to_mj(local));xml<<"\" size=\".001\"/>";}}
  xml<<"</body>";}
- for(auto &entry:native_joints){auto &joint=entry.second;if(native_joint_active(joint,s.rid)&&!joint.b.is_valid()){xml<<"<site name=\"pin_"<<entry.first<<"_1\" pos=\"";vector_xml(xml,godot_to_mj(joint.anchor_b));xml<<"\" size=\".001\"/>";}}
+ for(auto &entry:native_joints){auto &joint=entry.second;if(native_joint_active(joint,s.rid)&&!joint.b.is_valid())for(int point=0;point<(joint.hinge?2:1);++point){xml<<"<site name=\"pin_"<<entry.first<<"_1_"<<point<<"\" pos=\"";vector_xml(xml,godot_to_mj(joint.anchor_b+joint.axis_b*point));xml<<"\" size=\".001\"/>";}}
  xml<<"</worldbody><contact>";std::set<std::pair<uint64_t,uint64_t>> exclusions;
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;for(auto id:b.exceptions){auto i=bodies.find(id);if(i!=bodies.end()&&i->second->space==s.rid&&id!=b.rid.get_id())exclusions.emplace(std::min<uint64_t>(id,b.rid.get_id()),std::max<uint64_t>(id,b.rid.get_id()));}}
  for(auto &entry:native_joints){auto &j=entry.second;if(native_joint_active(j,s.rid)&&j.b.is_valid()&&j.disable_collisions)exclusions.emplace(std::min(j.a.get_id(),j.b.get_id()),std::max(j.a.get_id(),j.b.get_id()));}
@@ -265,7 +265,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  xml<<"<hfield name=\"h"<<b.rid.get_id()<<"\" nrow=\""<<d<<"\" ncol=\""<<w<<"\" size=\""<<(w-1)*.5<<' '<<(d-1)*.5<<' '<<std::max(high-low,1e-6)<<" 1\" elevation=\"";
  for(int k=0;k<h.size();++k)xml<<h[k]<<' ';xml<<"\"/>";
  }
- xml<<"</asset><equality>";for(auto &entry:native_joints)if(native_joint_active(entry.second,s.rid))xml<<"<connect name=\"pin_"<<entry.first<<"\" site1=\"pin_"<<entry.first<<"_0\" site2=\"pin_"<<entry.first<<"_1\" solref=\".02 1\"/>";xml<<"</equality></mujoco>";
+ xml<<"</asset><equality>";for(auto &entry:native_joints)if(native_joint_active(entry.second,s.rid))for(int point=0;point<(entry.second.hinge?2:1);++point)xml<<"<connect name=\"pin_"<<entry.first<<"_"<<point<<"\" site1=\"pin_"<<entry.first<<"_0_"<<point<<"\" site2=\"pin_"<<entry.first<<"_1_"<<point<<"\" solref=\".02 1\"/>";xml<<"</equality></mujoco>";
  char error[2048]={};mjSpec *spec=mj_parseXMLString(xml.str().c_str(),nullptr,error,sizeof(error));
  if(!spec){s.last_error=String::utf8(error);return false;}
  mjs_setDeepCopy(spec,1);

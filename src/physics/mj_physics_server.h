@@ -20,7 +20,7 @@ class MjPhysicsServer3D;
 class MjDirectBodyState;
 class MjDirectSpaceState;
 struct MjAreaScratch;
-struct MjNativeJoint { RID rid,a,b; Vector3 anchor_a,anchor_b; bool pin=false,disable_collisions=true; };
+struct MjNativeJoint { RID rid,a,b; Vector3 anchor_a,anchor_b,axis_a,axis_b; bool hinge=false; bool pin=false,disable_collisions=true; };
 struct MjShape { RID rid; PhysicsServer3D::ShapeType type; Variant data; float margin=0.04f; };
 struct MjShapeInstance { RID shape; Transform3D transform; bool disabled=false; };
 struct MjImported {

@@ -54,12 +54,6 @@ void MjPhysicsServer3D::_soft_body_apply_point_impulse(const RID &p_body, int32_
 void MjPhysicsServer3D::_soft_body_apply_point_force(const RID &p_body, int32_t p_point_index, const Vector3 &p_force) { mj_unsupported("_soft_body_apply_point_force"); }
 void MjPhysicsServer3D::_soft_body_apply_central_impulse(const RID &p_body, const Vector3 &p_impulse) { mj_unsupported("_soft_body_apply_central_impulse"); }
 void MjPhysicsServer3D::_soft_body_apply_central_force(const RID &p_body, const Vector3 &p_force) { mj_unsupported("_soft_body_apply_central_force"); }
-void MjPhysicsServer3D::_joint_make_hinge(const RID &p_joint, const RID &p_body_A, const Transform3D &p_hinge_A, const RID &p_body_B, const Transform3D &p_hinge_B) { mj_unsupported("_joint_make_hinge"); }
-void MjPhysicsServer3D::_joint_make_hinge_simple(const RID &p_joint, const RID &p_body_A, const Vector3 &p_pivot_A, const Vector3 &p_axis_A, const RID &p_body_B, const Vector3 &p_pivot_B, const Vector3 &p_axis_B) { mj_unsupported("_joint_make_hinge_simple"); }
-void MjPhysicsServer3D::_hinge_joint_set_param(const RID &p_joint, PhysicsServer3D::HingeJointParam p_param, float p_value) { mj_unsupported("_hinge_joint_set_param"); }
-float MjPhysicsServer3D::_hinge_joint_get_param(const RID &p_joint, PhysicsServer3D::HingeJointParam p_param) const { mj_unsupported("_hinge_joint_get_param"); return {}; }
-void MjPhysicsServer3D::_hinge_joint_set_flag(const RID &p_joint, PhysicsServer3D::HingeJointFlag p_flag, bool p_enabled) { mj_unsupported("_hinge_joint_set_flag"); }
-bool MjPhysicsServer3D::_hinge_joint_get_flag(const RID &p_joint, PhysicsServer3D::HingeJointFlag p_flag) const { mj_unsupported("_hinge_joint_get_flag"); return {}; }
 void MjPhysicsServer3D::_joint_make_slider(const RID &p_joint, const RID &p_body_A, const Transform3D &p_local_ref_A, const RID &p_body_B, const Transform3D &p_local_ref_B) { mj_unsupported("_joint_make_slider"); }
 void MjPhysicsServer3D::_slider_joint_set_param(const RID &p_joint, PhysicsServer3D::SliderJointParam p_param, float p_value) { mj_unsupported("_slider_joint_set_param"); }
 float MjPhysicsServer3D::_slider_joint_get_param(const RID &p_joint, PhysicsServer3D::SliderJointParam p_param) const { mj_unsupported("_slider_joint_get_param"); return {}; }
