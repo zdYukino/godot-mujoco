@@ -4,7 +4,7 @@
 
 This branch targets **Linux x86_64, official Godot 4.7.2 .NET, and MuJoCo 3.16.0**. It does not modify the engine. Other platform configurations and historical reports do not establish current support.
 
-The native PhysicsServer integrates ordinary box/sphere/plane/cylinder bodies and ray queries with imported models. [Stage-one native overlap queries](docs/native-overlap-stage1.zh-CN.md) cover native primitives; heightfield/MJCF overlap and continuous sweeps remain unsupported. The MuJoCo editor workspace provides model properties, viewport selection and transforms, undo/redo, portable resources, and explicit runtime application. `MjRuntimeWorld` and `MjModelInstance` compose models in one physics space. The legacy `MjWorld` demonstration owns an independent model.
+The native PhysicsServer integrates ordinary box/sphere/plane/cylinder bodies and ray queries with imported models. [Stage-one native overlap queries](docs/native-overlap-stage1.zh-CN.md) cover native primitives; heightfield/MJCF overlap remains unsupported. [Continuous translation sweeps](docs/native-continuous-sweep-stage2.zh-CN.md) support sphere/primitive and finite/plane pairs only, with explicit failure outside that matrix. The MuJoCo editor workspace provides model properties, viewport selection and transforms, undo/redo, portable resources, and explicit runtime application. `MjRuntimeWorld` and `MjModelInstance` compose models in one physics space. The legacy `MjWorld` demonstration owns an independent model.
 
 Build with CMake 3.24+ and a C++17 compiler:
 
