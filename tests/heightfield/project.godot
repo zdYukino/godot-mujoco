@@ -1,0 +1,7 @@
+config_version=5
+[application]
+config/name="Typed control acceptance"
+[physics]
+3d/physics_engine="MuJoCo"
+[dotnet]
+project/assembly_name="TypedControl"

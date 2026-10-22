@@ -98,7 +98,7 @@ void MjPhysicsServer3D::_free_rid(const RID&source_rid){
   return;
  }
  if(flushing){pending_free.insert(r.get_id());return;}
- if(auto*b=body(r)){dirty(b->space);if(b->direct)memdelete(b->direct);bodies.erase(r.get_id());}
+ if(auto*b=body(r)){RID terrain_shape=b->heightfield&&!b->shapes.empty()?b->shapes[0].shape:RID();dirty(b->space);if(b->direct)memdelete(b->direct);bodies.erase(r.get_id());heightfield_revisions.erase(r.get_id());if(terrain_shape.is_valid())_free_rid(terrain_shape);}
  else if(space(r)){for(auto &i:space(r)->imported)handles.free(i.second->rid);for(auto &b:bodies)if(b.second->space==r){b.second->space=RID();b.second->mj_body=-1;}spaces.erase(r.get_id());}
  else if(shape(r)){for(auto &b:bodies){auto &s=b.second->shapes;auto n=s.size();s.erase(std::remove_if(s.begin(),s.end(),[&](auto&i){return i.shape==r;}),s.end());if(s.size()!=n)dirty(b.second->space);}shapes.erase(r.get_id());}
  else return;
@@ -111,6 +111,14 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s){
  std::ostringstream xml;xml.imbue(std::locale::classic());xml<<std::setprecision(17)<<"<mujoco model=\"GodotPhysicsSpace\"><compiler angle=\"radian\" fusestatic=\"false\"/><option timestep=\"0.002\" gravity=\"";vector_xml(xml,godot_to_mj(s.gravity_direction*s.gravity));xml<<"\"/><worldbody>";
  std::vector<std::pair<RID,int>> owners;
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;
+ if(b.heightfield){
+ auto*sh=shape(b.shapes[0].shape);Dictionary grid=sh->data;PackedFloat32Array heights=grid["heights"];
+ double low=heights[0];for(int k=1;k<heights.size();++k)low=std::min(low,double(heights[k]));
+ Transform3D t=b.transform;t.origin+=t.basis.xform(Vector3(0,low,0));
+ xml<<"<geom name=\"g"<<owners.size()<<"\" type=\"hfield\" hfield=\"h"<<b.rid.get_id()<<"\"";pose_xml(xml,t);
+ xml<<" contype=\""<<int32_t(b.layer)<<"\" conaffinity=\""<<int32_t(b.mask)<<"\" friction=\"1 .005 .0001\"/>";
+ owners.push_back({b.rid,0});continue;
+ }
  xml<<"<body name=\"b"<<b.rid.get_id()<<"\"";pose_xml(xml,b.transform);xml<<">";
  if(b.mode==BODY_MODE_RIGID)xml<<"<freejoint name=\"native_joint_"<<b.rid.get_id()<<"\"/>";
  int count=0;for(auto&i:b.shapes)if(!i.disabled&&shape(i.shape)&&shape(i.shape)->type!=SHAPE_WORLD_BOUNDARY)++count;
@@ -130,7 +138,14 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s){
  xml<<"</worldbody><contact>";std::set<std::pair<uint64_t,uint64_t>> exclusions;
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;for(auto id:b.exceptions){auto i=bodies.find(id);if(i!=bodies.end()&&i->second->space==s.rid&&id!=b.rid.get_id())exclusions.emplace(std::min<uint64_t>(id,b.rid.get_id()),std::max<uint64_t>(id,b.rid.get_id()));}}
  for(auto p:exclusions)xml<<"<exclude body1=\"b"<<p.first<<"\" body2=\"b"<<p.second<<"\"/>";
- xml<<"</contact></mujoco>";
+ xml<<"</contact><asset>";
+ for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid||!b.heightfield)continue;
+ Dictionary grid=shape(b.shapes[0].shape)->data;PackedFloat32Array h=grid["heights"];int w=grid["width"],d=grid["depth"];
+ double low=h[0],high=h[0];for(int k=1;k<h.size();++k){low=std::min(low,double(h[k]));high=std::max(high,double(h[k]));}
+ xml<<"<hfield name=\"h"<<b.rid.get_id()<<"\" nrow=\""<<d<<"\" ncol=\""<<w<<"\" size=\""<<(w-1)*.5<<' '<<(d-1)*.5<<' '<<std::max(high-low,1e-6)<<" 1\" elevation=\"";
+ for(int k=0;k<h.size();++k)xml<<h[k]<<' ';xml<<"\"/>";
+ }
+ xml<<"</asset></mujoco>";
  char error[2048]={};mjSpec *spec=mj_parseXMLString(xml.str().c_str(),nullptr,error,sizeof(error));
  if(!spec){s.last_error=String::utf8(error);return false;}
  mjs_setDeepCopy(spec,1);
@@ -213,6 +228,7 @@ void MjPhysicsServer3D::_sync(){}
 void MjPhysicsServer3D::_end_sync(){}
 bool MjPhysicsServer3D::_is_flushing_queries() const{return flushing;}
 void MjPhysicsServer3D::_step(float dt){
+ process_heightfields();
  process_model_edits();
  process_world_commands(); // Before stepping, including paused worlds: UI only enqueues snapshots.
  if(!active||dt<=0)return;last_step=dt;

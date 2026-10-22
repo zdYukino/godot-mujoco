@@ -26,7 +26,7 @@ struct MjImported {
  ~MjImported() { if(spec) mj_deleteSpec(spec); }
 };
 struct MjBody {
- RID rid, space; uint64_t object_id=0; PhysicsServer3D::BodyMode mode=PhysicsServer3D::BODY_MODE_RIGID;
+ RID rid, space; bool heightfield=false; uint64_t object_id=0; PhysicsServer3D::BodyMode mode=PhysicsServer3D::BODY_MODE_RIGID;
  Transform3D transform; Vector3 linear_velocity, angular_velocity, force, torque, constant_force, constant_torque;
  std::vector<MjShapeInstance> shapes; std::map<int, Variant> params;
  uint32_t layer=1, mask=1; bool ray_pickable=true, sleeping=false, omit_integration=false;
@@ -78,6 +78,14 @@ public:
  Dictionary scene_world_command_result(int64_t request);
  void scene_cancel_world_command(int64_t request);
  void process_world_commands();
+ int64_t scene_request_heightfield(const RID &space,const RID &body,const Dictionary &design,uint64_t owner,int64_t revision);
+ Dictionary scene_heightfield_result(int64_t request);
+ void scene_cancel_heightfield(int64_t request);
+ void process_heightfields();
+ struct HeightfieldEdit {int64_t request,revision; RID space,body; Dictionary design; uint64_t owner;};
+ std::deque<HeightfieldEdit> heightfield_edits;
+ std::map<int64_t,Dictionary> heightfield_results;
+ std::map<uint64_t,int64_t> heightfield_revisions;
  void remember_initial_state(MjSpace &space);
  struct WorldCommand {int64_t request;RID space;String command;int count;};
  std::deque<WorldCommand> world_commands;

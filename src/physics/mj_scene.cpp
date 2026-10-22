@@ -17,6 +17,9 @@ bool rigid_pose(const Transform3D &t){return t.is_finite() && t.basis.is_orthogo
 Transform3D geom_pose(const mjData *d,int g){const auto *p=d->geom_xpos+3*g,*m=d->geom_xmat+9*g;Basis b;for(int r=0;r<3;++r)for(int c=0;c<3;++c)b[r][c]=m[3*r+c];return Transform3D(mj_to_godot(b),mj_to_godot(Vector3(p[0],p[1],p[2])));}
 }
 void MjPhysicsServer3D::_bind_methods(){
+ ClassDB::bind_method(D_METHOD("scene_request_heightfield","space","body","design","owner","revision"),&MjPhysicsServer3D::scene_request_heightfield);
+ ClassDB::bind_method(D_METHOD("scene_heightfield_result","request"),&MjPhysicsServer3D::scene_heightfield_result);
+ ClassDB::bind_method(D_METHOD("scene_cancel_heightfield","request"),&MjPhysicsServer3D::scene_cancel_heightfield);
  ClassDB::bind_method(D_METHOD("scene_request_world_command","space","command","count"),&MjPhysicsServer3D::scene_request_world_command,DEFVAL(1));
  ClassDB::bind_method(D_METHOD("scene_world_command_result","request"),&MjPhysicsServer3D::scene_world_command_result);
  ClassDB::bind_method(D_METHOD("scene_cancel_world_command","request"),&MjPhysicsServer3D::scene_cancel_world_command);

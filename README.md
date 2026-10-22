@@ -222,3 +222,5 @@ CMake 将 godot-cpp 获取到构建目录并静态链接进扩展，将 MuJoCo �
 本项目采用 [MIT License](LICENSE)，署名 **Copyright (c) 2026 godot-mujoco contributors**。MuJoCo 采用 Apache-2.0，godot-cpp 采用 MIT；二进制再分发请保留相应许可和声明，见 [THIRD_PARTY.md](demo/addons/godot_mujoco/THIRD_PARTY.md)。Unitree G1 资产保留 [BSD-3-Clause 许可证及原作者署名](demo/assets/robots/unitree_g1/g1_29dof_mode_18/LICENSE)与[来源说明](demo/assets/robots/unitree_g1/g1_29dof_mode_18/README.md)，不属于本项目自行创作的模型；原始资产保持字节不变，派生设计另存。
 
 [类型化 C# 控制 API](docs/typed-control.md)：请求入队与完成反馈、生命周期与轻量验证。原生 `CylinderShape3D` 尚未支持；MJCF 圆柱的编辑与模拟属于模型功能。
+
+[静态固定网格高度场](docs/static-heightfield.md)：`MjStaticHeightField` / `MjHeightFieldData`，安全边界增删/替换、匹配可见网格和碰撞；不等于通用 `HeightMapShape3D` 支持。

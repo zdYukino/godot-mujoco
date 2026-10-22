@@ -183,6 +183,7 @@ add_library(godot_mujoco SHARED
     src/physics/mj_coordinates.cpp
     src/physics/mj_scene.cpp
     src/physics/mj_runtime_model.cpp
+    src/physics/mj_heightfield.cpp
     src/physics/mj_runtime_clock.cpp
     src/physics/mj_physics_server.cpp
     src/physics/mj_direct_body_state.cpp

@@ -63,9 +63,7 @@ bool MjDirectSpaceState::_intersect_ray(const Vector3 &p_from, const Vector3 &p_
 	if (p_collide_with_areas) {
 		mj_unsupported("Area3D ray queries");
 	}
-	// Godot's box, sphere and world-boundary primitives do not use this flag.
-	// Back-face filtering becomes relevant when concave shapes are supported.
-	(void)p_hit_back_faces;
+	// Primitive rays are two-sided; heightfield back faces obey the query flag.
 	if (!server || !p_collide_with_bodies || !p_collision_mask ||
 			!p_from.is_finite() || !p_to.is_finite()) {
 		return false;
@@ -126,7 +124,7 @@ bool MjDirectSpaceState::_intersect_ray(const Vector3 &p_from, const Vector3 &p_
 		// A query's mask is matched against the body's layer. The body's own
 		// collision mask controls body/body contacts, not visibility to rays.
 		const int type = model->geom_type[geom];
-		if (type != mjGEOM_BOX && type != mjGEOM_SPHERE && type != mjGEOM_PLANE) {
+		if (type != mjGEOM_BOX && type != mjGEOM_SPHERE && type != mjGEOM_PLANE && type != mjGEOM_HFIELD) {
 			mj_unsupported("ray queries for non-box/sphere/world-boundary shapes");
 			continue;
 		}
@@ -136,7 +134,22 @@ bool MjDirectSpaceState::_intersect_ray(const Vector3 &p_from, const Vector3 &p_
 		mjtNum offset[3], local_from[3];
 		mju_sub3(offset, origin, position);
 		mju_mulMatTVec3(local_from, matrix, offset);
-		if (point_inside_geom(type, local_from, size)) {
+		bool inside = point_inside_geom(type, local_from, size);
+		if (type == mjGEOM_HFIELD) {
+			const int id = model->geom_dataid[geom];
+			const mjtNum *extent = model->hfield_size + 4*id;
+			const int cols = model->hfield_ncol[id], rows = model->hfield_nrow[id];
+			if (std::abs(local_from[0]) < extent[0] && std::abs(local_from[1]) < extent[1] && local_from[2] > -extent[3]) {
+				double x = (local_from[0]/extent[0]+1)*.5*(cols-1);
+				double y = (local_from[1]/extent[1]+1)*.5*(rows-1);
+				int col = std::clamp(int(x),0,cols-2), row = std::clamp(int(y),0,rows-2);
+				x -= col; y -= row;
+				const float *h = model->hfield_data + model->hfield_adr[id] + row*cols + col;
+				double top = y <= x ? h[0]+x*(h[1]-h[0])+y*(h[cols+1]-h[1]) : h[0]+x*(h[cols+1]-h[cols])+y*(h[cols]-h[0]);
+				inside = local_from[2] < top*extent[2];
+			}
+		}
+		if (inside) {
 			if (!p_hit_from_inside) {
 				// MuJoCo returns the exit surface for solid primitives. Godot
 				// instead skips a shape entirely when starting inside it.
@@ -152,12 +165,13 @@ bool MjDirectSpaceState::_intersect_ray(const Vector3 &p_from, const Vector3 &p_
 			continue;
 		}
 		mjtNum normal[3] = {};
-		mjtNum distance = intersect_geom(type, position, matrix, size, origin, direction,
+		mjtNum distance = type == mjGEOM_HFIELD ? mj_rayHfield(model, data, geom, origin, direction, normal) : intersect_geom(type, position, matrix, size, origin, direction,
 				local_from, normal);
 		if (!std::isfinite(distance) || distance < 0 || distance > length + endpoint_tolerance ||
 				!std::isfinite(normal[0]) || !std::isfinite(normal[1]) || !std::isfinite(normal[2])) {
 			continue;
 		}
+		if (type == mjGEOM_HFIELD && !p_hit_back_faces && mju_dot3(normal,direction) > 0) continue;
 		distance = std::min(distance, length);
 		if (nearest_body && distance >= nearest) {
 			continue;
