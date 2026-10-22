@@ -15,7 +15,8 @@ static func signature(document:RefCounted)->String:
   if p.transmission_type!=0:return "" # mjTRN_JOINT only, no tendon/site targets.
   var gains={}
   if p.type=="position-compatible":gains.kp=1.0
-  if p.type!="general/non-PD":gains.kv=0.0
+  if p.type=="position-compatible":gains.kv=0.0
+  elif p.type=="velocity-compatible":gains.kv=1.0
   if not gains.is_empty() and not copy.edit({"op":"set","kind":"actuator","name":entity.name,"values":gains}):return ""
  return String(copy.snapshot().xml).sha256_text()
 static func capture(document:RefCounted)->Dictionary:

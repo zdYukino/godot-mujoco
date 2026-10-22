@@ -68,6 +68,27 @@ func run(plugin:EditorPlugin):
   var tendon_before=tendon.snapshot()
   check(Presets.capture(tendon).has("error") and not Presets.candidate(tendon,original).error.is_empty() and tendon.snapshot()==tendon_before,"non-joint target rejected without mutation "+target)
  check(doc.snapshot()==stable,"signature computation does not mutate source document")
+ # Mixed position/velocity drives retain their distinct valid gain domains.
+ var velocity_source=source.replace('<position name="drive" joint="hinge" kp="20"','<velocity name="drive" joint="hinge" kv="4"')
+ file=FileAccess.open("res://velocity.xml",FileAccess.WRITE);file.store_string(velocity_source);file.close()
+ check(doc.import_file("res://velocity.xml") and drive(doc,"drive").type=="velocity-compatible","import standard joint velocity drive")
+ doc.set_paused(true);doc.edit({"op":"control","name":"drive","value":.3})
+ var velocity_before=doc.snapshot();var velocity_signature=Presets.signature(doc)
+ check(not velocity_signature.is_empty() and doc.snapshot()==velocity_before,"velocity signature nonempty without source mutation")
+ check(panel.save_control_preset("res://velocity-preset.json"),"save velocity preset via editor")
+ var velocity_preset=Presets.read_file("res://velocity-preset.json").value
+ check(velocity_preset.drives.drive.kv==4 and not velocity_preset.drives.drive.has("kp"),"velocity preset records kv without fictitious kp")
+ doc.edit({"op":"set","kind":"actuator","name":"drive","values":{"kv":7}});doc.edit({"op":"control","name":"drive","value":-.2})
+ check(Presets.signature(doc)==velocity_signature,"changed velocity kv remains compatible")
+ check(panel.load_control_preset("res://velocity-preset.json") and drive(doc,"drive").kv==4 and drive(doc,"drive").control==.3,"velocity editor load restores gain and target")
+ var invalid_velocity=velocity_preset.duplicate(true);invalid_velocity.drives.drive.kv=0
+ velocity_before=doc.snapshot()
+ check(not Presets.candidate(doc,invalid_velocity).error.is_empty() and doc.snapshot()==velocity_before,"zero velocity gain rejects without partial overwrite")
+ file=FileAccess.open("res://velocity-other.xml",FileAccess.WRITE);file.store_string(velocity_source.replace('kv="4"','kv="9"'));file.close()
+ var other_velocity=ClassDB.instantiate("MjEditorDocument");check(other_velocity.import_file("res://velocity-other.xml"),"import independently authored different velocity kv")
+ var other_snapshot=other_velocity.snapshot()
+ var velocity_candidate=Presets.candidate(other_velocity,velocity_preset)
+ check(velocity_candidate.error.is_empty() and other_velocity.snapshot()==other_snapshot and other_velocity.restore(velocity_candidate.snapshot) and drive(other_velocity,"drive").kv==4 and drive(other_velocity,"drive").control==.3,"different original kv loads atomically into compatible model")
  var report={"passed":passed,"failed":failed}
  for arg in OS.get_cmdline_user_args():
   if arg.begins_with("--report="):var f=FileAccess.open(arg.trim_prefix("--report="),FileAccess.WRITE);f.store_string(JSON.stringify(report))
