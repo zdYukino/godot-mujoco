@@ -1,0 +1,37 @@
+{
+  "checked_at_utc": "2026-10-22T08:42:24.102797+00:00",
+  "sha": "a4f8532b2b3fff788512346d8217a77e32420c59",
+  "pr": 1,
+  "observed": {
+    "pr_open": true,
+    "draft": true,
+    "mergeable": true,
+    "run_count_for_sha": 0,
+    "repository_run_count": 0,
+    "check_run_count": 0,
+    "check_suite_count": 0,
+    "combined_status": "pending",
+    "individual_status_count": 0,
+    "workflow_state": "active",
+    "pull_request_opened_event_visible": true,
+    "actions_permissions_read_http": 403,
+    "actions_permissions_read_message": "Resource not accessible by integration"
+  },
+  "static": {
+    "actionlint_version": "1.7.7",
+    "actionlint_exit": 0,
+    "actionlint_shellcheck": "disabled; bash -n separately checked",
+    "push_branch_matches": true,
+    "pull_request_opened_matches": true,
+    "no_draft_exclusion": true,
+    "default_branch_lacks_workflow_dispatch": true
+  },
+  "conclusion": "No visible run exists; not evidence of queuing. Repository/owner policy and event/token suppression cannot be determined with available access. No security settings changed.",
+  "toolchain_sources": {
+    "godot": "https://api.github.com/repos/godotengine/godot-builds/releases/tags/4.7.2-stable",
+    "godot_sha512": "https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable/SHA512-SUMS.txt",
+    "mujoco": "https://api.github.com/repos/google-deepmind/mujoco/releases/tags/3.16.0",
+    "dotnet_sdk": "https://builds.dotnet.microsoft.com/dotnet/release-metadata/8.0/releases.json"
+  },
+  "ci_extension_build": "actions checkout then cmake configure and build -j2; no extension artifact download/cache. Execution not confirmed."
+}

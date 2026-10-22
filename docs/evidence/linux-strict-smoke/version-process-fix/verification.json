@@ -1,0 +1,17 @@
+{
+  "base_commit": "a4f8532b2b3fff788512346d8217a77e32420c59",
+  "scope": "Working-tree preflight evidence fix only; existing native reused",
+  "unittest_normal": {
+    "passed": 15,
+    "exit": 0
+  },
+  "unittest_optimized": {
+    "passed": 15,
+    "exit": 0
+  },
+  "integration_exit": 0,
+  "source_sha256": {
+    "tests/mjworld_smoke/run.py": "7ddb2550db87e72017e1293c1c11dd2efaa2e6d3491e024ea757a0afb893dfd4",
+    "tests/mjworld_smoke/test_runner.py": "e1c1e5e50e5b65be4ed11b0908126e44d04cdf0cf22661f5911b5dae12b9a698"
+  }
+}

@@ -1,0 +1,10 @@
+...............
+----------------------------------------------------------------------
+Ran 15 tests in 0.067s
+
+OK
+{"status": "blocked", "report": "/tmp/tmpqcc7fjbu/out/results.json"}
+{"status": "failed", "report": "/tmp/tmp0c6do5lt/results.json"}
+{"status": "failed", "report": "/tmp/tmpqurtptr4/results.json"}
+{"status": "failed", "report": "/tmp/tmpo_247oep/results.json"}
+{"status": "failed", "report": "/tmp/tmprj_3d_4e/results.json"}

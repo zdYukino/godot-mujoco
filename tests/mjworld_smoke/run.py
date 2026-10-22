@@ -62,6 +62,8 @@ def run(out, godot):
         if digest(binary) != CONFIG['godot_binary_sha256']:
             raise RuntimeError('Expected the exact official Godot .NET executable')
         verification = process([str(binary), '--version'], out / 'version.log', 20)
+        result['stages']['verify'].update(godot=str(binary), version_process=verification)
+        save()
         if verification['exit_code'] != 0 or verification['timed_out'] or (out / 'version.log').read_text().strip() != CONFIG['godot_version']:
             raise RuntimeError('Godot version check failed')
         native = ROOT / 'demo/addons/godot_mujoco/bin'

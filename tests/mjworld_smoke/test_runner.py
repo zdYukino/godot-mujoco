@@ -53,3 +53,31 @@ class RunnerTests(unittest.TestCase):
             self.assertEqual(report['stages']['positive']['status'],'not_run')
             self.assertEqual(report['stages']['negative']['status'],'not_run')
             self.assertEqual((out/'import.log').read_text(),'original crash log\n')
+
+    def verify_version_rejection(self, code, timed_out, output):
+        import json
+        with tempfile.TemporaryDirectory() as tmp:
+            def fake_process(argv,log,timeout):
+                log.write_text(output)
+                return {'argv':argv,'exit_code':code,'timed_out':timed_out}
+            with patch.object(run,'digest',return_value=run.CONFIG['godot_binary_sha256']),patch.object(run,'process',side_effect=fake_process) as proc:
+                self.assertEqual(run.run(tmp,'godot'),1)
+                self.assertEqual(proc.call_count,1)
+            report=json.loads((pathlib.Path(tmp)/'results.json').read_text())
+            stage=report['stages']['verify']
+            self.assertEqual(stage['status'],'failed')
+            self.assertEqual(stage['version_process']['exit_code'],code)
+            self.assertEqual(stage['version_process']['timed_out'],timed_out)
+            self.assertIn('--version',stage['version_process']['argv'])
+            self.assertEqual((pathlib.Path(tmp)/'version.log').read_text(),output)
+            for name in ('import','positive','negative','audit_tests'):
+                self.assertEqual(report['stages'][name]['status'],'not_run')
+
+    def test_version_failure_retains_process(self):
+        self.verify_version_rejection(2,False,'version launch failed\n')
+
+    def test_version_timeout_retains_process(self):
+        self.verify_version_rejection(-9,True,'partial output\n')
+
+    def test_version_mismatch_retains_process(self):
+        self.verify_version_rejection(0,False,'different version\n')
