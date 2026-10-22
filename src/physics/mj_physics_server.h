@@ -71,6 +71,8 @@ public:
  bool scene_set_actuator(const RID &space, const RID &object, const String &name, double value);
  bool scene_release_model(const RID &space, const RID &object);
  int64_t scene_request_model_edit(const RID &space, const RID &object, const Dictionary &snapshot, const String &directory, int64_t expected_revision);
+ int64_t scene_request_preset(const RID &space,const RID &object,const Dictionary &preset,int64_t revision);
+ bool scene_cancel_preset(int64_t request);
  Dictionary scene_edit_result(int64_t request);
  void scene_cancel_model_edit(int64_t request);
  void process_model_edits();
@@ -90,7 +92,7 @@ public:
  struct WorldCommand {int64_t request;RID space;String command;int count;};
  std::deque<WorldCommand> world_commands;
  std::map<int64_t,Dictionary> world_command_results;
- struct ModelEdit {int64_t request, expected_revision; RID space, object; Dictionary snapshot; String directory;};
+ struct ModelEdit {int64_t request, expected_revision; RID space, object; Dictionary snapshot; String directory; bool preset=false;};
  std::mutex edits_mutex;
  std::deque<ModelEdit> model_edits;
  std::map<int64_t,Dictionary> edit_results;

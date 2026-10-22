@@ -42,6 +42,8 @@ void MjEditorDocument::_bind_methods(){
  ClassDB::bind_method(D_METHOD("geometry"),&MjEditorDocument::geometry);
  ClassDB::bind_method(D_METHOD("set_paused","paused"),&MjEditorDocument::set_paused);
  ClassDB::bind_method(D_METHOD("is_paused"),&MjEditorDocument::is_paused);
+ ClassDB::bind_method(D_METHOD("control_signature"),&MjEditorDocument::control_signature);
+ ClassDB::bind_method(D_METHOD("preset_candidate","preset"),&MjEditorDocument::preset_candidate);
  ClassDB::bind_method(D_METHOD("advance","seconds"),&MjEditorDocument::advance);
  ClassDB::bind_method(D_METHOD("get_error"),&MjEditorDocument::get_error);
 }
@@ -69,6 +71,41 @@ bool MjEditorDocument::commit(mjSpec*c,const Dictionary &state,bool migrate){
  spec=c;model=m;data=d;accumulator=0;error="";++revision;return true;
 }
 String MjEditorDocument::xml() const {if(!spec)return {};char error[1024]={};int n=mj_saveXMLString(spec,nullptr,0,error,sizeof(error));if(n<=0)return {};std::vector<char>b(n+1);if(mj_saveXMLString(spec,b.data(),b.size(),error,sizeof(error)))return {};return String::utf8(b.data());}
+String MjEditorDocument::control_signature() const {
+ Ref<MjEditorDocument> copy;copy.instantiate();if(!copy->restore(snapshot()))return {};
+ for(int a=0;a<model->nu;++a){
+  if(model->actuator_trntype[a]!=mjTRN_JOINT)return {};
+  String kind=drive_kind(model,a);Dictionary gains,cmd;
+  if(kind=="position-compatible"){gains["kp"]=1.;gains["kv"]=0.;}
+  else if(kind=="velocity-compatible")gains["kv"]=1.;
+  if(gains.is_empty())continue;
+  cmd["op"]="set";cmd["kind"]="actuator";cmd["name"]=name(model,mjOBJ_ACTUATOR,a);cmd["values"]=gains;
+  if(!copy->edit(cmd))return {};
+ }
+ return copy->xml().sha256_text();
+}
+Dictionary MjEditorDocument::preset_candidate(const Dictionary &preset) const {
+ auto fail=[](const String &error){Dictionary result;result["error"]=error;return result;};
+ if(!paused)return fail("Pause before loading a preset");
+ Variant format=preset.get("format",Variant());
+ if((format.get_type()!=Variant::INT&&format.get_type()!=Variant::FLOAT)||double(format)!=2||Variant(preset.get("mapping",Variant())).get_type()!=Variant::STRING||Variant(preset.get("kind",Variant())).get_type()!=Variant::STRING)return fail("Invalid control preset schema");
+ if(preset.size()!=4||String(preset.get("kind",String()))!="godot-mujoco-control-preset"||Variant(preset.get("drives",Variant())).get_type()!=Variant::DICTIONARY)return fail("Invalid control preset schema");
+ String signature=control_signature();if(signature.is_empty())return fail("Preset requires supported joint transmissions");
+ if(String(preset.get("mapping",String()))!=signature)return fail("Model/joint/actuator mapping or design is incompatible");
+ Dictionary drives=preset["drives"];if(drives.size()!=model->nu)return fail("Actuator set mismatch");
+ Ref<MjEditorDocument> copy;copy.instantiate();if(!copy->restore(snapshot()))return fail(copy->get_error());
+ for(int a=0;a<model->nu;++a){
+  String label=name(model,mjOBJ_ACTUATOR,a),kind=drive_kind(model,a);
+  if(label.is_empty()||!drives.has(label)||Variant(drives[label]).get_type()!=Variant::DICTIONARY)return fail("Missing named actuator");
+  Dictionary fields=drives[label];int count=kind=="position-compatible"?3:kind=="velocity-compatible"?2:1;
+  if(fields.size()!=count||!fields.has("control")||(count>1&&!fields.has("kv"))||(count==3&&!fields.has("kp")))return fail("Invalid preset fields");
+  for(auto key:{"control","kp","kv"})if(fields.has(key)){double value;if(!scalar(fields[key],value))return fail("Invalid numeric preset field");}
+  Dictionary gains=fields.duplicate();gains.erase("control");Dictionary cmd;
+  if(!gains.is_empty()){cmd["op"]="set";cmd["kind"]="actuator";cmd["name"]=label;cmd["values"]=gains;if(!copy->edit(cmd))return fail(copy->get_error());}
+  cmd.clear();cmd["op"]="control";cmd["name"]=label;cmd["value"]=fields["control"];if(!copy->edit(cmd))return fail(copy->get_error());
+ }
+ Dictionary result;result["error"]="";result["snapshot"]=copy->snapshot();return result;
+}
 Dictionary MjEditorDocument::snapshot() const {Dictionary r,state;r["format"]=1;r["xml"]=xml();r["source"]=source;if(data){state["qpos"]=numbers(data->qpos,model->nq);state["qvel"]=numbers(data->qvel,model->nv);state["ctrl"]=numbers(data->ctrl,model->nu);state["act"]=numbers(data->act,model->na);state["time"]=data->time;std::vector<double> v(mj_stateSize(model,mjSTATE_INTEGRATION));mj_getState(model,data,v.data(),mjSTATE_INTEGRATION);state["integration"]=numbers(v.data(),v.size());}r["state"]=state;return r;}
 bool MjEditorDocument::restore(const Dictionary&r){paused=true;if(int(r.get("format",0))!=1||!r.has("xml")||!r.has("state")){error="Unsupported editor document format";return false;}char e[2048]={};String text=r["xml"];auto*c=mj_parseXMLString(text.utf8().get_data(),nullptr,e,sizeof(e));if(!c){error=String::utf8(e);return false;}if(!commit(c,r["state"],false))return false;source=r.get("source",String());return true;}
 bool MjEditorDocument::import_g1(const String &path,bool free_base,bool relaxed){String absolute=ProjectSettings::get_singleton()->globalize_path(path);auto*c=gmj_import_g1(absolute,error,free_base,relaxed);if(!c)return false;if(!commit(c,Dictionary(),false))return false;

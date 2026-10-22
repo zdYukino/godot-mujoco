@@ -70,6 +70,8 @@ func _ready() -> void:
 	button(runtime_bar, "Assign saved model to scene selection", assign_saved_model)
 	runtime_apply = button(runtime_bar, "Apply saved model to runtime", apply_runtime_model)
 	button(runtime_bar, "Send selected control to runtime", send_runtime_control)
+	button(runtime_bar,"应用整份运行预设",runtime_preset_dialog)
+	button(runtime_bar,"取消待提交运行预设",func():plugin.live_debugger.send(runtime_target_key,"cancel_preset",{}))
 	runtime_status = Label.new()
 	runtime_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(runtime_status)
@@ -762,6 +764,8 @@ func refresh_runtime_targets() -> void:
 	runtime_apply.disabled = info.pending
 	var changed: bool = project_model_path != info.resource or state.dirty or pending
 	runtime_status.text = "Runtime revision %s • %s • %s" % [info.revision,"Request pending" if info.pending else "Ready", "Design changes not applied" if changed else "Saved resource matches"]
+	var outcome:Dictionary=info.get("preset",{})
+	if not outcome.is_empty(): runtime_status.text+=" • Preset "+str(outcome.get("status",""))+" #"+str(outcome.get("request",0))
 	if not str(info.error).is_empty(): runtime_status.text += " • Failed: " + str(info.error) + " • Fix and retry"
 
 func apply_runtime_model() -> bool:
@@ -823,3 +827,21 @@ func load_control_preset(path:String)->bool:
 	if not state.document.restore(result.snapshot):show_error(state.document.get_error());return false
 	record_change(before,"Load control preset")
 	status.text="预设已加载到编辑文档，可 Undo；运行实例尚未改变。PD需保存模型后显式应用，目标值需选择对应控制并发送。";return true
+
+func runtime_preset_dialog()->void:
+	if runtime_target_key.is_empty():show_error("Select one runtime instance");return
+	var key=runtime_target_key
+	var target=plugin.live_debugger.instances.get(key,{})
+	if target.is_empty() or target.pending:show_error("Wait for pending runtime operation");return
+	var revision=target.revision
+	var dialog=EditorFileDialog.new();dialog.access=EditorFileDialog.ACCESS_FILESYSTEM;dialog.file_mode=EditorFileDialog.FILE_MODE_OPEN_FILE
+	dialog.title="Apply preset to "+str(target.path)
+	dialog.filters=PackedStringArray(["*.json ; Runtime control preset"]);add_child(dialog)
+	dialog.file_selected.connect(func(path):
+		var input=preload("control_presets.gd").read_file(path)
+		if not input.error.is_empty():show_error(input.error)
+		elif runtime_target_key!=key or not plugin.live_debugger.instances.has(key) or plugin.live_debugger.instances[key].revision!=revision:show_error("Runtime target/revision changed; reopen preset chooser")
+		elif not input.value is Dictionary:show_error("Invalid preset schema")
+		elif not plugin.live_debugger.send(key,"preset",{"preset":input.value}):show_error("Runtime target unavailable or pending")
+		dialog.queue_free())
+	dialog.canceled.connect(dialog.queue_free);dialog.popup_centered_ratio(.65)
