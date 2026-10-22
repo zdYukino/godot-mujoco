@@ -225,4 +225,6 @@ CMake 将 godot-cpp 获取到构建目录并静态链接进扩展，将 MuJoCo �
 
 [静态固定网格高度场](docs/static-heightfield.md)：`MjStaticHeightField` / `MjHeightFieldData`，安全边界增删/替换、匹配可见网格和碰撞；不等于通用 `HeightMapShape3D` 支持。
 
-专用地形现提供[编辑面板](docs/heightfield-editor.zh-CN.md)和[类型化 C# TerrainHandle](docs/typed-terrain.zh-CN.md)：场景草稿/预览/撤销、运行目标及完成反馈；新功能仍需独立验收后批准合入，不改变已冻结基线记录。
+专用地形现提供[编辑面板](docs/heightfield-editor.zh-CN.md)和[类型化 C# TerrainHandle](docs/typed-terrain.zh-CN.md)：场景草稿/预览/撤销、运行目标及完成反馈；已独立验收并通过 PR #2 合入，不改变已冻结基线记录。
+
+[轻量综合工作流](examples/light_workflow/README.zh-CN.md)：两个固定基座模型、专用地形、普通 box，类型化控制、暂停/精确步进及 checkpoint 重置；本轮新增示例等待独立 GUI 验收。

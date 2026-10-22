@@ -28,4 +28,6 @@ See the [implementation and validation report](docs/freebase-clock-validation.zh
 
 [Static fixed-grid heightfield](docs/static-heightfield.md): `MjStaticHeightField` / `MjHeightFieldData`, boundary transactions and matching visual/collision geometry; not general `HeightMapShape3D` support.
 
-Dedicated terrain now includes an [editor panel](docs/heightfield-editor.zh-CN.md) and [typed C# TerrainHandle](docs/typed-terrain.zh-CN.md), with design drafts, undo, runtime targets and completion feedback. These feature-branch additions require independent acceptance and approval before another main merge.
+Dedicated terrain now includes an [editor panel](docs/heightfield-editor.zh-CN.md) and [typed C# TerrainHandle](docs/typed-terrain.zh-CN.md), with design drafts, undo, runtime targets and completion feedback. These additions were independently accepted and merged through PR #2.
+
+[Lightweight integrated workflow](examples/light_workflow/README.zh-CN.md): two fixed-base models, typed terrain, box contact, controls, pause/step and checkpoint reset. New example awaits independent GUI acceptance.
