@@ -1,0 +1,7 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Condition "n<0" is true.
+   at: _body_set_max_contacts_reported (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:142)
+   GDScript backtrace (most recent call first):
+       [0] _initialize (res://negative.gd:5)
+CONTACT_NEGATIVE_RESULT true

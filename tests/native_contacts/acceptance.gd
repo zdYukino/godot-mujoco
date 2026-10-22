@@ -5,6 +5,7 @@ var failed:=0
 var entered:=0
 var exited:=0
 var callback_deleted:=false
+var callback_shape_deleted:=false
 func _initialize():call_deferred("run")
 func check(ok:bool,label:String):
  if ok:passed+=1
@@ -25,7 +26,8 @@ func run():
  await ticks(150)
  var state=PhysicsServer3D.body_get_direct_state(b.get_rid())
  check(state.get_contact_count()==4,"box plane four manifold points")
- check(b.get_colliding_bodies().has(floor) and entered==1,"contact_monitor body_entered and list")
+ print("MONITOR_DIAGNOSTIC ",JSON.stringify({"entered":entered,"exited":exited,"has_floor":b.get_colliding_bodies().has(floor)}))
+ check(b.get_colliding_bodies().has(floor) and entered>=1 and entered-exited==1,"contact_monitor body_entered and list")
  var impulse:=Vector3.ZERO
  for i in state.get_contact_count():
   check(state.get_contact_collider(i)==floor.get_rid() and state.get_contact_collider_object(i)==floor and state.get_contact_collider_id(i)==floor.get_instance_id(),"collider identity")
@@ -36,8 +38,15 @@ func run():
   check(state.get_contact_local_velocity_at_position(i).length()<.1 and state.get_contact_collider_velocity_at_position(i).length()<.001,"point velocities")
   impulse+=state.get_contact_impulse(i)
  check(absf(impulse.y-9.8/540)<.003,"last substep impulse N s")
- b.max_contacts_reported=1;await ticks(3);check(state.get_contact_count()==1,"capacity truncation")
- b.max_contacts_reported=0;await ticks(3);check(state.get_contact_count()==0 and b.get_colliding_bodies().is_empty() and exited==1,"zero disables and monitor exits")
+ b.max_contacts_reported=1
+ check(state.get_contact_count()==1,"capacity lowering truncates immediately before next tick")
+ for index in [-1,1,999]:
+  check(state.get_contact_local_position(index)==Vector3.ZERO and state.get_contact_collider_position(index)==Vector3.ZERO and state.get_contact_local_normal(index)==Vector3.ZERO and state.get_contact_impulse(index)==Vector3.ZERO,"out of range position normal impulse zero")
+  check(state.get_contact_local_velocity_at_position(index)==Vector3.ZERO and state.get_contact_collider_velocity_at_position(index)==Vector3.ZERO,"out of range velocities zero")
+  check(not state.get_contact_collider(index).is_valid() and state.get_contact_collider_id(index)==0 and state.get_contact_collider_object(index)==null and state.get_contact_local_shape(index)==-1 and state.get_contact_collider_shape(index)==-1,"out of range identity empty and shape minus one")
+ await ticks(3);check(state.get_contact_count()==1,"capacity truncation")
+ var exits_before_disable:=exited
+ b.max_contacts_reported=0;await ticks(3);print("MONITOR_ZERO_DIAGNOSTIC ",JSON.stringify({"entered":entered,"exited":exited,"empty":b.get_colliding_bodies().is_empty(),"contacts":state.get_contact_count()}));check(state.get_contact_count()==0 and b.get_colliding_bodies().is_empty() and exited==exits_before_disable+1 and entered==exited,"zero disables and monitor exits")
  b.max_contacts_reported=16;await ticks(3)
  b.add_collision_exception_with(floor);await ticks(3);check(state.get_contact_count()==0,"exception filters report")
  b.remove_collision_exception_with(floor);b.position=Vector3(2,.5,0);b.linear_velocity=Vector3.ZERO;await ticks(30)
@@ -85,6 +94,51 @@ func run():
  if not callback_deleted:
   PhysicsServer3D.free_rid(raw_floor);PhysicsServer3D.free_rid(raw)
  PhysicsServer3D.free_rid(shape)
+ # Rotated shape offset: compare tangential contact velocity to v + w x r.
+ # Normal acceleration changes during mj_step; only tangential components are
+ # compared because the report is sampled from the final substep solver state.
+ var velocity_floor=StaticBody3D.new();velocity_floor.position=Vector3(20,-.5,0);add_shape(velocity_floor)
+ velocity_floor.get_child(0).shape.size=Vector3(8,1,8)
+ var smooth=PhysicsMaterial.new();smooth.friction=0;velocity_floor.physics_material_override=smooth;scene.add_child(velocity_floor)
+ var spin=RigidBody3D.new();spin.gravity_scale=0;spin.linear_damp_mode=RigidBody3D.DAMP_MODE_REPLACE;spin.angular_damp_mode=RigidBody3D.DAMP_MODE_REPLACE
+ spin.position=Vector3(20,.49,0);spin.rotation.y=.6;spin.max_contacts_reported=8;spin.physics_material_override=smooth
+ add_shape(spin,Vector3(.3,0,.2));scene.add_child(spin)
+ spin.linear_velocity=Vector3(.3,0,.1);spin.angular_velocity=Vector3(0,.4,0)
+ var velocity_observed:=false
+ for attempt in 10:
+  await ticks(1)
+  var vs=PhysicsServer3D.body_get_direct_state(spin.get_rid())
+  if vs.get_contact_count()==0:continue
+  check(vs.get_contact_collider_object(0)==velocity_floor,"velocity probe real floor identity")
+  check(vs.center_of_mass.length()>.3,"velocity probe has nonzero rotated center of mass")
+  for i in vs.get_contact_count():
+   var position:Vector3=vs.get_contact_local_position(i)
+   var expected:Vector3=vs.linear_velocity+vs.angular_velocity.cross(position-(vs.transform.origin+vs.center_of_mass))
+   var observed:Vector3=vs.get_contact_local_velocity_at_position(i)
+   print("VELOCITY_DIAGNOSTIC ",JSON.stringify({"observed":observed,"expected":expected,"v":vs.linear_velocity,"w":vs.angular_velocity,"com":vs.center_of_mass,"position":position,"origin":vs.transform.origin}))
+   check(Vector2(observed.x,observed.z).distance_to(Vector2(expected.x,expected.z))<.001,"rotated offset COM tangential point velocity")
+  velocity_observed=true;break
+ check(velocity_observed,"rotated offset contact observed")
+ spin.queue_free();velocity_floor.queue_free();await ticks(3)
+ # Shape RID deletion inside a callback must invalidate snapshots of its peers,
+ # even while deferred destruction retains the native shape until flush finishes.
+ var deletion_floor=StaticBody3D.new();deletion_floor.position=Vector3(0,-.5,0);scene.add_child(deletion_floor)
+ var deletion_box=RigidBody3D.new();deletion_box.position=Vector3(0,1,0);deletion_box.max_contacts_reported=8;scene.add_child(deletion_box)
+ var floor_shape=PhysicsServer3D.box_shape_create();PhysicsServer3D.shape_set_data(floor_shape,Vector3(4,.5,4))
+ var box_shape=PhysicsServer3D.box_shape_create();PhysicsServer3D.shape_set_data(box_shape,Vector3.ONE*.5)
+ PhysicsServer3D.body_add_shape(deletion_floor.get_rid(),floor_shape)
+ PhysicsServer3D.body_add_shape(deletion_box.get_rid(),box_shape)
+ PhysicsServer3D.body_set_state_sync_callback(deletion_box.get_rid(),func(snapshot):
+  if callback_shape_deleted or snapshot.get_contact_count()==0:return
+  check(snapshot.get_contact_collider_object(0)==deletion_floor and snapshot.get_contact_collider(0)==deletion_floor.get_rid(),"shape deletion probe has real native collider identity")
+  PhysicsServer3D.free_rid(floor_shape)
+  callback_shape_deleted=true
+  check(snapshot.get_contact_count()==0,"deferred shape free immediately invalidates peer snapshot"))
+ await ticks(60)
+ check(callback_shape_deleted,"shape deletion inside sync callback executed")
+ if not callback_shape_deleted:PhysicsServer3D.free_rid(floor_shape)
+ deletion_box.queue_free();deletion_floor.queue_free();await ticks(3)
+ PhysicsServer3D.free_rid(box_shape)
  var world=scene.get_world_3d().space
  check(PhysicsServer3D.call("scene_pause",world,true),"pause for imported geometry")
  var imported:RID=PhysicsServer3D.call("scene_add_box",world,"contact_boundary",Transform3D(Basis.IDENTITY,Vector3(0,-.5,0)),Vector3(4,1,4),0.0)

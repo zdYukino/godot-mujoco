@@ -36,6 +36,7 @@ struct MjContact {
 struct MjBody {
  int max_contacts=0; std::vector<MjContact> contacts;
  RID rid, space; bool heightfield=false; uint64_t object_id=0; PhysicsServer3D::BodyMode mode=PhysicsServer3D::BODY_MODE_RIGID;
+ // Godot velocities are world-space; linear velocity is at the center of mass.
  Transform3D transform; Vector3 linear_velocity, angular_velocity, force, torque, constant_force, constant_torque;
  std::vector<MjShapeInstance> shapes; std::map<int, Variant> params;
  uint32_t layer=1, mask=1; bool ray_pickable=true, sleeping=false, omit_integration=false;
