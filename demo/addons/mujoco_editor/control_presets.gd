@@ -2,27 +2,43 @@
 extends RefCounted
 ## Document presets, not simulation checkpoints or automatic runtime broadcasts.
 static func signature(document:RefCounted)->String:
- var entities:Array=document.inspect().entities.duplicate(true)
- for entity in entities:
-  for key in ["qpos","control","kp","kv"]:entity.properties.erase(key)
- return JSON.stringify(entities).sha256_text()
+ # inspect() is a UI projection: it omits joint axis/anchor and other model fields.
+ # Canonical XML from an isolated copy retains those fields. Normalize only the
+ # editable PD gains, so changing gains does not make an otherwise identical
+ # model incompatible. Controls and simulation state are not part of XML.
+ var copy:RefCounted=ClassDB.instantiate("MjEditorDocument")
+ if not copy.restore(document.snapshot()):return ""
+ copy.set_paused(true)
+ for entity in copy.inspect().entities:
+  if entity.kind!="actuator":continue
+  var p=entity.properties
+  if p.transmission_type!=0:return "" # mjTRN_JOINT only, no tendon/site targets.
+  var gains={}
+  if p.type=="position-compatible":gains.kp=1.0
+  if p.type!="general/non-PD":gains.kv=0.0
+  if not gains.is_empty() and not copy.edit({"op":"set","kind":"actuator","name":entity.name,"values":gains}):return ""
+ return String(copy.snapshot().xml).sha256_text()
 static func capture(document:RefCounted)->Dictionary:
  var drives={}
  for entity in document.inspect().entities:
   if entity.kind!="actuator":continue
   if entity.name.is_empty() or drives.has(entity.name):return {"error":"Presets require unique named actuators"}
-  var p=entity.properties;var values={"control":p.control}
+  var p=entity.properties
+  if p.transmission_type!=0:return {"error":"Control presets support joint transmissions only; tendon/site/other targets are unsupported"}
+  var values={"control":p.control}
   if p.type=="position-compatible":values.kp=p.kp
   if p.type!="general/non-PD":values.kv=p.kv
   drives[entity.name]=values
- return {"format":1,"kind":"godot-mujoco-control-preset","mapping":signature(document),"drives":drives}
+ var mapping=signature(document)
+ if mapping.is_empty():return {"error":"Cannot establish a complete model compatibility signature"}
+ return {"format":2,"kind":"godot-mujoco-control-preset","mapping":mapping,"drives":drives}
 static func candidate(document:RefCounted,preset:Variant)->Dictionary:
  if not document.inspect().paused:return {"error":"Pause the editor model before loading a preset"}
- if not preset is Dictionary or preset.size()!=4 or preset.get("format")!=1 or preset.get("kind")!="godot-mujoco-control-preset" or not preset.get("drives") is Dictionary:
+ if not preset is Dictionary or preset.size()!=4 or preset.get("format")!=2 or preset.get("kind")!="godot-mujoco-control-preset" or not preset.get("drives") is Dictionary:
   return {"error":"Invalid control preset schema"}
- if preset.get("mapping")!=signature(document):return {"error":"Model/joint/actuator mapping or design is incompatible"}
  var captured=capture(document)
  if captured.has("error"):return captured
+ if preset.get("mapping")!=captured.mapping:return {"error":"Model/joint/actuator mapping or design is incompatible"}
  var expected=captured.drives
  if preset.drives.size()!=expected.size():return {"error":"Actuator set mismatch"}
  for name in expected:

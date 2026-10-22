@@ -53,6 +53,21 @@ func run(plugin:EditorPlugin):
  var unnamed=ClassDB.instantiate("MjEditorDocument")
  file=FileAccess.open("res://unnamed.xml",FileAccess.WRITE);file.store_string(FileAccess.get_file_as_string("res://fixture.xml").replace('name="drive" ' ,''));file.close();unnamed.import_file("res://unnamed.xml")
  check(Presets.save_file(unnamed,"res://unnamed-preset.json").is_empty() and Presets.read_file("res://unnamed-preset.json").value.drives.size()==2,"importer generated actuator names preserve every preset field")
+ # Changes omitted by inspect() must still invalidate the complete signature.
+ var source=FileAccess.get_file_as_string("res://fixture.xml")
+ for attribute in ['axis="1 0 0"','pos=".1 0 0"']:
+  file=FileAccess.open("res://changed.xml",FileAccess.WRITE);file.store_string(source.replace('name="hinge" range=', 'name="hinge" '+attribute+' range='));file.close()
+  var changed=ClassDB.instantiate("MjEditorDocument");check(changed.import_file("res://changed.xml"),"import changed joint "+attribute)
+  var changed_before=changed.snapshot()
+  check(not Presets.candidate(changed,original).error.is_empty() and changed.snapshot()==changed_before,"axis/anchor change atomically rejects old preset "+attribute)
+ # Explicitly reject both non-joint targets, even with identical drive names/types/gear.
+ for target in ["t1","t2"]:
+  var tendon_source=source.replace('</worldbody>','</worldbody><tendon><fixed name="t1"><joint joint="hinge" coef="1"/></fixed><fixed name="t2"><joint joint="other" coef="1"/></fixed></tendon>').replace('name="drive" joint="hinge"','name="drive" tendon="'+target+'"')
+  file=FileAccess.open("res://tendon.xml",FileAccess.WRITE);file.store_string(tendon_source);file.close()
+  var tendon=ClassDB.instantiate("MjEditorDocument");check(tendon.import_file("res://tendon.xml"),"import tendon target "+target)
+  var tendon_before=tendon.snapshot()
+  check(Presets.capture(tendon).has("error") and not Presets.candidate(tendon,original).error.is_empty() and tendon.snapshot()==tendon_before,"non-joint target rejected without mutation "+target)
+ check(doc.snapshot()==stable,"signature computation does not mutate source document")
  var report={"passed":passed,"failed":failed}
  for arg in OS.get_cmdline_user_args():
   if arg.begins_with("--report="):var f=FileAccess.open(arg.trim_prefix("--report="),FileAccess.WRITE);f.store_string(JSON.stringify(report))

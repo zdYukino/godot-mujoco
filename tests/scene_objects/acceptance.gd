@@ -39,6 +39,13 @@ func run(plugin:EditorPlugin):
  config.mass=1;config.layer=-1;check(not panel.create_object(root,config),"invalid layer rejected")
  config.layer=1;check(not panel.create_object(body,config),"nested physics body rejected")
  parent.scale=Vector3(2,1,1);check(not panel.create_object(parent,config),"scaled parent rejected");parent.scale=Vector3.ONE
+ var node_count=root.get_child_count();var undo_version=history.get_version()
+ config.shape="sphere";config.dimensions=[2e38]
+ check(not panel.create_object(root,config) and root.get_child_count()==node_count and history.get_version()==undo_version,"sphere diameter overflow rejects before nodes and undo history")
+ config.shape="box";config.dimensions=[1e-45,1,1]
+ check(not panel.create_object(root,config) and root.get_child_count()==node_count and history.get_version()==undo_version,"box half extent underflow rejects without mutation")
+ config.shape="cylinder";config.dimensions=[1,1e-45]
+ check(not panel.create_object(root,config) and root.get_child_count()==node_count and history.get_version()==undo_version,"cylinder half height underflow rejects without mutation")
  EditorInterface.save_scene_as("res://Objects.tscn",false)
  var reopened=ResourceLoader.load("res://Objects.tscn","",ResourceLoader.CACHE_MODE_IGNORE).instantiate()
  check(reopened.get_node("Box").mass==2 and is_equal_approx(reopened.get_node("Other/Sphere/CollisionShape3D").shape.radius,.4) and is_equal_approx(reopened.get_node("Cylinder/CollisionShape3D").shape.height,1.6),"save reopen all shapes and properties");reopened.free()
