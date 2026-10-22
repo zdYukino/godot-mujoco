@@ -48,6 +48,8 @@ public partial class TypedControl : Node
             Check(first.Read().Value.Joints["hinge"].Position[0]>0 && second.Read().Value.Joints["hinge"].Position[0]<0,"two light joints move independently");
             await Frames(2);
             Check(node.GetNode<Node3D>("Box").Position.Y<2,"ordinary box shares simulation");
+            await Done(world.Step(500));
+            Check(world.Read().Value.Contacts>0,"typed contact count after box landing");
             var before=world.Read().Value.Time;
             var bad=await Done(world.Step(0),false);
             Check(bad.Error.Length>0 && world.Read().Value.Time==before,"boundary rejection distinguishes accepted from success");

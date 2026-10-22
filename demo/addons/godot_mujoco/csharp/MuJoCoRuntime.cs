@@ -143,7 +143,7 @@ public sealed class WorldHandle : RuntimeHandle
         if (!IsAlive) return Access<WorldState>.Fail(Unavailable);
         var data = Node.Call("info").AsGodotDictionary();
         return Access<WorldState>.Ok(new WorldState(data["time"].AsDouble(), data["timestep"].AsDouble(),
-            data["paused"].AsBool(), data["has_checkpoint"].AsBool(), data["contacts"].AsInt32(),
+            data["paused"].AsBool(), data["has_checkpoint"].AsBool(), data["ncon"].AsInt32(),
             Node.Get(PendingProperty).AsInt64(), Node.Get("last_error").AsString()));
     }
     public Request Pause(bool paused = true) => Queue("request_pause", paused);

@@ -25,3 +25,10 @@ stale failure, compatible state continuity, deletion during pending request,
 unload/reload and same-node exit/reentry invalidation, independent surviving
 instance, ordinary box motion, and saved design reopened in a new World3D.
 GUI acceptance, G1/stress, cold-import stability and Windows are not claimed.
+
+Follow-up: typed `Contacts` reads native `ncon` (the `contacts` field is a pair
+array). Added a real box-ground contact assertion. At
+`/workspace/shared/validation/typed-control-p2`, all stages exit 0, 61 assertions
+pass with no ERROR/leak. This follow-up ran against the working P2 extension;
+the underlying `ncon` field exists unchanged in the P1/base native API. Final dot
+verification should use the follow-up SHA and record its own native binary.
