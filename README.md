@@ -232,3 +232,5 @@ CMake 将 godot-cpp 获取到构建目录并静态链接进扩展，将 MuJoCo �
 插件新增[普通场景对象创建](docs/scene-objects.zh-CN.md)与[文档级控制参数预设](docs/control-presets.zh-CN.md)，本轮功能分支等待独立 GUI 验收；运行整套预设批量事务见下方独立入口。
 
 [运行整份预设事务](docs/runtime-presets.zh-CN.md)：安全边界提交目标与PD、失败回滚及取消；新分支待dot验收。
+
+[原生物理后端推进计划（仅供审查）](docs/native-backend-plan-review.zh-CN.md)：查询、CharacterBody、Area、形状、关节与生命周期依赖及验收门槛，未实施的新能力不算已支持。
