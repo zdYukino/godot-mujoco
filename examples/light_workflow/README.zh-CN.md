@@ -8,7 +8,7 @@ Linux x86_64，Godot 4.7.2 .NET、MuJoCo 3.16.0。两个固定基座单关节模
 OUT=/tmp/gmj-light-example GODOT_BIN=/path/to/godot bash examples/light_workflow/run.sh
 ```
 
-OUT 必须是新目录。入口复制插件、导入、生成便携模型及 Environment.tscn、编译 C#，再运行七项 headless 闭环断言；每步真实退出码见 executions.tsv，原始日志及 results.json 保留。退出非零或 ERROR/leak 均失败。冷导入 139 仍是独立已知限制，失败时不执行后续阶段，不用缓存重试冒充 fresh pass。
+OUT 必须是新目录。入口复制插件、导入、生成便携模型及 Environment.tscn、编译 C#，再运行九项 headless 闭环断言；每步真实退出码见 executions.tsv，原始日志及 results.json 保留。退出非零或 ERROR/leak 均失败。冷导入 139 仍是独立已知限制，失败时不执行后续阶段，不用缓存重试冒充 fresh pass。
 
 GUI：用同一 Godot 打开 `$OUT/project/project.godot`，F5，或 `godot --path "$OUT/project" --audio-driver Dummy`。独立窗口可用于环境对照，不能视为嵌入显示修复。
 
@@ -17,5 +17,7 @@ GUI：用同一 Godot 打开 `$OUT/project/project.godot`，F5，或 `godot --pa
 3. “重置仿真”回到初始化 checkpoint；滑块同步恢复的控制值。“记录复位点”后继续步进，再重置，应恢复新 checkpoint 时间与控制。
 4. “抬高地形角点”通过 revision 安全事务更新。观察 accepted/completed；错误显示在状态栏。重置恢复仿真状态，不撤销已提交地形设计。
 5. Stop 后重新 F5、关闭编辑器重开项目：初始模型/地形配置重新生成运行状态；运行时角点和 checkpoint **不保存为设计资源**。持久设计编辑使用地形编辑面板的保存工作流。
+
+MJCF 显式使用 `compiler angle="radian"`，关节限位为 ±1 弧度，与滑块 ±0.7 弧度一致。验收检查生成包的弧度限位，并要求两个关节正向及反向跟踪 ±0.5 弧度（误差小于0.03），不能仅以运动符号判断通过。
 
 Headless 覆盖初始化、精确步进、双模型控制、box 接触、reset、pause/resume、新 checkpoint。实际鼠标布局、F5 嵌入、保存重开 GUI 需独立验收，不能由自动结果替代。本例不新增后台线程、站立行走、地形雕刻或打包。

@@ -1,0 +1,12 @@
+  Determining projects to restore...
+  Restored /workspace/shared/validation/light-workflow-radians/project/LightWorkflow.csproj (in 175 ms).
+/workspace/shared/validation/light-workflow-radians/project/LightWorkflow.cs(96,24): warning CS8602: Dereference of a possibly null reference. [/workspace/shared/validation/light-workflow-radians/project/LightWorkflow.csproj]
+  LightWorkflow -> /workspace/shared/validation/light-workflow-radians/project/.godot/mono/temp/bin/Debug/LightWorkflow.dll
+
+Build succeeded.
+
+/workspace/shared/validation/light-workflow-radians/project/LightWorkflow.cs(96,24): warning CS8602: Dereference of a possibly null reference. [/workspace/shared/validation/light-workflow-radians/project/LightWorkflow.csproj]
+    1 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:02.03

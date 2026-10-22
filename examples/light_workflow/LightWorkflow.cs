@@ -88,6 +88,13 @@ public partial class LightWorkflow : Node
         await Finish(world.Step(600));
         for(int i=0;i<3;i++)await ToSignal(GetTree(),SceneTree.SignalName.PhysicsFrame);
         Check(Math.Abs(environment.GetNode<Node3D>("Box").Position.Y-.5)<.04,"box contacts typed static terrain");
+        Check(Math.Abs(first.Read().Value.Joints["hinge"].Position[0]-.5)<.03 &&
+              Math.Abs(second!.Read().Value.Joints["hinge"].Position[0]+.5)<.03,
+              "both joints track +/-0.5 radians beyond degree-sized limits");
+        SetControl(-.5);await Finish(world.Step(700));
+        Check(Math.Abs(first.Read().Value.Joints["hinge"].Position[0]+.5)<.03 &&
+              Math.Abs(second.Read().Value.Joints["hinge"].Position[0]-.5)<.03,
+              "both joints track reversed radian targets");
         await Finish(world.Reset());
         Check(world.Read().Value.Time==0&&first.Read().Value.Controls["drive"]==0,"reset restores checkpoint time and controls");
         await Finish(world.Pause(false));for(int i=0;i<3;i++)await ToSignal(GetTree(),SceneTree.SignalName.PhysicsFrame);
