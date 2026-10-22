@@ -29,18 +29,23 @@ RID MjPhysicsServer3D::_cylinder_shape_create() {
  Dictionary data; data["radius"]=0.5; data["height"]=2.0;
  return make_shape(SHAPE_CYLINDER,data);
 }
+RID MjPhysicsServer3D::_capsule_shape_create() {
+ Dictionary data; data["radius"]=0.5; data["height"]=2.0;
+ return make_shape(SHAPE_CAPSULE,data);
+}
 RID MjPhysicsServer3D::_world_boundary_shape_create() { return make_shape(SHAPE_WORLD_BOUNDARY,Plane(Vector3(0,1,0),0)); }
-void MjPhysicsServer3D::_shape_set_data(const RID&r,const Variant&v) { auto*s=shape(r); ERR_FAIL_NULL(s); if(s->type==SHAPE_BOX) { ERR_FAIL_COND(v.get_type()!=Variant::VECTOR3); Vector3 z=v; ERR_FAIL_COND(!z.is_finite()||z.x<=0||z.y<=0||z.z<=0); } else if(s->type==SHAPE_SPHERE) { ERR_FAIL_COND(!std::isfinite(double(v))||double(v)<=0); } else if(s->type==SHAPE_CYLINDER) {
- ERR_FAIL_COND_MSG(v.get_type()!=Variant::DICTIONARY,"Cylinder data requires radius and height");
+void MjPhysicsServer3D::_shape_set_data(const RID&r,const Variant&v) { auto*s=shape(r); ERR_FAIL_NULL(s); if(s->type==SHAPE_BOX) { ERR_FAIL_COND(v.get_type()!=Variant::VECTOR3); Vector3 z=v; ERR_FAIL_COND(!z.is_finite()||z.x<=0||z.y<=0||z.z<=0); } else if(s->type==SHAPE_SPHERE) { ERR_FAIL_COND(!std::isfinite(double(v))||double(v)<=0); } else if(s->type==SHAPE_CYLINDER || s->type==SHAPE_CAPSULE) {
+ ERR_FAIL_COND_MSG(v.get_type()!=Variant::DICTIONARY,s->type==SHAPE_CAPSULE?"Capsule data requires radius and height":"Cylinder data requires radius and height");
  Dictionary data=v;
  for(const char *key:{"radius","height"}) {
-  ERR_FAIL_COND_MSG(!data.has(key),"Cylinder data requires radius and height");
+  ERR_FAIL_COND_MSG(!data.has(key),s->type==SHAPE_CAPSULE?"Capsule data requires radius and height":"Cylinder data requires radius and height");
   Variant value=data[key];
-  ERR_FAIL_COND_MSG(value.get_type()!=Variant::FLOAT&&value.get_type()!=Variant::INT,"Cylinder dimensions must be numeric");
-  ERR_FAIL_COND_MSG(!std::isfinite(double(value))||double(value)<=0,"Cylinder dimensions must be finite and positive");
+  ERR_FAIL_COND_MSG(value.get_type()!=Variant::FLOAT&&value.get_type()!=Variant::INT,s->type==SHAPE_CAPSULE?"Capsule dimensions must be numeric":"Cylinder dimensions must be numeric");
+  ERR_FAIL_COND_MSG(!std::isfinite(double(value))||double(value)<=0,s->type==SHAPE_CAPSULE?"Capsule dimensions must be finite and positive":"Cylinder dimensions must be finite and positive");
  }
- } else { ERR_FAIL_COND(v.get_type()!=Variant::PLANE); Plane plane=v; ERR_FAIL_COND(!plane.normal.is_finite()||plane.normal.length_squared()<1e-12||!std::isfinite(plane.d)); } s->data=s->type==SHAPE_CYLINDER?Variant(Dictionary(v).duplicate()):v; for(auto &b:bodies) for(auto &i:b.second->shapes) if(i.shape==r) dirty(b.second->space); }
-Variant MjPhysicsServer3D::_shape_get_data(const RID&r) const { auto*s=shape(r);return s?(s->type==SHAPE_CYLINDER?Variant(Dictionary(s->data).duplicate()):s->data):Variant(); }
+ ERR_FAIL_COND_MSG(s->type==SHAPE_CAPSULE && double(data["height"])*.5<double(data["radius"]),"Capsule height must be at least twice radius");
+ } else { ERR_FAIL_COND(v.get_type()!=Variant::PLANE); Plane plane=v; ERR_FAIL_COND(!plane.normal.is_finite()||plane.normal.length_squared()<1e-12||!std::isfinite(plane.d)); } s->data=(s->type==SHAPE_CYLINDER || s->type==SHAPE_CAPSULE)?Variant(Dictionary(v).duplicate()):v; for(auto &b:bodies) for(auto &i:b.second->shapes) if(i.shape==r) dirty(b.second->space); }
+Variant MjPhysicsServer3D::_shape_get_data(const RID&r) const { auto*s=shape(r);return s?((s->type==SHAPE_CYLINDER || s->type==SHAPE_CAPSULE)?Variant(Dictionary(s->data).duplicate()):s->data):Variant(); }
 PhysicsServer3D::ShapeType MjPhysicsServer3D::_shape_get_type(const RID&r) const { auto*s=shape(r);return s?s->type:SHAPE_CUSTOM; }
 void MjPhysicsServer3D::_shape_set_margin(const RID&r,float v) { if(auto*s=shape(r)) s->margin=v; }
 float MjPhysicsServer3D::_shape_get_margin(const RID&r) const { auto*s=shape(r);return s?s->margin:0; }
@@ -202,6 +207,7 @@ static void pose_xml(std::ostream&o,const Transform3D&t){o<<" pos=\"";vector_xml
 static double shape_volume(const MjShape &shape){
  if(shape.type==PhysicsServer3D::SHAPE_BOX){Vector3 e=shape.data;return 8.0*e.x*e.y*e.z;}
  if(shape.type==PhysicsServer3D::SHAPE_SPHERE){double r=shape.data;return (4.0/3.0)*Math_PI*r*r*r;}
+ if(shape.type==PhysicsServer3D::SHAPE_CAPSULE){Dictionary d=shape.data;double r=d["radius"],length=double(d["height"])-2*r;return Math_PI*r*r*(length+4*r/3);}
  if(shape.type==PhysicsServer3D::SHAPE_CYLINDER){Dictionary d=shape.data;double r=d["radius"];return Math_PI*r*r*double(d["height"]);}
  return 0;
 }
@@ -234,6 +240,11 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  xml<<"<geom name=\"g"<<owners.size()<<"\" type=\"";
  if(sh->type==SHAPE_BOX){xml<<"box\" size=\"";Vector3 v=Vector3(sh->data)*scale;vector_xml(xml,Vector3(v.x,v.z,v.y));}
  else if(sh->type==SHAPE_SPHERE){if(!Math::is_equal_approx(scale.x,scale.y)||!Math::is_equal_approx(scale.x,scale.z))mj_unsupported("nonuniform sphere scale");xml<<"sphere\" size=\""<<double(sh->data)*scale.x;}
+ else if(sh->type==SHAPE_CAPSULE){Dictionary d=sh->data;double r=d["radius"],half=double(d["height"])*.5-r;
+  // A zero cylinder segment is a sphere. MuJoCo capsules require a positive half-length.
+  if(half==0)xml<<"sphere\" size=\""<<r;
+  else xml<<"capsule\" size=\""<<r<<' '<<half;
+ }
  else if(sh->type==SHAPE_CYLINDER){Dictionary d=sh->data;xml<<"cylinder\" size=\""<<double(d["radius"])<<' '<<double(d["height"])*0.5;}
  else {Plane p=sh->data;Vector3 n=p.normal.normalized(); t.origin+=t.basis.xform(n*(p.d/p.normal.length())); t.basis=t.basis.orthonormalized()*Basis(Quaternion(Vector3(0,1,0),n)); xml<<"plane\" size=\"0 0 0.1";}
  xml<<"\"";pose_xml(xml,t);

@@ -9,7 +9,7 @@ bool rigid(const Transform3D &t) {
  return t.is_finite() && t.basis.is_orthogonal() && t.basis.get_scale().is_equal_approx(Vector3(1,1,1)) && t.basis.determinant()>0;
 }
 bool supported(const MjShape *s) {
- return s && (s->type==PhysicsServer3D::SHAPE_BOX || s->type==PhysicsServer3D::SHAPE_SPHERE || s->type==PhysicsServer3D::SHAPE_CYLINDER);
+ return s && (s->type==PhysicsServer3D::SHAPE_BOX || s->type==PhysicsServer3D::SHAPE_SPHERE || s->type==PhysicsServer3D::SHAPE_CYLINDER || s->type==PhysicsServer3D::SHAPE_CAPSULE);
 }
 } // namespace
 // Same isolated MuJoCo primitive narrowphase as overlap stage 1. No live
@@ -26,8 +26,9 @@ struct MjAreaScratch {
   mjtNum *size=model->geom_size+index*3;mju_zero3(size);
   if(s.type==PhysicsServer3D::SHAPE_BOX){Vector3 v=s.data;model->geom_type[index]=mjGEOM_BOX;size[0]=v.x;size[1]=v.z;size[2]=v.y;}
   else if(s.type==PhysicsServer3D::SHAPE_SPHERE){model->geom_type[index]=mjGEOM_SPHERE;size[0]=double(s.data);}
+  else if(s.type==PhysicsServer3D::SHAPE_CAPSULE){Dictionary d=s.data;size[0]=double(d["radius"]);size[1]=double(d["height"])*.5-size[0];model->geom_type[index]=size[1]==0?mjGEOM_SPHERE:mjGEOM_CAPSULE;}
   else {Dictionary d=s.data;model->geom_type[index]=mjGEOM_CYLINDER;size[0]=double(d["radius"]);size[1]=double(d["height"])*.5;}
-  model->geom_rbound[index]=s.type==PhysicsServer3D::SHAPE_SPHERE?size[0]:mju_norm3(size);
+  model->geom_rbound[index]=model->geom_type[index]==mjGEOM_SPHERE?size[0]:model->geom_type[index]==mjGEOM_CAPSULE?size[0]+size[1]:mju_norm3(size);
   Vector3 p=godot_to_mj(pose.origin);Basis b=godot_to_mj(pose.basis);
   for(int i=0;i<3;++i){data->geom_xpos[index*3+i]=p[i];for(int j=0;j<3;++j)data->geom_xmat[index*9+i*3+j]=b[i][j];}
  }
@@ -38,7 +39,7 @@ struct MjAreaScratch {
   int first=model->geom_type[0]>model->geom_type[1]?1:0,second=1-first;
   auto fn=mjCOLLISIONFUNC[model->geom_type[first]][model->geom_type[second]];if(!fn)return false;
   mjPreContact contacts[mjMAXCONPAIR]{};int count=fn(model.get(),data.get(),contacts,first,second,0);
-  if(!count&&(model->geom_type[0]==mjGEOM_CYLINDER||model->geom_type[1]==mjGEOM_CYLINDER)){
+  if(!count&&(model->geom_type[0]==mjGEOM_CYLINDER||model->geom_type[1]==mjGEOM_CYLINDER||model->geom_type[0]==mjGEOM_CAPSULE||model->geom_type[1]==mjGEOM_CAPSULE)){
    model->opt.disableflags|=mjDSBL_NATIVECCD;count=fn(model.get(),data.get(),contacts,first,second,0);model->opt.disableflags&=~mjDSBL_NATIVECCD;
   }
   for(int i=0;i<count;++i)if(std::isfinite(contacts[i].dist)&&contacts[i].dist<=0)return true;
@@ -56,7 +57,7 @@ RID MjPhysicsServer3D::_area_create(){RID r=handles.make_rid(0);auto a=std::make
  areas.emplace(r.get_id(),std::move(a));return r;}
 void MjPhysicsServer3D::_area_set_space(const RID&r,const RID&s){DEFER_AREA(_area_set_space(r,s));auto*a=area(r);if(!a)return;ERR_FAIL_COND(s.is_valid()&&!space(s));if(a->space==s)return;a->space=s;retire_area_pairs(r);}
 RID MjPhysicsServer3D::_area_get_space(const RID&r) const {auto*a=area(r);return a?a->space:RID();}
-void MjPhysicsServer3D::_area_add_shape(const RID&r,const RID&s,const Transform3D&t,bool disabled){DEFER_AREA(_area_add_shape(r,s,t,disabled));auto*a=area(r);if(!a)return;ERR_FAIL_COND_MSG(!supported(shape(s)),"Area monitoring supports native box, sphere and cylinder only");ERR_FAIL_COND(!rigid(t));a->shapes.push_back({s,t,disabled});}
+void MjPhysicsServer3D::_area_add_shape(const RID&r,const RID&s,const Transform3D&t,bool disabled){DEFER_AREA(_area_add_shape(r,s,t,disabled));auto*a=area(r);if(!a)return;ERR_FAIL_COND_MSG(!supported(shape(s)),"Area monitoring supports native box, sphere, cylinder and capsule only");ERR_FAIL_COND(!rigid(t));a->shapes.push_back({s,t,disabled});}
 void MjPhysicsServer3D::_area_set_shape(const RID&r,int32_t i,const RID&s){DEFER_AREA(_area_set_shape(r,i,s));auto*a=area(r);if(!a)return;ERR_FAIL_INDEX(i,int(a->shapes.size()));ERR_FAIL_COND(!supported(shape(s)));a->shapes[i].shape=s;}
 void MjPhysicsServer3D::_area_set_shape_transform(const RID&r,int32_t i,const Transform3D&t){DEFER_AREA(_area_set_shape_transform(r,i,t));auto*a=area(r);if(!a)return;ERR_FAIL_INDEX(i,int(a->shapes.size()));ERR_FAIL_COND(!rigid(t));a->shapes[i].transform=t;}
 void MjPhysicsServer3D::_area_set_shape_disabled(const RID&r,int32_t i,bool value){DEFER_AREA(_area_set_shape_disabled(r,i,value));auto*a=area(r);if(!a)return;ERR_FAIL_INDEX(i,int(a->shapes.size()));a->shapes[i].disabled=value;}
