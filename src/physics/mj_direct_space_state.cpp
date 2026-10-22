@@ -50,6 +50,126 @@ mjtNum intersect_geom(int p_type, const mjtNum p_position[3], const mjtNum p_mat
 	return mju_rayGeom(p_position, p_matrix, p_size, p_from, p_direction, p_type, r_normal);
 }
 
+
+// All native queries share ownership validation and query-mask semantics.
+MjBody *query_body(MjDirectSpaceState &state, MjSpace &space, int geom, uint32_t mask, bool pick = false) {
+ const auto &owner = space.geom_owners[geom];
+ auto *body = state.server->body(owner.first);
+ if (!body || state.server->pending_free.count(owner.first.get_id()) || body->space != state.rid || owner.second < 0 ||
+     size_t(owner.second) >= body->shapes.size() || body->shapes[owner.second].disabled ||
+     !state.server->shape(body->shapes[owner.second].shape) ||
+     state.server->pending_free.count(body->shapes[owner.second].shape.get_id()) ||
+     !(body->layer & mask) || (pick && !body->ray_pickable) ||
+     state.is_body_excluded_from_query(owner.first)) return nullptr;
+ return body;
+}
+MjSpace *query_space(MjDirectSpaceState &state, uint32_t mask, bool bodies, bool areas) {
+ if (areas) mj_unsupported("Area3D overlap queries");
+ if (!state.server || state.server->pending_free.count(state.rid.get_id()) || !bodies || !mask) return nullptr;
+ auto *space = state.server->space(state.rid);
+ if (!space || !state.server->rebuild(*space) || !space->model || !space->data ||
+     space->geom_owners.size() != size_t(space->model->ngeom)) return nullptr;
+ return space;
+}
+bool primitive(int type) {
+ return type == mjGEOM_BOX || type == mjGEOM_SPHERE || type == mjGEOM_CYLINDER || type == mjGEOM_PLANE;
+}
+PhysicsServer3DExtensionShapeResult shape_result(MjBody &body, int shape) {
+ PhysicsServer3DExtensionShapeResult result{};
+ result.rid = body.rid; result.collider_id = ObjectID(body.object_id); result.shape = shape;
+ Object *object = body.object_id ? ObjectDB::get_instance(body.object_id) : nullptr;
+ result.collider = object ? reinterpret_cast<Object *>(object->_owner) : nullptr;
+ return result;
+}
+struct Overlap {
+ MjBody *body; int shape; mjPreContact contact; bool reversed;
+};
+Vector3 contact_point(const Overlap &hit, bool query);
+// The scratch model has no ownership or dynamics relationship to the live space.
+// Dispatching MuJoCo narrowphase directly neither runs forward nor steps live data.
+std::vector<Overlap> overlaps(MjDirectSpaceState &state, const RID &rid, const Transform3D &transform,
+    const Vector3 &motion, float margin, uint32_t mask, bool bodies, bool areas) {
+ std::vector<Overlap> hits;
+ if (!transform.is_finite() || !transform.basis.is_orthogonal() ||
+     !transform.basis.get_scale().is_equal_approx(Vector3(1,1,1)) || transform.basis.determinant() <= 0 ||
+     !motion.is_finite() || !std::isfinite(margin) || margin < 0) return hits;
+ // Overlap APIs test the supplied pose; motion is intentionally ignored, as in Godot.
+ auto *shape = state.server ? state.server->shape(rid) : nullptr;
+ if (!shape || state.server->pending_free.count(rid.get_id())) return hits;
+ int type; mjtNum size[3] = {0,0,0}; Transform3D pose = transform;
+ switch (shape->type) {
+ case PhysicsServer3D::SHAPE_BOX: {
+   Vector3 v = shape->data; type = mjGEOM_BOX; size[0]=v.x; size[1]=v.z; size[2]=v.y; break;
+ }
+ case PhysicsServer3D::SHAPE_SPHERE: type=mjGEOM_SPHERE; size[0]=double(shape->data); break;
+ case PhysicsServer3D::SHAPE_CYLINDER: {
+   Dictionary d=shape->data; type=mjGEOM_CYLINDER; size[0]=double(d["radius"]); size[1]=double(d["height"])*.5; break;
+ }
+ case PhysicsServer3D::SHAPE_WORLD_BOUNDARY: {
+   Plane p=shape->data;
+   if (!std::isfinite(p.normal.length()) || !std::isfinite(p.d)) return hits;
+   Vector3 n=p.normal.normalized();
+   pose.origin += pose.basis.xform(n*(p.d/p.normal.length()));
+   pose.basis = pose.basis*Basis(Quaternion(Vector3(0,1,0),n));
+   type=mjGEOM_PLANE; size[2]=.1; break;
+ }
+ default: mj_unsupported("overlap query shape (only native primitives supported)"); return hits;
+ }
+ if (!pose.is_finite()) return hits;
+ for (mjtNum extent : size) if (!std::isfinite(extent) || extent < 0 || extent > std::numeric_limits<real_t>::max()) return hits;
+ auto *space = query_space(state,mask,bodies,areas); if (!space) return hits;
+ std::unique_ptr<mjSpec, decltype(&mj_deleteSpec)> spec(mj_makeSpec(),mj_deleteSpec);
+ for (int i=0;i<2;++i) { auto *g=mjs_addGeom(mjs_findBody(spec.get(),"world"),nullptr); g->type=mjGEOM_SPHERE; g->size[0]=1; }
+ std::unique_ptr<mjModel, decltype(&mj_deleteModel)> model(mj_compile(spec.get(),nullptr),mj_deleteModel);
+ if (!model) return hits;
+ std::unique_ptr<mjData, decltype(&mj_deleteData)> data(mj_makeData(model.get()),mj_deleteData);
+ if (!data) return hits;
+ model->geom_type[0]=type; mju_copy3(model->geom_size,size);
+ model->geom_rbound[0]=type==mjGEOM_SPHERE?size[0]:mju_norm3(size);
+ Vector3 pos=godot_to_mj(pose.origin); Basis basis=godot_to_mj(pose.basis);
+ for (int a=0;a<3;++a) { data->geom_xpos[a]=pos[a]; for(int b=0;b<3;++b) data->geom_xmat[3*a+b]=basis[a][b]; }
+ for (int geom=0;geom<space->model->ngeom;++geom) {
+   auto *body=query_body(state,*space,geom,mask); if (!body) continue;
+   int target=space->model->geom_type[geom];
+   // Heightfields need their own asset-aware path; imported geoms have no native owner.
+   if (!primitive(target)) { mj_unsupported("heightfield/nonprimitive overlap target"); continue; }
+   model->geom_type[1]=target;
+   model->geom_rbound[1]=space->model->geom_rbound[geom];
+   mju_copy3(model->geom_size+3,space->model->geom_size+3*geom);
+   mju_copy3(data->geom_xpos+3,space->data->geom_xpos+3*geom);
+   mju_copy(data->geom_xmat+9,space->data->geom_xmat+9*geom,9);
+   bool reversed=type>target; int a=reversed?1:0,b=reversed?0:1;
+   auto collision=mjCOLLISIONFUNC[model->geom_type[a]][model->geom_type[b]];
+   if (!collision) continue; // In particular, no plane/plane finite manifold.
+   mjPreContact contacts[mjMAXCONPAIR]{};
+   int count=collision(model.get(),data.get(),contacts,a,b,margin);
+   // MuJoCo 3.16 native GJK can return no witness for concentric cylinder
+   // pairs (also cylinder/box). Its independent MPR narrowphase resolves
+   // these degeneracies without perturbing geometry or sampling motion.
+   if (!count && (type==mjGEOM_CYLINDER || target==mjGEOM_CYLINDER)) {
+     model->opt.disableflags |= mjDSBL_NATIVECCD;
+     count=collision(model.get(),data.get(),contacts,a,b,margin);
+     model->opt.disableflags &= ~mjDSBL_NATIVECCD;
+   }
+   for(int i=0;i<count;++i) {
+     const auto &c=contacts[i];
+     Overlap hit{body,space->geom_owners[geom].second,c,reversed};
+     if(std::isfinite(c.dist) && c.dist<=margin &&
+         Vector3(c.normal[0],c.normal[1],c.normal[2]).is_finite() &&
+         contact_point(hit,true).is_finite() && contact_point(hit,false).is_finite()) hits.push_back(hit);
+   }
+ }
+ std::stable_sort(hits.begin(),hits.end(),[](const Overlap &a,const Overlap &b) {
+   if(a.body->rid!=b.body->rid) return a.body->rid.get_id()<b.body->rid.get_id();
+   return a.shape<b.shape;
+ });
+ return hits;
+}
+Vector3 contact_point(const Overlap &hit, bool query) {
+ const auto &c=hit.contact;
+ double sign=(query != hit.reversed)?-1:1;
+ return mj_to_godot(Vector3(c.pos[0]+sign*.5*c.dist*c.normal[0],c.pos[1]+sign*.5*c.dist*c.normal[1],c.pos[2]+sign*.5*c.dist*c.normal[2]));
+}
 } // namespace
 
 bool MjDirectSpaceState::_intersect_ray(const Vector3 &p_from, const Vector3 &p_to,
@@ -116,13 +236,8 @@ bool MjDirectSpaceState::_intersect_ray(const Vector3 &p_from, const Vector3 &p_
 
 	for (int geom = 0; geom < model->ngeom; ++geom) {
 		const auto &owner = query_space->geom_owners[geom];
-		MjBody *body = server->body(owner.first);
-		if (!body || body->space != rid || owner.second < 0 ||
-				static_cast<size_t>(owner.second) >= body->shapes.size() ||
-				body->shapes[owner.second].disabled || !(body->layer & p_collision_mask) ||
-				(p_pick_ray && !body->ray_pickable) || is_body_excluded_from_query(owner.first)) {
-			continue;
-		}
+		MjBody *body = query_body(*this, *query_space, geom, p_collision_mask, p_pick_ray);
+		if (!body) continue;
 		// A query's mask is matched against the body's layer. The body's own
 		// collision mask controls body/body contacts, not visibility to rays.
 		const int type = model->geom_type[geom];
@@ -206,16 +321,33 @@ bool MjDirectSpaceState::_intersect_ray(const Vector3 &p_from, const Vector3 &p_
 	return true;
 }
 
-int32_t MjDirectSpaceState::_intersect_point(const Vector3 &, uint32_t, bool, bool,
-		PhysicsServer3DExtensionShapeResult *, int32_t) {
-	mj_unsupported("direct-space intersect_point");
-	return 0;
+int32_t MjDirectSpaceState::_intersect_point(const Vector3 &position, uint32_t mask, bool bodies, bool areas,
+    PhysicsServer3DExtensionShapeResult *results, int32_t max_results) {
+ if (!results || max_results<=0 || !position.is_finite()) return 0;
+ auto *space=query_space(*this,mask,bodies,areas); if(!space) return 0;
+ std::vector<PhysicsServer3DExtensionShapeResult> hits;
+ Vector3 p=godot_to_mj(position); mjtNum point[3]={p.x,p.y,p.z};
+ for(int geom=0;geom<space->model->ngeom;++geom) {
+   auto *body=query_body(*this,*space,geom,mask); if(!body) continue;
+   int type=space->model->geom_type[geom];
+   if(!primitive(type)) { mj_unsupported("heightfield/nonprimitive point target"); continue; }
+   mjtNum offset[3],local[3]; mju_sub3(offset,point,space->data->geom_xpos+3*geom);
+   mju_mulMatTVec3(local,space->data->geom_xmat+9*geom,offset);
+   if(point_inside_geom(type,local,space->model->geom_size+3*geom)) hits.push_back(shape_result(*body,space->geom_owners[geom].second));
+ }
+ std::sort(hits.begin(),hits.end(),[](const auto &a,const auto &b){return a.rid==b.rid?a.shape<b.shape:a.rid.get_id()<b.rid.get_id();});
+ int count=std::min(max_results,int(hits.size())); std::copy_n(hits.begin(),count,results); return count;
 }
 
-int32_t MjDirectSpaceState::_intersect_shape(const RID &, const Transform3D &, const Vector3 &,
-		float, uint32_t, bool, bool, PhysicsServer3DExtensionShapeResult *, int32_t) {
-	mj_unsupported("direct-space intersect_shape");
-	return 0;
+int32_t MjDirectSpaceState::_intersect_shape(const RID &shape, const Transform3D &pose, const Vector3 &motion,
+    float margin, uint32_t mask, bool bodies, bool areas, PhysicsServer3DExtensionShapeResult *results, int32_t max_results) {
+ if(!results || max_results<=0) return 0;
+ auto hits=overlaps(*this,shape,pose,motion,margin,mask,bodies,areas); int count=0;
+ for(const auto &hit:hits) {
+   if(count && results[count-1].rid==hit.body->rid && results[count-1].shape==hit.shape) continue;
+   results[count++]=shape_result(*hit.body,hit.shape); if(count==max_results) break;
+ }
+ return count;
 }
 
 bool MjDirectSpaceState::_cast_motion(const RID &, const Transform3D &, const Vector3 &,
@@ -234,22 +366,39 @@ bool MjDirectSpaceState::_cast_motion(const RID &, const Transform3D &, const Ve
 	return false;
 }
 
-bool MjDirectSpaceState::_collide_shape(const RID &, const Transform3D &, const Vector3 &,
-		float, uint32_t, bool, bool, void *, int32_t, int32_t *p_result_count) {
-	if (p_result_count) {
-		*p_result_count = 0;
-	}
-	mj_unsupported("direct-space collide_shape");
-	return false;
+bool MjDirectSpaceState::_collide_shape(const RID &shape, const Transform3D &pose, const Vector3 &motion,
+    float margin, uint32_t mask, bool bodies, bool areas, void *results, int32_t max_results, int32_t *count) {
+ if(count) *count=0;
+ if(!count || !results || max_results<=0) return false;
+ auto hits=overlaps(*this,shape,pose,motion,margin,mask,bodies,areas);
+ auto *points=static_cast<Vector3 *>(results);
+ for(const auto &hit:hits) {
+   points[2*(*count)]=contact_point(hit,true); points[2*(*count)+1]=contact_point(hit,false);
+   if(++(*count)==max_results) break;
+ }
+ return *count>0;
 }
 
-bool MjDirectSpaceState::_rest_info(const RID &, const Transform3D &, const Vector3 &,
-		float, uint32_t, bool, bool, PhysicsServer3DExtensionShapeRestInfo *p_rest_info) {
-	if (p_rest_info) {
-		*p_rest_info = {};
-	}
-	mj_unsupported("direct-space rest_info");
-	return false;
+bool MjDirectSpaceState::_rest_info(const RID &shape, const Transform3D &pose, const Vector3 &motion,
+    float margin, uint32_t mask, bool bodies, bool areas, PhysicsServer3DExtensionShapeRestInfo *info) {
+ if(!info) return false; *info={};
+ auto hits=overlaps(*this,shape,pose,motion,margin,mask,bodies,areas); if(hits.empty()) return false;
+ const auto &hit=*std::min_element(hits.begin(),hits.end(),[](const Overlap &a,const Overlap &b){return a.contact.dist<b.contact.dist;});
+ info->rid=hit.body->rid; info->collider_id=ObjectID(hit.body->object_id); info->shape=hit.shape;
+ info->point=contact_point(hit,false);
+ double sign=hit.reversed?1:-1;
+ info->normal=mj_to_godot(Vector3(hit.contact.normal[0],hit.contact.normal[1],hit.contact.normal[2]))*sign;
+ // MuJoCo object velocity is COM based; point velocity must include angular motion.
+ auto *space=server->space(rid);
+ int id=hit.body->mj_body;
+ if(id>=0 && hit.body->mode==PhysicsServer3D::BODY_MODE_RIGID) {
+   mjtNum velocity[6]; mj_objectVelocity(space->model,space->data,mjOBJ_BODY,id,velocity,0);
+   Vector3 angular=mj_to_godot(Vector3(velocity[0],velocity[1],velocity[2]));
+   Vector3 linear=mj_to_godot(Vector3(velocity[3],velocity[4],velocity[5]));
+   const mjtNum *com=space->data->xipos+3*id;
+   info->linear_velocity=linear+angular.cross(info->point-mj_to_godot(Vector3(com[0],com[1],com[2])));
+ }
+ return true;
 }
 
 Vector3 MjDirectSpaceState::_get_closest_point_to_object_volume(const RID &, const Vector3 &) const {
