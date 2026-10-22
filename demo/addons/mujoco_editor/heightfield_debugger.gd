@@ -2,6 +2,7 @@
 extends EditorDebuggerPlugin
 signal changed
 var instances := {}
+var outcomes := {}
 
 func _has_capture(capture: String) -> bool:
 	return capture == "mujoco_heightfield"
@@ -19,6 +20,8 @@ func session_started(session_id: int) -> void:
 	get_session(session_id).send_message("mujoco_heightfield:list", [])
 
 func session_stopped(session_id: int) -> void:
+	for key in outcomes.keys():
+		if key.begins_with(str(session_id)+":"): outcomes.erase(key)
 	for key in instances.keys():
 		if instances[key].session == session_id: instances.erase(key)
 	changed.emit()
@@ -29,10 +32,13 @@ func shutdown() -> void:
 		if session.started.is_connected(session_started.bind(id)): session.started.disconnect(session_started.bind(id))
 		if session.stopped.is_connected(session_stopped.bind(id)): session.stopped.disconnect(session_stopped.bind(id))
 	session_ids.clear()
-	instances.clear()
+	instances.clear();outcomes.clear()
 
 func _capture(message: String, data: Array, session_id: int) -> bool:
 	if data.size() != 1: return false
+	if message == "mujoco_heightfield:finished" and data[0] is Dictionary:
+		outcomes[str(session_id)+":"+str(data[0].id)]=data[0].duplicate(true)
+		changed.emit();return true
 	if message == "mujoco_heightfield:instance" and data[0] is Dictionary:
 		var info: Dictionary = data[0].duplicate(true)
 		info.session = session_id
@@ -55,6 +61,7 @@ func send(key: String, operation: String, payload: Dictionary) -> bool:
 	payload.id = info.id
 	payload.revision = info.revision
 	# Immediately lock this target against repeated clicks until runtime acknowledges.
+	outcomes.erase(key)
 	info.pending = true
 	session.send_message("mujoco_heightfield:" + operation, [payload])
 	changed.emit()

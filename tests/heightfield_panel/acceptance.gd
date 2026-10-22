@@ -45,9 +45,12 @@ func run(plugin:EditorPlugin):
 	panel.discard();panel.select_target(created);panel.undo_scene()
 	check(root.get_child_count()==2,"creation undo")
 	panel.discard();panel.select_target(first)
-	panel.debugger.instances["test:busy"]={"path":"/busy","id":"busy","revision":3,"pending":true,"error":"","session":0}
-	panel.refresh_live();panel.selected_key="test:busy"
+	panel.debugger.instances["0:busy"]={"path":"/busy","id":"busy","revision":3,"pending":true,"error":"","session":0}
+	panel.refresh_live();panel.selected_key="0:busy"
 	check(not panel.apply_live(),"pending runtime target rejects repeat Apply")
+	panel.debugger._capture("mujoco_heightfield:finished",[{"id":"busy","success":true,"revision":4,"request":1,"error":""}],0)
+	panel.debugger.instances["0:busy"].pending=false;panel.refresh_live()
+	check(panel.error.contains("completed") and panel.error.contains("4"),"completion outcome shown separately from acceptance")
 	panel.debugger.instances.clear();panel.refresh_live()
 	check(panel.selected_key.is_empty() and not panel.remove_live(),"stopped runtime target cannot receive remove")
 	var report={"passed":passed,"failed":failed}

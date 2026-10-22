@@ -27,3 +27,5 @@ See the [implementation and validation report](docs/freebase-clock-validation.zh
 [Typed C# control API](docs/typed-control.md): request completion, handle lifetime, and lightweight validation. Native `CylinderShape3D` is not implemented; MJCF cylinder editing/simulation is a separate model capability.
 
 [Static fixed-grid heightfield](docs/static-heightfield.md): `MjStaticHeightField` / `MjHeightFieldData`, boundary transactions and matching visual/collision geometry; not general `HeightMapShape3D` support.
+
+Dedicated terrain now includes an [editor panel](docs/heightfield-editor.zh-CN.md) and [typed C# TerrainHandle](docs/typed-terrain.zh-CN.md), with design drafts, undo, runtime targets and completion feedback. These feature-branch additions require independent acceptance and approval before another main merge.

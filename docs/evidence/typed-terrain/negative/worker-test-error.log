@@ -1,0 +1,290 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+MuJoCo: compile time (ms)
+  total:          0.4   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.4   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS unrelated node rejected
+PASS design copies caller data
+PASS invalid grid rejected
+PASS create queued not complete
+PASS concurrent same instance rejected
+PASS request accepted
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS completion bounded
+PASS actual completion result
+PASS request accepted
+PASS completion bounded
+PASS actual completion result
+PASS two terrain identities isolated
+ERROR: /root/Acceptance/@SubViewport@2/Environment: The caller thread can't call the function `get_node_or_null()` on this node. Use `call_deferred()` or `call_deferred_thread_group()` instead.
+   at: get_node_or_null (scene/main/node.cpp:1905)
+   C# backtrace (most recent call first):
+       [0] Godot.GodotObject Godot.NativeCalls.godot_icall_1_914(nint, nint, Godot.NativeInterop.godot_node_path) (/root/godot/modules/mono/glue/GodotSharp/GodotSharp/Generated/NativeCalls.cs:8079)
+       [1] Godot.Node Godot.Node.GetNode(Godot.NodePath) (/root/godot/modules/mono/glue/GodotSharp/GodotSharp/Generated/GodotObjects/Node.cs:962)
+       [2] bool TypedTerrain+<>c__DisplayClass4_0.<_Ready>b__0() (/workspace/shared/validation/typed-terrain-01/project/TypedTerrain.cs:36)
+       [3] void System.Threading.Tasks.Task`1.InnerInvoke()
+       [4] void System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(System.Threading.Thread, System.Threading.ExecutionContext, System.Threading.ContextCallback, object)
+       [5] void System.Threading.Tasks.Task.ExecuteWithThreadLocal(System.Threading.Tasks.Task&, System.Threading.Thread)
+       [6] bool System.Threading.ThreadPoolWorkQueue.Dispatch()
+       [7] void System.Threading.PortableThreadPool+WorkerThread.WorkerThreadStart()
+ERROR: Node not found: "Ground" (relative to "/root/Acceptance/@SubViewport@2/Environment").
+   at: get_node (scene/main/node.cpp:1975)
+   C# backtrace (most recent call first):
+       [0] Godot.GodotObject Godot.NativeCalls.godot_icall_1_914(nint, nint, Godot.NativeInterop.godot_node_path) (/root/godot/modules/mono/glue/GodotSharp/GodotSharp/Generated/NativeCalls.cs:8079)
+       [1] Godot.Node Godot.Node.GetNode(Godot.NodePath) (/root/godot/modules/mono/glue/GodotSharp/GodotSharp/Generated/GodotObjects/Node.cs:962)
+       [2] bool TypedTerrain+<>c__DisplayClass4_0.<_Ready>b__0() (/workspace/shared/validation/typed-terrain-01/project/TypedTerrain.cs:36)
+       [3] void System.Threading.Tasks.Task`1.InnerInvoke()
+       [4] void System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(System.Threading.Thread, System.Threading.ExecutionContext, System.Threading.ContextCallback, object)
+       [5] void System.Threading.Tasks.Task.ExecuteWithThreadLocal(System.Threading.Tasks.Task&, System.Threading.Thread)
+       [6] bool System.Threading.ThreadPoolWorkQueue.Dispatch()
+       [7] void System.Threading.PortableThreadPool+WorkerThread.WorkerThreadStart()
+PASS worker access rejected
+PASS request accepted
+PASS completion bounded
+PASS actual completion result
+PASS ordinary box contacts typed terrain
+PASS request accepted
+PASS completion bounded
+PASS actual completion result
+PASS stale revision preserves geometry snapshot
+PASS request accepted
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS completion bounded
+PASS actual completion result
+PASS update isolated and revision coherent
+PASS request accepted
+PASS completion bounded
+PASS actual completion result
+PASS native failure retains revision and error
+PASS request accepted
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS completion bounded
+PASS actual completion result
+PASS successful remove invalidates old handle
+PASS request accepted
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS completion bounded
+PASS actual completion result
+PASS explicit rebind adds new generation
+PASS inherited terrain bound
+PASS queued node deletion rejected
+PASS deletion settles pending observer
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS same-node reentry invalidates old handle
+PASS request accepted
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS completion bounded
+PASS actual completion result
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS world destruction invalidates handles
+TYPED_TERRAIN_RESULT {"passed":45,"failed":0}

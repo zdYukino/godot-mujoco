@@ -87,6 +87,7 @@ func _poll_result() -> void:
 	var result: Dictionary=PhysicsServer3D.call("scene_heightfield_result",pending_request)
 	if result.is_empty(): return
 	pending_request=0;last_error=result.error
+	Bridge.finished(self,result)
 	if result.success:
 		body_rid=result.body
 		revision=result.revision if body_rid.is_valid() else 0

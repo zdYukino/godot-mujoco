@@ -1,0 +1,4 @@
+<Project Sdk="Godot.NET.Sdk/4.7.2">
+  <PropertyGroup><TargetFramework>net8.0</TargetFramework><EnableDynamicLoading>true</EnableDynamicLoading><EnableDefaultCompileItems>false</EnableDefaultCompileItems><Nullable>enable</Nullable></PropertyGroup>
+  <ItemGroup><Compile Include="TypedTerrain.cs"/><Compile Include="addons/godot_mujoco/csharp/*.cs"/></ItemGroup>
+</Project>

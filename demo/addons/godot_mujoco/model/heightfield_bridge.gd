@@ -11,6 +11,8 @@ static func detach(node: Node) -> void:
 	if nodes.is_empty() and EngineDebugger.has_capture("mujoco_heightfield"): EngineDebugger.unregister_message_capture("mujoco_heightfield")
 static func publish(node: Node) -> void:
 	if EngineDebugger.is_active(): EngineDebugger.send_message("mujoco_heightfield:instance",[{"id":node.live_id,"path":str(node.get_path()),"revision":node.revision,"pending":node.pending_request!=0,"error":node.last_error,"active":node.body_rid.is_valid()}])
+static func finished(node:Node,result:Dictionary) -> void:
+	if EngineDebugger.is_active(): EngineDebugger.send_message("mujoco_heightfield:finished",[{"id":node.live_id,"request":result.request,"success":result.success,"revision":result.get("revision",node.revision),"error":result.error}])
 static func receive(message: String,data: Array) -> bool:
 	if message=="list":
 		for ref in nodes.values():

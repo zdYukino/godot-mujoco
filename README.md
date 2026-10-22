@@ -224,3 +224,5 @@ CMake 将 godot-cpp 获取到构建目录并静态链接进扩展，将 MuJoCo �
 [类型化 C# 控制 API](docs/typed-control.md)：请求入队与完成反馈、生命周期与轻量验证。原生 `CylinderShape3D` 尚未支持；MJCF 圆柱的编辑与模拟属于模型功能。
 
 [静态固定网格高度场](docs/static-heightfield.md)：`MjStaticHeightField` / `MjHeightFieldData`，安全边界增删/替换、匹配可见网格和碰撞；不等于通用 `HeightMapShape3D` 支持。
+
+专用地形现提供[编辑面板](docs/heightfield-editor.zh-CN.md)和[类型化 C# TerrainHandle](docs/typed-terrain.zh-CN.md)：场景草稿/预览/撤销、运行目标及完成反馈；新功能仍需独立验收后批准合入，不改变已冻结基线记录。

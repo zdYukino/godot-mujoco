@@ -124,6 +124,9 @@ func create_terrain() -> void:
 	undo.add_undo_method(root,"remove_child",node);undo.commit_action()
 	EditorInterface.mark_scene_as_unsaved();EditorInterface.get_selection().clear();EditorInterface.get_selection().add_node(node)
 func refresh_live() -> void:
+	var outcome:Dictionary=debugger.outcomes.get(selected_key,{})
+	if not outcome.is_empty() and not debugger.instances.get(selected_key,{}).get("pending",false):
+		error="运行 completed：revision="+str(outcome.revision) if outcome.success else "运行 failed："+str(outcome.error)
 	live.clear();live.add_item("选择运行实例（启动 F5/F6）");live.set_item_metadata(0,"")
 	for key in debugger.instances:
 		var info:Dictionary=debugger.instances[key]
