@@ -56,9 +56,8 @@ int32_t MjPhysicsServer3D::_space_get_contact_count(const RID&) const{return 0;}
 // Godot addresses the world's default environment using its space RID, not an Area RID.
 void MjPhysicsServer3D::_area_set_param(const RID&r,AreaParameter p,const Variant&v) {
  if(auto*a=area(r)){
-  if((p==AREA_PARAM_GRAVITY_OVERRIDE_MODE||p==AREA_PARAM_LINEAR_DAMP_OVERRIDE_MODE||p==AREA_PARAM_ANGULAR_DAMP_OVERRIDE_MODE)&&int(v)!=AREA_SPACE_OVERRIDE_DISABLED){mj_unsupported("Area3D environment overrides; monitoring only");return;}
   if(flushing){area_commands.push_back([this,r,p,v]{_area_set_param(r,p,v);});return;}
-  a->params[p]=v;return;
+  set_area_environment_param(*a,p,v);return;
  }
  auto*s=space(r); if(!s)return;
  if(s->authored_options&&(p==AREA_PARAM_GRAVITY||p==AREA_PARAM_GRAVITY_VECTOR)){s->last_error="Runtime world model owns gravity; Godot default-area override rejected";return;}
@@ -394,9 +393,10 @@ void MjPhysicsServer3D::_step(float dt){
  // per MuJoCo solver subdivision (which changes its numerical meaning).
  for(auto &be:bodies){auto&b=*be.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID||b.mj_body<1)continue;
   b.integration_step=span;b.callback_pending=true;
+  MjEnvironment environment=body_environment(b);b.integration_gravity=environment.gravity;
   if(b.omit_integration)continue;
   int j=s.model->body_jntadr[b.mj_body],v=s.model->jnt_dofadr[j];
-  double ld=b.direct->_get_total_linear_damp(),ad=b.direct->_get_total_angular_damp();
+  double ld=environment.linear_damp,ad=environment.angular_damp;
   Vector3 linear=b.linear_velocity*std::max(0.0,1-ld*span),angular=b.angular_velocity*std::max(0.0,1-ad*span);
   Vector3 lv=godot_to_mj(linear-angular.cross(native_com_offset(s.model,b.mj_body,b.transform)));
   Vector3 av=godot_to_mj(b.transform.basis.transposed().xform(angular));
@@ -406,9 +406,9 @@ void MjPhysicsServer3D::_step(float dt){
  for(auto &be:bodies){auto&b=*be.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID||b.mj_body<1)continue;
  Vector3 force=godot_to_mj(b.force),constant=godot_to_mj(b.constant_force);
  Vector3 torque=godot_to_mj(b.torque),constant_torque=godot_to_mj(b.constant_torque);
- Vector3 direction=godot_to_mj(s.gravity_direction);
+ Vector3 gravity=godot_to_mj(b.integration_gravity);
  for(int k=0;k<3;++k){
-  s.data->xfrc_applied[6*b.mj_body+k]=(b.omit_integration?0:double(force[k])+constant[k])+double(direction[k])*s.gravity*b.mass*((b.omit_integration?0:b.gravity_scale)-1);
+  s.data->xfrc_applied[6*b.mj_body+k]=(b.omit_integration?0:double(force[k])+constant[k])+b.mass*((b.omit_integration?0:double(gravity[k]))-s.model->opt.gravity[k]);
   s.data->xfrc_applied[6*b.mj_body+3+k]=b.omit_integration?0:double(torque[k])+constant_torque[k];
  }
  }
