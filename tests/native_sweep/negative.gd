@@ -21,7 +21,18 @@ func run():
  PhysicsServer3D.shape_set_data(ball,1.0);PhysicsServer3D.body_set_shape(b,0,ball)
  PhysicsServer3D.body_set_state(b,PhysicsServer3D.BODY_STATE_TRANSFORM,Transform3D(Basis.IDENTITY,Vector3(100000008,0,0)))
  q.transform.origin=Vector3(100000000,0,0)
- ok=ok and ds.cast_motion(q).is_empty()
+ # Large world-coordinate ULPs now admit a wider, independently certified
+ # bracket. This case must prove both continuous and actual float pose signs.
+ var wide:=ds.cast_motion(q)
+ var certified:=wide.size()==2
+ if certified:
+  var safe_gap:=absf(8.0-10.0*wide[0])-2.0
+  var unsafe_gap:=absf(8.0-10.0*wide[1])-2.0
+  var safe_pose:Vector3=q.transform.origin+q.motion*wide[0]
+  var unsafe_pose:Vector3=q.transform.origin+q.motion*wide[1]
+  certified=wide[0]<=wide[1] and safe_gap>=0 and unsafe_gap<=0 and absf(safe_pose.x-100000008.0)>=2 and absf(unsafe_pose.x-100000008.0)<=2
+ print("SWEEP_LARGE_FLOAT_BRACKET ",wide," certified=",certified)
+ ok=certified and ok
  for rid in [b,ball,box,space]:PhysicsServer3D.free_rid(rid)
  print("SWEEP_NEGATIVE_RESULT ","PASS" if ok else "FAIL")
  quit(0 if ok else 1)

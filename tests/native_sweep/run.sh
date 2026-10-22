@@ -24,5 +24,5 @@ s=(p/'negative.log').read_text()
 assert 'SWEEP_NEGATIVE_RESULT PASS' in s
 warnings=[line for line in s.splitlines() if line.startswith('WARNING:')]
 assert len(warnings)==3 and any('continuous sweep pair' in x for x in warnings) and any('Area3D' in x for x in warnings) and any('float safe/unsafe' in x for x in warnings),warnings
-print('SWEEP PASS',r,'5 explicit rejection cases',p)
+print('SWEEP PASS',r,'4 explicit rejection cases plus certified large-coordinate bracket',p)
 PY

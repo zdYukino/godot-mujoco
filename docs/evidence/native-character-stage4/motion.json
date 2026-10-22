@@ -1,0 +1,72 @@
+{
+  "runs": [
+    {
+      "test": "rid",
+      "repeat": 1,
+      "failed": 0,
+      "passed": 43
+    },
+    {
+      "test": "rid",
+      "repeat": 2,
+      "failed": 0,
+      "passed": 43
+    },
+    {
+      "test": "rid",
+      "repeat": 3,
+      "failed": 0,
+      "passed": 43
+    },
+    {
+      "test": "character",
+      "repeat": 1,
+      "diagnostic": {
+        "ceiling_frames": 15,
+        "floor_frames": 100,
+        "grounded_frames": 67,
+        "on_ceiling": false,
+        "on_floor": true,
+        "on_wall": false,
+        "position": "(0.0, 1.0, 0.0)",
+        "wall_frames": 51
+      },
+      "failed": 0,
+      "passed": 23
+    },
+    {
+      "test": "character",
+      "repeat": 2,
+      "diagnostic": {
+        "ceiling_frames": 15,
+        "floor_frames": 100,
+        "grounded_frames": 67,
+        "on_ceiling": false,
+        "on_floor": true,
+        "on_wall": false,
+        "position": "(0.0, 1.0, 0.0)",
+        "wall_frames": 51
+      },
+      "failed": 0,
+      "passed": 23
+    },
+    {
+      "test": "character",
+      "repeat": 3,
+      "diagnostic": {
+        "ceiling_frames": 15,
+        "floor_frames": 100,
+        "grounded_frames": 67,
+        "on_ceiling": false,
+        "on_floor": true,
+        "on_wall": false,
+        "position": "(0.0, 1.0, 0.0)",
+        "wall_frames": 51
+      },
+      "failed": 0,
+      "passed": 23
+    }
+  ],
+  "problems": [],
+  "extension_sha256": "3c98ee532f2c9075718be7700493cfb7722fe5751252970dd6b1e3b5267e350d"
+}

@@ -33,7 +33,7 @@ inline Vec closest(const Primitive &g, Vec p) {
 }
 struct Result {
  bool valid=true, hit=false, initial_overlap=false;
- double safe=1, unsafe=1;
+ double safe=1, unsafe=1, minimum=1;
  Vec point{}, normal{};
 };
 // Nearest pair between a fixed segment and a closed convex primitive.
@@ -94,7 +94,7 @@ inline Result capsule(const Primitive &g, Vec start, Vec motion, double radius, 
    Vec d=delta(mid);
    if(d.dot(d)>r2) left=mid; else right=mid;
  }
- result.hit=true; result.safe=left; result.unsafe=right;
+ result.hit=true; result.safe=left; result.unsafe=right; result.minimum=minimum;
  Pair contact=pair(right);
  result.point=contact.point;
  Vec n=contact.delta(); double length=n.length();
