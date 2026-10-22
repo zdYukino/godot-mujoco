@@ -1,0 +1,27 @@
+{
+  "base_commit": "82a0ddf982d34c55b3612438b66045ace988e6f4",
+  "source": "working tree identified by source-hashes.json",
+  "godot_official_release_asset_sha256": "129f82db7bafd54ae14bb5bb284041c73860e8c7a009a3a026ca5e946cbff247",
+  "godot_official_sha512_sums_match": true,
+  "mujoco_official_release_digest": "sha256:139577c541d43716a63992ab698cbc7b09788b1d547fb82b682d59b40ef49b9d",
+  "checks": {
+    "unittest_normal": {
+      "passed": 12,
+      "exit": 0
+    },
+    "unittest_optimized": {
+      "passed": 12,
+      "exit": 0
+    },
+    "python_ast": "PASS",
+    "yaml_and_workflow_bash_syntax": "PASS",
+    "legacy_workflow_byte_identical": "PASS",
+    "final_local_runner_exit": 0
+  },
+  "limitations": [
+    "Existing native extension reused locally; no C++ changes. CI must separately build.",
+    "Fresh project only; shared SDK/XDG retained.",
+    "No G1, migration pressure, GUI or engine repair performed.",
+    "Remote CI result must be recorded separately."
+  ]
+}

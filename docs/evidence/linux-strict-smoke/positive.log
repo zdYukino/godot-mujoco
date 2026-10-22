@@ -1,0 +1,52 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+MuJoCo version reported by extension: 3.16.0
+MuJoCo: compile time (ms)
+  total:          0.3   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.3   (wall clock)
+Model loaded. nq=1 nv=1 nu=1 nbody=2 njnt=1 nsensor=2
+timestep=0.0100s  start_time=0.0000s
+resolved ids: body=1 hinge=0 motor=0 sensor(hinge_pos)=0
+--- stepping simulation (dt=0.010s) ---
+t=0.50s  hinge=+2.6457 rad  quat=(0.000,0.958,0.000,0.286)  sensor[hinge_pos]=+2.5618
+t=1.00s  hinge=+11.2329 rad  quat=(0.000,-0.712,0.000,0.702)  sensor[hinge_pos]=+10.9820
+t=1.50s  hinge=+27.6328 rad  quat=(0.000,0.868,0.000,0.496)  sensor[hinge_pos]=+27.2355
+t=2.00s  hinge=+51.5374 rad  quat=(0.000,0.351,0.000,0.936)  sensor[hinge_pos]=+50.9829
+t=2.50s  hinge=+82.9912 rad  quat=(0.000,-0.298,0.000,-0.955)  sensor[hinge_pos]=+82.2861
+t=3.00s  hinge=+121.9941 rad  quat=(0.000,-0.771,0.000,-0.637)  sensor[hinge_pos]=+121.1416
+start_angle=0.0000  end_angle=121.9941  moved=true  sensordata=[121.994090779135, 85.2484595505434]  sensor_matches_qpos=true
+debug: ncon=0  KE=902.5049  PE=24.3388  warnings={  }
+debug_info={ "mujoco_version": "3.16.0", "ready": true, "last_error": "", "time": 2.99999999999998, "timestep": 0.01, "nq": 1, "nv": 1, "nu": 1, "nbody": 2, "njnt": 1, "nsensor": 2, "ncon": 0, "energy": { "potential": 24.3388169592183, "kinetic": 902.504947190856, "total": 926.843764150074 }, "warnings": {  } }
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.2   -
+    load:         0.1     (CPU time)
+    hull:         0.1     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+multifile_ok=true (err='')
+checks: strload=true name_roundtrip=true step0_noop=true
+SMOKE TEST: PASS

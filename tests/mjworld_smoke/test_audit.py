@@ -19,3 +19,8 @@ class AuditTests(unittest.TestCase):
   for text in [EXPECTED,self.clean+self.clean.splitlines()[1],self.clean.replace('"failed": 0','"failed": 1')]:
    with self.subTest(text=text),self.assertRaises(AssertionError):negative(text,0)
 if __name__=='__main__':unittest.main()
+
+class PositiveFailureTests(unittest.TestCase):
+ def test_nonzero_and_duplicate(self):
+  for code,text in [(139,'SMOKE TEST: PASS\n'),(0,'SMOKE TEST: PASS\nSMOKE TEST: PASS\n')]:
+   with self.subTest(code=code),self.assertRaises(AssertionError):positive(text,code)

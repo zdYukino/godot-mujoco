@@ -1,0 +1,10 @@
+{
+  ".github/workflows/cmake-build.yml": "5949358088c8ab925764ee98fbf10acafa0f426d596ab9431b00fe710f07a638",
+  "scripts/ci/install_godot.py": "59a7494ea90330c0e8b0cf97224cd64d9a02c456040181dec869f4a98d5e39a6",
+  "scripts/ci/toolchain.json": "0b0031d27b3d536925a7d017cf037f9b3da1957cff2ae34c6f5c21056ae6565f",
+  "tests/mjworld_smoke/run.py": "6d24316ed2de0924a7cf143696833fbac4e48f576ea0ee9b528178c49043ca7a",
+  "tests/mjworld_smoke/run.sh": "744281e5eb32131ce827210a694a9a52d270d58c7ed08ec2526955572fafc19e",
+  "tests/mjworld_smoke/audit.py": "107318dda521a1b448862f123ef732b5f38146d29d8b646779f3f76c22e7cef0",
+  "tests/mjworld_smoke/test_audit.py": "46b2348c249012d2f2772bd2285838b47f394a7e87e9d2ccf67f519a3cbf8dcc",
+  "tests/mjworld_smoke/test_runner.py": "b4a82d08fd4f5129f029bd9ae0fbec8eb5fb46e424e463c04e44adf6188f2f3d"
+}

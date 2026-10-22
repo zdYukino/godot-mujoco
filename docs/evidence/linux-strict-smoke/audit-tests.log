@@ -1,0 +1,7 @@
+............
+----------------------------------------------------------------------
+Ran 12 tests in 0.065s
+
+OK
+{"status": "blocked", "report": "/tmp/tmp8veloo35/out/results.json"}
+{"status": "failed", "report": "/tmp/tmphrxk2345/results.json"}
