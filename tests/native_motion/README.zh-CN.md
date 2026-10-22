@@ -15,9 +15,9 @@ OUT=$(mktemp -d /tmp/gmj-motion.XXXXXX) bash tests/native_motion/run.sh
 日志出现 ERROR、leak、unsupported，断言失败、超时或缺失结果都使验收失败。
 `executions.tsv` 保留各进程退出码，JSON 包含被测 extension SHA256 与 CharacterBody 诊断状态。
 
-## 正例：66 断言/轮
+## 正例：75 断言/轮
 
-### `rid.gd`：43
+### `rid.gd`：52
 
 - sphere/capsule 运动主体，静态目标；解析入口 `safe≈.6`、travel/remainder、point/normal、collider RID/local shape。
 - 查询只使用 parameters.from，不写实际 body transform，不激活 space，不向 dynamic target 施加冲量。
@@ -46,6 +46,8 @@ OUT=$(mktemp -d /tmp/gmj-motion.XXXXXX) bash tests/native_motion/run.sh
 
 不包含动态 CCD、旋转扫掠、rigid-linear、separation ray、楼梯或完整移动平台语义；不宣称 CharacterBody 全契约覆盖。
 
-`run_negative.sh` 另验 10 项：不支持的运动形状、缩放、两墙夹困、不可表示擦边、
+`run_negative.sh` 另验 12 项：不支持的运动形状、缩放、两墙夹困、不可表示擦边、
 舍入路径新增碰撞。要求明确零 travel 拒绝及状态不变，严格匹配预期警告。
 RID 正例另验大坐标相反局部偏置不穿墙与 clear travel 不超出请求向量。
+
+后续复审增加大坐标法线方向恢复、真正 BODY unsafe 位姿认证，以及 kinematic 显式线/角速度与偏置 COM 点速度。wall=6 无可表示 unsafe 接触，必须拒绝；wall=7.5 可表示端点接触，保持正例。

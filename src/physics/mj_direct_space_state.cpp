@@ -314,6 +314,9 @@ void rest_result(MjSpace &space, MjBody &body, int shape, const Vector3 &point,
    Vector3 linear=mj_to_godot(Vector3(velocity[3],velocity[4],velocity[5]));
    const mjtNum *com=space.data->xipos+3*body.mj_body;
    info.linear_velocity=linear+angular.cross(point-mj_to_godot(Vector3(com[0],com[1],com[2])));
+ } else if(body.mj_body>=0 && body.mode==PhysicsServer3D::BODY_MODE_KINEMATIC) {
+   const mjtNum *com=space.data->xipos+3*body.mj_body;
+   info.linear_velocity=body.linear_velocity+body.angular_velocity.cross(point-mj_to_godot(Vector3(com[0],com[1],com[2])));
  }
 }
 // Support of a primitive in world direction, with sizes/axes in MuJoCo order.
@@ -790,11 +793,14 @@ bool MjPhysicsServer3D::_body_test_motion(const RID &body_rid,const Transform3D 
  // Recovery must leave every shape outside the margin before cast_motion,
  // whose separate public contract ignores initial penetrations. A bounded
  // failure stops travel explicitly instead of silently ignoring a wall.
- double epsilon=std::max(1e-6,8*double(std::numeric_limits<real_t>::epsilon())*
-     std::max({1.0,double(from.origin.abs().x),double(from.origin.abs().y),double(from.origin.abs().z)}));
+ // Slop is geometric, not proportional to unrelated world coordinates.
+ // Certify actual per-shape displacement below instead of inflating recovery
+ // by the largest body-origin ULP (e.g. huge X must not inflate floor Y).
+ constexpr double epsilon=1e-6;
+ struct RecoveryConstraint {Vector3 normal;double depth;int shape;};
  bool clear=false;
  for(int iteration=0;iteration<16;++iteration) {
-   std::vector<std::pair<Vector3,double>> constraints;Vector3 correction;
+   std::vector<RecoveryConstraint> constraints;Vector3 correction;
    for(int index:shapes) {
      const auto &instance=moving->shapes[index];bool valid;
      auto hits=overlaps(state,instance.shape,pose*instance.transform,{},margin,moving->mask,true,false,moving,&valid);
@@ -803,7 +809,7 @@ bool MjPhysicsServer3D::_body_test_motion(const RID &body_rid,const Transform3D 
        double depth=double(margin)-hit.contact.dist;
        if(depth>0) {
          remember(recovered,collision(hit,index,depth));
-         constraints.push_back({hit.target_normal,depth});
+         constraints.push_back({hit.target_normal,depth,index});
        }
      }
    }
@@ -814,15 +820,22 @@ bool MjPhysicsServer3D::_body_test_motion(const RID &body_rid,const Transform3D 
    bool feasible=false;
    for(int pass=0;pass<32;++pass) {
      for(const auto &c:constraints) {
-       double deficit=c.second-c.first.dot(correction);
-       if(deficit>0)correction+=c.first*(deficit+epsilon);
+       double deficit=c.depth-c.normal.dot(correction);
+       if(deficit>0)correction+=c.normal*(deficit+epsilon);
      }
-     feasible=true;for(const auto &c:constraints)if(c.first.dot(correction)<c.second){feasible=false;break;}
+     feasible=true;for(const auto &c:constraints)if(c.normal.dot(correction)<c.depth){feasible=false;break;}
      if(feasible)break;
    }
    if(!feasible)return blocked("body motion recovery did not converge");
    if(!correction.is_finite() || pose.origin+correction==pose.origin)return blocked("body motion recovery has no representable displacement");
-   pose.origin+=correction;
+   Transform3D next=pose;next.origin+=correction;
+   for(const auto &c:constraints) {
+     const auto &instance=moving->shapes[c.shape];
+     Vector3 actual=(next*instance.transform).origin-(pose*instance.transform).origin;
+     if(!actual.is_finite() || double(c.normal.dot(actual))<c.depth)
+       return blocked("body motion recovery has no certified directional displacement");
+   }
+   pose=next;
  }
  if(!clear)return blocked("body motion recovery did not converge");
  float safe=1,unsafe=1;PhysicsServer3DExtensionShapeRestInfo nearest{};int local_shape=-1;
@@ -881,26 +894,42 @@ bool MjPhysicsServer3D::_body_test_motion(const RID &body_rid,const Transform3D 
  result.travel=travel;result.remainder=motion-progress;
  if(motion.length_squared()>0)safe=std::min(safe,float(std::clamp(double(progress.dot(motion))/motion.length_squared(),0.0,1.0)));
 
- result.collision_safe_fraction=safe;result.collision_unsafe_fraction=unsafe;
  if(local_shape>=0) {
-   // Gather simultaneous constraints at the certified unsafe pose, preserving
-   // native local/target shape identity and the target's COM point velocity.
-   Transform3D contact_pose=pose;contact_pose.origin+=motion*unsafe;
-   for(int index:shapes) {
-     const auto &instance=moving->shapes[index];bool valid;
-     auto hits=overlaps(state,instance.shape,contact_pose*instance.transform,{},margin+2*epsilon,moving->mask,true,false,moving,&valid);
-     if(!valid)return blocked("body motion contact witness unavailable");
-     for(const auto &hit:hits)if(hit.target_normal.dot(motion)<0)
-       remember(collisions,collision(hit,index,double(margin)-hit.contact.dist));
+   // Certify unsafe using the same BODY + travel + local transform order as
+   // the caller. Shape-space contact alone cannot certify this float pose.
+   auto unsafe_contacts=[&](float fraction) {
+     collisions.clear();bool matched=false;
+     Transform3D contact_pose=from;contact_pose.origin+=pose.origin-from.origin+motion*fraction;
+     for(int index:shapes) {
+       const auto &instance=moving->shapes[index];bool valid;
+       auto hits=overlaps(state,instance.shape,contact_pose*instance.transform,{},margin,moving->mask,true,false,moving,&valid);
+       if(!valid)return false;
+       for(const auto &hit:hits) {
+         bool selected=index==local_shape && hit.body->rid==nearest.rid && hit.shape==nearest.shape;
+         if(selected || hit.target_normal.dot(motion)<0)
+           remember(collisions,collision(hit,index,double(margin)-hit.contact.dist));
+         matched|=selected;
+       }
+     }
+     return matched;
+   };
+   bool certified=unsafe_contacts(unsafe);
+   for(int i=0;!certified && unsafe<1 && i<256;++i) {
+     unsafe=std::nextafter(unsafe,1.0f);certified=unsafe_contacts(unsafe);
    }
-   if(collisions.empty()) {
-     PhysicsServer3DExtensionMotionCollision c{};
-     c.position=nearest.point;c.normal=nearest.normal;c.collider_velocity=nearest.linear_velocity;
-     c.local_shape=local_shape;c.collider=nearest.rid;c.collider_shape=nearest.shape;c.collider_id=nearest.collider_id;
-     if(auto *target=body(nearest.rid))c.collider_angular_velocity=target->angular_velocity;
-     collisions.push_back(c);
+   // Near zero, fraction ULPs can be much smaller than a body-position ULP.
+   // A certified endpoint can bound refinement after continuous detection;
+   // never infer a contact from an uncertified endpoint or sparse samples.
+   if(!certified && unsafe_contacts(1)) {
+     float a=unsafe,b=1;
+     for(int i=0;i<64;++i) {float mid=a+(b-a)*.5f;if(mid<=a||mid>=b)break;
+       if(unsafe_contacts(mid))b=mid;else a=mid;
+     }
+     unsafe=b;certified=unsafe_contacts(unsafe);
    }
+   if(!certified)return blocked("body motion unsafe body pose has no certified contact");
  } else if(recovery_as_collision)collisions=recovered;
+ result.collision_safe_fraction=safe;result.collision_unsafe_fraction=unsafe;
  std::stable_sort(collisions.begin(),collisions.end(),[](const auto &a,const auto &b) {
    if(a.depth!=b.depth)return a.depth>b.depth;
    if(a.collider!=b.collider)return a.collider.get_id()<b.collider.get_id();

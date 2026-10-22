@@ -13,6 +13,8 @@ Godot motion 的 exclude_bodies/exclude_objects；按 mover mask 对 target laye
 
 先对初始穿透及 margin 做恢复，再做真实连续 sweep。每轮恢复同时求解当前接触的
 法向半空间约束，最多 16 轮、每轮 32 次约束投影；不可行或数值不收敛明确拒绝。
+恢复 slop 固定为 1e-6，每个约束按实际 body/local 舍入后的 shape 位移验证法线投影；
+无关大坐标不会放大 slop，不能表示的恢复明确拒绝。
 不会依靠逐个推出后反复换边，把夹困主体挪穿墙。恢复后的初始距离另行校验，
 不得继承公共 cast_motion 的“忽略初始重叠”策略。零运动也可返回恢复 travel；
 recovery_as_collision 控制恢复接触是否算碰撞。travel 包含恢复，remainder 只扣运动进展。
@@ -24,6 +26,8 @@ recovery_as_collision 控制恢复接触是否算碰撞。travel 包含恢复，
 防止巨大相反局部偏置造成穿薄墙。已有碰撞可保守回退可表示 travel；若舍入路径
 引入理想路径没有的碰撞，实际端点有可靠 witness 时保留该碰撞并回退 safe；
 否则明确拒绝，不能无碰撞地悄悄截断运动。
+最终 unsafe 也必须按同一 BODY 运算顺序取得真实目标 witness；相邻 fraction 或已认证的
+终点可用于细化，无法认证则拒绝，不用理想 shape 路径的 contact 填充结果。
 
 失败返回 false、collision_count=0、travel=0、remainder=motion、fractions=0 并报告警告；
 不能把这种拒绝当作无障碍成功，也不伪造零法线碰撞。普通 clear 返回 false 和完整请求
@@ -60,3 +64,6 @@ rigid-linear、旋转 sweep、动态 CCD、moving box/cylinder；专用 heightfi
 不声称支持 kinematic 与 dynamic 的双向推挤或动态角色控制。
 
 验收和真实失败记录见 `evidence/native-character-stage4/README.md`。
+
+阶段 4 复审三项修复及独立数值复现见 `evidence/native-character-review-fixes/README.md`，
+它补充并修正原阶段证据（原 wall=6 只认证 safe 的契约不充分，现改为严格拒绝）。

@@ -84,6 +84,16 @@ func run()->void:
  PhysicsServer3D.body_remove_shape(mover,1)
  PhysicsServer3D.body_set_mode(target,PhysicsServer3D.BODY_MODE_KINEMATIC)
  check(PhysicsServer3D.body_test_motion(mover,p,r),"kinematic target blocks body query")
+ PhysicsServer3D.body_set_state(target,PhysicsServer3D.BODY_STATE_LINEAR_VELOCITY,Vector3(2,0,0))
+ check(PhysicsServer3D.body_test_motion(mover,p,r) and r.get_collider_velocity().distance_to(Vector3(2,0,0))<.00001,"kinematic target reports explicit linear velocity")
+ PhysicsServer3D.body_set_state(target,PhysicsServer3D.BODY_STATE_ANGULAR_VELOCITY,Vector3(0,0,3))
+ var kine_hit:=PhysicsServer3D.body_test_motion(mover,p,r)
+ var kine_expected:=Vector3(2,0,0)+Vector3(0,0,3).cross(r.get_collision_point()-Vector3(4,0,0))
+ check(kine_hit and r.get_collider_velocity().distance_to(kine_expected)<.00001,"kinematic target explicit angular point velocity")
+ var rest_query:=PhysicsShapeQueryParameters3D.new();rest_query.shape_rid=sphere;rest_query.transform.origin=Vector3(3.3,0,0)
+ var rest:=PhysicsServer3D.space_get_direct_state(space).get_rest_info(rest_query)
+ check(not rest.is_empty() and rest.linear_velocity.distance_to(Vector3(2,0,0)+Vector3(0,0,3).cross(rest.point-Vector3(4,0,0)))<.00001,"kinematic rest info shares explicit point velocity")
+
  PhysicsServer3D.body_set_state(target,PhysicsServer3D.BODY_STATE_TRANSFORM,Transform3D(Basis.IDENTITY,Vector3(7,0,0)))
  check(not PhysicsServer3D.body_test_motion(mover,p,r),"updated kinematic target pose visible without step")
  remove(target);object.free()
@@ -116,19 +126,24 @@ func run()->void:
   velocity_ok=r.get_collider_velocity().distance_to(expected)<.005
  check(velocity_ok,"collider point velocity includes angular motion and offset COM")
  check(PhysicsServer3D.body_get_state(moving_target,PhysicsServer3D.BODY_STATE_LINEAR_VELOCITY)==Vector3(2,0,0),"query applies no impulse to dynamic target")
- remove(moving_target)
- # Body-origin rounding and opposite local offsets must not jump through a wall.
- var thin_wall:=body(box,Vector3(6,0,0))
- PhysicsServer3D.body_set_shape_transform(mover,0,Transform3D(Basis.IDENTITY,Vector3(-1e8,0,0)))
- p=parameters(Vector3(1e8,0,0),Vector3(10,0,0))
+ PhysicsServer3D.body_set_mode(moving_target,PhysicsServer3D.BODY_MODE_KINEMATIC)
  collided=PhysicsServer3D.body_test_motion(mover,p,r)
- var actual_shape_end:Vector3=(p.from.origin+r.get_travel())+Vector3(-1e8,0,0)
- check(collided and r.get_collision_count()>0,"large cancelling body/local origins retain collision identity")
- check(actual_shape_end.x<=5 and r.get_collision_safe_fraction()<=.5,"returned float body pose cannot tunnel beyond thin wall")
- check(r.get_travel()==Vector3.ZERO and r.get_remainder()==p.motion and r.get_collision_safe_fraction()==0,"unrepresentable partial travel conservatively stays put")
- remove(thin_wall);p.motion=Vector3(5,0,0)
+ check(collided and r.get_collider_velocity().distance_to(Vector3(2,0,0)+Vector3(0,0,3).cross(r.get_collision_point()-Vector3(4,1,0)))<.00001,"kinematic explicit velocity uses offset shape COM")
+ remove(moving_target)
+ # Large unrelated coordinates must not inflate normal recovery.
+ var recovery_floor:=body(plane,Vector3.ZERO)
+ for cancel in [false,true]:
+  for origin in [Vector3(1e8,.4,0),Vector3(-1e8,.4,1e8)]:
+   var offset:=Vector3(-origin.x,0,-origin.z) if cancel else Vector3.ZERO
+   PhysicsServer3D.body_set_shape_transform(mover,0,Transform3D(Basis.IDENTITY,offset))
+   p=parameters(origin,Vector3.ZERO);p.margin=.001;p.recovery_as_collision=true
+   check(PhysicsServer3D.body_test_motion(mover,p,r) and r.get_collision_count()>0,"large tangent coordinates retain recovery contact")
+   check(absf(r.get_travel().y-.101)<.00001 and r.get_travel().x==0 and r.get_travel().z==0 and r.get_remainder()==Vector3.ZERO,"recovery follows normal without unrelated coordinate slop")
+ remove(recovery_floor)
+ PhysicsServer3D.body_set_shape_transform(mover,0,Transform3D(Basis.IDENTITY,Vector3(-1e8,0,0)))
+ p=parameters(Vector3(1e8,0,0),Vector3(5,0,0))
  check(not PhysicsServer3D.body_test_motion(mover,p,r) and r.get_travel()==p.motion and r.get_remainder()==Vector3.ZERO,"clear large-coordinate travel reports requested vector, not rounded-origin subtraction")
- thin_wall=body(box,Vector3(7.5,0,0))
+ var thin_wall:=body(box,Vector3(7.5,0,0))
  collided=PhysicsServer3D.body_test_motion(mover,p,r)
  check(collided and r.get_collision_count()>0 and r.get_collider_rid()==thin_wall,"float-only endpoint contact retains real collision metadata")
  var unsafe_center:Vector3=(p.from.origin+p.motion*r.get_collision_unsafe_fraction())+Vector3(-1e8,0,0)
