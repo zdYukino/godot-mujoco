@@ -71,10 +71,15 @@ public abstract class RuntimeHandle : IDisposable
         node.TreeExiting += OnExit;
         tree.ProcessFrame += OnFrame;
     }
-    protected static bool IsScript(Node node, string filename) => OS.GetThreadCallerId() == OS.GetMainThreadId() && GodotObject.IsInstanceValid(node)
-        && !node.IsQueuedForDeletion() && node.IsInsideTree()
-        && node.GetScript().AsGodotObject() is Script script
-        && script.ResourcePath == "res://addons/godot_mujoco/model/" + filename;
+    protected static bool IsScript(Node node, string filename)
+    {
+        if (OS.GetThreadCallerId() != OS.GetMainThreadId() || !GodotObject.IsInstanceValid(node)
+            || node.IsQueuedForDeletion() || !node.IsInsideTree()) return false;
+        for (var script = node.GetScript().AsGodotObject() as Script;
+             script != null; script = script.GetBaseScript())
+            if (script.ResourcePath == "res://addons/godot_mujoco/model/" + filename) return true;
+        return false;
+    }
     public bool IsAlive => System.Environment.CurrentManagedThreadId == thread && !disposed
         && GodotObject.IsInstanceValid(Node) && !Node.IsQueuedForDeletion() && Node.IsInsideTree() && SameLifetime;
     protected string Unavailable => System.Environment.CurrentManagedThreadId != thread
@@ -185,7 +190,7 @@ public sealed class InstanceHandle : RuntimeHandle
             var body = entry.Value.AsGodotDictionary();
             bodies.Add(entry.Key.AsString(), new BodyState(body["mass"].AsDouble(), body["transform"].AsTransform3D()));
         }
-        return Access<InstanceState>.Ok(new InstanceState(identity, Node.Get("property_revision").AsInt64(),
+        return Access<InstanceState>.Ok(new InstanceState(identity, data["property_revision"].AsInt64(),
             Node.Get(PendingProperty).AsInt64(), new ReadOnlyDictionary<string,JointState>(joints),
             new ReadOnlyDictionary<string,double>(controls), new ReadOnlyDictionary<string,BodyState>(bodies)));
     }

@@ -158,7 +158,7 @@ func _ready() -> void:
         push_error(world.last_error)
 ```
 
-C# 通过 Godot 的 `Call` / `Get` 访问同一组 GDScript 包装节点，不假设生成了 `MjRuntimeWorld` 的 C# 强类型类。下面是同一场景创建和控制片段，放入已初始化 C# 项目的 Node 派生类 `_Ready()` 中；暂停/步进的完整写法见[现有 C# 时钟例程](tests/runtime_clock/ClockBinding.cs)。
+C# 推荐使用插件内 `GodotMuJoCo.WorldHandle` / `InstanceHandle` 类型化门面，支持继承的包装节点、状态快照、控制和带完成反馈的请求；详见[类型化 API 与例程](docs/typed-control.md)。绑定后仍须检查 `Success`，入队的 `Accepted` 不代表执行成功。旧的 Godot `Call` / `Get` 动态调用保持兼容；以下是同一场景的动态调用片段，放入已初始化 C# 项目的 Node 派生类 `_Ready()` 中。暂停/步进的动态写法见[现有 C# 时钟例程](tests/runtime_clock/ClockBinding.cs)。
 
 ```csharp
 var world = GD.Load<PackedScene>("res://PendulumRuntime.tscn").Instantiate<Node3D>();
@@ -209,7 +209,7 @@ CMake 将 godot-cpp 获取到构建目录并静态链接进扩展，将 MuJoCo �
 
 - cold import 退出 **139** 未修复，按当前使用范围作为非阻断遗留；不能证明仅发生在无窗口模式。图形初始化后 API 编辑已有文件是已验证路径。
 - 要求主线程物理；同步候选编译可能阻塞 UI。一个 World3D 仅一个 `MjRuntimeWorld`，其他世界使用独立 World3D。
-- 不支持完整 Godot body/joint 兼容、Area、CharacterBody、地形；文件系统模型包可搬迁，PCK/ZIP 内资产加载未验证。
+- 支持专用静态 `MjStaticHeightField`；不支持通用 `HeightMapShape3D`、动态地形、完整 Godot body/joint 兼容、Area、CharacterBody；文件系统模型包可搬迁，PCK/ZIP 内资产加载未验证。
 - G1 默认固定基座；自由基座导入没有重力补偿、站立或步行控制，倒伏是预期行为。
 - Ubuntu 22.04 及其他宿主需独立核验动态库/驱动；Windows 等其他平台未适配本基线。
 

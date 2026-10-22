@@ -3,7 +3,7 @@
 The product API is `demo/addons/godot_mujoco/csharp/MuJoCoRuntime.cs`, namespace
 `GodotMuJoCo`. Copy the addon into a .NET Godot project; the normal SDK compile
 includes its C# sources. Bind existing configured `MjRuntimeWorld` and loaded
-`MjModelInstance` nodes on the main thread. This facade uses the existing native
+`MjModelInstance` nodes (including scripts inheriting from them) on the main thread. This facade uses the existing native
 transaction queue; it does not mutate model/data from worker threads.
 
 ```csharp
@@ -23,7 +23,7 @@ Check `Access<T>.Success` before using `Value`; a failed binding has no handle.
 `WorldHandle.Read()` exposes time, timestep, pause, checkpoint, contacts, pending
 request and last queue error. `InstanceHandle.Read()` copies named joint states,
 controls, body masses/transforms, unique live identity and property revision.
-Snapshots are read-only copies. Transforms are Godot Y-up; qpos/qvel and controls
+Snapshots are read-only copies. Instance revision comes from the same native snapshot as its bodies/joints; it can advance before the node polls completion. `Finished` remains the separately observed completion signal. Transforms are Godot Y-up; qpos/qvel and controls
 retain MuJoCo units and actuator semantics (not universally radians/torque).
 
 `Pause`, `Step`, `Capture`, `Reset` and `Apply` return a `Request`. `Accepted`

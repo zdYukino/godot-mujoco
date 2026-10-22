@@ -35,6 +35,23 @@ func run():
 	check(not hit.is_empty() and hit.collider==terrain and hit.rid==terrain.body_rid and hit.shape==0,"ray terrain identity")
 	check(not hit.is_empty() and absf(hit.position.y-.3)<1e-5 and hit.normal.y>.99,"flat height and normal")
 	check(ray(world,0,2,2).is_empty(),"ray layer mask")
+	var filtered=PhysicsRayQueryParameters3D.create(Vector3(0,5,2),Vector3(0,-5,2))
+	filtered.exclude=[terrain.body_rid]
+	check(world.get_world_3d().direct_space_state.intersect_ray(filtered).is_empty(),"ray excludes terrain RID")
+	filtered.exclude=[];filtered.hit_back_faces=false
+	var front=world.get_world_3d().direct_space_state.intersect_ray(filtered)
+	check(not front.is_empty() and front.rid==terrain.body_rid,"ray front face accepted with back faces disabled")
+	filtered.hit_back_faces=true
+	var both=world.get_world_3d().direct_space_state.intersect_ray(filtered)
+	check(not both.is_empty() and both.position==front.position,"back face toggle preserves front hit")
+	# Start exactly on the flat surface and point outwards: t=0 is a back face,
+	# not an inside-origin query (strict interior test excludes the surface).
+	var outbound=PhysicsRayQueryParameters3D.create(front.position,front.position+Vector3.UP)
+	outbound.hit_back_faces=false
+	check(world.get_world_3d().direct_space_state.intersect_ray(outbound).is_empty(),"outward surface back face rejected")
+	outbound.hit_back_faces=true
+	var back=world.get_world_3d().direct_space_state.intersect_ray(outbound)
+	check(not back.is_empty() and back.position.distance_to(front.position)<1e-6,"outward surface back face enabled")
 	await step(world,700)
 	await process_frame;await process_frame
 	check(absf(world.get_node("Box").position.y-.5)<.035,"ordinary box contacts heightfield")

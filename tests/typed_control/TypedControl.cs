@@ -29,7 +29,23 @@ public partial class TypedControl : Node
         try {
             var scene=GD.Load<PackedScene>("res://Environment.tscn");
             var host=new SubViewport { OwnWorld3D=true };AddChild(host);
-            var node=scene.Instantiate<Node3D>();host.AddChild(node);
+            var node=scene.Instantiate<Node3D>();
+            var design=node.Get("world_model");
+            node.SetScript(GD.Load<Script>("res://derived_world.gd"));
+            node.Set("world_model",design);node.Set("start_paused",true);
+            var inheritedInstance=node.GetNode<Node>("First");
+            var instanceDesign=inheritedInstance.Get("model");
+            inheritedInstance.SetScript(GD.Load<Script>("res://derived_instance.gd"));
+            inheritedInstance.Set("model",instanceDesign);
+            Check(!WorldHandle.Bind(node).Success && !InstanceHandle.Bind(inheritedInstance).Success,"inherited nodes outside tree rejected");
+            host.AddChild(node);
+            var unrelated=new Node();host.AddChild(unrelated);
+            Check(!WorldHandle.Bind(unrelated).Success && !InstanceHandle.Bind(unrelated).Success,"unrelated node rejected");
+            using var inheritedWorldCheck=WorldHandle.Bind(node).Value;
+            Check(inheritedWorldCheck!=null,"two-level inherited world accepted");
+            using var inheritedInstanceCheck=InstanceHandle.Bind(inheritedInstance).Value;
+            Check(inheritedInstanceCheck!=null,"inherited instance accepted");
+            Check(!WorldHandle.Bind(inheritedInstance).Success && !InstanceHandle.Bind(node).Success,"wrong runtime kind rejected");
             using var world=WorldHandle.Bind(node).Value;
             using var first=InstanceHandle.Bind(node.GetNode<Node>("First")).Value;
             using var second=InstanceHandle.Bind(node.GetNode<Node>("Second")).Value;
@@ -46,7 +62,8 @@ public partial class TypedControl : Node
             await Done(request);
             Check(Math.Abs(world.Read().Value.Time-.2)<1e-9,"exact 100 steps");
             Check(first.Read().Value.Joints["hinge"].Position[0]>0 && second.Read().Value.Joints["hinge"].Position[0]<0,"two light joints move independently");
-            await Frames(2);
+            for(int i=0;i<5 && node.GetNode<Node3D>("Box").Position.Y>=2;i++)
+                await ToSignal(GetTree(), SceneTree.SignalName.PhysicsFrame);
             Check(node.GetNode<Node3D>("Box").Position.Y<2,"ordinary box shares simulation");
             await Done(world.Step(500));
             Check(world.Read().Value.Contacts>0,"typed contact count after box landing");
@@ -61,13 +78,24 @@ public partial class TypedControl : Node
             Check(loaded.Success,"load saved typed design");
             var firstBefore=first.Read().Value.Joints["hinge"].Position[0];
             var secondBefore=second.Read().Value.Joints["hinge"].Position[0];
-            var edit=await Done(first.Apply(loaded.Value,0));
+            var firstNode=node.GetNode<Node>("First");
+            firstNode.SetProcess(false); // Hold result polling while native physics commits.
+            var editRequest=first.Apply(loaded.Value,0);
+            long nativeRevision=0;
+            for(int i=0;i<240 && nativeRevision==0;i++) {
+                await Frames();
+                nativeRevision=firstNode.Call("state").AsGodotDictionary()["property_revision"].AsInt64();
+            }
+            Check(nativeRevision==1 && firstNode.Get("property_revision").AsInt64()==0,"reproduce native commit before node revision polling");
+            Check(first.Read().Value.Revision==nativeRevision && first.Read().Value.Bodies["arm"].Mass==2,"typed snapshot revision matches committed native bodies");
+            Check(!editRequest.Finished.IsCompleted,"completion waits for node polling independently of snapshot revision");
+            firstNode.SetProcess(true);
+            var edit=await Done(editRequest);
             Check(edit.Revision==1 && first.Read().Value.Revision==1 && second.Read().Value.Revision==0,"revision isolated");
             Check(Math.Abs(first.Read().Value.Joints["hinge"].Position[0]-firstBefore)<1e-10 && Math.Abs(second.Read().Value.Joints["hinge"].Position[0]-secondBefore)<1e-10,"compatible states continuous");
             Check(first.Read().Value.Bodies["arm"].Mass==2 && second.Read().Value.Bodies["arm"].Mass==1,"inertia revision applied to one instance");
             edit=await Done(first.Apply(loaded.Value,0),false);
             Check(edit.Error.Length>0 && first.Read().Value.Revision==1,"stale revision failure feedback");
-            var firstNode=node.GetNode<Node>("First");
             firstNode.Call("unload_model");
             Check(!first.Read().Success && !first.SetControl("drive",.2).Success,"unloaded instance handle safely rejected immediately");
             Check(firstNode.Call("load_model").AsBool(),"same node reloaded");

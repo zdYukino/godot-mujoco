@@ -5,7 +5,7 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 : "${OUT:=$(mktemp -d /tmp/gmj-typed.XXXXXX)}"
 [[ ! -e "$OUT/project" ]] || exit 2
 mkdir -p "$OUT/project"
-cp "$ROOT/tests/typed_control/"{prepare.gd,project.godot,TypedControl.cs,TypedControl.csproj,TypedControl.tscn} "$OUT/project/"
+cp "$ROOT/tests/typed_control/"{derived_world.gd,inherited_world_base.gd,derived_instance.gd,prepare.gd,project.godot,TypedControl.cs,TypedControl.csproj,TypedControl.tscn} "$OUT/project/"
 cp -a "$ROOT/demo/addons" "$OUT/project/"
 run_stage() {
     local stage="$1" limit="$2" code
