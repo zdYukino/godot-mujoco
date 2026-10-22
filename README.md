@@ -2,7 +2,7 @@
 
 在 Godot 中导入、编辑和运行 MuJoCo 模型。项目由 C++ GDExtension、MuJoCo 编辑器插件和场景运行组件组成：既可以编辑 MJCF，也可以把保存的模型放入 Godot 场景，与受支持的普通刚体共享物理空间。
 
-[English](README.en.md) · [安装详解](docs/linux-install.zh-CN.md) · [中文文档](docs/README.zh-CN.md) · [开发基线](docs/linux-editor-runtime-baseline.zh-CN.md)
+[English](README.en.md) · [安装详解](docs/linux-install.zh-CN.md) · [中文文档](docs/README.zh-CN.md) · [开发基线](docs/linux-development-baseline-20261022.zh-CN.md)
 
 ![MuJoCo 工作区：模型树、三维预览和属性面板](docs/evidence/mouse-gui-fix/viewport-shapes.png)
 
@@ -205,7 +205,7 @@ CMake 将 godot-cpp 获取到构建目录并静态链接进扩展，将 MuJoCo �
 
 可复用的[Linux 固定工具链轻量检查](tests/mjworld_smoke/README.md)提供版本/哈希核验、独立正负例、阶段状态和日志归档；它不替代 GUI 或重负载验收。
 
-当前保存的是[Linux 编辑运行开发基线](docs/linux-editor-runtime-baseline.zh-CN.md)，不是稳定 release。dot 已完成约定的轻量真实 GUI、保存重开和运行编辑验收；**重型 G1/多 G1 压力未通过，交用户手测**。原始失败日志保留，不用后续重试覆盖。
+当前保存的是带已知限制的[Linux 开发稳定基线（2026-10-22）](docs/linux-development-baseline-20261022.zh-CN.md)，不是稳定 release。dot 已完成约定的轻量真实 GUI、保存重开和运行编辑验收；**重型 G1/多 G1 压力未通过，交用户手测**。原始失败日志保留，不用后续重试覆盖。
 
 - cold import 退出 **139** 未修复，按当前使用范围作为非阻断遗留；不能证明仅发生在无窗口模式。图形初始化后 API 编辑已有文件是已验证路径。
 - 要求主线程物理；同步候选编译可能阻塞 UI。一个 World3D 仅一个 `MjRuntimeWorld`，其他世界使用独立 World3D。
