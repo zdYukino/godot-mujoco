@@ -23,7 +23,7 @@ order=json.loads(next(x.split(' ',1)[1] for x in (p/'body-shape-order.log').read
 assert order['failed']==0 and order['passed']==22,order
 r['body_shape_order']=order
 s=(p/'negative.log').read_text();errors=[x for x in s.splitlines() if x.startswith('ERROR:')]
-assert len(errors)==2 and 'Area monitoring supports native box, sphere and cylinder only' in errors[0] and '!rigid(t)' in errors[1],s
+assert len(errors)==2 and 'Area monitoring supports native box, sphere, cylinder and capsule only' in errors[0] and '!rigid(t)' in errors[1],s
 assert len([x for x in s.splitlines() if x.startswith('WARNING:')])==1 and 'Area3D environment overrides; monitoring only' in s and 'AREA_NEGATIVE_RESULT true' in s and 'SCRIPT ERROR:' not in s and 'leak' not in s.lower(),s
 r['expected_errors']=2;r['expected_unsupported_warnings']=1
 (p/'results.json').write_text(json.dumps(r,indent=2)+'\n');print('AREA PASS',r)

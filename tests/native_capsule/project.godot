@@ -1,0 +1,12 @@
+config_version=5
+
+[application]
+config/name="MuJoCo Native Capsule Acceptance"
+config/features=PackedStringArray("4.7")
+
+[physics]
+3d/physics_engine="MuJoCo"
+common/physics_ticks_per_second=60
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
