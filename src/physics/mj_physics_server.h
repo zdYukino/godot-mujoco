@@ -33,6 +33,7 @@ struct MjContact {
  RID collider; uint64_t object_id=0; int local_shape=-1, collider_shape=-1;
  Vector3 position, normal, impulse, local_velocity, collider_velocity;
 };
+struct MjEnvironment {Vector3 gravity; double linear_damp=0, angular_damp=0;};
 struct MjBody {
  int max_contacts=0; std::vector<MjContact> contacts;
  RID rid, space; bool heightfield=false; uint64_t object_id=0; PhysicsServer3D::BodyMode mode=PhysicsServer3D::BODY_MODE_RIGID;
@@ -41,6 +42,7 @@ struct MjBody {
  std::vector<MjShapeInstance> shapes; std::map<int, Variant> params;
  uint32_t layer=1, mask=1; bool ray_pickable=true, sleeping=false, omit_integration=false;
  bool callback_pending=false, sync_pending=false; double integration_step=0;
+ MjEnvironment integration_environment; bool environment_valid=false;
  Callable sync_callback, integration_callback; Variant integration_userdata;
  MjDirectBodyState *direct=nullptr; int mj_body=-1; double mass=1; double gravity_scale=1;
  std::set<uint64_t> exceptions;
@@ -125,6 +127,8 @@ public:
  std::deque<std::function<void()>> area_commands;
  bool draining_area_commands=false;
  MjArea *area(const RID &rid) const;
+ MjEnvironment body_environment(const MjBody &body);
+ void set_area_environment_param(MjArea &area, AreaParameter param, const Variant &value);
  void flush_area_queries();
  void retire_area_pairs(const RID &rid, int from_shape=-1);
  void drain_area_commands();

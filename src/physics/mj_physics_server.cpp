@@ -56,11 +56,10 @@ int32_t MjPhysicsServer3D::_space_get_contact_count(const RID&) const{return 0;}
 // Godot addresses the world's default environment using its space RID, not an Area RID.
 void MjPhysicsServer3D::_area_set_param(const RID&r,AreaParameter p,const Variant&v) {
  if(auto*a=area(r)){
-  if((p==AREA_PARAM_GRAVITY_OVERRIDE_MODE||p==AREA_PARAM_LINEAR_DAMP_OVERRIDE_MODE||p==AREA_PARAM_ANGULAR_DAMP_OVERRIDE_MODE)&&int(v)!=AREA_SPACE_OVERRIDE_DISABLED){mj_unsupported("Area3D environment overrides; monitoring only");return;}
   if(flushing){area_commands.push_back([this,r,p,v]{_area_set_param(r,p,v);});return;}
-  a->params[p]=v;return;
+  set_area_environment_param(*a,p,v);return;
  }
- auto*s=space(r); if(!s){return;}
+ auto*s=space(r); if(!s)return;
  if(s->authored_options&&(p==AREA_PARAM_GRAVITY||p==AREA_PARAM_GRAVITY_VECTOR)){s->last_error="Runtime world model owns gravity; Godot default-area override rejected";return;}
  if(p==AREA_PARAM_GRAVITY_VECTOR){ERR_FAIL_COND(v.get_type()!=Variant::VECTOR3||!Vector3(v).is_finite());}
  else if(p==AREA_PARAM_GRAVITY||p==AREA_PARAM_LINEAR_DAMP||p==AREA_PARAM_ANGULAR_DAMP){
@@ -86,7 +85,7 @@ Variant MjPhysicsServer3D::_area_get_param(const RID&r,AreaParameter p) const {i
 RID MjPhysicsServer3D::_body_create(){RID r=handles.make_rid(0);auto b=std::make_unique<MjBody>();b->rid=r;b->direct=memnew(MjDirectBodyState);b->direct->server=this;b->direct->rid=r;bodies.emplace(r.get_id(),std::move(b));return r;}
 void MjPhysicsServer3D::_body_set_space(const RID&r,const RID&s){if(flushing){area_commands.push_back([this,r,s]{_body_set_space(r,s);});return;}auto*b=body(r);if(!b)return;if(b->space==s)return;ERR_FAIL_COND(s.is_valid()&&!space(s));if(auto*target=space(s)){ERR_FAIL_COND(!(target->gravity_direction*(target->gravity*b->gravity_scale)).is_finite());
  for(bool angular:{false,true}){auto mode=angular?BODY_PARAM_ANGULAR_DAMP_MODE:BODY_PARAM_LINEAR_DAMP_MODE;auto damp=angular?BODY_PARAM_ANGULAR_DAMP:BODY_PARAM_LINEAR_DAMP;
- ERR_FAIL_COND(int(_body_get_param(r,mode))==0&&!std::isfinite(float(double(_body_get_param(r,damp))+(angular?target->angular_damp:target->linear_damp))));}}dirty(b->space);b->space=s;b->mj_body=-1;b->callback_pending=false;b->sync_pending=false;dirty(s);retire_area_pairs(r);}
+ ERR_FAIL_COND(int(_body_get_param(r,mode))==0&&!std::isfinite(float(double(_body_get_param(r,damp))+(angular?target->angular_damp:target->linear_damp))));}}dirty(b->space);b->space=s;b->mj_body=-1;b->callback_pending=false;b->sync_pending=false;b->environment_valid=false;dirty(s);retire_area_pairs(r);}
 RID MjPhysicsServer3D::_body_get_space(const RID&r) const {auto*b=body(r);return b?b->space:RID();}
 void MjPhysicsServer3D::_body_set_mode(const RID&r,BodyMode m){auto*b=body(r);ERR_FAIL_NULL(b);if(m!=BODY_MODE_STATIC&&m!=BODY_MODE_RIGID){mj_unsupported("kinematic/rigid-linear body modes");return;}b->mode=m;dirty(b->space);}
 PhysicsServer3D::BodyMode MjPhysicsServer3D::_body_get_mode(const RID&r) const {auto*b=body(r);return b?b->mode:BODY_MODE_STATIC;}
@@ -394,9 +393,10 @@ void MjPhysicsServer3D::_step(float dt){
  // per MuJoCo solver subdivision (which changes its numerical meaning).
  for(auto &be:bodies){auto&b=*be.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID||b.mj_body<1)continue;
   b.integration_step=span;b.callback_pending=true;
+  MjEnvironment environment=body_environment(b);b.integration_environment=environment;b.environment_valid=true;
   if(b.omit_integration)continue;
   int j=s.model->body_jntadr[b.mj_body],v=s.model->jnt_dofadr[j];
-  double ld=b.direct->_get_total_linear_damp(),ad=b.direct->_get_total_angular_damp();
+  double ld=environment.linear_damp,ad=environment.angular_damp;
   Vector3 linear=b.linear_velocity*std::max(0.0,1-ld*span),angular=b.angular_velocity*std::max(0.0,1-ad*span);
   Vector3 lv=godot_to_mj(linear-angular.cross(native_com_offset(s.model,b.mj_body,b.transform)));
   Vector3 av=godot_to_mj(b.transform.basis.transposed().xform(angular));
@@ -406,9 +406,9 @@ void MjPhysicsServer3D::_step(float dt){
  for(auto &be:bodies){auto&b=*be.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID||b.mj_body<1)continue;
  Vector3 force=godot_to_mj(b.force),constant=godot_to_mj(b.constant_force);
  Vector3 torque=godot_to_mj(b.torque),constant_torque=godot_to_mj(b.constant_torque);
- Vector3 direction=godot_to_mj(s.gravity_direction);
+ Vector3 gravity=godot_to_mj(b.integration_environment.gravity);
  for(int k=0;k<3;++k){
-  s.data->xfrc_applied[6*b.mj_body+k]=(b.omit_integration?0:double(force[k])+constant[k])+double(direction[k])*s.gravity*b.mass*((b.omit_integration?0:b.gravity_scale)-1);
+  s.data->xfrc_applied[6*b.mj_body+k]=(b.omit_integration?0:double(force[k])+constant[k])+b.mass*((b.omit_integration?0:double(gravity[k]))-s.model->opt.gravity[k]);
   s.data->xfrc_applied[6*b.mj_body+3+k]=b.omit_integration?0:double(torque[k])+constant_torque[k];
  }
  }
