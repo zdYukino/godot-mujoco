@@ -2,7 +2,7 @@
 
 依赖：contact 分支 `fce6d0a9245903369827926080ea412ea6be08d8`；overlap
 `0bc54e2d5f365baf3388cc4dbee8b2d9f2b4442b` 无冲突 cherry-pick 为 `a5add5a`。
-不包含重力/阻尼/priority 覆盖场，不修改 P0 刚体动力学。
+本文记录监测阶段基线；后续 [环境覆盖阶段](../native_area_environment/README.zh-CN.md) 已实现有限形状的 gravity/damping/priority，以下历史拒绝说明由新阶段替代。
 
 ## 支持与边界
 

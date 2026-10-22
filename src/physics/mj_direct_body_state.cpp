@@ -2,9 +2,9 @@
 #include <godot_cpp/core/object.hpp>
 #include <algorithm>
 namespace godot {
-Vector3 MjDirectBodyState::_get_total_gravity() const{auto*b=server->body(rid);return b?server->body_environment(*b).gravity:Vector3();}
-float MjDirectBodyState::_get_total_linear_damp() const{auto*b=server->body(rid);return b?server->body_environment(*b).linear_damp:0;}
-float MjDirectBodyState::_get_total_angular_damp() const{auto*b=server->body(rid);return b?server->body_environment(*b).angular_damp:0;}
+Vector3 MjDirectBodyState::_get_total_gravity() const{auto*b=server->body(rid);return b?(b->environment_valid?b->integration_environment:server->body_environment(*b)).gravity:Vector3();}
+float MjDirectBodyState::_get_total_linear_damp() const{auto*b=server->body(rid);return b?(b->environment_valid?b->integration_environment:server->body_environment(*b)).linear_damp:0;}
+float MjDirectBodyState::_get_total_angular_damp() const{auto*b=server->body(rid);return b?(b->environment_valid?b->integration_environment:server->body_environment(*b)).angular_damp:0;}
 Vector3 MjDirectBodyState::_get_center_of_mass_local() const {
  auto*b=server->body(rid);if(!b)return {};auto*s=server->space(b->space);if(!s||!server->rebuild(*s)||b->mj_body<1)return {};
  auto*p=s->model->body_ipos+3*b->mj_body;return mj_to_godot(Vector3(p[0],p[1],p[2]));

@@ -105,6 +105,7 @@ func run():
  PhysicsServer3D.area_set_transform(high,Transform3D(Basis.IDENTITY,Vector3(1,0,0)))
  ap(high,PhysicsServer3D.AREA_PARAM_GRAVITY_IS_POINT,true);ap(high,PhysicsServer3D.AREA_PARAM_GRAVITY_VECTOR,Vector3(1,0,0));ap(high,PhysicsServer3D.AREA_PARAM_GRAVITY,8.0);ap(high,PhysicsServer3D.AREA_PARAM_GRAVITY_POINT_UNIT_DISTANCE,1.0)
  reset();await step();near(velocity(),Vector3(.02,0,0),"transformed point center inverse-square gravity")
+ near(PhysicsServer3D.body_get_direct_state(body).total_gravity,Vector3(2,0,0),"point gravity getter retains force interval sample")
  ap(high,PhysicsServer3D.AREA_PARAM_GRAVITY_POINT_UNIT_DISTANCE,0.0);reset();await step();near(velocity(),Vector3(.08,0,0),"zero unit distance uses constant point strength")
  reset(Vector3.ZERO,Vector3.ZERO,Vector3(2,0,0));await step();near(velocity(),Vector3.ZERO,"point center has zero gravity")
  # Queued callback changes affect the following interval, never the completed one.
@@ -114,6 +115,7 @@ func run():
   if not changed[0]:
    changed[0]=true;ap(high,PhysicsServer3D.AREA_PARAM_GRAVITY,6.0))
  reset();await step();near(velocity(),Vector3(.02,0,0),"callback change does not retroactively affect finished step")
+ near(PhysicsServer3D.body_get_direct_state(body).total_gravity,Vector3(2,0,0),"getter retains last integration gravity after queued parameter update")
  reset();await step();near(velocity(),Vector3(.06,0,0),"callback parameter change applies next step")
  var before=velocity();await frames(6);near(velocity(),before,"paused world does not integrate field")
  PhysicsServer3D.body_set_omit_force_integration(body,true);reset();await step();near(velocity(),Vector3.ZERO,"custom integrator suppresses automatic Area gravity")

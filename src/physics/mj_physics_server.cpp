@@ -85,7 +85,7 @@ Variant MjPhysicsServer3D::_area_get_param(const RID&r,AreaParameter p) const {i
 RID MjPhysicsServer3D::_body_create(){RID r=handles.make_rid(0);auto b=std::make_unique<MjBody>();b->rid=r;b->direct=memnew(MjDirectBodyState);b->direct->server=this;b->direct->rid=r;bodies.emplace(r.get_id(),std::move(b));return r;}
 void MjPhysicsServer3D::_body_set_space(const RID&r,const RID&s){if(flushing){area_commands.push_back([this,r,s]{_body_set_space(r,s);});return;}auto*b=body(r);if(!b)return;if(b->space==s)return;ERR_FAIL_COND(s.is_valid()&&!space(s));if(auto*target=space(s)){ERR_FAIL_COND(!(target->gravity_direction*(target->gravity*b->gravity_scale)).is_finite());
  for(bool angular:{false,true}){auto mode=angular?BODY_PARAM_ANGULAR_DAMP_MODE:BODY_PARAM_LINEAR_DAMP_MODE;auto damp=angular?BODY_PARAM_ANGULAR_DAMP:BODY_PARAM_LINEAR_DAMP;
- ERR_FAIL_COND(int(_body_get_param(r,mode))==0&&!std::isfinite(float(double(_body_get_param(r,damp))+(angular?target->angular_damp:target->linear_damp))));}}dirty(b->space);b->space=s;b->mj_body=-1;b->callback_pending=false;b->sync_pending=false;dirty(s);retire_area_pairs(r);}
+ ERR_FAIL_COND(int(_body_get_param(r,mode))==0&&!std::isfinite(float(double(_body_get_param(r,damp))+(angular?target->angular_damp:target->linear_damp))));}}dirty(b->space);b->space=s;b->mj_body=-1;b->callback_pending=false;b->sync_pending=false;b->environment_valid=false;dirty(s);retire_area_pairs(r);}
 RID MjPhysicsServer3D::_body_get_space(const RID&r) const {auto*b=body(r);return b?b->space:RID();}
 void MjPhysicsServer3D::_body_set_mode(const RID&r,BodyMode m){auto*b=body(r);ERR_FAIL_NULL(b);if(m!=BODY_MODE_STATIC&&m!=BODY_MODE_RIGID){mj_unsupported("kinematic/rigid-linear body modes");return;}b->mode=m;dirty(b->space);}
 PhysicsServer3D::BodyMode MjPhysicsServer3D::_body_get_mode(const RID&r) const {auto*b=body(r);return b?b->mode:BODY_MODE_STATIC;}
@@ -393,7 +393,7 @@ void MjPhysicsServer3D::_step(float dt){
  // per MuJoCo solver subdivision (which changes its numerical meaning).
  for(auto &be:bodies){auto&b=*be.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID||b.mj_body<1)continue;
   b.integration_step=span;b.callback_pending=true;
-  MjEnvironment environment=body_environment(b);b.integration_gravity=environment.gravity;
+  MjEnvironment environment=body_environment(b);b.integration_environment=environment;b.environment_valid=true;
   if(b.omit_integration)continue;
   int j=s.model->body_jntadr[b.mj_body],v=s.model->jnt_dofadr[j];
   double ld=environment.linear_damp,ad=environment.angular_damp;
@@ -406,7 +406,7 @@ void MjPhysicsServer3D::_step(float dt){
  for(auto &be:bodies){auto&b=*be.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID||b.mj_body<1)continue;
  Vector3 force=godot_to_mj(b.force),constant=godot_to_mj(b.constant_force);
  Vector3 torque=godot_to_mj(b.torque),constant_torque=godot_to_mj(b.constant_torque);
- Vector3 gravity=godot_to_mj(b.integration_gravity);
+ Vector3 gravity=godot_to_mj(b.integration_environment.gravity);
  for(int k=0;k<3;++k){
   s.data->xfrc_applied[6*b.mj_body+k]=(b.omit_integration?0:double(force[k])+constant[k])+b.mass*((b.omit_integration?0:double(gravity[k]))-s.model->opt.gravity[k]);
   s.data->xfrc_applied[6*b.mj_body+3+k]=b.omit_integration?0:double(torque[k])+constant_torque[k];

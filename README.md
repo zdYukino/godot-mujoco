@@ -209,7 +209,7 @@ CMake 将 godot-cpp 获取到构建目录并静态链接进扩展，将 MuJoCo �
 
 - cold import 退出 **139** 未修复，按当前使用范围作为非阻断遗留；不能证明仅发生在无窗口模式。图形初始化后 API 编辑已有文件是已验证路径。
 - 要求主线程物理；同步候选编译可能阻塞 UI。一个 World3D 仅一个 `MjRuntimeWorld`，其他世界使用独立 World3D。
-- 支持专用静态 `MjStaticHeightField`；不支持通用 `HeightMapShape3D`、动态地形、完整 Godot body/joint 兼容、Area 环境覆写、CharacterBody；文件系统模型包可搬迁，PCK/ZIP 内资产加载未验证。
+- 支持专用静态 `MjStaticHeightField`；不支持通用 `HeightMapShape3D`、动态地形、完整 Godot body/joint 兼容、复杂几何 Area、CharacterBody；文件系统模型包可搬迁，PCK/ZIP 内资产加载未验证。
 - G1 默认固定基座；自由基座导入没有重力补偿、站立或步行控制，倒伏是预期行为。
 - Ubuntu 22.04 及其他宿主需独立核验动态库/驱动；Windows 等其他平台未适配本基线。
 
@@ -234,3 +234,5 @@ CMake 将 godot-cpp 获取到构建目录并静态链接进扩展，将 MuJoCo �
 [运行整份预设事务](docs/runtime-presets.zh-CN.md)：安全边界提交目标与PD、失败回滚及取消；新分支待dot验收。
 
 [原生物理后端推进计划（仅供审查）](docs/native-backend-plan-review.zh-CN.md)：查询、CharacterBody、Area、形状、关节与生命周期依赖及验收门槛，未实施的新能力不算已支持。
+
+[Area 环境覆盖](tests/native_area_environment/README.zh-CN.md)：原生有限形状的重力、阻尼与 priority，保留 P0 积分语义；待独立 GUI 验收。
