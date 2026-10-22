@@ -2,6 +2,7 @@
 extends EditorPlugin
 const State = preload("editor_state.gd")
 const EditorPanel = preload("panel.gd")
+var object_panel:Control
 var heightfield_debugger:EditorDebuggerPlugin
 var heightfield_panel:Control
 var live_debugger: EditorDebuggerPlugin
@@ -13,6 +14,8 @@ func _enter_tree() -> void:
 	if not ClassDB.class_exists("MjEditorDocument"):
 		push_error("MuJoCo editor requires the rebuilt Linux godot_mujoco GDExtension. Build and restart the editor.")
 		return
+	object_panel=preload("object_panel.gd").new();object_panel.plugin=self
+	add_control_to_bottom_panel(object_panel,"MuJoCo 对象")
 	live_debugger = preload("live_debugger.gd").new()
 	add_debugger_plugin(live_debugger)
 	heightfield_debugger=preload("heightfield_debugger.gd").new()
@@ -37,6 +40,8 @@ func _enter_tree() -> void:
 		call_deferred("_run_acceptance")
 
 func _exit_tree() -> void:
+	if object_panel:
+		remove_control_from_bottom_panel(object_panel);object_panel.free();object_panel=null
 	if heightfield_panel:
 		heightfield_panel.shutdown();remove_control_from_bottom_panel(heightfield_panel);heightfield_panel.free();heightfield_panel=null
 	if heightfield_debugger:
