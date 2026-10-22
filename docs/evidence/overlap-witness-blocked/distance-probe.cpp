@@ -1,0 +1,3 @@
+#include <mujoco/mujoco.h>
+#include <cstdio>
+int main(){char err[2048];auto*s=mj_parseXMLString("<mujoco><worldbody><geom type='cylinder' size='.35 .3' pos='3 5 -2'/><geom type='cylinder' size='1.4 1.7' pos='3 5 -2'/></worldbody></mujoco>",nullptr,err,2048);auto*m=mj_compile(s,nullptr);auto*d=mj_makeData(m);mj_forward(m,d);double ft[6];double dist=mj_geomDistance(m,d,0,1,10,ft);printf("dist=%g from=%g,%g,%g to=%g,%g,%g\n",dist,ft[0],ft[1],ft[2],ft[3],ft[4],ft[5]);mjPreContact cs[mjMAXCONPAIR]{};int n=mjCOLLISIONFUNC[mjGEOM_CYLINDER][mjGEOM_CYLINDER](m,d,cs,0,1,0);printf("collision_count=%d\n",n);mj_deleteData(d);mj_deleteModel(m);mj_deleteSpec(s);}

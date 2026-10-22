@@ -1,0 +1,233 @@
+{
+	"backend": "MjPhysicsServer3D",
+	"checks": [
+		{
+			"detail": "MjPhysicsServer3D",
+			"name": "runtime_backend_identity",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "backend_setting",
+			"passed": true
+		},
+		{
+			"detail": "(0.0, 2.510901, 0.0)",
+			"name": "ordinary_rigidbody_falls",
+			"passed": true
+		},
+		{
+			"detail": "(0.0, -3.05722, 0.0)",
+			"name": "gravity_velocity_callback",
+			"passed": true
+		},
+		{
+			"detail": "(-0.0, 0.499892, -0.0)",
+			"name": "floor_rest_height",
+			"passed": true
+		},
+		{
+			"detail": "(-0.0, -0.0, -0.0)",
+			"name": "rest_velocity",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "finite_transform",
+			"passed": true
+		},
+		{
+			"detail": "1.0",
+			"name": "rotation_determinant",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "rotation_orthonormal",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "ray_hit_present",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "ray_hit_rid",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "ray_hit_object_id",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "ray_hit_object",
+			"passed": true
+		},
+		{
+			"detail": "(0.0, 0.999892, 0.0)",
+			"name": "ray_position",
+			"passed": true
+		},
+		{
+			"detail": "(0.0, 1.0, 0.0)",
+			"name": "ray_normal",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "ray_collision_mask_miss",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "ray_exclusion_reveals_floor",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "ray_exclusion_all_miss",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "ray_outside_miss",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "velocity_property_write_read",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "velocity_server_write_read",
+			"passed": true
+		},
+		{
+			"detail": "(0.082918, 0.631034, -0.0)",
+			"name": "velocity_moves_body",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "detached_body_absent_0",
+			"passed": true
+		},
+		{
+			"detail": "(-0.0, 0.499892, 0.0)",
+			"name": "reentry_rest_0",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "detached_body_absent_1",
+			"passed": true
+		},
+		{
+			"detail": "(-0.0, 0.499892, 0.0)",
+			"name": "reentry_rest_1",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "detached_body_absent_2",
+			"passed": true
+		},
+		{
+			"detail": "(-0.0, 0.499892, 0.0)",
+			"name": "reentry_rest_2",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "oriented_box_rid_0",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "oriented_box_surface_0",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "oriented_box_normal_0",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "oriented_box_rid_1",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "oriented_box_surface_1",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "oriented_box_normal_1",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "oriented_box_rid_2",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "oriented_box_surface_2",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "oriented_box_normal_2",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "world_space_rids_distinct",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "main_world_excludes_other_world",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "other_world_own_hit",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "other_world_excludes_main_world",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "freed_world_object_released",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "new_world_has_no_old_references",
+			"passed": true
+		},
+		{
+			"detail": "",
+			"name": "freed_bodies_absent",
+			"passed": true
+		}
+	],
+	"failed": 0,
+	"godot_version": "4.7.2-stable (official)",
+	"measurements": {
+		"rest_velocity": "(-0.0, -0.0, -0.0)",
+		"rest_y": 0.499892354011536
+	},
+	"passed": 44,
+	"physics_hz": 60
+}
