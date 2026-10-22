@@ -16,4 +16,4 @@
 
 Godot 原生参考：[刚体默认力积分和质量分配](https://github.com/godotengine/godot/blob/4.7.2-stable/modules/godot_physics_3d/godot_body_3d.cpp)、[摩擦合并](https://github.com/godotengine/godot/blob/4.7.2-stable/modules/godot_physics_3d/godot_body_pair_3d.cpp)、[direct_state.integrate_forces](https://github.com/godotengine/godot/blob/4.7.2-stable/servers/physics_3d/physics_server_3d.cpp)。默认自动积分先衰减已有速度再施加力；显式 direct-state 辅助方法依 Godot 基类先加重力再衰减，二者顺序刻意保留。
 
-本阶段不宣称接触报告、overlap/sweep、Capsule/CharacterBody、Area 或普通 Joint3D 已完成。冷导入 139 未根治；不运行 G1/多 G1 重负载、不修引擎、不打包或验证 Windows。
+P0 本身不包含接触报告；后续集成阶段提供最后子步接触报告，见 `tests/native_contacts/README.zh-CN.md`。overlap/sweep、Capsule/CharacterBody、Area 或普通 Joint3D 仍需各自阶段验收。冷导入 139 未根治；不运行 G1/多 G1 重负载、不修引擎、不打包或验证 Windows。

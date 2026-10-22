@@ -179,6 +179,17 @@ func run() -> void:
  PhysicsServer3D.body_apply_impulse(compound,Vector3(0,9,0),Vector3(8.0/3,0,0))
  near(velocity(compound),Vector3(0,1,0),"compound COM impulse linear mass response")
  near(angular(compound),Vector3.ZERO,"compound impulse at actual COM has no angular response")
+ # A rotating offset body translates at its COM velocity, not origin velocity.
+ var moving_offset := make_body(space,12,Vector3(1,2,3),Transform3D(Basis(Vector3.UP,.6),Vector3(120,3,0)),Vector3(.3,0,.2))
+ var drift_velocity := Vector3(.3,0,.1)
+ set_velocity(moving_offset,drift_velocity,Vector3(0,.4,0))
+ var moving_state := PhysicsServer3D.body_get_direct_state(moving_offset)
+ var start_com:Vector3 = moving_state.transform.origin+moving_state.center_of_mass
+ PhysicsServer3D.body_apply_torque_impulse(moving_offset,Vector3(0,4,0))
+ near(velocity(moving_offset),drift_velocity,"torque impulse preserves COM linear velocity")
+ await step(space,10)
+ near(velocity(moving_offset),drift_velocity,"rotating offset body preserves force-free COM velocity",.002)
+ near(moving_state.transform.origin+moving_state.center_of_mass,start_com+drift_velocity*.1,"rotating offset COM follows straight translation",.001)
  # Body destruction inside a callback must suppress the later sync callback.
  release_in_callback = make_body(space, 2, Vector3(.5,.5,.5), Transform3D(Basis.IDENTITY, Vector3(80,0,0)))
  PhysicsServer3D.body_set_force_integration_callback(release_in_callback, free_callback)

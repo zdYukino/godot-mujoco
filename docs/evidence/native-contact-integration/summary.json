@@ -1,0 +1,57 @@
+{
+  "base": "a92cd39be9b48ac352eaa93fc26fcc29b364c10b",
+  "integrated_source": "fce6d0a9245903369827926080ea412ea6be08d8",
+  "build_exit": 0,
+  "core_exit": 0,
+  "extension_sha256": "0b37623ba07feed80f04f7e3307bfca67c9bd05d188540d09122ebd8eb2a3d96",
+  "runs": {
+    "native": {
+      "exit_code": 0,
+      "passed": 149,
+      "failed": 0
+    },
+    "cylinder": {
+      "exit_code": 0,
+      "passed": 35,
+      "failed": 0
+    },
+    "clock": {
+      "exit_code": 0,
+      "passed": 118,
+      "failed": 0
+    },
+    "presets": {
+      "exit_code": 0,
+      "passed": 48,
+      "failed": 0
+    },
+    "heightfield": {
+      "exit_code": 0,
+      "passed": 73,
+      "failed": 0
+    },
+    "typed": {
+      "exit_code": 0,
+      "passed": 69,
+      "failed": 0
+    },
+    "semantics": {
+      "exit_code": 0,
+      "passed": 98,
+      "failed": 0,
+      "negative_passed": 31,
+      "expected_errors": 21
+    },
+    "contacts": {
+      "exit_code": 0,
+      "passed": 68,
+      "failed": 0
+    }
+  },
+  "gui": "headless parse/teardown only; desktop not_run",
+  "limits": [
+    "last actual MuJoCo substep contacts and impulse only; not full-tick accumulated",
+    "cold import 139 unresolved; explicit import helper",
+    "no heavy G1, Windows or packaging"
+  ]
+}
