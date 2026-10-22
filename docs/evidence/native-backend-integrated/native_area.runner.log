@@ -1,0 +1,1 @@
+AREA PASS {'failed': 0, 'passed': 53, 'body_shape_order': {'failed': 0, 'passed': 22}, 'expected_errors': 2, 'expected_unsupported_warnings': 1}

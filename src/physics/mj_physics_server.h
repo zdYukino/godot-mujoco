@@ -13,10 +13,13 @@
 #include <set>
 #include <mutex>
 #include <deque>
+#include <functional>
+#include <tuple>
 namespace godot {
 class MjPhysicsServer3D;
 class MjDirectBodyState;
 class MjDirectSpaceState;
+struct MjAreaScratch;
 struct MjShape { RID rid; PhysicsServer3D::ShapeType type; Variant data; float margin=0.04f; };
 struct MjShapeInstance { RID shape; Transform3D transform; bool disabled=false; };
 struct MjImported {
@@ -41,6 +44,17 @@ struct MjBody {
  Callable sync_callback, integration_callback; Variant integration_userdata;
  MjDirectBodyState *direct=nullptr; int mj_body=-1; double mass=1; double gravity_scale=1;
  std::set<uint64_t> exceptions;
+};
+// Value-only shape pair identity; never retain pointers across user callbacks.
+struct MjAreaPair {
+ RID rid; uint64_t object_id=0; int other_shape=0, self_shape=0; bool area=false;
+ bool operator<(const MjAreaPair &b) const {return std::tie(area,rid,object_id,other_shape,self_shape)<std::tie(b.area,b.rid,b.object_id,b.other_shape,b.self_shape);}
+};
+struct MjArea {
+ RID rid, space; uint64_t object_id=0; Transform3D transform;
+ uint32_t layer=1, mask=1; bool monitorable=true, ray_pickable=true;
+ std::vector<MjShapeInstance> shapes; std::map<int,Variant> params;
+ Callable body_callback, area_callback; std::set<MjAreaPair> reported;
 };
 struct MjSpace {
  bool paused=false; uint64_t revision=0; String last_error;
@@ -106,6 +120,14 @@ public:
  std::map<int64_t,Dictionary> edit_results;
  int64_t next_edit_request=1;
 
+ std::shared_ptr<MjAreaScratch> area_scratch;
+ std::map<uint64_t,std::unique_ptr<MjArea>> areas;
+ std::deque<std::function<void()>> area_commands;
+ bool draining_area_commands=false;
+ MjArea *area(const RID &rid) const;
+ void flush_area_queries();
+ void retire_area_pairs(const RID &rid, int from_shape=-1);
+ void drain_area_commands();
  std::set<uint64_t> pending_free;
  RID_Owner<int> handles;
  std::map<uint64_t,std::unique_ptr<MjShape>> shapes;

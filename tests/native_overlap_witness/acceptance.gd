@@ -21,6 +21,26 @@ func surface_error(p: Vector3, spec: Dictionary, pose: Transform3D) -> float:
  var delta := Vector2(Vector2(local.x,local.z).length()-float(spec.radius),absf(local.y)-float(spec.height)*.5)
  return absf(delta.max(Vector2.ZERO).length()+minf(maxf(delta.x,delta.y),0))
 
+func outward_normal(point: Vector3, normal: Vector3, spec: Dictionary, pose: Transform3D) -> bool:
+ var p=pose.affine_inverse()*point
+ var n=pose.basis.inverse()*normal
+ if spec.kind=="box":
+  for i in 3:
+   if absf(absf(p[i])-spec.extents[i])<EPSILON:
+    if n[i]*signf(p[i]) < -EPSILON:return false
+   elif absf(n[i])>EPSILON:return false
+  return true
+ var radial=Vector2(p.x,p.z)
+ var radial_normal=Vector2(n.x,n.z)
+ if absf(radial.length()-float(spec.radius))<EPSILON:
+  var direction=radial.normalized()
+  if direction.dot(radial_normal)<-EPSILON or absf(Vector2(-direction.y,direction.x).dot(radial_normal))>EPSILON:return false
+ elif radial_normal.length()>EPSILON:return false
+ if absf(absf(p.y)-float(spec.height)*.5)<EPSILON:
+  if n.y*signf(p.y)<-EPSILON:return false
+ elif absf(n.y)>EPSILON:return false
+ return true
+
 func shape(spec: Dictionary) -> RID:
  var rid: RID
  if spec.kind == "box":
@@ -46,19 +66,23 @@ func probe(label: String, query_spec: Dictionary, target_spec: Dictionary, query
  check(hits.size()==1 and hits[0].rid==target and hits[0].shape==0,label+" overlap identity")
  var contacts := state.collide_shape(query,32)
  check(contacts.size()>=2 and contacts.size()%2==0,label+" nonempty witness pairs",contacts.size())
+ var nondegenerate:=contacts.size()>=2
  var max_query_error := 0.0
  var max_target_error := 0.0
  var finite := true
  for i in range(0,contacts.size()-1,2):
+  nondegenerate=nondegenerate and contacts[i].distance_to(contacts[i+1])>.1
   finite=finite and contacts[i].is_finite() and contacts[i+1].is_finite()
   max_query_error=maxf(max_query_error,surface_error(contacts[i],query_spec,query_pose))
   max_target_error=maxf(max_target_error,surface_error(contacts[i+1],target_spec,target_pose))
  check(finite and max_query_error<EPSILON,label+" every query witness lies on query surface",max_query_error)
  check(finite and max_target_error<EPSILON,label+" every target witness lies on target surface",max_target_error)
+ check(nondegenerate,label+" deep penetration retains nonzero witness separation")
  var rest := state.get_rest_info(query)
  check(not rest.is_empty() and rest.rid==target and rest.shape==0,label+" rest identity")
  if not rest.is_empty():
   check(rest.normal.is_finite() and absf(rest.normal.length()-1)<.0001,label+" finite unit rest normal",rest.normal)
+  check(outward_normal(rest.point,rest.normal,target_spec,target_pose),label+" rest normal belongs to target outward normal cone",rest.normal)
   check(rest.point.is_finite() and surface_error(rest.point,target_spec,target_pose)<EPSILON,label+" rest point lies on target surface",{"point":rest.point,"error":surface_error(rest.point,target_spec,target_pose)})
  samples.append({"label":label,"contacts":contacts,"query_surface_error":max_query_error,"target_surface_error":max_target_error,"rest":rest})
  PhysicsServer3D.free_rid(target)
@@ -75,7 +99,11 @@ func run() -> void:
  var pose := Transform3D(Basis.IDENTITY,Vector3(3,-2,5))
  var rotated := Transform3D(Basis.from_euler(Vector3(.41,-.28,.67)),pose.origin)
  var tilted := Transform3D(Basis.from_euler(Vector3(-.52,.63,-.19)),pose.origin)
- for arrangement in [["aligned",pose,pose],["shared rotation",rotated,rotated],["different rotations",rotated,tilted]]:
+ var offset=Vector3(.123,.17,-.234)
+ for arrangement in [["aligned",pose,pose],["shared rotation",rotated,rotated],["different rotations",rotated,tilted],
+  ["offset aligned",pose,Transform3D(pose.basis,pose.origin+offset)],
+  ["offset shared rotation",rotated,Transform3D(rotated.basis,rotated.origin+offset)],
+  ["offset different rotations",rotated,Transform3D(tilted.basis,tilted.origin+offset)]]:
   var name: String=arrangement[0]
   var query_pose: Transform3D=arrangement[1]
   var target_pose: Transform3D=arrangement[2]
