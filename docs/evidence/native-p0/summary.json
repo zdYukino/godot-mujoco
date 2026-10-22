@@ -1,0 +1,56 @@
+{
+  "base": "8d3976e1d0fb71588b9b303d6c202708d6737bbe",
+  "branch": "codex/native-backend-integration",
+  "platform": "Linux x86_64",
+  "godot": "4.7.2.stable.mono.official.ed1daf0bf",
+  "mujoco": "3.16.0",
+  "build_exit": 0,
+  "extension_sha256": "df0b02233ab6e67f2c347919eb97e082ff28492fa82bd455d32387a411bf6c91",
+  "runs": {
+    "native": {
+      "exit_code": 0,
+      "passed": 149,
+      "failed": 0
+    },
+    "cylinder": {
+      "exit_code": 0,
+      "passed": 35,
+      "failed": 0,
+      "expected_rejections": 9
+    },
+    "clock": {
+      "exit_code": 0,
+      "passed": 118,
+      "failed": 0
+    },
+    "presets": {
+      "exit_code": 0,
+      "passed": 48,
+      "failed": 0
+    },
+    "heightfield": {
+      "exit_code": 0,
+      "passed": 73,
+      "failed": 0
+    },
+    "typed": {
+      "exit_code": 0,
+      "passed": 69,
+      "failed": 0
+    },
+    "semantics": {
+      "exit_code": 0,
+      "passed": 93,
+      "failed": 0,
+      "negative_passed": 31,
+      "expected_errors": 21
+    }
+  },
+  "gui": "not_run_here; dot independent acceptance required",
+  "not_run": [
+    "G1 / multi-G1 heavy",
+    "Windows",
+    "packaging"
+  ],
+  "known_limit": "cold import 139 not resolved; import helper used explicitly, not claimed fresh cold pass"
+}

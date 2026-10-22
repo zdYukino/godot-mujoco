@@ -1,0 +1,283 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+MuJoCo: compile time (ms)
+  total:          0.3   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.3   (wall clock)
+PASS negative space paused 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS negative fixture configured 
+EXPECT_NATIVE_ERROR value <= 0
+ERROR: Condition "value<=0" is true.
+   at: _body_set_param (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:113)
+   GDScript backtrace (most recent call first):
+       [0] param (res://acceptance.gd:22)
+       [1] run (res://negative.gd:14)
+PASS invalid parameter preserves previous value 2 
+EXPECT_NATIVE_ERROR !std::isfinite(value)
+ERROR: Condition "!std::isfinite(value)||!std::isfinite(float(value))" is true.
+   at: _body_set_param (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:111)
+   GDScript backtrace (most recent call first):
+       [0] param (res://acceptance.gd:22)
+       [1] run (res://negative.gd:14)
+PASS invalid parameter preserves previous value 5 
+EXPECT_NATIVE_ERROR !std::isfinite(value)
+ERROR: Condition "!std::isfinite(value)||!std::isfinite(float(value))" is true.
+   at: _body_set_param (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:111)
+   GDScript backtrace (most recent call first):
+       [0] param (res://acceptance.gd:22)
+       [1] run (res://negative.gd:14)
+PASS invalid parameter preserves previous value 1 
+EXPECT_NATIVE_ERROR value < 0
+ERROR: Condition "value<0" is true.
+   at: _body_set_param (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:116)
+   GDScript backtrace (most recent call first):
+       [0] param (res://acceptance.gd:22)
+       [1] run (res://negative.gd:14)
+PASS invalid parameter preserves previous value 8 
+EXPECT_NATIVE_ERROR value < 0
+ERROR: Condition "value<0" is true.
+   at: _body_set_param (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:116)
+   GDScript backtrace (most recent call first):
+       [0] param (res://acceptance.gd:22)
+       [1] run (res://negative.gd:14)
+PASS invalid parameter preserves previous value 9 
+EXPECT_NATIVE_ERROR value != 0 && value != 1
+ERROR: Condition "value!=0&&value!=1" is true.
+   at: _body_set_param (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:117)
+   GDScript backtrace (most recent call first):
+       [0] param (res://acceptance.gd:22)
+       [1] run (res://negative.gd:14)
+PASS invalid parameter preserves previous value 6 
+WARNING: MuJoCo minimal backend: unsupported nonzero bounce
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] param (res://acceptance.gd:22)
+         [1] run (res://negative.gd:17)
+PASS unsupported parameter is not falsely stored 0 
+WARNING: MuJoCo minimal backend: unsupported custom inertia
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] param (res://acceptance.gd:22)
+         [1] run (res://negative.gd:17)
+PASS unsupported parameter is not falsely stored 3 
+WARNING: MuJoCo minimal backend: unsupported custom center of mass
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] param (res://acceptance.gd:22)
+         [1] run (res://negative.gd:17)
+PASS unsupported parameter is not falsely stored 4 
+EXPECT_NATIVE_ERROR v.get_type() != Variant::VECTOR3 || !Vector3(v).is_finite()
+ERROR: Condition "v.get_type()!=Variant::VECTOR3||!Vector3(v).is_finite()" is true.
+   at: _body_set_state (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:133)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:21)
+PASS nonfinite velocity rejected { "actual": (1.0, 2.0, 3.0), "expected": (1.0, 2.0, 3.0) }
+EXPECT_NATIVE_ERROR !v.is_finite() || !p.is_finite()
+ERROR: Condition "!v.is_finite()||!p.is_finite()" is true.
+   at: _body_apply_impulse (/workspace/godot-mujoco/src/physics/mj_direct_body_state.cpp:62)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:24)
+PASS invalid offset impulse no partial linear mutation { "actual": (1.0, 2.0, 3.0), "expected": (1.0, 2.0, 3.0) }
+PASS invalid offset impulse no partial angular mutation { "actual": (0.0, 0.0, 2.0), "expected": (0.0, 0.0, 2.0) }
+EXPECT_NATIVE_ERROR !v.is_finite() || !p.is_finite()
+ERROR: Condition "!v.is_finite()||!p.is_finite()" is true.
+   at: _body_add_constant_force (/workspace/godot-mujoco/src/physics/mj_direct_body_state.cpp:77)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:30)
+PASS invalid constant offset force leaves force unchanged { "actual": (2.0, 0.0, 0.0), "expected": (2.0, 0.0, 0.0) }
+PASS invalid constant offset force leaves torque unchanged { "actual": (0.0, 0.0, 1.0), "expected": (0.0, 0.0, 1.0) }
+EXPECT_NATIVE_ERROR !v.is_finite()
+ERROR: Condition "!v.is_finite()" is true.
+   at: _body_set_constant_force (/workspace/godot-mujoco/src/physics/mj_direct_body_state.cpp:81)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:34)
+PASS nonfinite constant setter preserves value { "actual": (2.0, 0.0, 0.0), "expected": (2.0, 0.0, 0.0) }
+EXPECT_NATIVE_ERROR !v.is_finite() || !p.is_finite()
+ERROR: Condition "!v.is_finite()||!p.is_finite()" is true.
+   at: _body_apply_force (/workspace/godot-mujoco/src/physics/mj_direct_body_state.cpp:70)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:41)
+PASS step queued 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS step completed { "request": 1, "command": "step", "success": true, "error": "", "time": 0.01, "paused": true }
+PASS invalid one-shot offset force leaves original physical force only { "actual": (0.01, 0.0, 0.0), "expected": (0.01, 0.0, 0.0) }
+PASS invalid one-shot offset force leaves no torque { "actual": (0.0, 0.0, 0.0), "expected": (0.0, 0.0, 0.0) }
+EXPECT_NATIVE_ERROR !std::isfinite(double(v))||!std::isfinite(float(double(v)))
+ERROR: Condition "(v.get_type()!=Variant::FLOAT&&v.get_type()!=Variant::INT)||!std::isfinite(double(v))||!std::isfinite(float(double(v)))" is true.
+   at: _area_set_param (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:62)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:50)
+       [1] step (res://acceptance.gd:42)
+       [2] command (res://acceptance.gd:52)
+       [3] frames (res://acceptance.gd:21)
+PASS invalid default area gravity preserved 
+EXPECT_NATIVE_ERROR !std::isfinite(double(v))||!std::isfinite(float(double(v)))
+ERROR: Condition "(v.get_type()!=Variant::FLOAT&&v.get_type()!=Variant::INT)||!std::isfinite(double(v))||!std::isfinite(float(double(v)))" is true.
+   at: _area_set_param (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:62)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:50)
+       [1] step (res://acceptance.gd:42)
+       [2] command (res://acceptance.gd:52)
+       [3] frames (res://acceptance.gd:21)
+PASS invalid default area gravity preserved 
+EXPECT_NATIVE_ERROR !(gravity_direction*gravity).is_finite()
+ERROR: Condition "!(gravity_direction*gravity).is_finite()" is true.
+   at: _area_set_param (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:67)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:53)
+       [1] step (res://acceptance.gd:42)
+       [2] command (res://acceptance.gd:52)
+       [3] frames (res://acceptance.gd:21)
+PASS derived default gravity overflow preserves direction 
+EXPECT_NATIVE_ERROR !std::isfinite(value)||!std::isfinite(float(value))
+ERROR: Condition "!std::isfinite(value)||!std::isfinite(float(value))" is true.
+   at: _body_set_param (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:111)
+   GDScript backtrace (most recent call first):
+       [0] param (res://acceptance.gd:22)
+       [1] run (res://negative.gd:56)
+       [2] step (res://acceptance.gd:42)
+       [3] command (res://acceptance.gd:52)
+       [4] frames (res://acceptance.gd:21)
+PASS finite double outside float range preserves gravity scale 
+EXPECT_NATIVE_ERROR selected==0&&!std::isfinite(float(amount+(angular?s->angular_damp:s->linear_damp)))
+ERROR: Condition "selected==0&&!std::isfinite(float(amount+(angular?s->angular_damp:s->linear_damp)))" is true.
+   at: _body_set_param (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:127)
+   GDScript backtrace (most recent call first):
+       [0] param (res://acceptance.gd:22)
+       [1] run (res://negative.gd:64)
+       [2] step (res://acceptance.gd:42)
+       [3] command (res://acceptance.gd:52)
+       [4] frames (res://acceptance.gd:21)
+PASS overflowing combined body damping preserves amount 8 
+EXPECT_NATIVE_ERROR selected==0&&!std::isfinite(float(amount+(angular?s->angular_damp:s->linear_damp)))
+ERROR: Condition "selected==0&&!std::isfinite(float(amount+(angular?s->angular_damp:s->linear_damp)))" is true.
+   at: _body_set_param (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:127)
+   GDScript backtrace (most recent call first):
+       [0] param (res://acceptance.gd:22)
+       [1] run (res://negative.gd:69)
+       [2] step (res://acceptance.gd:42)
+       [3] command (res://acceptance.gd:52)
+       [4] frames (res://acceptance.gd:21)
+PASS overflowing mode switch preserves REPLACE 6 
+EXPECT_NATIVE_ERROR int(_body_get_param(r,mode))==0&&!std::isfinite(float(double(_body_get_param(r,damp))+(angular?target->angular_damp:target->linear_damp)))
+ERROR: Condition "int(_body_get_param(r,mode))==0&&!std::isfinite(float(double(_body_get_param(r,damp))+(angular?target->angular_damp:target->linear_damp)))" is true.
+   at: _body_set_space (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:84)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:74)
+       [1] step (res://acceptance.gd:42)
+       [2] command (res://acceptance.gd:52)
+       [3] frames (res://acceptance.gd:21)
+PASS overflowing damping on destination retains original space 8 
+EXPECT_NATIVE_ERROR selected==0&&!std::isfinite(float(amount+(angular?s->angular_damp:s->linear_damp)))
+ERROR: Condition "selected==0&&!std::isfinite(float(amount+(angular?s->angular_damp:s->linear_damp)))" is true.
+   at: _body_set_param (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:127)
+   GDScript backtrace (most recent call first):
+       [0] param (res://acceptance.gd:22)
+       [1] run (res://negative.gd:64)
+       [2] step (res://acceptance.gd:42)
+       [3] command (res://acceptance.gd:52)
+       [4] frames (res://acceptance.gd:21)
+PASS overflowing combined body damping preserves amount 9 
+EXPECT_NATIVE_ERROR selected==0&&!std::isfinite(float(amount+(angular?s->angular_damp:s->linear_damp)))
+ERROR: Condition "selected==0&&!std::isfinite(float(amount+(angular?s->angular_damp:s->linear_damp)))" is true.
+   at: _body_set_param (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:127)
+   GDScript backtrace (most recent call first):
+       [0] param (res://acceptance.gd:22)
+       [1] run (res://negative.gd:69)
+       [2] step (res://acceptance.gd:42)
+       [3] command (res://acceptance.gd:52)
+       [4] frames (res://acceptance.gd:21)
+PASS overflowing mode switch preserves REPLACE 7 
+EXPECT_NATIVE_ERROR int(_body_get_param(r,mode))==0&&!std::isfinite(float(double(_body_get_param(r,damp))+(angular?target->angular_damp:target->linear_damp)))
+ERROR: Condition "int(_body_get_param(r,mode))==0&&!std::isfinite(float(double(_body_get_param(r,damp))+(angular?target->angular_damp:target->linear_damp)))" is true.
+   at: _body_set_space (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:84)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:74)
+       [1] step (res://acceptance.gd:42)
+       [2] command (res://acceptance.gd:52)
+       [3] frames (res://acceptance.gd:21)
+PASS overflowing damping on destination retains original space 9 
+NATIVE_SEMANTICS_NEGATIVE_RESULT {"checks":[{"detail":"","name":"negative space paused","passed":true},{"detail":"","name":"negative fixture configured","passed":true},{"detail":"","name":"invalid parameter preserves previous value 2","passed":true},{"detail":"","name":"invalid parameter preserves previous value 5","passed":true},{"detail":"","name":"invalid parameter preserves previous value 1","passed":true},{"detail":"","name":"invalid parameter preserves previous value 8","passed":true},{"detail":"","name":"invalid parameter preserves previous value 9","passed":true},{"detail":"","name":"invalid parameter preserves previous value 6","passed":true},{"detail":"","name":"unsupported parameter is not falsely stored 0","passed":true},{"detail":"","name":"unsupported parameter is not falsely stored 3","passed":true},{"detail":"","name":"unsupported parameter is not falsely stored 4","passed":true},{"detail":"{ \"actual\": (1.0, 2.0, 3.0), \"expected\": (1.0, 2.0, 3.0) }","name":"nonfinite velocity rejected","passed":true},{"detail":"{ \"actual\": (1.0, 2.0, 3.0), \"expected\": (1.0, 2.0, 3.0) }","name":"invalid offset impulse no partial linear mutation","passed":true},{"detail":"{ \"actual\": (0.0, 0.0, 2.0), \"expected\": (0.0, 0.0, 2.0) }","name":"invalid offset impulse no partial angular mutation","passed":true},{"detail":"{ \"actual\": (2.0, 0.0, 0.0), \"expected\": (2.0, 0.0, 0.0) }","name":"invalid constant offset force leaves force unchanged","passed":true},{"detail":"{ \"actual\": (0.0, 0.0, 1.0), \"expected\": (0.0, 0.0, 1.0) }","name":"invalid constant offset force leaves torque unchanged","passed":true},{"detail":"{ \"actual\": (2.0, 0.0, 0.0), \"expected\": (2.0, 0.0, 0.0) }","name":"nonfinite constant setter preserves value","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.01, \"paused\": true }","name":"step completed","passed":true},{"detail":"{ \"actual\": (0.01, 0.0, 0.0), \"expected\": (0.01, 0.0, 0.0) }","name":"invalid one-shot offset force leaves original physical force only","passed":true},{"detail":"{ \"actual\": (0.0, 0.0, 0.0), \"expected\": (0.0, 0.0, 0.0) }","name":"invalid one-shot offset force leaves no torque","passed":true},{"detail":"","name":"invalid default area gravity preserved","passed":true},{"detail":"","name":"invalid default area gravity preserved","passed":true},{"detail":"","name":"derived default gravity overflow preserves direction","passed":true},{"detail":"","name":"finite double outside float range preserves gravity scale","passed":true},{"detail":"","name":"overflowing combined body damping preserves amount 8","passed":true},{"detail":"","name":"overflowing mode switch preserves REPLACE 6","passed":true},{"detail":"","name":"overflowing damping on destination retains original space 8","passed":true},{"detail":"","name":"overflowing combined body damping preserves amount 9","passed":true},{"detail":"","name":"overflowing mode switch preserves REPLACE 7","passed":true},{"detail":"","name":"overflowing damping on destination retains original space 9","passed":true}],"failed":0,"passed":31}

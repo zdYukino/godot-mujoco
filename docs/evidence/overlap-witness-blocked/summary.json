@@ -1,0 +1,12 @@
+{
+  "integration_base": "43a0ab827a890577460f57083be5e336d8c0ef2e",
+  "query_source": "0bc54e2d5f365baf3388cc4dbee8b2d9f2b4442b",
+  "build_exit": 0,
+  "import_exit": 0,
+  "positive_exit": 1,
+  "passed": 79,
+  "failed": 48,
+  "cases": 18,
+  "status": "blocked; query implementation not published on integration branch",
+  "extension_sha256": "9d1e5af783f692179ffc619e9de39e33081eb21ad0b5b450cabf040678fd3b68"
+}

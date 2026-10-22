@@ -1,0 +1,39 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+ERROR: Cylinder data requires radius and height
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:37)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:9)
+ERROR: Cylinder data requires radius and height
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:34)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:9)
+ERROR: Cylinder dimensions must be numeric
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:39)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:9)
+ERROR: Cylinder dimensions must be finite and positive
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:9)
+ERROR: Cylinder dimensions must be finite and positive
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:9)
+ERROR: Cylinder dimensions must be finite and positive
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:9)
+ERROR: Cylinder dimensions must be finite and positive
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:9)
+ERROR: Cylinder dimensions must be finite and positive
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:40)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:9)
+ERROR: MuJoCo minimal backend requires unscaled rigid transforms; set shape dimensions instead
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:12)
+CYLINDER_NEGATIVE_RESULT 9 rejected inputs; old data retained
