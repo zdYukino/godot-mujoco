@@ -55,13 +55,33 @@ PackedVector3Array MjPhysicsServer3D::_space_get_contacts(const RID&) const{retu
 int32_t MjPhysicsServer3D::_space_get_contact_count(const RID&) const{return 0;}
 // Godot addresses the world's default environment using its space RID, not an Area RID.
 void MjPhysicsServer3D::_area_set_param(const RID&r,AreaParameter p,const Variant&v) {
- auto*s=space(r); if(!s){mj_unsupported("Area3D parameters");return;} s->params[p]=v;
+ auto*s=space(r); if(!s){mj_unsupported("Area3D parameters");return;}
  if(s->authored_options&&(p==AREA_PARAM_GRAVITY||p==AREA_PARAM_GRAVITY_VECTOR)){s->last_error="Runtime world model owns gravity; Godot default-area override rejected";return;}
+ if(p==AREA_PARAM_GRAVITY_VECTOR){ERR_FAIL_COND(v.get_type()!=Variant::VECTOR3||!Vector3(v).is_finite());}
+ else if(p==AREA_PARAM_GRAVITY||p==AREA_PARAM_LINEAR_DAMP||p==AREA_PARAM_ANGULAR_DAMP){
+  ERR_FAIL_COND((v.get_type()!=Variant::FLOAT&&v.get_type()!=Variant::INT)||!std::isfinite(double(v))||!std::isfinite(float(double(v))));
+  ERR_FAIL_COND(p!=AREA_PARAM_GRAVITY&&double(v)<0);
+ }
+ Vector3 gravity_direction=p==AREA_PARAM_GRAVITY_VECTOR?Vector3(v):s->gravity_direction;
+ double gravity=p==AREA_PARAM_GRAVITY?double(v):s->gravity;
+ ERR_FAIL_COND(!(gravity_direction*gravity).is_finite());
+ for(auto &entry:bodies){auto &b=*entry.second;if(b.space!=r)continue;
+  ERR_FAIL_COND(!(gravity_direction*(gravity*b.gravity_scale)).is_finite());
+  if(p==AREA_PARAM_LINEAR_DAMP||p==AREA_PARAM_ANGULAR_DAMP){
+   bool angular=p==AREA_PARAM_ANGULAR_DAMP;
+   auto mode=angular?BODY_PARAM_ANGULAR_DAMP_MODE:BODY_PARAM_LINEAR_DAMP_MODE;
+   auto damp=angular?BODY_PARAM_ANGULAR_DAMP:BODY_PARAM_LINEAR_DAMP;
+   ERR_FAIL_COND(int(_body_get_param(b.rid,mode))==0&&!std::isfinite(float(double(v)+double(_body_get_param(b.rid,damp)))));
+  }
+ }
+ s->params[p]=v;
  switch(p){case AREA_PARAM_GRAVITY:s->gravity=double(v);break;case AREA_PARAM_GRAVITY_VECTOR:s->gravity_direction=v;break;case AREA_PARAM_LINEAR_DAMP:s->linear_damp=double(v);break;case AREA_PARAM_ANGULAR_DAMP:s->angular_damp=double(v);break;default:break;} dirty(r);
 }
 Variant MjPhysicsServer3D::_area_get_param(const RID&r,AreaParameter p) const {auto*s=space(r);if(!s)return {};auto i=s->params.find(p);return i==s->params.end()?Variant():i->second;}
 RID MjPhysicsServer3D::_body_create(){RID r=handles.make_rid(0);auto b=std::make_unique<MjBody>();b->rid=r;b->direct=memnew(MjDirectBodyState);b->direct->server=this;b->direct->rid=r;bodies.emplace(r.get_id(),std::move(b));return r;}
-void MjPhysicsServer3D::_body_set_space(const RID&r,const RID&s){auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_COND(s.is_valid()&&!space(s));dirty(b->space);b->space=s;b->mj_body=-1;dirty(s);}
+void MjPhysicsServer3D::_body_set_space(const RID&r,const RID&s){auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_COND(s.is_valid()&&!space(s));if(auto*target=space(s)){ERR_FAIL_COND(!(target->gravity_direction*(target->gravity*b->gravity_scale)).is_finite());
+ for(bool angular:{false,true}){auto mode=angular?BODY_PARAM_ANGULAR_DAMP_MODE:BODY_PARAM_LINEAR_DAMP_MODE;auto damp=angular?BODY_PARAM_ANGULAR_DAMP:BODY_PARAM_LINEAR_DAMP;
+ ERR_FAIL_COND(int(_body_get_param(r,mode))==0&&!std::isfinite(float(double(_body_get_param(r,damp))+(angular?target->angular_damp:target->linear_damp))));}}dirty(b->space);b->space=s;b->mj_body=-1;b->callback_pending=false;b->sync_pending=false;dirty(s);}
 RID MjPhysicsServer3D::_body_get_space(const RID&r) const {auto*b=body(r);return b?b->space:RID();}
 void MjPhysicsServer3D::_body_set_mode(const RID&r,BodyMode m){auto*b=body(r);ERR_FAIL_NULL(b);if(m!=BODY_MODE_STATIC&&m!=BODY_MODE_RIGID){mj_unsupported("kinematic/rigid-linear body modes");return;}b->mode=m;dirty(b->space);}
 PhysicsServer3D::BodyMode MjPhysicsServer3D::_body_get_mode(const RID&r) const {auto*b=body(r);return b?b->mode:BODY_MODE_STATIC;}
@@ -81,10 +101,36 @@ uint32_t MjPhysicsServer3D::_body_get_collision_layer(const RID&r) const{auto*b=
 void MjPhysicsServer3D::_body_set_collision_mask(const RID&r,uint32_t v){if(auto*b=body(r)){b->mask=v;dirty(b->space);}}
 uint32_t MjPhysicsServer3D::_body_get_collision_mask(const RID&r) const{auto*b=body(r);return b?b->mask:0;}
 void MjPhysicsServer3D::_body_set_ray_pickable(const RID&r,bool v){if(auto*b=body(r))b->ray_pickable=v;}
-void MjPhysicsServer3D::_body_set_param(const RID&r,BodyParameter p,const Variant&v){auto*b=body(r);ERR_FAIL_NULL(b);if(p==BODY_PARAM_MASS){ERR_FAIL_COND(!std::isfinite(double(v))||double(v)<=0);b->mass=double(v);}else if(p==BODY_PARAM_GRAVITY_SCALE)b->gravity_scale=double(v);else if(p==BODY_PARAM_INERTIA){if(Vector3(v)!=Vector3())mj_unsupported("custom inertia");}else if(p==BODY_PARAM_CENTER_OF_MASS){if(Vector3(v)!=Vector3())mj_unsupported("custom center of mass");}else if(p==BODY_PARAM_BOUNCE&&double(v)!=0)mj_unsupported("nonzero bounce");b->params[p]=v;dirty(b->space);}
+void MjPhysicsServer3D::_body_set_param(const RID&r,BodyParameter p,const Variant&v){
+ auto*b=body(r);ERR_FAIL_NULL(b);
+ if(p==BODY_PARAM_INERTIA||p==BODY_PARAM_CENTER_OF_MASS){
+  ERR_FAIL_COND(v.get_type()!=Variant::VECTOR3||!Vector3(v).is_finite());
+  if(Vector3(v)!=Vector3()){mj_unsupported(p==BODY_PARAM_INERTIA?"custom inertia":"custom center of mass");return;}
+ }else{
+  ERR_FAIL_COND(v.get_type()!=Variant::FLOAT&&v.get_type()!=Variant::INT);
+  double value=v;ERR_FAIL_COND(!std::isfinite(value)||!std::isfinite(float(value)));
+  switch(p){
+   case BODY_PARAM_MASS:ERR_FAIL_COND(value<=0);b->mass=value;break;
+   case BODY_PARAM_GRAVITY_SCALE:if(auto*s=space(b->space)){ERR_FAIL_COND(!(s->gravity_direction*(s->gravity*value)).is_finite());}b->gravity_scale=value;break;
+   case BODY_PARAM_FRICTION:break; // Negative means PhysicsMaterial.rough.
+   case BODY_PARAM_LINEAR_DAMP:case BODY_PARAM_ANGULAR_DAMP:ERR_FAIL_COND(value<0);break;
+   case BODY_PARAM_LINEAR_DAMP_MODE:case BODY_PARAM_ANGULAR_DAMP_MODE:ERR_FAIL_COND(value!=0&&value!=1);break;
+   case BODY_PARAM_BOUNCE:if(value!=0){mj_unsupported("nonzero bounce");return;}break;
+   default:mj_unsupported("body parameter");return;
+  }
+ }
+ if(auto*s=space(b->space))for(bool angular:{false,true}){
+  auto mode=angular?BODY_PARAM_ANGULAR_DAMP_MODE:BODY_PARAM_LINEAR_DAMP_MODE;
+  auto damp=angular?BODY_PARAM_ANGULAR_DAMP:BODY_PARAM_LINEAR_DAMP;
+  int selected=p==mode?int(v):int(_body_get_param(r,mode));
+  double amount=p==damp?double(v):double(_body_get_param(r,damp));
+  ERR_FAIL_COND(selected==0&&!std::isfinite(float(amount+(angular?s->angular_damp:s->linear_damp))));
+ }
+ b->params[p]=v;dirty(b->space);
+}
 Variant MjPhysicsServer3D::_body_get_param(const RID&r,BodyParameter p) const{auto*b=body(r);if(!b)return {};if(p==BODY_PARAM_MASS)return b->mass;if(p==BODY_PARAM_GRAVITY_SCALE)return b->gravity_scale;auto i=b->params.find(p);if(i!=b->params.end())return i->second;if(p==BODY_PARAM_INERTIA||p==BODY_PARAM_CENTER_OF_MASS)return Vector3();return p==BODY_PARAM_FRICTION?Variant(1.0):Variant(0.0);}
 void MjPhysicsServer3D::_body_reset_mass_properties(const RID&r){if(auto*b=body(r))dirty(b->space);}
-void MjPhysicsServer3D::_body_set_state(const RID&r,BodyState p,const Variant&v){auto*b=body(r);ERR_FAIL_NULL(b);switch(p){case BODY_STATE_TRANSFORM:if(!valid_rigid_transform(Transform3D(v)))return;b->transform=v; if(b->mode==BODY_MODE_STATIC)dirty(b->space);break;case BODY_STATE_LINEAR_VELOCITY:b->linear_velocity=v;break;case BODY_STATE_ANGULAR_VELOCITY:b->angular_velocity=v;break;case BODY_STATE_SLEEPING:if(bool(v))mj_unsupported("sleeping (bodies remain simulated)");b->sleeping=false;break;case BODY_STATE_CAN_SLEEP:break;default:break;}write_body(*b);}
+void MjPhysicsServer3D::_body_set_state(const RID&r,BodyState p,const Variant&v){auto*b=body(r);ERR_FAIL_NULL(b);switch(p){case BODY_STATE_TRANSFORM:if(!valid_rigid_transform(Transform3D(v)))return;b->transform=v; if(b->mode==BODY_MODE_STATIC)dirty(b->space);break;case BODY_STATE_LINEAR_VELOCITY:ERR_FAIL_COND(v.get_type()!=Variant::VECTOR3||!Vector3(v).is_finite());b->linear_velocity=v;break;case BODY_STATE_ANGULAR_VELOCITY:ERR_FAIL_COND(v.get_type()!=Variant::VECTOR3||!Vector3(v).is_finite());b->angular_velocity=v;break;case BODY_STATE_SLEEPING:if(bool(v))mj_unsupported("sleeping (bodies remain simulated)");b->sleeping=false;break;case BODY_STATE_CAN_SLEEP:break;default:break;}write_body(*b);}
 Variant MjPhysicsServer3D::_body_get_state(const RID&r,BodyState p) const{auto*b=body(r);if(!b)return {};switch(p){case BODY_STATE_TRANSFORM:return b->transform;case BODY_STATE_LINEAR_VELOCITY:return b->linear_velocity;case BODY_STATE_ANGULAR_VELOCITY:return b->angular_velocity;case BODY_STATE_SLEEPING:return false;case BODY_STATE_CAN_SLEEP:return false;default:return {};}}
 void MjPhysicsServer3D::_body_set_state_sync_callback(const RID&r,const Callable&c){if(auto*b=body(r))b->sync_callback=c;}
 void MjPhysicsServer3D::_body_set_force_integration_callback(const RID&r,const Callable&c,const Variant&u){if(auto*b=body(r)){b->integration_callback=c;b->integration_userdata=u;}}
@@ -119,6 +165,12 @@ void MjPhysicsServer3D::_free_rid(const RID&source_rid){
 }
 static void vector_xml(std::ostream&o,const Vector3&v){o<<v.x<<' '<<v.y<<' '<<v.z;}
 static void pose_xml(std::ostream&o,const Transform3D&t){o<<" pos=\"";vector_xml(o,godot_to_mj(t.origin));Quaternion q=godot_to_mj(t.basis.orthonormalized()).get_rotation_quaternion();o<<"\" quat=\""<<q.w<<' '<<q.x<<' '<<q.y<<' '<<q.z<<"\"";}
+static double shape_volume(const MjShape &shape){
+ if(shape.type==PhysicsServer3D::SHAPE_BOX){Vector3 e=shape.data;return 8.0*e.x*e.y*e.z;}
+ if(shape.type==PhysicsServer3D::SHAPE_SPHERE){double r=shape.data;return (4.0/3.0)*Math_PI*r*r*r;}
+ if(shape.type==PhysicsServer3D::SHAPE_CYLINDER){Dictionary d=shape.data;double r=d["radius"];return Math_PI*r*r*double(d["height"]);}
+ return 0;
+}
 bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,bool validate_dynamics){
  if(!s.dirty)return s.model&&s.data;
  std::ostringstream xml;xml.imbue(std::locale::classic());xml<<std::setprecision(17)<<"<mujoco model=\"GodotPhysicsSpace\"><compiler angle=\"radian\" fusestatic=\"false\"/><option timestep=\"0.002\" gravity=\"";vector_xml(xml,godot_to_mj(s.gravity_direction*s.gravity));xml<<"\"/><worldbody>";
@@ -134,7 +186,8 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  }
  xml<<"<body name=\"b"<<b.rid.get_id()<<"\"";pose_xml(xml,b.transform);xml<<">";
  if(b.mode==BODY_MODE_RIGID)xml<<"<freejoint name=\"native_joint_"<<b.rid.get_id()<<"\"/>";
- int count=0;for(auto&i:b.shapes)if(!i.disabled&&shape(i.shape)&&shape(i.shape)->type!=SHAPE_WORLD_BOUNDARY)++count;
+ int count=0;double volume=0;for(auto&i:b.shapes)if(!i.disabled&&shape(i.shape)&&shape(i.shape)->type!=SHAPE_WORLD_BOUNDARY){++count;volume+=shape_volume(*shape(i.shape));}
+ if(count&&(!std::isfinite(volume)||volume<=0)){s.last_error="Native shape volume is not finite and positive";return false;}
  if(b.mode==BODY_MODE_RIGID&&count==0)xml<<"<inertial pos=\"0 0 0\" mass=\""<<b.mass<<"\" diaginertia=\"0.001 0.001 0.001\"/>";
  for(int j=0;j<int(b.shapes.size());++j){auto&i=b.shapes[j];auto*sh=shape(i.shape);if(i.disabled||!sh)continue;if(sh->type==SHAPE_WORLD_BOUNDARY&&b.mode!=BODY_MODE_STATIC){mj_unsupported("WorldBoundaryShape3D on dynamic body");continue;}
  Transform3D t=i.transform;Vector3 scale=t.basis.get_scale().abs()*b.transform.basis.get_scale().abs();
@@ -145,13 +198,22 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  else {Plane p=sh->data;Vector3 n=p.normal.normalized(); t.origin+=t.basis.xform(n*(p.d/p.normal.length())); t.basis=t.basis.orthonormalized()*Basis(Quaternion(Vector3(0,1,0),n)); xml<<"plane\" size=\"0 0 0.1";}
  xml<<"\"";pose_xml(xml,t);
  // A Godot +Y plane normal maps to the MuJoCo primitive's native +Z.
- xml<<" contype=\""<<int32_t(b.layer)<<"\" conaffinity=\""<<int32_t(b.mask)<<"\" friction=\""<<double(_body_get_param(b.rid,BODY_PARAM_FRICTION))<<" 0.005 0.0001\"";
- if(b.mode==BODY_MODE_RIGID)xml<<" mass=\""<<b.mass/std::max(count,1)<<"\"";
+ xml<<" contype=\""<<int32_t(b.layer)<<"\" conaffinity=\""<<int32_t(b.mask)<<"\" friction=\""<<std::abs(double(_body_get_param(b.rid,BODY_PARAM_FRICTION)))<<" 0.005 0.0001\"";
+ if(b.mode==BODY_MODE_RIGID)xml<<" mass=\""<<b.mass*(shape_volume(*sh)/volume)<<"\"";
  xml<<"/>";owners.push_back({b.rid,j});}
  xml<<"</body>";}
  xml<<"</worldbody><contact>";std::set<std::pair<uint64_t,uint64_t>> exclusions;
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;for(auto id:b.exceptions){auto i=bodies.find(id);if(i!=bodies.end()&&i->second->space==s.rid&&id!=b.rid.get_id())exclusions.emplace(std::min<uint64_t>(id,b.rid.get_id()),std::max<uint64_t>(id,b.rid.get_id()));}}
  for(auto p:exclusions)xml<<"<exclude body1=\"b"<<p.first<<"\" body2=\"b"<<p.second<<"\"/>";
+ // Explicit native pairs use Godot's signed rough-material combination.
+ // Imported MJCF contacts keep their authored MuJoCo combination semantics.
+ for(size_t i=0;i<owners.size();++i)for(size_t j=i+1;j<owners.size();++j){
+  auto*a=body(owners[i].first);auto*b=body(owners[j].first);
+  if(a==b||(a->mode==BODY_MODE_STATIC&&b->mode==BODY_MODE_STATIC)||
+     !((a->layer&b->mask)||(b->layer&a->mask))||a->exceptions.count(b->rid.get_id())||b->exceptions.count(a->rid.get_id()))continue;
+  double friction=std::abs(std::min(double(_body_get_param(a->rid,BODY_PARAM_FRICTION)),double(_body_get_param(b->rid,BODY_PARAM_FRICTION))));
+  xml<<"<pair geom1=\"g"<<i<<"\" geom2=\"g"<<j<<"\" condim=\"3\" friction=\""<<friction<<' '<<friction<<" 0 0 0\"/>";
+ }
  xml<<"</contact><asset>";
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid||!b.heightfield)continue;
  Dictionary grid=shape(b.shapes[0].shape)->data;PackedFloat32Array h=grid["heights"];int w=grid["width"],d=grid["depth"];
@@ -264,6 +326,7 @@ void MjPhysicsServer3D::read_body(MjBody &b) {
  b.transform.basis=mj_to_godot(Basis(orientation.normalized()));
  b.linear_velocity=mj_to_godot(Vector3(d->qvel[v],d->qvel[v+1],d->qvel[v+2]));
  b.angular_velocity=b.transform.basis.xform(mj_to_godot(Vector3(d->qvel[v+3],d->qvel[v+4],d->qvel[v+5])));
+ b.sync_pending=true;
 }
 void MjPhysicsServer3D::_set_active(bool v){active=v;}
 void MjPhysicsServer3D::_init(){}
@@ -282,17 +345,32 @@ void MjPhysicsServer3D::_step(float dt){
  if(s.single_steps>0){steps=s.single_steps;s.single_steps=0;s.model->opt.timestep=s.options.timestep;}
  else if(s.authored_options){s.accumulator+=dt;steps=int((s.accumulator+1e-12)/s.options.timestep);s.accumulator-=steps*s.options.timestep;s.model->opt.timestep=s.options.timestep;}
  else{steps=std::max(1,int(std::ceil(double(dt)/0.002)));s.model->opt.timestep=double(dt)/steps;}
+ if(steps<=0)continue;
+ const double span=steps*s.model->opt.timestep;
+ // Godot damping is applied once per server integration interval, not once
+ // per MuJoCo solver subdivision (which changes its numerical meaning).
+ for(auto &be:bodies){auto&b=*be.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID||b.mj_body<1)continue;
+  b.integration_step=span;b.callback_pending=true;
+  if(b.omit_integration)continue;
+  int j=s.model->body_jntadr[b.mj_body],v=s.model->jnt_dofadr[j];
+  double ld=b.direct->_get_total_linear_damp(),ad=b.direct->_get_total_angular_damp();
+  for(int k=0;k<3;++k){s.data->qvel[v+k]*=std::max(0.0,1-ld*span);s.data->qvel[v+3+k]*=std::max(0.0,1-ad*span);}
+ }
  for(int n=0;n<steps;++n){
  for(auto &be:bodies){auto&b=*be.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID||b.mj_body<1)continue;
- Vector3 f=b.force+b.constant_force;f+=s.gravity_direction*s.gravity*b.mass*((b.omit_integration?0:b.gravity_scale)-1);Vector3 torque=b.torque+b.constant_torque;f=godot_to_mj(f);torque=godot_to_mj(torque);
- for(int k=0;k<3;++k){s.data->xfrc_applied[6*b.mj_body+k]=f[k];s.data->xfrc_applied[6*b.mj_body+3+k]=torque[k];}
- int j=s.model->body_jntadr[b.mj_body],v=s.model->jnt_dofadr[j];double ld=double(_body_get_param(b.rid,BODY_PARAM_LINEAR_DAMP)),ad=double(_body_get_param(b.rid,BODY_PARAM_ANGULAR_DAMP));if(int(_body_get_param(b.rid,BODY_PARAM_LINEAR_DAMP_MODE))==0)ld+=s.linear_damp;if(int(_body_get_param(b.rid,BODY_PARAM_ANGULAR_DAMP_MODE))==0)ad+=s.angular_damp;if(b.omit_integration)ld=ad=0;
- for(int k=0;k<3;++k){s.data->qvel[v+k]*=std::max(0.0,1-ld*s.model->opt.timestep);s.data->qvel[v+3+k]*=std::max(0.0,1-ad*s.model->opt.timestep);}}
+ Vector3 force=godot_to_mj(b.force),constant=godot_to_mj(b.constant_force);
+ Vector3 torque=godot_to_mj(b.torque),constant_torque=godot_to_mj(b.constant_torque);
+ Vector3 direction=godot_to_mj(s.gravity_direction);
+ for(int k=0;k<3;++k){
+  s.data->xfrc_applied[6*b.mj_body+k]=(b.omit_integration?0:double(force[k])+constant[k])+double(direction[k])*s.gravity*b.mass*((b.omit_integration?0:b.gravity_scale)-1);
+  s.data->xfrc_applied[6*b.mj_body+3+k]=b.omit_integration?0:double(torque[k])+constant_torque[k];
+ }
+ }
  mj_step(s.model,s.data);}
  mj_forward(s.model,s.data);
  for(auto &be:bodies){auto&b=*be.second;if(b.space==s.rid){read_body(b);b.force=Vector3();b.torque=Vector3();}}
  }
 }
-void MjPhysicsServer3D::_flush_queries(){flushing=true;std::vector<RID> snapshot;for(auto&b:bodies)snapshot.push_back(b.second->rid);for(auto r:snapshot){auto*b=body(r);if(!b||pending_free.count(r.get_id())||!space(b->space)||!space(b->space)->active)continue;if(b->integration_callback.is_valid()){Callable c=b->integration_callback;Variant u=b->integration_userdata;auto*d=b->direct;if(u.get_type()==Variant::NIL)c.call(d);else c.call(d,u);}b=body(r);if(b&&!pending_free.count(r.get_id())&&b->sync_callback.is_valid()){Callable c=b->sync_callback;c.call(b->direct);}}flushing=false; auto pending=std::move(pending_free);pending_free.clear();for(auto id:pending){auto b=bodies.find(id);if(b!=bodies.end())_free_rid(b->second->rid);else {auto s=spaces.find(id);if(s!=spaces.end())_free_rid(s->second->rid);else {auto sh=shapes.find(id);if(sh!=shapes.end())_free_rid(sh->second->rid);else {for(auto &entry:spaces){auto imported=entry.second->imported.find(id);if(imported!=entry.second->imported.end()){RID rid=imported->second->rid;_free_rid(rid);break;}}}}}}}
+void MjPhysicsServer3D::_flush_queries(){flushing=true;std::vector<RID> snapshot;for(auto&b:bodies)snapshot.push_back(b.second->rid);for(auto r:snapshot){auto*b=body(r);if(!b||pending_free.count(r.get_id())||!space(b->space)||!space(b->space)->active||(!b->callback_pending&&!b->sync_pending))continue;bool integrated=b->callback_pending;bool sync=b->sync_pending;b->callback_pending=b->sync_pending=false;if(integrated&&b->integration_callback.is_valid()){Callable c=b->integration_callback;Variant u=b->integration_userdata;auto*d=b->direct;if(u.get_type()==Variant::NIL)c.call(d);else c.call(d,u);}b=body(r);if(sync&&b&&!pending_free.count(r.get_id())&&b->sync_callback.is_valid()){Callable c=b->sync_callback;c.call(b->direct);}}flushing=false; auto pending=std::move(pending_free);pending_free.clear();for(auto id:pending){auto b=bodies.find(id);if(b!=bodies.end())_free_rid(b->second->rid);else {auto s=spaces.find(id);if(s!=spaces.end())_free_rid(s->second->rid);else {auto sh=shapes.find(id);if(sh!=shapes.end())_free_rid(sh->second->rid);else {for(auto &entry:spaces){auto imported=entry.second->imported.find(id);if(imported!=entry.second->imported.end()){RID rid=imported->second->rid;_free_rid(rid);break;}}}}}}}
 int32_t MjPhysicsServer3D::_get_process_info(ProcessInfo p){if(p==INFO_ACTIVE_OBJECTS)return bodies.size();if(p==INFO_ISLAND_COUNT)return spaces.size();if(p==INFO_COLLISION_PAIRS){int count=0;for(auto&s:spaces)if(s.second->data)count+=s.second->data->ncon;return count;}return 0;}
 }
