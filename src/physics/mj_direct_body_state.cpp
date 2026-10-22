@@ -1,5 +1,6 @@
 #include "mj_physics_server.h"
 #include <godot_cpp/core/object.hpp>
+#include <algorithm>
 namespace godot {
 static Vector3 total_gravity(MjPhysicsServer3D *server, const RID &rid) {
  auto *b=server->body(rid); if(!b) return {}; auto *s=server->space(b->space);
@@ -93,23 +94,50 @@ CONTACT_GET(int32_t,collider_shape,collider_shape,-1)
 RID MjDirectBodyState::_get_contact_collider(int32_t i) const{auto*c=contact(server,rid,i);auto*b=server->body(rid);auto*other=c?server->body(c->collider):nullptr;return other&&b&&other->space==b->space&&!server->pending_free.count(other->rid.get_id())?other->rid:RID();}
 uint64_t MjDirectBodyState::_get_contact_collider_id(int32_t i) const{auto*c=contact(server,rid,i);return c&&_get_contact_collider(i).is_valid()?c->object_id:0;}
 Object *MjDirectBodyState::_get_contact_collider_object(int32_t i) const{auto id=_get_contact_collider_id(i);return id?ObjectDB::get_instance(id):nullptr;}
-float MjDirectBodyState::_get_step() const{return server->last_step;}
-void MjDirectBodyState::_integrate_forces(){mj_unsupported("explicit direct-state integrate_forces; MuJoCo performs integration");}
+float MjDirectBodyState::_get_step() const{auto*b=server->body(rid);return b?b->integration_step:0;}
+void MjDirectBodyState::_integrate_forces(){
+ double step=_get_step();
+ _set_linear_velocity((_get_linear_velocity()+_get_total_gravity()*step)*std::max(0.0,1-step*_get_total_linear_damp()));
+ _set_angular_velocity(_get_angular_velocity()*std::max(0.0,1-step*_get_total_angular_damp()));
+}
 PhysicsDirectSpaceState3D *MjDirectBodyState::_get_space_state(){auto*b=server->body(rid);return b?server->_space_get_direct_state(b->space):nullptr;}
-void MjPhysicsServer3D::_body_apply_central_impulse(const RID&r,const Vector3&v){auto*b=body(r);if(!b||b->mode!=BODY_MODE_RIGID)return;b->linear_velocity+=v/b->mass;write_body(*b);}
-void MjPhysicsServer3D::_body_apply_torque_impulse(const RID&r,const Vector3&v){auto*b=body(r);if(!b||b->mode!=BODY_MODE_RIGID)return;b->angular_velocity+=b->direct->_get_inverse_inertia_tensor().xform(v);write_body(*b);}
-void MjPhysicsServer3D::_body_apply_impulse(const RID&r,const Vector3&v,const Vector3&p){auto*b=body(r);if(!b)return;_body_apply_central_impulse(r,v);_body_apply_torque_impulse(r,(p-b->direct->_get_center_of_mass()).cross(v));}
-void MjPhysicsServer3D::_body_apply_central_force(const RID&r,const Vector3&v){if(auto*b=body(r))b->force+=v;}
-void MjPhysicsServer3D::_body_apply_torque(const RID&r,const Vector3&v){if(auto*b=body(r))b->torque+=v;}
-void MjPhysicsServer3D::_body_apply_force(const RID&r,const Vector3&v,const Vector3&p){auto*b=body(r);if(!b)return;b->force+=v;b->torque+=(p-b->direct->_get_center_of_mass()).cross(v);}
-void MjPhysicsServer3D::_body_add_constant_central_force(const RID&r,const Vector3&v){if(auto*b=body(r))b->constant_force+=v;}
-void MjPhysicsServer3D::_body_add_constant_torque(const RID&r,const Vector3&v){if(auto*b=body(r))b->constant_torque+=v;}
-void MjPhysicsServer3D::_body_add_constant_force(const RID&r,const Vector3&v,const Vector3&p){auto*b=body(r);if(!b)return;b->constant_force+=v;b->constant_torque+=(p-b->direct->_get_center_of_mass()).cross(v);}
-void MjPhysicsServer3D::_body_set_constant_force(const RID&r,const Vector3&v){if(auto*b=body(r))b->constant_force=v;}
+void MjPhysicsServer3D::_body_apply_central_impulse(const RID&r,const Vector3&v){
+ auto*b=body(r);if(!b||b->mode!=BODY_MODE_RIGID)return;
+ Vector3 result=b->linear_velocity+v/b->mass;ERR_FAIL_COND(!v.is_finite()||!result.is_finite());b->linear_velocity=result;write_body(*b);
+}
+void MjPhysicsServer3D::_body_apply_torque_impulse(const RID&r,const Vector3&v){
+ auto*b=body(r);if(!b||b->mode!=BODY_MODE_RIGID)return;ERR_FAIL_COND(!v.is_finite());
+ Vector3 result=b->angular_velocity+b->direct->_get_inverse_inertia_tensor().xform(v);ERR_FAIL_COND(!result.is_finite());b->angular_velocity=result;write_body(*b);
+}
+void MjPhysicsServer3D::_body_apply_impulse(const RID&r,const Vector3&v,const Vector3&p){
+ auto*b=body(r);if(!b||b->mode!=BODY_MODE_RIGID)return;ERR_FAIL_COND(!v.is_finite()||!p.is_finite());
+ Vector3 lv=b->linear_velocity+v/b->mass;
+ Vector3 av=b->angular_velocity+b->direct->_get_inverse_inertia_tensor().xform((p-b->direct->_get_center_of_mass()).cross(v));
+ ERR_FAIL_COND(!lv.is_finite()||!av.is_finite());b->linear_velocity=lv;b->angular_velocity=av;write_body(*b);
+}
+void MjPhysicsServer3D::_body_apply_central_force(const RID&r,const Vector3&v){if(auto*b=body(r)){Vector3 result=b->force+v;ERR_FAIL_COND(!v.is_finite()||!result.is_finite());b->force=result;}}
+void MjPhysicsServer3D::_body_apply_torque(const RID&r,const Vector3&v){if(auto*b=body(r)){Vector3 result=b->torque+v;ERR_FAIL_COND(!v.is_finite()||!result.is_finite());b->torque=result;}}
+void MjPhysicsServer3D::_body_apply_force(const RID&r,const Vector3&v,const Vector3&p){
+ auto*b=body(r);if(!b)return;ERR_FAIL_COND(!v.is_finite()||!p.is_finite());
+ Vector3 f=b->force+v,t=b->torque+(p-b->direct->_get_center_of_mass()).cross(v);
+ ERR_FAIL_COND(!f.is_finite()||!t.is_finite());b->force=f;b->torque=t;
+}
+void MjPhysicsServer3D::_body_add_constant_central_force(const RID&r,const Vector3&v){if(auto*b=body(r)){Vector3 result=b->constant_force+v;ERR_FAIL_COND(!v.is_finite()||!result.is_finite());b->constant_force=result;}}
+void MjPhysicsServer3D::_body_add_constant_torque(const RID&r,const Vector3&v){if(auto*b=body(r)){Vector3 result=b->constant_torque+v;ERR_FAIL_COND(!v.is_finite()||!result.is_finite());b->constant_torque=result;}}
+void MjPhysicsServer3D::_body_add_constant_force(const RID&r,const Vector3&v,const Vector3&p){
+ auto*b=body(r);if(!b)return;ERR_FAIL_COND(!v.is_finite()||!p.is_finite());
+ Vector3 f=b->constant_force+v,t=b->constant_torque+(p-b->direct->_get_center_of_mass()).cross(v);
+ ERR_FAIL_COND(!f.is_finite()||!t.is_finite());b->constant_force=f;b->constant_torque=t;
+}
+void MjPhysicsServer3D::_body_set_constant_force(const RID&r,const Vector3&v){ERR_FAIL_COND(!v.is_finite());if(auto*b=body(r))b->constant_force=v;}
 Vector3 MjPhysicsServer3D::_body_get_constant_force(const RID&r) const {auto*b=body(r);return b?b->constant_force:Vector3();}
-void MjPhysicsServer3D::_body_set_constant_torque(const RID&r,const Vector3&v){if(auto*b=body(r))b->constant_torque=v;}
+void MjPhysicsServer3D::_body_set_constant_torque(const RID&r,const Vector3&v){ERR_FAIL_COND(!v.is_finite());if(auto*b=body(r))b->constant_torque=v;}
 Vector3 MjPhysicsServer3D::_body_get_constant_torque(const RID&r) const {auto*b=body(r);return b?b->constant_torque:Vector3();}
-void MjPhysicsServer3D::_body_set_axis_velocity(const RID&r,const Vector3&v){auto*b=body(r);if(!b)return;Vector3 axis=v.normalized();b->linear_velocity-=axis*axis.dot(b->linear_velocity);b->linear_velocity+=v;write_body(*b);}
+void MjPhysicsServer3D::_body_set_axis_velocity(const RID&r,const Vector3&v){
+ auto*b=body(r);if(!b)return;ERR_FAIL_COND(!v.is_finite());
+ Vector3 axis=v.normalized(),result=b->linear_velocity-axis*axis.dot(b->linear_velocity)+v;
+ ERR_FAIL_COND(!result.is_finite());b->linear_velocity=result;write_body(*b);
+}
 #define FORWARD_VECTOR(name) void MjDirectBodyState::_##name(const Vector3&v){server->_body_##name(rid,v);}
 #define FORWARD_POSITION(name) void MjDirectBodyState::_##name(const Vector3&v,const Vector3&p){server->_body_##name(rid,v,p);}
 FORWARD_VECTOR(apply_central_impulse)

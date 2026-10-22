@@ -39,6 +39,7 @@ struct MjBody {
  Transform3D transform; Vector3 linear_velocity, angular_velocity, force, torque, constant_force, constant_torque;
  std::vector<MjShapeInstance> shapes; std::map<int, Variant> params;
  uint32_t layer=1, mask=1; bool ray_pickable=true, sleeping=false, omit_integration=false;
+ bool callback_pending=false, sync_pending=false; double integration_step=0;
  Callable sync_callback, integration_callback; Variant integration_userdata;
  MjDirectBodyState *direct=nullptr; int mj_body=-1; double mass=1; double gravity_scale=1;
  std::set<uint64_t> exceptions;

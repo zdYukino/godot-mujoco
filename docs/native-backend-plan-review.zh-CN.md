@@ -1,6 +1,8 @@
-# 原生 PhysicsServer 后端推进计划（仅供审查，未授权实施）
+# 原生 PhysicsServer 后端推进计划与阶段状态
 
-代码核查基点：PR4合入后的main4637c33及本轮预设事务。以下区分普通Godot节点能力与MJCF模型能力；未运行的能力不因MuJoCo底层支持而视作Godot支持。HTML由父任务维护。
+开发基点：已验收的 `8d3976e`（PR #5，未合 main）。用户已授权按优先级开发原生后端；集成分支为 `codex/native-backend-integration`。P0 先收口现有刚体语义，接触报告与查询由独立任务开发，必须逐个集成和验证；以下后续能力不能因已授权而记为完成。
+
+以下区分普通Godot节点能力与MJCF模型能力；未运行的能力不因MuJoCo底层支持而视作Godot支持。HTML由父任务维护。
 
 | 分类 | 已有能力 | 主要缺口与代码依据 |
 |---|---|---|
@@ -13,8 +15,9 @@
 | 接触/高级刚体 | MuJoCo空间contact信息；基础力、冲量/速度与状态同步 | direct body _get_contact_count返回0，Godot contact reporting未实现；sleep、CCD、axis lock、自定义惯量/质心等仍不支持 |
 | 生命周期 | RID管理、free延迟、实例身份/revision、队列、兼容迁移回滚；本轮整份预设边界事务 | 每新增对象类型必须接入同一free/rebuild/rollback协议；不能依赖原shape/body生命周期测试覆盖Area/joint的新依赖图 |
 
-建议里程碑（全部“待审查”，不自动开始）：
+后续里程碑（依赖阶段通过后推进，未实现项保持未完成）：
 
+0. **P0 现有刚体语义**：见 [支持与拒绝契约](native-body-semantics.zh-CN.md)。以数值测试验证质量、摩擦、重力缩放、阻尼、力/冲量、自定义积分与暂停/重置回调；不能以 setter/getter 存值代替动力学效果。
 1. **查询基础与接触身份**：先为现有形状补point/shape overlap、collide/rest info与稳定结果排序/身份。验证层/掩码、exclude、多个shape索引、移除后RID失效、边界点/退化输入、重建前后身份；不宣称连续运动。
 2. **CapsuleShape3D**：明确Godot完整高度与MuJoCo半段长度转换，退化球规则/尺寸限制、质量惯量、ray/overlap联动。依赖查询基础以覆盖角色常用形状；形状可单独交付，不能冒充CharacterBody完成。
 3. **运动查询**：实现cast_motion和body_test_motion，明确扫掠算法、初始穿透恢复、margin、safe/unsafe fraction、多个碰撞结果。验证薄墙/高速、角落、滑坡、开始重叠、移动障碍和回归可重复性。依赖1（角色capsule路径还依赖2）。这是CharacterBody的前置门槛。
