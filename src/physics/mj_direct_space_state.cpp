@@ -572,6 +572,7 @@ bool MjDirectSpaceState::_cast_motion(const RID &shape_rid, const Transform3D &t
  Quaternion rotation=godot_to_mj(pose.basis).get_rotation_quaternion().normalized();
  mjtNum quat[4]={rotation.w,rotation.x,rotation.y,rotation.z}, matrix[9];
  mju_normalize4(quat); mju_quat2Mat(matrix,quat);
+ std::vector<int> sweep_targets;
  double first=2, lower=1; MjBody *nearest=nullptr; int nearest_shape=-1, nearest_geom=-1; Vec witness{},normal{};
  for(int geom=0;geom<space->model->ngeom;++geom) {
    auto *body=query_body(*this,*space,geom,mask); if(!body) continue;
@@ -604,6 +605,7 @@ bool MjDirectSpaceState::_cast_motion(const RID &shape_rid, const Transform3D &t
      point=center+Vec{wp[0],wp[1],wp[2]}; n={wn[0],wn[1],wn[2]};
    }
    if(!hit.valid) { mj_unsupported("continuous sweep numerical bracket could not be certified"); return false; }
+   if(!hit.initial_overlap) sweep_targets.push_back(geom);
    if(!hit.hit) continue;
    lower=std::min(lower,hit.safe);
    auto owner=space->geom_owners[geom];
@@ -638,10 +640,38 @@ bool MjDirectSpaceState::_cast_motion(const RID &shape_rid, const Transform3D &t
  auto continuous_gap=[&](float fraction) { return sweep_gap(type,size,matrix,origin,velocity,
      space->model->geom_type[nearest_geom],space->model->geom_size+3*nearest_geom,
      space->data->geom_xmat+9*nearest_geom,{target_pos[0],target_pos[1],target_pos[2]},margin,fraction); };
- double safe_gap=abi_gap(lo), unsafe_gap=abi_gap(hi);
- double continuous_safe=continuous_gap(lo), continuous_unsafe=continuous_gap(hi);
- if(!std::isfinite(safe_gap) || !std::isfinite(unsafe_gap) || !std::isfinite(continuous_safe) ||
-     !std::isfinite(continuous_unsafe) || safe_gap<0 || unsafe_gap>0 || continuous_safe<0 || continuous_unsafe>0) {
+ // Fraction rounding and vector arithmetic round independently. A single
+ // nextafter can leave an otherwise ordinary rotated face just outside at
+ // unsafe (or inside at safe). Search adjacent representable fractions only
+ // AFTER the continuous solver has established the first-contact bracket.
+ // These probes certify ABI outputs; they never discover or classify a sweep.
+ // Keep the continuous and float-pose predicates independent and exact: no
+ // penetration/gap tolerance can turn a miss into a certified contact.
+ auto safe_at=[&](float f) {
+   for(int geom:sweep_targets) {
+     const mjtNum *tp=space->data->geom_xpos+3*geom;
+     int target=space->model->geom_type[geom];
+     const mjtNum *ts=space->model->geom_size+3*geom,*mat=space->data->geom_xmat+9*geom;
+     Vec center{tp[0],tp[1],tp[2]};
+     double continuous=sweep_gap(type,size,matrix,origin,velocity,target,ts,mat,center,margin,f);
+     double actual=sweep_gap(type,size,matrix,rounded_origin(f),{},target,ts,mat,center,margin,0);
+     if(!std::isfinite(continuous) || !std::isfinite(actual) || continuous<0 || actual<0)return false;
+   }
+   return true;
+ };
+ auto unsafe_at=[&](float f) {
+   double continuous=continuous_gap(f),actual=abi_gap(f);
+   return std::isfinite(continuous) && std::isfinite(actual) && continuous<=0 && actual<=0;
+ };
+ bool safe_ok=safe_at(lo),unsafe_ok=unsafe_at(hi);
+ constexpr int max_fraction_neighbors=256;
+ for(int i=0;!safe_ok && lo>0 && i<max_fraction_neighbors;++i) {
+   lo=std::nextafter(lo,0.0f);safe_ok=safe_at(lo);
+ }
+ for(int i=0;!unsafe_ok && hi<1 && i<max_fraction_neighbors;++i) {
+   hi=std::nextafter(hi,1.0f);unsafe_ok=unsafe_at(hi);
+ }
+ if(!safe_ok || !unsafe_ok) {
    mj_unsupported("continuous sweep contact has no certified float safe/unsafe poses"); return false;
  }
  *safe=std::clamp(lo,0.0f,1.0f); *unsafe=std::clamp(hi,0.0f,1.0f);
