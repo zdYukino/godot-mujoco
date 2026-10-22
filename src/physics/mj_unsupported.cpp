@@ -3,7 +3,6 @@ namespace godot {
 // Unsupported extension entry points fail explicitly, once per feature.
 RID MjPhysicsServer3D::_separation_ray_shape_create() { mj_unsupported("_separation_ray_shape_create"); return {}; }
 RID MjPhysicsServer3D::_capsule_shape_create() { mj_unsupported("_capsule_shape_create"); return {}; }
-RID MjPhysicsServer3D::_cylinder_shape_create() { mj_unsupported("_cylinder_shape_create"); return {}; }
 RID MjPhysicsServer3D::_convex_polygon_shape_create() { mj_unsupported("_convex_polygon_shape_create"); return {}; }
 RID MjPhysicsServer3D::_concave_polygon_shape_create() { mj_unsupported("_concave_polygon_shape_create"); return {}; }
 RID MjPhysicsServer3D::_heightmap_shape_create() { mj_unsupported("_heightmap_shape_create"); return {}; }

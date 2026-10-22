@@ -1,0 +1,164 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+MuJoCo: compile time (ms)
+  total:          0.3   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.3   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS initialized paused composite world
+PASS exact typed steps
+PASS two controlled light robots
+PASS box contacts typed static terrain
+PASS reset restores checkpoint time and controls
+PASS resume and pause completed
+PASS new checkpoint reset
+LIGHT_WORKFLOW_RESULT {"passed":7,"failed":0}
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)

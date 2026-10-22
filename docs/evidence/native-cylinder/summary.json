@@ -1,0 +1,17 @@
+{
+  "extension_sha256": "e7387fb9c5f53ca3b71d8c39c443d16378eb756d1e50ee96f0050a7e4f1f7dba",
+  "build_exit": 0,
+  "cylinder_exit": 0,
+  "cylinder_positive": 35,
+  "expected_negative_errors": 9,
+  "native_exit": 0,
+  "native_checks": 149,
+  "heightfield_exit": 0,
+  "heightfield_checks": 73,
+  "workflow_exit": 0,
+  "workflow_checks": 7,
+  "strict_smoke_exit": 0,
+  "gui_scene_headless_exit": 0,
+  "real_gui": "not_run",
+  "first_attempt": "failed: import referenced missing Main.tscn; raw logs retained"
+}

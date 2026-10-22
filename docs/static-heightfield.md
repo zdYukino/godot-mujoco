@@ -10,8 +10,7 @@ metre spacing. Node poses support translation/rotation; scale and shear fail.
 
 This is a dedicated static terrain node. General Godot `HeightMapShape3D`, dynamic
 terrain bodies, holes/NaNs, sculpting and streaming are unsupported. Existing
-native shapes remain box/sphere/plane; `CylinderShape3D` remains unsupported even
-though MJCF cylinders can be edited and simulated in model instances.
+native shapes include box/sphere/plane and [CylinderShape3D](../tests/native_cylinder/README.zh-CN.md). Native cylinders and MJCF cylinder model editing have separate entry points.
 
 `request_apply(expected_revision=-1)` queues an add or replacement. Resolution
 cannot change on a live terrain; remove then add a new grid. `request_remove()`

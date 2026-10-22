@@ -14,7 +14,7 @@
 - **模型资源与场景**：保存包含依赖资产的模型包，使用 `MjRuntimeWorld` 和 `MjModelInstance` 组织独立实例；支持整个文件系统项目搬迁。
 - **运行编辑**：明确选择运行实例并应用保存的设计；结构修改在物理步边界编译、迁移兼容状态，失败回滚。
 - **仿真控制**：每个世界独立暂停、精确 N 步、内存快照、状态重置和已保存环境重建；游戏 UI 与输入继续运行。
-- **原生物理后端**：支持普通 Godot 刚体的 box/sphere/plane 和 ray 查询。并非完整替代 Godot 的全部物理节点及 API。
+- **原生物理后端**：支持普通 Godot 刚体的 box/sphere/plane/cylinder 和 ray 查询。并非完整替代 Godot 的全部物理节点及 API。
 
 | 项目 | 当前要求 |
 |---|---|
@@ -221,7 +221,7 @@ CMake 将 godot-cpp 获取到构建目录并静态链接进扩展，将 MuJoCo �
 
 本项目采用 [MIT License](LICENSE)，署名 **Copyright (c) 2026 godot-mujoco contributors**。MuJoCo 采用 Apache-2.0，godot-cpp 采用 MIT；二进制再分发请保留相应许可和声明，见 [THIRD_PARTY.md](demo/addons/godot_mujoco/THIRD_PARTY.md)。Unitree G1 资产保留 [BSD-3-Clause 许可证及原作者署名](demo/assets/robots/unitree_g1/g1_29dof_mode_18/LICENSE)与[来源说明](demo/assets/robots/unitree_g1/g1_29dof_mode_18/README.md)，不属于本项目自行创作的模型；原始资产保持字节不变，派生设计另存。
 
-[类型化 C# 控制 API](docs/typed-control.md)：请求入队与完成反馈、生命周期与轻量验证。原生 `CylinderShape3D` 尚未支持；MJCF 圆柱的编辑与模拟属于模型功能。
+[类型化 C# 控制 API](docs/typed-control.md)：请求入队与完成反馈、生命周期与轻量验证。原生 [`CylinderShape3D`](tests/native_cylinder/README.zh-CN.md) 支持普通静态/刚体圆柱；MJCF 圆柱编辑仍为独立模型入口。本轮圆柱改动等待 dot 独立构建与 GUI 验收。
 
 [静态固定网格高度场](docs/static-heightfield.md)：`MjStaticHeightField` / `MjHeightFieldData`，安全边界增删/替换、匹配可见网格和碰撞；不等于通用 `HeightMapShape3D` 支持。
 

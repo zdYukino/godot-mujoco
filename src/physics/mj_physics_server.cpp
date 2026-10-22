@@ -25,9 +25,22 @@ void MjPhysicsServer3D::_finish() { while(!bodies.empty()) _free_rid(bodies.begi
 RID MjPhysicsServer3D::make_shape(ShapeType type,const Variant &data) { RID r=handles.make_rid(0); auto s=std::make_unique<MjShape>(); s->rid=r;s->type=type;s->data=data; shapes.emplace(r.get_id(),std::move(s)); return r; }
 RID MjPhysicsServer3D::_box_shape_create() { return make_shape(SHAPE_BOX,Vector3(0.5,0.5,0.5)); }
 RID MjPhysicsServer3D::_sphere_shape_create() { return make_shape(SHAPE_SPHERE,0.5); }
+RID MjPhysicsServer3D::_cylinder_shape_create() {
+ Dictionary data; data["radius"]=0.5; data["height"]=2.0;
+ return make_shape(SHAPE_CYLINDER,data);
+}
 RID MjPhysicsServer3D::_world_boundary_shape_create() { return make_shape(SHAPE_WORLD_BOUNDARY,Plane(Vector3(0,1,0),0)); }
-void MjPhysicsServer3D::_shape_set_data(const RID&r,const Variant&v) { auto*s=shape(r); ERR_FAIL_NULL(s); if(s->type==SHAPE_BOX) { ERR_FAIL_COND(v.get_type()!=Variant::VECTOR3); Vector3 z=v; ERR_FAIL_COND(!z.is_finite()||z.x<=0||z.y<=0||z.z<=0); } else if(s->type==SHAPE_SPHERE) { ERR_FAIL_COND(!std::isfinite(double(v))||double(v)<=0); } else { ERR_FAIL_COND(v.get_type()!=Variant::PLANE); Plane plane=v; ERR_FAIL_COND(!plane.normal.is_finite()||plane.normal.length_squared()<1e-12||!std::isfinite(plane.d)); } s->data=v; for(auto &b:bodies) for(auto &i:b.second->shapes) if(i.shape==r) dirty(b.second->space); }
-Variant MjPhysicsServer3D::_shape_get_data(const RID&r) const { auto*s=shape(r);return s?s->data:Variant(); }
+void MjPhysicsServer3D::_shape_set_data(const RID&r,const Variant&v) { auto*s=shape(r); ERR_FAIL_NULL(s); if(s->type==SHAPE_BOX) { ERR_FAIL_COND(v.get_type()!=Variant::VECTOR3); Vector3 z=v; ERR_FAIL_COND(!z.is_finite()||z.x<=0||z.y<=0||z.z<=0); } else if(s->type==SHAPE_SPHERE) { ERR_FAIL_COND(!std::isfinite(double(v))||double(v)<=0); } else if(s->type==SHAPE_CYLINDER) {
+ ERR_FAIL_COND_MSG(v.get_type()!=Variant::DICTIONARY,"Cylinder data requires radius and height");
+ Dictionary data=v;
+ for(const char *key:{"radius","height"}) {
+  ERR_FAIL_COND_MSG(!data.has(key),"Cylinder data requires radius and height");
+  Variant value=data[key];
+  ERR_FAIL_COND_MSG(value.get_type()!=Variant::FLOAT&&value.get_type()!=Variant::INT,"Cylinder dimensions must be numeric");
+  ERR_FAIL_COND_MSG(!std::isfinite(double(value))||double(value)<=0,"Cylinder dimensions must be finite and positive");
+ }
+ } else { ERR_FAIL_COND(v.get_type()!=Variant::PLANE); Plane plane=v; ERR_FAIL_COND(!plane.normal.is_finite()||plane.normal.length_squared()<1e-12||!std::isfinite(plane.d)); } s->data=s->type==SHAPE_CYLINDER?Variant(Dictionary(v).duplicate()):v; for(auto &b:bodies) for(auto &i:b.second->shapes) if(i.shape==r) dirty(b.second->space); }
+Variant MjPhysicsServer3D::_shape_get_data(const RID&r) const { auto*s=shape(r);return s?(s->type==SHAPE_CYLINDER?Variant(Dictionary(s->data).duplicate()):s->data):Variant(); }
 PhysicsServer3D::ShapeType MjPhysicsServer3D::_shape_get_type(const RID&r) const { auto*s=shape(r);return s?s->type:SHAPE_CUSTOM; }
 void MjPhysicsServer3D::_shape_set_margin(const RID&r,float v) { if(auto*s=shape(r)) s->margin=v; }
 float MjPhysicsServer3D::_shape_get_margin(const RID&r) const { auto*s=shape(r);return s?s->margin:0; }
@@ -128,6 +141,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s){
  xml<<"<geom name=\"g"<<owners.size()<<"\" type=\"";
  if(sh->type==SHAPE_BOX){xml<<"box\" size=\"";Vector3 v=Vector3(sh->data)*scale;vector_xml(xml,Vector3(v.x,v.z,v.y));}
  else if(sh->type==SHAPE_SPHERE){if(!Math::is_equal_approx(scale.x,scale.y)||!Math::is_equal_approx(scale.x,scale.z))mj_unsupported("nonuniform sphere scale");xml<<"sphere\" size=\""<<double(sh->data)*scale.x;}
+ else if(sh->type==SHAPE_CYLINDER){Dictionary d=sh->data;xml<<"cylinder\" size=\""<<double(d["radius"])<<' '<<double(d["height"])*0.5;}
  else {Plane p=sh->data;Vector3 n=p.normal.normalized(); t.origin+=t.basis.xform(n*(p.d/p.normal.length())); t.basis=t.basis.orthonormalized()*Basis(Quaternion(Vector3(0,1,0),n)); xml<<"plane\" size=\"0 0 0.1";}
  xml<<"\"";pose_xml(xml,t);
  // A Godot +Y plane normal maps to the MuJoCo primitive's native +Z.

@@ -19,6 +19,8 @@ bool point_inside_geom(int p_type, const mjtNum p_local[3], const mjtNum p_size[
 					std::abs(p_local[2]) < p_size[2];
 		case mjGEOM_SPHERE:
 			return std::hypot(p_local[0], p_local[1], p_local[2]) < p_size[0];
+		case mjGEOM_CYLINDER:
+			return std::hypot(p_local[0], p_local[1]) < p_size[0] && std::abs(p_local[2]) < p_size[1];
 		case mjGEOM_PLANE:
 			// WorldBoundaryShape3D occupies the negative half-space.
 			return p_local[2] < 0;
@@ -124,7 +126,7 @@ bool MjDirectSpaceState::_intersect_ray(const Vector3 &p_from, const Vector3 &p_
 		// A query's mask is matched against the body's layer. The body's own
 		// collision mask controls body/body contacts, not visibility to rays.
 		const int type = model->geom_type[geom];
-		if (type != mjGEOM_BOX && type != mjGEOM_SPHERE && type != mjGEOM_PLANE && type != mjGEOM_HFIELD) {
+		if (type != mjGEOM_BOX && type != mjGEOM_SPHERE && type != mjGEOM_PLANE && type != mjGEOM_CYLINDER && type != mjGEOM_HFIELD) {
 			mj_unsupported("ray queries for non-box/sphere/world-boundary shapes");
 			continue;
 		}
