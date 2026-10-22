@@ -100,13 +100,13 @@ void MjPhysicsServer3D::process_model_edits(){
    for(int a=0;a<m->nu;++a){const char*n=mj_id2name(m,mjOBJ_ACTUATOR,a);int old=mj_name2id(s->model,mjOBJ_ACTUATOR,(object.prefix+n).c_str());if(old>=0&&(m->actuator_dyntype[a]!=s->model->actuator_dyntype[old]||m->actuator_actnum[a]!=s->model->actuator_actnum[old]))return "Incompatible actuator state: "+String(n);}
    mjSpec*previous=object.spec;Dictionary initial=object.initial;bool dirty=s->dirty;
    object.spec=doc->copy_spec();object.initial=initial_state(m,doc->native_data());s->dirty=true;
-   if(!rebuild(*s)){
+   Dictionary controls;
+   if(request.preset)for(int a=0;a<m->nu;++a)controls[String((object.prefix+mj_id2name(m,mjOBJ_ACTUATOR,a)).c_str())]=doc->native_data()->ctrl[a];
+   if(!rebuild(*s,controls,request.preset)){
     String error=s->last_error;mj_deleteSpec(object.spec);object.spec=previous;object.initial=initial;s->dirty=dirty;
     return error;
    }
-   // Rebuild has migrated all compatible state. Override this instance's complete
-   // validated control set before any physics step or completion can observe it.
-   if(request.preset){for(int a=0;a<m->nu;++a){int combined=mj_name2id(s->model,mjOBJ_ACTUATOR,(object.prefix+mj_id2name(m,mjOBJ_ACTUATOR,a)).c_str());s->data->ctrl[combined]=doc->native_data()->ctrl[a];}mj_forward(s->model,s->data);}
+   // Rebuild validated migrated state and the entire control set before swap.
    mj_deleteSpec(previous);++object.property_revision;
    result["revision"]=int64_t(object.property_revision);result["success"]=true;
    if(request.preset)result["state"]=scene_state(request.space,request.object);

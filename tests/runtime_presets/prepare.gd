@@ -32,4 +32,15 @@ func run():
  var light=DirectionalLight3D.new();light.rotation_degrees=Vector3(-55,-25,0);gui.add_child(light);light.owner=gui
  var status=Label.new();status.name="Status";status.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART;status.size=Vector2(1100,250);gui.add_child(status);status.owner=gui
  var packed=PackedScene.new();packed.pack(gui);ResourceSaver.save(packed,"res://RuntimePresetDemo.tscn");gui.free()
+ f=FileAccess.open("res://slide.xml",FileAccess.WRITE)
+ f.store_string('<mujoco><compiler angle="radian"/><option timestep=".002"/><worldbody><body name="slider" pos="0 0 1"><joint name="slide" type="slide" axis="1 0 0" range="-3 3"/><geom type="box" size=".1 .1 .1" mass="1"/></body></worldbody><actuator><position name="drive" joint="slide" kp="20"/></actuator></mujoco>');f.close()
+ assert(doc.import_file("res://slide.xml"))
+ assert(doc.edit({"op":"qpos","name":"slide","value":2.0}))
+ assert(doc.edit({"op":"control","name":"drive","value":2.0}))
+ package=Builder.pack(doc,"res://models","slide");assert(package.error.is_empty());model=load(package.path)
+ var dynamics_world=World.new();dynamics_world.name="Dynamics";dynamics_world.world_model=model;dynamics_world.start_paused=true
+ for index in 2:
+  var instance=Instance.new();instance.name="First" if index==0 else "Second";instance.model=model;instance.position.x=index*5.0
+  dynamics_world.add_child(instance);instance.owner=dynamics_world
+ packed=PackedScene.new();assert(packed.pack(dynamics_world)==OK);assert(ResourceSaver.save(packed,"res://Dynamics.tscn")==OK);dynamics_world.free()
  print("RUNTIME_PRESET_PREPARE_PASS");quit()

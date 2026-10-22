@@ -5,7 +5,7 @@
 请求契约：
 1. UI只复制数据并排队，accepted/pending 不表示成功；同一实例的模型编辑/预设共享pending门禁。完整预设含全部 actuator 控制值与分类允许的 kp/kv。
 2. native物理步边界验证world/RID生命周期与property revision，暂时暂停该space，基于当前native模型做完整v2兼容签名与所有字段/数值/控制范围/PD合法性验证。不使用可能落后的资源缓存作兼容判断。
-3. 候选模型独立编译，复用原有重建/兼容状态迁移；失败保留旧模型与全部控制。成功在同一边界提交所有目标与PD，再增加revision，返回一致的原生state快照。其他实例的兼容状态保留；未暂停世界恢复运行，已暂停世界保持暂停，时间不因事务重置。
+3. 候选combined model/data独立编译，迁移实际live状态并写入整份控制，在隔离候选上forward；检查qpos/qvel/qacc的MuJoCo有效范围以及力/激活的有限性、无新增动力学warning，全部通过才swap。提交后不再进行未验证的body回写/forward。失败保留旧模型与全部控制。成功在同一边界提交所有目标与PD，再增加revision，返回一致的原生state快照。其他实例的兼容状态保留；未暂停世界恢复运行，已暂停世界保持暂停，时间不因事务重置。
 4. 反馈按session/live_id归属：accepted、completed、failed、cancelled和request/revision。状态展示随选择切换；Stop移除会话后清空。传输仅携带结果元数据，不发送含native RID的state；本地edit_finished结果包含提交快照。
 5. “取消待提交运行预设”只取消仍在native队列中的请求，最终反馈cancelled。若已经执行或提交，取消失败；不伪称撤销。取消后如需恢复设计目标，应显式提交另一份预设。卸载/删除节点取消未执行请求，重建节点产生新live_id/RID，旧句柄不能写新实例。
 
@@ -23,8 +23,10 @@ OUT=/absolute/new/runtime-preset-editor bash tests/runtime_preset_editor/run.sh
 OUT=/absolute/new/document-preset bash tests/control_presets/run.sh
 ```
 
-第一入口生成Environment.tscn、RuntimePresetDemo.tscn、good.json和bad-last.json，35项双实例断言；第二入口7项真实EditorPlugin目标反馈隔离检查。均记录真实退出/错误与日志。接收入口测试不是实际debugger桌面传输通过。
+第一入口生成Environment.tscn、RuntimePresetDemo.tscn、good.json和bad-last.json，48项双实例及数值安全断言；第二入口7项真实EditorPlugin目标反馈隔离检查。均记录真实退出/错误与日志。接收入口测试不是实际debugger桌面传输通过。
 
 GUI：打开生成项目，在编辑器打开RuntimePresetDemo.tscn并F6。进入MuJoCo工作区，选First应用good.json；观察accepted→completed及revision增加，First两个控制/PD全部改变，Second不变。bad-last.json末项kv=0，应failed，之前所有控制与PD保持。重复点击不能重复排队；切Second时不显示First结果。打开文件选择器后切目标/取消应无发送。P恢复/暂停、S步进100；运行应用后保持原暂停状态。点击取消若来得及应cancelled且无变化，若已完成应明确不能取消，不能要求UI把已提交操作撤销。Stop/F6后从设计重新初始化，不继承上次运行预设。
 
 本轮不注入内存耗尽或强制编译器失败，不运行G1重负载；冷导入139仍未根治，不把初始化失败后的未运行测试标通过。
+
+数值回归包含暂停slide live qpos=2、ctrl=0、kp=1e308，以及有限但产生过大qacc的kp=1e12；二者失败后qpos/PD/ctrl/revision/暂停状态/另一实例均保持，下一step无QACC报警或自动重置。校验针对提交时迁移状态，不承诺任意后续输入下的全局稳定性。

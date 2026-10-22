@@ -109,7 +109,7 @@ public:
  MjShape *shape(const RID &rid) const;
  RID make_shape(ShapeType type, const Variant &data);
  void dirty(const RID &space);
- bool rebuild(MjSpace &space);
+ bool rebuild(MjSpace &space, const Dictionary &control_overrides=Dictionary(), bool validate_dynamics=false);
  void write_body(MjBody &body);
  void read_body(MjBody &body);
  ~MjPhysicsServer3D();

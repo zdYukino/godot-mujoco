@@ -76,4 +76,26 @@ func run():
  Bridge.receive("cancel_preset",[{"id":a.live_id,"revision":0}]);result=await finished(a)
  check(result.status=="cancelled" and a.state()==fresh,"bridge cancellation remains scoped")
  world.queue_free();await frames(4)
+ # Default-state compilation is safe at q=0; the migrated live q=2 is not.
+ world=load("res://Dynamics.tscn").instantiate();root.add_child(world);await frames(5)
+ a=world.get_node("First");b=world.get_node("Second")
+ var numerical=Presets.capture(a.model.open_document().document)
+ var numerical_before=a.state();var other_before=b.state();var clock_before=world.info()
+ check(numerical_before.joints.slide.qpos[0]==2 and clock_before.paused,"slide reproducer starts paused at live qpos2")
+ for gain in [1e308,1e12]:
+  numerical.drives.drive.kp=gain;numerical.drives.drive.kv=0;numerical.drives.drive.control=0
+  check(a.request_control_preset(numerical,0),"finite high gain queued "+str(gain))
+  result=await finished(a)
+  check(not result.get("success",true) and str(result.get("error","")).contains("candidate dynamics"),"unsafe migrated dynamics rejected "+str(gain))
+  check(a.state()==numerical_before and b.state()==other_before and a.property_revision==0,"failure preserves full live state PD controls revision and other instance")
+  check(world.info().paused and world.info().time==clock_before.time and world.info().warning_count==clock_before.warning_count,"failure preserves pause clock and active warning counters")
+ check(world.step_simulation(10),"step preserved original after rejection")
+ for i in 300:
+  if world.info().time>clock_before.time:break
+  await process_frame
+ check(absf(a.state().joints.slide.qpos[0]-2)<1e-10 and world.info().warning_count==clock_before.warning_count,"next step keeps qpos2 without bad QACC warning or reset")
+ numerical.drives.drive.kp=30;numerical.drives.drive.control=2
+ check(a.request_control_preset(numerical,0),"safe retry accepted after dynamics failure")
+ result=await finished(a);check(result.get("success",false) and a.property_revision==1 and a.state().actuator_parameters.drive.gain==30,"safe retry commits once")
+ world.queue_free();await frames(4)
  print("RUNTIME_PRESET_RESULT ",JSON.stringify({"passed":passed,"failed":failed}));quit(0 if failed==0 else 1)

@@ -119,7 +119,7 @@ void MjPhysicsServer3D::_free_rid(const RID&source_rid){
 }
 static void vector_xml(std::ostream&o,const Vector3&v){o<<v.x<<' '<<v.y<<' '<<v.z;}
 static void pose_xml(std::ostream&o,const Transform3D&t){o<<" pos=\"";vector_xml(o,godot_to_mj(t.origin));Quaternion q=godot_to_mj(t.basis.orthonormalized()).get_rotation_quaternion();o<<"\" quat=\""<<q.w<<' '<<q.x<<' '<<q.y<<' '<<q.z<<"\"";}
-bool MjPhysicsServer3D::rebuild(MjSpace&s){
+bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,bool validate_dynamics){
  if(!s.dirty)return s.model&&s.data;
  std::ostringstream xml;xml.imbue(std::locale::classic());xml<<std::setprecision(17)<<"<mujoco model=\"GodotPhysicsSpace\"><compiler angle=\"radian\" fusestatic=\"false\"/><option timestep=\"0.002\" gravity=\"";vector_xml(xml,godot_to_mj(s.gravity_direction*s.gravity));xml<<"\"/><worldbody>";
  std::vector<std::pair<RID,int>> owners;
@@ -208,15 +208,44 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s){
   }
   names=controls.keys();for(int i=0;i<names.size();++i){String n=names[i];std::string full=o.prefix+n.utf8().get_data();int a=mj_name2id(model,mjOBJ_ACTUATOR,full.c_str());if(a<0||(s.model&&mj_name2id(s.model,mjOBJ_ACTUATOR,full.c_str())>=0))continue;data->ctrl[a]=double(controls[n]);if(activation.has(n)){Array act=activation[n];for(int k=0;k<std::min(int(act.size()),model->actuator_actnum[a]);++k)data->act[model->actuator_actadr[a]+k]=double(act[k]);}}
  }
+ auto reject_candidate=[&](const String &error){mj_deleteData(data);mj_deleteModel(model);s.last_error=error;return false;};
+ // Complete the transaction on isolated combined data, including all live-state
+ // migration and native body pose writes that commit will perform.
+ if(validate_dynamics){
+  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID)continue;
+   int body_id=mj_name2id(model,mjOBJ_BODY,("b"+std::to_string(b.rid.get_id())).c_str());if(body_id<1)continue;
+   int joint=model->body_jntadr[body_id];if(joint<0)continue;int q=model->jnt_qposadr[joint],v=model->jnt_dofadr[joint];
+   Vector3 pos=godot_to_mj(b.transform.origin);Quaternion quat=godot_to_mj(b.transform.basis).get_rotation_quaternion().normalized();
+   for(int k=0;k<3;++k)data->qpos[q+k]=pos[k];data->qpos[q+3]=quat.w;data->qpos[q+4]=quat.x;data->qpos[q+5]=quat.y;data->qpos[q+6]=quat.z;
+   Vector3 linear=godot_to_mj(b.linear_velocity),angular=godot_to_mj(b.transform.basis.orthonormalized().transposed().xform(b.angular_velocity));
+   for(int k=0;k<3;++k){data->qvel[v+k]=linear[k];data->qvel[v+3+k]=angular[k];}
+  }
+ }
+ Array override_names=control_overrides.keys();
+ for(int i=0;i<override_names.size();++i){String name=override_names[i];int a=mj_name2id(model,mjOBJ_ACTUATOR,name.utf8().get_data());
+  if(a<0||!std::isfinite(double(control_overrides[name])))return reject_candidate("Invalid candidate control override");
+  data->ctrl[a]=double(control_overrides[name]);
+ }
  mj_normalizeQuat(model,data->qpos);
+ int warnings_before[mjNWARNING];for(int i=0;i<mjNWARNING;++i)warnings_before[i]=data->warning[i].number;
  mj_forward(model,data);
+ if(validate_dynamics){
+  auto valid=[](const mjtNum*values,int count,bool bounded){for(int i=0;i<count;++i)if(!std::isfinite(values[i])||(bounded&&mju_isBad(values[i])))return false;return true;};
+  if(!valid(data->qpos,model->nq,true)||!valid(data->qvel,model->nv,true)||!valid(data->qacc,model->nv,true)||!valid(data->qacc_smooth,model->nv,true)||
+     !valid(data->ctrl,model->nu,false)||!valid(data->act,model->na,false)||!valid(data->act_dot,model->na,false)||!valid(data->actuator_force,model->nu,false)||
+     !valid(data->qfrc_actuator,model->nv,false)||!valid(data->qfrc_constraint,model->nv,false)||!valid(data->qfrc_bias,model->nv,false))
+   return reject_candidate("Unsafe migrated candidate dynamics; preset not committed");
+  for(int i=0;i<mjNWARNING;++i)if(data->warning[i].number!=warnings_before[i])return reject_candidate("Candidate dynamics produced a warning; preset not committed");
+ }
+
  for(int i=0;i<model->nq;++i)if(!std::isfinite(data->qpos[i])){mj_deleteData(data);mj_deleteModel(model);s.last_error="Nonfinite candidate state";return false;}
  std::vector<std::pair<RID,int>> mapped(model->ngeom);
  for(size_t i=0;i<owners.size();++i){int g=mj_name2id(model,mjOBJ_GEOM,("g"+std::to_string(i)).c_str());if(g>=0)mapped[g]=owners[i];}
  if(s.data)mj_deleteData(s.data);if(s.model)mj_deleteModel(s.model);
  s.model=model;s.data=data;s.geom_owners=std::move(mapped);s.dirty=false;s.last_error="";++s.revision;
- for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;std::string name="b"+std::to_string(b.rid.get_id());b.mj_body=mj_name2id(model,mjOBJ_BODY,name.c_str());write_body(b);}
- mj_forward(model,data);remember_initial_state(s);return true;
+ for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;std::string name="b"+std::to_string(b.rid.get_id());b.mj_body=mj_name2id(model,mjOBJ_BODY,name.c_str());if(!validate_dynamics)write_body(b);}
+ // Validated transactions commit exactly the data already checked above.
+ if(!validate_dynamics)mj_forward(model,data);remember_initial_state(s);return true;
 }
 void MjPhysicsServer3D::write_body(MjBody&b){auto*s=space(b.space);if(!s||s->dirty||!s->model||b.mj_body<1||b.mode!=BODY_MODE_RIGID)return;int j=s->model->body_jntadr[b.mj_body];if(j<0)return;int q=s->model->jnt_qposadr[j],v=s->model->jnt_dofadr[j];Vector3 p=godot_to_mj(b.transform.origin);Quaternion quat=godot_to_mj(b.transform.basis.orthonormalized()).get_rotation_quaternion().normalized();for(int k=0;k<3;++k)s->data->qpos[q+k]=p[k];s->data->qpos[q+3]=quat.w;s->data->qpos[q+4]=quat.x;s->data->qpos[q+5]=quat.y;s->data->qpos[q+6]=quat.z;Vector3 lv=godot_to_mj(b.linear_velocity),av=godot_to_mj(b.transform.basis.orthonormalized().transposed().xform(b.angular_velocity));for(int k=0;k<3;++k){s->data->qvel[v+k]=lv[k];s->data->qvel[v+3+k]=av[k];}mj_forward(s->model,s->data);}
 void MjPhysicsServer3D::read_body(MjBody &b) {
