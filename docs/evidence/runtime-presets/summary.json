@@ -1,0 +1,14 @@
+{
+  "extension_sha256": "8f1cb0f2308645b1f1bc91092a9a903e6cff6a0056a732b020e500b51e16bbd1",
+  "native_changed": true,
+  "build_exit": 0,
+  "runtime": 35,
+  "ui": 7,
+  "document": 39,
+  "native": 149,
+  "typed": 69,
+  "editor": 160,
+  "heightfield": 73,
+  "strict_smoke": "passed",
+  "real_gui": "not_run"
+}

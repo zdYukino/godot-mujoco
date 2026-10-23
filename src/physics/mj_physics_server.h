@@ -13,10 +13,13 @@
 #include <set>
 #include <mutex>
 #include <deque>
+#include <functional>
+#include <tuple>
 namespace godot {
 class MjPhysicsServer3D;
 class MjDirectBodyState;
 class MjDirectSpaceState;
+struct MjAreaScratch;
 struct MjShape { RID rid; PhysicsServer3D::ShapeType type; Variant data; float margin=0.04f; };
 struct MjShapeInstance { RID shape; Transform3D transform; bool disabled=false; };
 struct MjImported {
@@ -25,7 +28,13 @@ struct MjImported {
  std::string prefix;
  ~MjImported() { if(spec) mj_deleteSpec(spec); }
 };
+// One solved manifold point in Godot world coordinates; impulse covers one substep.
+struct MjContact {
+ RID collider; uint64_t object_id=0; int local_shape=-1, collider_shape=-1;
+ Vector3 position, normal, impulse, local_velocity, collider_velocity;
+};
 struct MjBody {
+ int max_contacts=0; std::vector<MjContact> contacts;
  RID rid, space; bool heightfield=false; uint64_t object_id=0; PhysicsServer3D::BodyMode mode=PhysicsServer3D::BODY_MODE_RIGID;
  Transform3D transform; Vector3 linear_velocity, angular_velocity, force, torque, constant_force, constant_torque;
  std::vector<MjShapeInstance> shapes; std::map<int, Variant> params;
@@ -33,6 +42,17 @@ struct MjBody {
  Callable sync_callback, integration_callback; Variant integration_userdata;
  MjDirectBodyState *direct=nullptr; int mj_body=-1; double mass=1; double gravity_scale=1;
  std::set<uint64_t> exceptions;
+};
+// Value-only shape pair identity; never retain pointers across user callbacks.
+struct MjAreaPair {
+ RID rid; uint64_t object_id=0; int other_shape=0, self_shape=0; bool area=false;
+ bool operator<(const MjAreaPair &b) const {return std::tie(area,rid,object_id,other_shape,self_shape)<std::tie(b.area,b.rid,b.object_id,b.other_shape,b.self_shape);}
+};
+struct MjArea {
+ RID rid, space; uint64_t object_id=0; Transform3D transform;
+ uint32_t layer=1, mask=1; bool monitorable=true, ray_pickable=true;
+ std::vector<MjShapeInstance> shapes; std::map<int,Variant> params;
+ Callable body_callback, area_callback; std::set<MjAreaPair> reported;
 };
 struct MjSpace {
  bool paused=false; uint64_t revision=0; String last_error;
@@ -71,6 +91,8 @@ public:
  bool scene_set_actuator(const RID &space, const RID &object, const String &name, double value);
  bool scene_release_model(const RID &space, const RID &object);
  int64_t scene_request_model_edit(const RID &space, const RID &object, const Dictionary &snapshot, const String &directory, int64_t expected_revision);
+ int64_t scene_request_preset(const RID &space,const RID &object,const Dictionary &preset,int64_t revision);
+ bool scene_cancel_preset(int64_t request);
  Dictionary scene_edit_result(int64_t request);
  void scene_cancel_model_edit(int64_t request);
  void process_model_edits();
@@ -90,12 +112,20 @@ public:
  struct WorldCommand {int64_t request;RID space;String command;int count;};
  std::deque<WorldCommand> world_commands;
  std::map<int64_t,Dictionary> world_command_results;
- struct ModelEdit {int64_t request, expected_revision; RID space, object; Dictionary snapshot; String directory;};
+ struct ModelEdit {int64_t request, expected_revision; RID space, object; Dictionary snapshot; String directory; bool preset=false;};
  std::mutex edits_mutex;
  std::deque<ModelEdit> model_edits;
  std::map<int64_t,Dictionary> edit_results;
  int64_t next_edit_request=1;
 
+ std::shared_ptr<MjAreaScratch> area_scratch;
+ std::map<uint64_t,std::unique_ptr<MjArea>> areas;
+ std::deque<std::function<void()>> area_commands;
+ bool draining_area_commands=false;
+ MjArea *area(const RID &rid) const;
+ void flush_area_queries();
+ void retire_area_pairs(const RID &rid, int from_shape=-1);
+ void drain_area_commands();
  std::set<uint64_t> pending_free;
  RID_Owner<int> handles;
  std::map<uint64_t,std::unique_ptr<MjShape>> shapes;
@@ -107,9 +137,10 @@ public:
  MjShape *shape(const RID &rid) const;
  RID make_shape(ShapeType type, const Variant &data);
  void dirty(const RID &space);
- bool rebuild(MjSpace &space);
+ bool rebuild(MjSpace &space, const Dictionary &control_overrides=Dictionary(), bool validate_dynamics=false);
  void write_body(MjBody &body);
  void read_body(MjBody &body);
+ void collect_contacts(MjSpace &space);
  ~MjPhysicsServer3D();
  RID _world_boundary_shape_create() override;
  RID _separation_ray_shape_create() override;

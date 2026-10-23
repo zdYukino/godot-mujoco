@@ -18,10 +18,12 @@ static func detach(instance: Node) -> void:
 		EngineDebugger.unregister_message_capture("mujoco_live")
 
 static func publish(instance: Node) -> void:
+	# Transport only serializable completion metadata, not native snapshot RIDs.
+	var outcome=instance.last_preset_result.duplicate(true);outcome.erase("state")
 	if EngineDebugger.is_active():
 		EngineDebugger.send_message("mujoco_live:instance",[{
 			"id":instance.live_id,"path":str(instance.get_path()),"revision":instance.property_revision,
-			"resource":instance.model.resource_path,"pending":instance.edit_request != 0,"error":instance.last_error}])
+			"resource":instance.model.resource_path,"pending":instance.edit_request != 0,"error":instance.last_error,"preset":outcome}])
 
 static func receive(message: String, data: Array) -> bool:
 	if message == "list":
@@ -29,11 +31,16 @@ static func receive(message: String, data: Array) -> bool:
 			var instance = reference.get_ref()
 			if instance: publish(instance)
 		return true
-	if message not in ["apply", "control"] or data.size() != 1 or not data[0] is Dictionary: return false
+	if message not in ["apply", "control", "preset", "cancel_preset"] or data.size() != 1 or not data[0] is Dictionary: return false
 	var request: Dictionary = data[0]
 	var instance: Node = instances.get(request.get("id"), weakref(null)).get_ref()
 	if not instance: return true
-	if message == "apply":
+	if message == "preset":
+		if request.get("preset") is Dictionary: instance.request_control_preset(request.preset,int(request.get("revision",-1)))
+		else: instance.last_error="Invalid preset payload"
+	elif message == "cancel_preset":
+		if not instance.cancel_control_preset(): instance.last_error="Preset already executing/completed or no longer pending; refresh result"
+	elif message == "apply":
 		var path: String = request.get("resource", "")
 		if not path.begins_with("res://") or path.get_extension() != "tres":
 			instance.last_error = "Live apply requires a saved project model resource"

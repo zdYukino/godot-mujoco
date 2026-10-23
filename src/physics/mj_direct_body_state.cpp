@@ -1,4 +1,5 @@
 #include "mj_physics_server.h"
+#include <godot_cpp/core/object.hpp>
 namespace godot {
 static Vector3 total_gravity(MjPhysicsServer3D *server, const RID &rid) {
  auto *b=server->body(rid); if(!b) return {}; auto *s=server->space(b->space);
@@ -41,7 +42,57 @@ void MjDirectBodyState::_set_collision_layer(uint32_t v){server->_body_set_colli
 uint32_t MjDirectBodyState::_get_collision_layer() const{return server->_body_get_collision_layer(rid);}
 void MjDirectBodyState::_set_collision_mask(uint32_t v){server->_body_set_collision_mask(rid,v);}
 uint32_t MjDirectBodyState::_get_collision_mask() const{return server->_body_get_collision_mask(rid);}
-int32_t MjDirectBodyState::_get_contact_count() const{return 0;}
+// Snapshots contain values and RIDs only; never retain MuJoCo pointers.
+void MjPhysicsServer3D::collect_contacts(MjSpace &s) {
+ for(int i=0;i<s.data->ncon;++i){
+  const auto &c=s.data->contact[i];if(c.efc_address<0)continue;
+  if(c.geom[0]<0||c.geom[1]<0)continue; // flex contacts have no native rigid geom identity.
+  const auto owners=std::make_pair(s.geom_owners[c.geom[0]],s.geom_owners[c.geom[1]]);
+  auto wants_report=[](const MjBody *b){return b&&b->max_contacts>int(b->contacts.size());};
+  if(!wants_report(body(owners.first.first))&&!wants_report(body(owners.second.first)))continue;
+  // MuJoCo contact frame rows map normal/tangent force into world axes.
+  mjtNum force[6];mj_contactForce(s.model,s.data,i,force);
+  Vector3 normal=mj_to_godot(Vector3(c.frame[0],c.frame[1],c.frame[2]));
+  Vector3 impulse;
+  for(int axis=0;axis<3;++axis)impulse+=mj_to_godot(Vector3(c.frame[3*axis],c.frame[3*axis+1],c.frame[3*axis+2]))*force[axis]*s.model->opt.timestep;
+  Vector3 position=mj_to_godot(Vector3(c.pos[0],c.pos[1],c.pos[2]));
+  Vector3 velocities[2];
+  for(int side=0;side<2;++side){
+   // mjOBJ_BODY returns velocity at the inertial COM, in world axes.
+   int id=s.model->geom_bodyid[c.geom[side]];mjtNum velocity[6];mj_objectVelocity(s.model,s.data,mjOBJ_BODY,id,velocity,0);
+   Vector3 angular(velocity[0],velocity[1],velocity[2]),linear(velocity[3],velocity[4],velocity[5]);
+   Vector3 center(s.data->xipos[3*id],s.data->xipos[3*id+1],s.data->xipos[3*id+2]);
+   velocities[side]=mj_to_godot(linear+angular.cross(Vector3(c.pos[0],c.pos[1],c.pos[2])-center));
+  }
+  for(int side=0;side<2;++side){
+   auto owner=side==0?owners.first:owners.second,other=side==0?owners.second:owners.first;
+   auto*b=body(owner.first);if(!b||b->max_contacts<=int(b->contacts.size()))continue;
+   auto*collider=body(other.first);MjContact report;
+   report.local_shape=owner.second;report.position=position;report.normal=normal*(side==0?-1:1);report.impulse=impulse*(side==0?-1:1);
+   report.local_velocity=velocities[side];report.collider_velocity=velocities[1-side];
+   if(collider){report.collider=collider->rid;report.object_id=collider->object_id;report.collider_shape=other.second;}
+   b->contacts.push_back(report);
+  }
+ }
+}
+static const MjContact *contact(MjPhysicsServer3D *server,const RID &rid,int index){
+ auto*b=server->body(rid);if(!b||index<0||index>=int(b->contacts.size()))return nullptr;
+ return &b->contacts[index];
+}
+int32_t MjDirectBodyState::_get_contact_count() const{auto*b=server->body(rid);return b?b->contacts.size():0;}
+#define CONTACT_GET(type,name,field,fallback) type MjDirectBodyState::_get_contact_##name(int32_t i) const{auto*c=contact(server,rid,i);return c?c->field:fallback;}
+CONTACT_GET(Vector3,local_position,position,Vector3())
+CONTACT_GET(Vector3,collider_position,position,Vector3())
+CONTACT_GET(Vector3,local_normal,normal,Vector3())
+CONTACT_GET(Vector3,impulse,impulse,Vector3())
+CONTACT_GET(Vector3,local_velocity_at_position,local_velocity,Vector3())
+CONTACT_GET(Vector3,collider_velocity_at_position,collider_velocity,Vector3())
+CONTACT_GET(int32_t,local_shape,local_shape,-1)
+CONTACT_GET(int32_t,collider_shape,collider_shape,-1)
+#undef CONTACT_GET
+RID MjDirectBodyState::_get_contact_collider(int32_t i) const{auto*c=contact(server,rid,i);auto*b=server->body(rid);auto*other=c?server->body(c->collider):nullptr;return other&&b&&other->space==b->space&&!server->pending_free.count(other->rid.get_id())?other->rid:RID();}
+uint64_t MjDirectBodyState::_get_contact_collider_id(int32_t i) const{auto*c=contact(server,rid,i);return c&&_get_contact_collider(i).is_valid()?c->object_id:0;}
+Object *MjDirectBodyState::_get_contact_collider_object(int32_t i) const{auto id=_get_contact_collider_id(i);return id?ObjectDB::get_instance(id):nullptr;}
 float MjDirectBodyState::_get_step() const{return server->last_step;}
 void MjDirectBodyState::_integrate_forces(){mj_unsupported("explicit direct-state integrate_forces; MuJoCo performs integration");}
 PhysicsDirectSpaceState3D *MjDirectBodyState::_get_space_state(){auto*b=server->body(rid);return b?server->_space_get_direct_state(b->space):nullptr;}

@@ -1,0 +1,10 @@
+{
+  "extension_sha256": "9c0c4135dc08effcabd423624fbadfeff63450b92036cbe0ed013b0768fc2a71",
+  "build_exit": 0,
+  "runtime_checks": 48,
+  "native_checks": 149,
+  "typed_checks": 69,
+  "heightfield_checks": 73,
+  "native_changed": true,
+  "real_gui": "not_run"
+}

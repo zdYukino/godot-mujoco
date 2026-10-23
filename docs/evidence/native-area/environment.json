@@ -1,0 +1,31 @@
+{
+  "base_contact": "fce6d0a9245903369827926080ea412ea6be08d8",
+  "overlap_dependency": "0bc54e2d5f365baf3388cc4dbee8b2d9f2b4442b",
+  "overlap_cherry_pick": "a5add5a",
+  "dependency_conflicts": false,
+  "godot": "4.7.2.stable.mono.official.ed1daf0bf",
+  "mujoco": "3.16.0",
+  "mujoco_from_source": true,
+  "build_type": "Release",
+  "gui_visual_qa": "not executed: no DISPLAY/Xvfb",
+  "commands": {
+    "build": "cmake --build /workspace/shared/builds/contact-source -j 5",
+    "area": "OUT=/tmp/native-area-final bash tests/native_area/run.sh",
+    "contact": "OUT=/tmp/native-area-contact-regression bash tests/native_contacts/run.sh",
+    "overlap": "OUT=/tmp/native-area-overlap-regression bash tests/native_overlap/run.sh",
+    "backend": "REPEAT=1 OUT=/tmp/native-area-backend-regression bash tests/native_backend/run.sh",
+    "core": "/workspace/shared/builds/contact-source/gmj_core_smoke"
+  },
+  "exit_codes": {
+    "build": 0,
+    "area": 0,
+    "contact": 0,
+    "overlap": 0,
+    "backend": 0,
+    "core": 0
+  },
+  "sha256": {
+    "libgodot_mujoco.linux.template_debug.x86_64.so": "fd98a21c6265f3d313ae91a984ef604595a96560c4c8bebacda8fad2a1f3e8cf",
+    "libmujoco.so.3.16.0": "49bc9bd77036667c1dcc9f41715ea7c4e122346e671feec14f8d50cf4559b83c"
+  }
+}
