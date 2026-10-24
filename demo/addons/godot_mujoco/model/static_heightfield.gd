@@ -9,6 +9,8 @@ var _replace_design := false
 @export var design: MjHeightFieldData
 @export_flags_3d_physics var collision_layer := 1
 @export_flags_3d_physics var collision_mask := 1
+## Saved design material. Runtime changes require Apply, like grid edits.
+@export var physics_material_override: PhysicsMaterial
 @export var auto_apply := true
 signal edit_finished(result: Dictionary)
 var body_rid := RID()
@@ -32,8 +34,15 @@ func _ready() -> void:
 		Bridge.attach(self)
 		if auto_apply: request_apply()
 
+func _material_snapshot(snapshot: Dictionary) -> Dictionary:
+	if snapshot.is_empty(): return snapshot
+	var material := physics_material_override
+	snapshot["friction"] = snapshot.get("friction", (-material.friction if material.rough else material.friction) if material else 1.0)
+	snapshot["bounce"] = snapshot.get("bounce", material.bounce if material else 0.0)
+	return snapshot
+
 func dirty() -> bool:
-	return not design or design.snapshot(global_transform,collision_layer,collision_mask) != _committed
+	return not design or _material_snapshot(design.snapshot(global_transform,collision_layer,collision_mask)) != _committed
 
 func request_apply(expected_revision: int = -1) -> bool:
 	if not design: last_error="Assign a heightfield design";return false
@@ -68,6 +77,7 @@ func _queue(value: MjHeightFieldData,expected: int,snapshot: Dictionary = {}) ->
 	_candidate=value.duplicate(true) if value else null
 	_candidate_pose=snapshot.get("pose",global_transform)
 	_candidate_snapshot = snapshot.duplicate(true) if not snapshot.is_empty() else (_candidate.snapshot(_candidate_pose,collision_layer,collision_mask) if _candidate else {})
+	_candidate_snapshot=_material_snapshot(_candidate_snapshot)
 	pending_request=PhysicsServer3D.call("scene_request_heightfield",get_world_3d().space,body_rid,_candidate_snapshot,get_instance_id(),revision if expected < 0 else expected)
 	if pending_request == 0: last_error="Heightfield queue is full";return false
 	last_error="";Bridge.publish(self);return true
@@ -95,6 +105,9 @@ func _poll_result() -> void:
 			if _replace_design:
 				design=_candidate.duplicate(true);global_transform=_candidate_pose
 				collision_layer=_candidate_snapshot.layer;collision_mask=_candidate_snapshot.mask
+				physics_material_override=PhysicsMaterial.new()
+				physics_material_override.friction=absf(_candidate_snapshot.friction)
+				physics_material_override.rough=_candidate_snapshot.friction<0
 			_committed=_candidate_snapshot.duplicate(true)
 			_visual.mesh=_candidate.mesh();_visual.global_transform=_candidate_pose
 		else:

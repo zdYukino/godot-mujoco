@@ -64,3 +64,7 @@ Discard。原生 Undo/Redo 与面板操作使用同一场景历史。
 操作区自动换行，长状态行折行，目标菜单固定最小宽度且不随最长 ID 撑宽；显示 ID 尾部，
 完整路径/ID 在提示中。dot 请补验 1152px 宽度下所有按钮可点击、长 ID 列表、Stop 清理，
 以及原生 Ctrl+Z/Ctrl+Shift+Z 后再次 Apply/Save 的显示与磁盘一致性。
+
+## 地形摩擦
+
+选择场景里的 MjStaticHeightField，在 Inspector 的 Physics Material Override 新建 PhysicsMaterial，设置 Friction（0..1）和 Rough，Bounce 保持 0。保存场景可持久化材质；运行中的修改需沿用本面板 Apply 或 request_apply() 才提交，等待完成结果和新 revision。普通 HeightMapShape3D 则使用所属 StaticBody3D 的相同材质入口，资源变化自动触发物理边界重建。详见[地形材质规则与验证](native-heightmap.zh-CN.md)。

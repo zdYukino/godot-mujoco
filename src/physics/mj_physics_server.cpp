@@ -246,7 +246,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  double low=heights[0];for(int k=1;k<heights.size();++k)low=std::min(low,double(heights[k]));
  Transform3D t=b.transform;t.origin+=t.basis.xform(Vector3(0,low,0));
  xml<<"<geom name=\"g"<<owners.size()<<"\" type=\"hfield\" hfield=\"h"<<b.rid.get_id()<<"\"";pose_xml(xml,t);
- xml<<" contype=\""<<int32_t(b.mode==BODY_MODE_KINEMATIC?0:b.layer)<<"\" conaffinity=\""<<int32_t(b.mode==BODY_MODE_KINEMATIC?0:b.mask)<<"\" friction=\"1 .005 .0001\"/>";
+ xml<<" contype=\""<<int32_t(b.mode==BODY_MODE_KINEMATIC?0:b.layer)<<"\" conaffinity=\""<<int32_t(b.mode==BODY_MODE_KINEMATIC?0:b.mask)<<"\" friction=\""<<std::abs(double(_body_get_param(b.rid,BODY_PARAM_FRICTION)))<<" .005 .0001\"/>";
  owners.push_back({b.rid,0});continue;
  }
  xml<<"<body name=\"b"<<b.rid.get_id()<<"\"";pose_xml(xml,b.transform);if(b.mode==BODY_MODE_KINEMATIC)xml<<" mocap=\"true\"";xml<<">";

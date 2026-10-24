@@ -76,3 +76,12 @@ allocator exhaustion and an artificially forced MuJoCo compiler failure are not
 injected. The candidate compiler rollback branch is implemented but is not claimed
 as a forced-failure runtime test. Terrain UI polish, a typed C# terrain-specific
 facade remain separate workflows; generic HeightMapShape3D now has the native entry point linked above.
+
+## Physics material
+
+`physics_material_override` is a saved Godot PhysicsMaterial exposed in the Inspector.
+Friction (0..1) and rough are applied through the same explicit terrain Apply transaction;
+nonzero bounce is rejected. A queued snapshot captures the numeric values, and later
+resource edits remain dirty. No material defaults to friction=1, bounce=0. Native body
+pairs retain the existing signed rough-material combination; imported MJCF contacts
+retain MuJoCo priority/solmix rules. See [material setup and acceptance](native-heightmap.zh-CN.md).
