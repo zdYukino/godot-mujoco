@@ -1,0 +1,376 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+PASS native backend identity 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS pause isolated space 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS empty lightweight authored world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS configure exact .01 second steps 
+PASS paused bodies do not run integration or sync callbacks 
+PASS mass two impulse changes all world axes { "actual": (1.0, 2.0, 3.0), "expected": (1.0, 2.0, 3.0) }
+PASS mass change affects next impulse { "actual": (2.0, 0.0, 3.0), "expected": (2.0, 0.0, 3.0) }
+PASS queued force remains unapplied while paused { "actual": (0.0, 0.0, 0.0), "expected": (0.0, 0.0, 0.0) }
+PASS step queued 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS step completed { "request": 1, "command": "step", "success": true, "error": "", "time": 0.01, "paused": true }
+PASS one-shot force integrates F over mass times dt { "actual": (0.1, 0.2, -0.3), "expected": (0.1, 0.2, -0.3) }
+PASS single step callbacks once with actual timestep 
+PASS pause retains numerical state { "actual": (0.1, 0.2, -0.3), "expected": (0.1, 0.2, -0.3) }
+PASS paused ticks do not repeat callbacks 
+PASS step queued 
+PASS step completed { "request": 2, "command": "step", "success": true, "error": "", "time": 0.02, "paused": true }
+PASS one-shot force cleared after simulated step { "actual": (0.1, 0.2, -0.3), "expected": (0.1, 0.2, -0.3) }
+PASS step queued 
+PASS step completed { "request": 3, "command": "step", "success": true, "error": "", "time": 0.05, "paused": true }
+PASS constant force persists for three substeps { "actual": (0.4, 0.2, -0.3), "expected": (0.4, 0.2, -0.3) }
+PASS multi-step callback reports actual simulated span 
+PASS step queued 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS step completed { "request": 4, "command": "step", "success": true, "error": "", "time": 0.06, "paused": true }
+PASS gravity scale two physical acceleration { "actual": (0.0, -0.2, 0.0), "expected": (0.0, -0.2, 0.0) }
+PASS step queued 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS step completed { "request": 5, "command": "step", "success": true, "error": "", "time": 0.07, "paused": true }
+PASS negative gravity scale reverses acceleration { "actual": (0.0, 0.1, 0.0), "expected": (0.0, 0.1, 0.0) }
+PASS step queued 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS step completed { "request": 6, "command": "step", "success": true, "error": "", "time": 0.1, "paused": true }
+PASS linear damping once per actual integration span { "actual": (8.5, 0.0, 0.0), "expected": (8.5, 0.0, 0.0) }
+PASS angular damping once per actual integration span { "actual": (0.0, 0.0, 1.76), "expected": (0.0, 0.0, 1.76) }
+PASS step queued 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS step completed { "request": 7, "command": "step", "success": true, "error": "", "time": 0.11, "paused": true }
+PASS torque uses generated box inertia { "actual": (0.0, 0.0, 0.01), "expected": (0.0, 0.0, 0.01) }
+PASS step queued 
+PASS step completed { "request": 8, "command": "step", "success": true, "error": "", "time": 0.13, "paused": true }
+PASS constant torque persists after one-shot torque clears { "actual": (0.0, 0.0, 0.03), "expected": (0.0, 0.0, 0.03) }
+PASS step queued 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS step completed { "request": 9, "command": "step", "success": true, "error": "", "time": 0.14, "paused": true }
+PASS custom integrator omits gravity damping and both force classes { "actual": (1.0, 0.0, 0.0), "expected": (1.0, 0.0, 0.0) }
+PASS custom integrator omits both torque classes { "actual": (0.0, 0.0, 2.0), "expected": (0.0, 0.0, 2.0) }
+PASS step queued 
+PASS step completed { "request": 10, "command": "step", "success": true, "error": "", "time": 0.15, "paused": true }
+PASS explicit direct integrate applies gravity then damping { "actual": (0.98, -0.098, 0.0), "expected": (0.98, -0.098, 0.0) }
+PASS explicit direct integrate damps angular velocity { "actual": (0.0, 0.0, 1.94), "expected": (0.0, 0.0, 1.94) }
+PASS step queued 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS step completed { "request": 11, "command": "step", "success": true, "error": "", "time": 0.16, "paused": true }
+PASS omitted one-shot forces are consumed, not replayed on resume { "actual": (0.0, 0.0, 0.0), "expected": (0.0, 0.0, 0.0) }
+PASS omitted one-shot torques are consumed { "actual": (0.0, 0.0, 0.0), "expected": (0.0, 0.0, 0.0) }
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS center of mass is rotated offset, without world origin { "actual": (-0.1, -0.25, 0.3), "expected": (-0.1, -0.25, 0.3) }
+PASS local COM follows shape offset { "actual": (0.25, -0.1, 0.3), "expected": (0.25, -0.1, 0.3) }
+PASS offset impulse linear response { "actual": (0.25, 0.333333, 0.416667), "expected": (0.25, 0.333333, 0.416667) }
+PASS offset impulse rotated asymmetric inverse inertia { "actual": (-0.425, -0.019231, 0.55), "expected": (-0.425, -0.019231, 0.55) }
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS rebuild while paused 
+PASS rebuild preserves linear state { "actual": (0.25, 0.333333, 0.416667), "expected": (0.25, 0.333333, 0.416667) }
+PASS rebuild preserves angular state { "actual": (-0.425, -0.019231, 0.55), "expected": (-0.425, -0.019231, 0.55) }
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS compound volume weighted center of mass { "actual": (2.666667, 0.0, 0.0), "expected": (2.666667, 0.0, 0.0) }
+PASS compound COM impulse linear mass response { "actual": (0.0, 1.0, 0.0), "expected": (0.0, 1.0, 0.0) }
+PASS compound impulse at actual COM has no angular response { "actual": (0.0, 0.0, 0.0), "expected": (0.0, 0.0, 0.0) }
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS torque impulse preserves COM linear velocity { "actual": (0.3, 0.0, 0.1), "expected": (0.3, 0.0, 0.1) }
+PASS step queued 
+PASS step completed { "request": 12, "command": "step", "success": true, "error": "", "time": 0.26, "paused": true }
+PASS rotating offset body preserves force-free COM velocity { "actual": (0.300001, -0.0, 0.100022), "expected": (0.3, 0.0, 0.1) }
+PASS rotating offset COM follows straight translation { "actual": (120.3906, 3.0, 0.005674), "expected": (120.3905, 3.0, 0.005674) }
+PASS step queued 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS step completed { "request": 13, "command": "step", "success": true, "error": "", "time": 0.27, "paused": true }
+PASS free inside integration callback suppresses sync and remains safe 
+PASS step queued 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS step completed { "request": 14, "command": "step", "success": true, "error": "", "time": 0.28, "paused": true }
+PASS detached body has no callback 
+PASS step queued 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS step completed { "request": 15, "command": "step", "success": true, "error": "", "time": 0.29, "paused": true }
+PASS readded body resumes exactly one callback 
+PASS step queued 
+PASS step completed { "request": 16, "command": "capture", "success": true, "error": "", "time": 0.29, "paused": true }
+PASS step queued 
+PASS step completed { "request": 17, "command": "step", "success": true, "error": "", "time": 0.31, "paused": true }
+PASS body moves after checkpoint 
+PASS step queued 
+PASS step completed { "request": 18, "command": "reset", "success": true, "error": "", "time": 0.29, "paused": true }
+PASS paused reset restores body pose { "actual": (0.286, 0.009, -0.015), "expected": (0.286, 0.009, -0.015) }
+PASS paused reset delivers sync only, no force callback 
+PASS step queued 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS step completed { "request": 19, "command": "step", "success": true, "error": "", "time": 0.59, "paused": true }
+PASS step queued 
+PASS step completed { "request": 20, "command": "step", "success": true, "error": "", "time": 1.59, "paused": true }
+PASS normal friction uses lower coefficient (3.971019, 0.28981, -0.0)
+PASS larger minimum friction physically brakes slider (0.000304, 0.000721, 0.0)
+PASS rough slider overrides low floor friction (0.000304, 0.000721, -0.0)
+PASS rough floor overrides low slider friction (-0.000745, 0.001462, -0.0)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS ordinary space paused for setup 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS ordinary space resumed 
+PASS ordinary space paused after ticks 
+PASS ordinary elapsed time is whole Godot ticks 0.0666666701436
+PASS ordinary damping once per Godot tick despite MuJoCo subdivisions { "actual": (7.060668, -0.0, 0.0), "expected": (7.060668, 0.0, 0.0) }
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS resume combine damping 
+PASS pause combine damping 
+PASS combine damping includes space and body coefficients { "actual": (6.088334, -0.0, 0.0), "expected": (6.088334, 0.0, 0.0) }
+NATIVE_SEMANTICS_RESULT {"backend":"MjPhysicsServer3D","checks":[{"detail":"","name":"native backend identity","passed":true},{"detail":"","name":"pause isolated space","passed":true},{"detail":"","name":"empty lightweight authored world","passed":true},{"detail":"","name":"configure exact .01 second steps","passed":true},{"detail":"","name":"paused bodies do not run integration or sync callbacks","passed":true},{"detail":"{ \"actual\": (1.0, 2.0, 3.0), \"expected\": (1.0, 2.0, 3.0) }","name":"mass two impulse changes all world axes","passed":true},{"detail":"{ \"actual\": (2.0, 0.0, 3.0), \"expected\": (2.0, 0.0, 3.0) }","name":"mass change affects next impulse","passed":true},{"detail":"{ \"actual\": (0.0, 0.0, 0.0), \"expected\": (0.0, 0.0, 0.0) }","name":"queued force remains unapplied while paused","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.01, \"paused\": true }","name":"step completed","passed":true},{"detail":"{ \"actual\": (0.1, 0.2, -0.3), \"expected\": (0.1, 0.2, -0.3) }","name":"one-shot force integrates F over mass times dt","passed":true},{"detail":"","name":"single step callbacks once with actual timestep","passed":true},{"detail":"{ \"actual\": (0.1, 0.2, -0.3), \"expected\": (0.1, 0.2, -0.3) }","name":"pause retains numerical state","passed":true},{"detail":"","name":"paused ticks do not repeat callbacks","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.02, \"paused\": true }","name":"step completed","passed":true},{"detail":"{ \"actual\": (0.1, 0.2, -0.3), \"expected\": (0.1, 0.2, -0.3) }","name":"one-shot force cleared after simulated step","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 3, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.05, \"paused\": true }","name":"step completed","passed":true},{"detail":"{ \"actual\": (0.4, 0.2, -0.3), \"expected\": (0.4, 0.2, -0.3) }","name":"constant force persists for three substeps","passed":true},{"detail":"","name":"multi-step callback reports actual simulated span","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 4, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.06, \"paused\": true }","name":"step completed","passed":true},{"detail":"{ \"actual\": (0.0, -0.2, 0.0), \"expected\": (0.0, -0.2, 0.0) }","name":"gravity scale two physical acceleration","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 5, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.07, \"paused\": true }","name":"step completed","passed":true},{"detail":"{ \"actual\": (0.0, 0.1, 0.0), \"expected\": (0.0, 0.1, 0.0) }","name":"negative gravity scale reverses acceleration","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 6, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.1, \"paused\": true }","name":"step completed","passed":true},{"detail":"{ \"actual\": (8.5, 0.0, 0.0), \"expected\": (8.5, 0.0, 0.0) }","name":"linear damping once per actual integration span","passed":true},{"detail":"{ \"actual\": (0.0, 0.0, 1.76), \"expected\": (0.0, 0.0, 1.76) }","name":"angular damping once per actual integration span","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 7, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.11, \"paused\": true }","name":"step completed","passed":true},{"detail":"{ \"actual\": (0.0, 0.0, 0.01), \"expected\": (0.0, 0.0, 0.01) }","name":"torque uses generated box inertia","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 8, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.13, \"paused\": true }","name":"step completed","passed":true},{"detail":"{ \"actual\": (0.0, 0.0, 0.03), \"expected\": (0.0, 0.0, 0.03) }","name":"constant torque persists after one-shot torque clears","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 9, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.14, \"paused\": true }","name":"step completed","passed":true},{"detail":"{ \"actual\": (1.0, 0.0, 0.0), \"expected\": (1.0, 0.0, 0.0) }","name":"custom integrator omits gravity damping and both force classes","passed":true},{"detail":"{ \"actual\": (0.0, 0.0, 2.0), \"expected\": (0.0, 0.0, 2.0) }","name":"custom integrator omits both torque classes","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 10, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.15, \"paused\": true }","name":"step completed","passed":true},{"detail":"{ \"actual\": (0.98, -0.098, 0.0), \"expected\": (0.98, -0.098, 0.0) }","name":"explicit direct integrate applies gravity then damping","passed":true},{"detail":"{ \"actual\": (0.0, 0.0, 1.94), \"expected\": (0.0, 0.0, 1.94) }","name":"explicit direct integrate damps angular velocity","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 11, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.16, \"paused\": true }","name":"step completed","passed":true},{"detail":"{ \"actual\": (0.0, 0.0, 0.0), \"expected\": (0.0, 0.0, 0.0) }","name":"omitted one-shot forces are consumed, not replayed on resume","passed":true},{"detail":"{ \"actual\": (0.0, 0.0, 0.0), \"expected\": (0.0, 0.0, 0.0) }","name":"omitted one-shot torques are consumed","passed":true},{"detail":"{ \"actual\": (-0.1, -0.25, 0.3), \"expected\": (-0.1, -0.25, 0.3) }","name":"center of mass is rotated offset, without world origin","passed":true},{"detail":"{ \"actual\": (0.25, -0.1, 0.3), \"expected\": (0.25, -0.1, 0.3) }","name":"local COM follows shape offset","passed":true},{"detail":"{ \"actual\": (0.25, 0.333333, 0.416667), \"expected\": (0.25, 0.333333, 0.416667) }","name":"offset impulse linear response","passed":true},{"detail":"{ \"actual\": (-0.425, -0.019231, 0.55), \"expected\": (-0.425, -0.019231, 0.55) }","name":"offset impulse rotated asymmetric inverse inertia","passed":true},{"detail":"","name":"rebuild while paused","passed":true},{"detail":"{ \"actual\": (0.25, 0.333333, 0.416667), \"expected\": (0.25, 0.333333, 0.416667) }","name":"rebuild preserves linear state","passed":true},{"detail":"{ \"actual\": (-0.425, -0.019231, 0.55), \"expected\": (-0.425, -0.019231, 0.55) }","name":"rebuild preserves angular state","passed":true},{"detail":"{ \"actual\": (2.666667, 0.0, 0.0), \"expected\": (2.666667, 0.0, 0.0) }","name":"compound volume weighted center of mass","passed":true},{"detail":"{ \"actual\": (0.0, 1.0, 0.0), \"expected\": (0.0, 1.0, 0.0) }","name":"compound COM impulse linear mass response","passed":true},{"detail":"{ \"actual\": (0.0, 0.0, 0.0), \"expected\": (0.0, 0.0, 0.0) }","name":"compound impulse at actual COM has no angular response","passed":true},{"detail":"{ \"actual\": (0.3, 0.0, 0.1), \"expected\": (0.3, 0.0, 0.1) }","name":"torque impulse preserves COM linear velocity","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 12, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.26, \"paused\": true }","name":"step completed","passed":true},{"detail":"{ \"actual\": (0.300001, -0.0, 0.100022), \"expected\": (0.3, 0.0, 0.1) }","name":"rotating offset body preserves force-free COM velocity","passed":true},{"detail":"{ \"actual\": (120.3906, 3.0, 0.005674), \"expected\": (120.3905, 3.0, 0.005674) }","name":"rotating offset COM follows straight translation","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 13, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.27, \"paused\": true }","name":"step completed","passed":true},{"detail":"","name":"free inside integration callback suppresses sync and remains safe","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 14, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.28, \"paused\": true }","name":"step completed","passed":true},{"detail":"","name":"detached body has no callback","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 15, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.29, \"paused\": true }","name":"step completed","passed":true},{"detail":"","name":"readded body resumes exactly one callback","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 16, \"command\": \"capture\", \"success\": true, \"error\": \"\", \"time\": 0.29, \"paused\": true }","name":"step completed","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 17, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.31, \"paused\": true }","name":"step completed","passed":true},{"detail":"","name":"body moves after checkpoint","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 18, \"command\": \"reset\", \"success\": true, \"error\": \"\", \"time\": 0.29, \"paused\": true }","name":"step completed","passed":true},{"detail":"{ \"actual\": (0.286, 0.009, -0.015), \"expected\": (0.286, 0.009, -0.015) }","name":"paused reset restores body pose","passed":true},{"detail":"","name":"paused reset delivers sync only, no force callback","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 19, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.59, \"paused\": true }","name":"step completed","passed":true},{"detail":"","name":"step queued","passed":true},{"detail":"{ \"request\": 20, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.59, \"paused\": true }","name":"step completed","passed":true},{"detail":"(3.971019, 0.28981, -0.0)","name":"normal friction uses lower coefficient","passed":true},{"detail":"(0.000304, 0.000721, 0.0)","name":"larger minimum friction physically brakes slider","passed":true},{"detail":"(0.000304, 0.000721, -0.0)","name":"rough slider overrides low floor friction","passed":true},{"detail":"(-0.000745, 0.001462, -0.0)","name":"rough floor overrides low slider friction","passed":true},{"detail":"","name":"ordinary space paused for setup","passed":true},{"detail":"","name":"ordinary space resumed","passed":true},{"detail":"","name":"ordinary space paused after ticks","passed":true},{"detail":"0.0666666701436","name":"ordinary elapsed time is whole Godot ticks","passed":true},{"detail":"{ \"actual\": (7.060668, -0.0, 0.0), \"expected\": (7.060668, 0.0, 0.0) }","name":"ordinary damping once per Godot tick despite MuJoCo subdivisions","passed":true},{"detail":"","name":"resume combine damping","passed":true},{"detail":"","name":"pause combine damping","passed":true},{"detail":"{ \"actual\": (6.088334, -0.0, 0.0), \"expected\": (6.088334, 0.0, 0.0) }","name":"combine damping includes space and body coefficients","passed":true}],"failed":0,"godot":"4.7.2-stable (official)","passed":98}

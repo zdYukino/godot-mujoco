@@ -1,0 +1,84 @@
+{
+  "checks": [
+    {
+      "detail": "",
+      "label": "import empty world",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "configure world",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "compile original mocap pose",
+      "passed": true
+    },
+    {
+      "detail": {
+        "command": "capture",
+        "error": "",
+        "paused": true,
+        "request": 1,
+        "success": true,
+        "time": 0.0
+      },
+      "label": "capture completed",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "movement reflected before reset",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "motion sees moved target before reset",
+      "passed": true
+    },
+    {
+      "detail": {
+        "command": "reset",
+        "error": "",
+        "paused": true,
+        "request": 2,
+        "success": true,
+        "time": 0.0
+      },
+      "label": "reset completed",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "label": "reset preserves kinematic transform cache",
+      "passed": true
+    },
+    {
+      "detail": {},
+      "label": "reset preserves current query geometry",
+      "passed": false
+    },
+    {
+      "detail": {
+        "collider": "<Object#null>",
+        "collider_id": 0,
+        "face_index": -1,
+        "normal": "(0.0, 1.0, 0.0)",
+        "position": "(0.0, 0.5, 0.0)",
+        "rid": "RID(103079215106)",
+        "shape": 0
+      },
+      "label": "reset does not resurrect compiled original position",
+      "passed": false
+    },
+    {
+      "detail": "",
+      "label": "motion sees current target after reset",
+      "passed": false
+    }
+  ],
+  "failed": 3,
+  "passed": 8,
+  "extension_sha256": "1ea6a574aa2134604b6f730555d51b10eaefd4d4087d670bfc3b0469c3dea3d4"
+}

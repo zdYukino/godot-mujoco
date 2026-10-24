@@ -13,10 +13,14 @@
 #include <set>
 #include <mutex>
 #include <deque>
+#include <functional>
+#include <tuple>
 namespace godot {
 class MjPhysicsServer3D;
 class MjDirectBodyState;
 class MjDirectSpaceState;
+struct MjAreaScratch;
+struct MjNativeJoint { RID rid,a,b; Vector3 anchor_a,anchor_b,axis_a,axis_b; bool hinge=false; bool pin=false,disable_collisions=true; };
 struct MjShape { RID rid; PhysicsServer3D::ShapeType type; Variant data; float margin=0.04f; };
 struct MjShapeInstance { RID shape; Transform3D transform; bool disabled=false; };
 struct MjImported {
@@ -25,14 +29,35 @@ struct MjImported {
  std::string prefix;
  ~MjImported() { if(spec) mj_deleteSpec(spec); }
 };
+// One solved manifold point in Godot world coordinates; impulse covers one substep.
+struct MjContact {
+ RID collider; uint64_t object_id=0; int local_shape=-1, collider_shape=-1;
+ Vector3 position, normal, impulse, local_velocity, collider_velocity;
+};
+struct MjEnvironment {Vector3 gravity; double linear_damp=0, angular_damp=0;};
 struct MjBody {
+ int max_contacts=0; std::vector<MjContact> contacts;
  RID rid, space; bool heightfield=false; uint64_t object_id=0; PhysicsServer3D::BodyMode mode=PhysicsServer3D::BODY_MODE_RIGID;
+ // Godot velocities are world-space; linear velocity is at the center of mass.
  Transform3D transform; Vector3 linear_velocity, angular_velocity, force, torque, constant_force, constant_torque;
  std::vector<MjShapeInstance> shapes; std::map<int, Variant> params;
  uint32_t layer=1, mask=1; bool ray_pickable=true, sleeping=false, omit_integration=false;
+ bool callback_pending=false, sync_pending=false; double integration_step=0;
+ MjEnvironment integration_environment; bool environment_valid=false;
  Callable sync_callback, integration_callback; Variant integration_userdata;
  MjDirectBodyState *direct=nullptr; int mj_body=-1; double mass=1; double gravity_scale=1;
  std::set<uint64_t> exceptions;
+};
+// Value-only shape pair identity; never retain pointers across user callbacks.
+struct MjAreaPair {
+ RID rid; uint64_t object_id=0; int other_shape=0, self_shape=0; bool area=false;
+ bool operator<(const MjAreaPair &b) const {return std::tie(area,rid,object_id,other_shape,self_shape)<std::tie(b.area,b.rid,b.object_id,b.other_shape,b.self_shape);}
+};
+struct MjArea {
+ RID rid, space; uint64_t object_id=0; Transform3D transform;
+ uint32_t layer=1, mask=1; bool monitorable=true, ray_pickable=true;
+ std::vector<MjShapeInstance> shapes; std::map<int,Variant> params;
+ Callable body_callback, area_callback; std::set<MjAreaPair> reported;
 };
 struct MjSpace {
  bool paused=false; uint64_t revision=0; String last_error;
@@ -98,6 +123,21 @@ public:
  std::map<int64_t,Dictionary> edit_results;
  int64_t next_edit_request=1;
 
+ std::shared_ptr<MjAreaScratch> area_scratch;
+ std::map<uint64_t,std::unique_ptr<MjArea>> areas;
+ std::deque<std::function<void()>> area_commands;
+ bool draining_area_commands=false;
+ MjArea *area(const RID &rid) const;
+ MjEnvironment body_environment(const MjBody &body);
+ void set_area_environment_param(MjArea &area, AreaParameter param, const Variant &value);
+ void flush_area_queries();
+ void retire_area_pairs(const RID &rid, int from_shape=-1);
+ void drain_area_commands();
+ std::map<uint64_t,MjNativeJoint> native_joints;
+ bool native_joint_active(const MjNativeJoint &joint,const RID &space) const;
+ bool native_joint_collision_disabled(const RID &a,const RID &b) const;
+ void detach_native_joints(const RID &body);
+ bool commit_native_joint(const MjNativeJoint &joint);
  std::set<uint64_t> pending_free;
  RID_Owner<int> handles;
  std::map<uint64_t,std::unique_ptr<MjShape>> shapes;
@@ -112,6 +152,7 @@ public:
  bool rebuild(MjSpace &space, const Dictionary &control_overrides=Dictionary(), bool validate_dynamics=false);
  void write_body(MjBody &body);
  void read_body(MjBody &body);
+ void collect_contacts(MjSpace &space);
  ~MjPhysicsServer3D();
  RID _world_boundary_shape_create() override;
  RID _separation_ray_shape_create() override;

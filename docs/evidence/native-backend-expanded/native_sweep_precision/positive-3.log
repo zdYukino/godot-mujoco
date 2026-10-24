@@ -1,0 +1,1395 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS rotation 0 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 0 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 0 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 0 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 0 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 0 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS rotation 0 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 0 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 0 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 0 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 0 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 0 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 1 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 1 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 1 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 1 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 1 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 1 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 1 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 1 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 1 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 1 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 1 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 1 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS rotation 2 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 2 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 2 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 2 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 2 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 2 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 2 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 2 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 2 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 2 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 2 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 2 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 3 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 3 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 3 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 3 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 3 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 3 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 3 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 3 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 3 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 3 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 3 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 3 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 4 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 4 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 4 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 4 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 4 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 4 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 4 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 4 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 4 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 4 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 4 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 4 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 5 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 5 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 5 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 5 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 5 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 5 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 5 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 5 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 5 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 5 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 5 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 5 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 6 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 6 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 6 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 6 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 6 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 6 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 6 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 6 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 6 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 6 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 6 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 6 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 7 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 7 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 7 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 7 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 7 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 7 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 7 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 7 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 7 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 7 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 7 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 7 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS rotation 8 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 8 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 8 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 8 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 8 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 8 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 8 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 8 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 8 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 8 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 8 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 8 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS rotation 9 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 9 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 9 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 9 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 9 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 9 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS rotation 9 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 9 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 9 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 9 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 9 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 9 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 10 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 10 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 10 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 10 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 10 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 10 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 10 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 10 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 10 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 10 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 10 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 10 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 11 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 11 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 11 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 11 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 11 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 11 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 11 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 11 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 11 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 11 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 11 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 11 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 12 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 12 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 12 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 12 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 12 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 12 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 12 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 12 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 12 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 12 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 12 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 12 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 13 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 13 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 13 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 13 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 13 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 13 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 13 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 13 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 13 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 13 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 13 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 13 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS rotation 14 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 14 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 14 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 14 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 14 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 14 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS rotation 14 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 14 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 14 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 14 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 14 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 14 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 15 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 15 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 15 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 15 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 15 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 15 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 15 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 15 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 15 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 15 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 15 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 15 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 16 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 16 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 16 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 16 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 16 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 16 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 16 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 16 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 16 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 16 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 16 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 16 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 17 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 17 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 17 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 17 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 17 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 17 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 17 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 17 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 17 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 17 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 17 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 17 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 18 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 18 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 18 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 18 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 18 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 18 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 18 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 18 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 18 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 18 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 18 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 18 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 19 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 19 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 19 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 19 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 19 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 19 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 19 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 19 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 19 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 19 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 19 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 19 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS rotation 20 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 20 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 20 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 20 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 20 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 20 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS rotation 20 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 20 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 20 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 20 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 20 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 20 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 21 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 21 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 21 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 21 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 21 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 21 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 21 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 21 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 21 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 21 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 21 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 21 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 22 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 22 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 22 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 22 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 22 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 22 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS rotation 22 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 22 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 22 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 22 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 22 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 22 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS rotation 23 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 23 multiple false margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 23 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 23 multiple false margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 23 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 23 multiple false margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS rotation 23 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 23 multiple true margin 0.0 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 23 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 23 multiple true margin 0.03 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 23 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+PASS rotation 23 multiple true margin 0.1 returns certified bracket
+PASS analytic face TOI bracket
+PASS actual Godot float poses agree with face contact within float transform roundoff
+SWEEP_PRECISION_RESULT {"failed":0,"passed":864}

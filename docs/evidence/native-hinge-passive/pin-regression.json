@@ -1,0 +1,364 @@
+{
+  "checks": [
+    {
+      "detail": "",
+      "name": "native backend identity",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "pause isolated world",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "configure lightweight exact-step world",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "make Pin returns actual type",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "local/world anchor readback",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "fixed compatibility parameter defaults",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "paused Pin does not advance",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.5, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "(0.000107, -0.000339, 0.0)",
+      "name": "world Pin constrains anchor under gravity",
+      "passed": true
+    },
+    {
+      "detail": "[X: (0.950846, 0.309663, 0.0), Y: (-0.309663, 0.950846, 0.0), Z: (0.0, 0.0, 1.0), O: (0.30977, -0.951185, 0.0)]",
+      "name": "Pin preserves pendulum rotation rather than welding",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "rebuild paused joint world",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "rebuild preserves body pose and velocity",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.6, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "constraint survives unrelated rebuild",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 3, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.7, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "updated local and world anchors physically constrain",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "make Pin returns actual type",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 4, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.1, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "dynamic pair anchor positions agree",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "dynamic pair remains free to fall",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "make Pin returns actual type",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 5, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.3, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "static endpoint constrains dynamic anchor",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 6, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.7, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "moving static endpoint updates constraint",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "make Pin returns actual type",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 7, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.73, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "joint collision disable suppresses real pair contacts",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 8, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.76, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "reenabling joint pair collision restores contact",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "clear returns unconfigured joint",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 9, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.06, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "cleared joint no longer constrains body",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 10, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.36, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "cleared joint RID can be reconfigured",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "deleted endpoint clears joint without destroying its RID",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 11, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.65999999999999, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "deleted endpoint leaves dynamic body free",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "endpoint detachment clears joint",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 12, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.85999999999999, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "readded endpoint and reused joint constrain again",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 13, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.86999999999998, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "callback make then mode change executes FIFO and clears joint",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "save real PinJoint3D scene",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "configure reopened scene world",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "reopened node paths create real Pin",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "reopened node derives correct local anchor",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 14, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.5, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "reopened Pin remains constrained while rotating",
+      "passed": true
+    }
+  ],
+  "failed": 0,
+  "passed": 49,
+  "negative": {
+    "checks": [
+      {
+        "detail": "",
+        "name": "native backend identity",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "pause isolated world",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "configure lightweight exact-step world",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "make Pin returns actual type",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "unsupported Pin response parameter not falsely stored",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "unsupported Pin response parameter not falsely stored",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "unsupported Pin response parameter not falsely stored",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "nonfinite anchor retains accepted definition",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "self joint rejects without replacing accepted Pin",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "cross-space replacement preserves old anchor",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "duplicate edge rejected before mutation",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "make Pin returns actual type",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "closed world loop rejected before mutation",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "unsupported priority not falsely stored",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.3, \"paused\": true }",
+        "name": "bounded exact step completes",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "accepted old Pin still physically constrains after all rejected replacements",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "finite unsafe candidate leaves old joint definition",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "finite unsafe candidate preserves active body pose and velocity",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "finite unsafe candidate preserves pause and simulation time",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.31, \"paused\": true }",
+        "name": "bounded exact step completes",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "callback mode then make validates new mode and rejects static-world",
+        "passed": true
+      }
+    ],
+    "failed": 0,
+    "passed": 21
+  },
+  "expected_rejections": 11,
+  "extension_sha256": "b10f6662aab0aa15bbea9449f7ae17d36a915053393936d4fcc849fe1e64325e"
+}

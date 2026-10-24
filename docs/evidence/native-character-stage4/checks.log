@@ -1,0 +1,68 @@
+PASS sphere/capsule body motion hits target
+PASS continuous body fractions bracket entry
+PASS travel and remainder partition requested motion
+PASS body motion native ownership
+PASS body motion target point and outward normal
+PASS sphere/capsule body motion hits target
+PASS continuous body fractions bracket entry
+PASS travel and remainder partition requested motion
+PASS body motion native ownership
+PASS body motion target point and outward normal
+PASS body_test_motion neither moves actual body nor activates space
+PASS clear motion returns false
+PASS clear motion result travels full distance
+PASS moving body's mask filters obstacle layer
+PASS target own collision mask does not hide query target
+PASS motion exclude_bodies
+PASS motion exclude_objects
+PASS motion collider engine Object identity
+PASS moving body exception
+PASS target reciprocal exception
+PASS disabled target absent
+PASS detached target absent
+PASS compound moving shape chooses earliest local index
+PASS max_collisions one
+PASS max_collisions thirty-two bounds output
+PASS kinematic target blocks body query
+PASS updated kinematic target pose visible without step
+PASS freed target absent and mover excludes itself
+PASS zero motion recovery alone is not collision by default
+PASS zero motion returns recovery travel
+PASS recovery_as_collision reports initial penetration
+PASS recovery travel and floor normal are stable
+PASS travel includes recovery while remainder excludes it
+PASS recovery queries preserve real pose and active state
+PASS dynamic target frozen-pose collision
+PASS collider point velocity includes angular motion and offset COM
+PASS query applies no impulse to dynamic target
+PASS large cancelling body/local origins retain collision identity
+PASS returned float body pose cannot tunnel beyond thin wall
+PASS unrepresentable partial travel conservatively stays put
+PASS clear large-coordinate travel reports requested vector, not rounded-origin subtraction
+PASS float-only endpoint contact retains real collision metadata
+PASS float-only endpoint collision returns certified safe travel and unsafe pose
+MOTION_RID_RESULT {"failed":0,"passed":43}
+PASS CharacterBody registers native kinematic mode
+PASS move_and_collide test_only reports wall
+PASS test_only does not move CharacterBody
+PASS CharacterBody collision identity and wall normal
+PASS CharacterBody travel plus remainder
+PASS move_and_collide stops capsule before wall
+PASS move_and_slide establishes persistent floor over many frames
+PASS standing capsule bottom rests on floor
+PASS floor normal is upward
+PASS multiframe floor motion blocks at wall
+PASS move_and_slide preserves tangential wall motion
+PASS wall slide retains floor classification
+PASS apply_floor_snap establishes floor
+PASS floor snap closes small vertical gap
+PASS floor snap survives next move_and_slide
+PASS upward capsule movement classifies ceiling
+PASS ceiling blocks capsule endcap
+PASS walkable slope is floor with geometric normal
+PASS move_and_slide walks uphill
+PASS uphill movement retains floor classification
+PASS CharacterBody query blocks on frozen dynamic target
+PASS kinematic character does not inject impulse into rigid target
+PASS freed wall absent from CharacterBody motion
+MOTION_CHARACTER_RESULT {"diagnostic":{"ceiling_frames":15,"floor_frames":100,"grounded_frames":67,"on_ceiling":false,"on_floor":true,"on_wall":false,"position":"(0.0, 1.0, 0.0)","wall_frames":51},"failed":0,"passed":23}

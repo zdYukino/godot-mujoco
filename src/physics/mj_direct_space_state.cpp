@@ -1,4 +1,7 @@
 #include "mj_physics_server.h"
+#include "mj_sweep.h"
+#include "query_ccd/witness.h"
+#include <godot_cpp/classes/physics_server3d_extension_motion_result.hpp>
 
 #include <godot_cpp/core/object.hpp>
 
@@ -19,6 +22,8 @@ bool point_inside_geom(int p_type, const mjtNum p_local[3], const mjtNum p_size[
 					std::abs(p_local[2]) < p_size[2];
 		case mjGEOM_SPHERE:
 			return std::hypot(p_local[0], p_local[1], p_local[2]) < p_size[0];
+		case mjGEOM_CAPSULE:
+			return std::hypot(p_local[0],p_local[1],p_local[2]-std::clamp(p_local[2],-p_size[1],p_size[1])) < p_size[0];
 		case mjGEOM_CYLINDER:
 			return std::hypot(p_local[0], p_local[1]) < p_size[0] && std::abs(p_local[2]) < p_size[1];
 		case mjGEOM_PLANE:
@@ -50,6 +55,305 @@ mjtNum intersect_geom(int p_type, const mjtNum p_position[3], const mjtNum p_mat
 	return mju_rayGeom(p_position, p_matrix, p_size, p_from, p_direction, p_type, r_normal);
 }
 
+
+// All native queries share ownership validation and query-mask semantics.
+MjBody *query_body(MjDirectSpaceState &state, MjSpace &space, int geom, uint32_t mask, bool pick = false, const MjBody *moving = nullptr) {
+ const auto &owner = space.geom_owners[geom];
+ auto *body = state.server->body(owner.first);
+ if (!body || state.server->pending_free.count(owner.first.get_id()) || body->space != state.rid || owner.second < 0 ||
+     size_t(owner.second) >= body->shapes.size() || body->shapes[owner.second].disabled ||
+     !state.server->shape(body->shapes[owner.second].shape) ||
+     state.server->pending_free.count(body->shapes[owner.second].shape.get_id()) ||
+     !(body->layer & mask) || (pick && !body->ray_pickable) ||
+     (!moving && state.is_body_excluded_from_query(owner.first))) return nullptr;
+ if(moving && (body==moving || moving->exceptions.count(body->rid.get_id()) || body->exceptions.count(moving->rid.get_id()) ||
+     state.server->body_test_motion_is_excluding_body(body->rid) ||
+     (body->object_id && state.server->body_test_motion_is_excluding_object(body->object_id))))return nullptr;
+ return body;
+}
+MjSpace *query_space(MjDirectSpaceState &state, uint32_t mask, bool bodies, bool areas) {
+ if (areas) mj_unsupported("Area3D overlap queries");
+ if (!state.server || state.server->pending_free.count(state.rid.get_id()) || !bodies || !mask) return nullptr;
+ auto *space = state.server->space(state.rid);
+ if (!space || !state.server->rebuild(*space) || !space->model || !space->data ||
+     space->geom_owners.size() != size_t(space->model->ngeom)) return nullptr;
+ return space;
+}
+bool primitive(int type) {
+ return type == mjGEOM_BOX || type == mjGEOM_SPHERE || type == mjGEOM_CYLINDER || type == mjGEOM_CAPSULE || type == mjGEOM_PLANE;
+}
+PhysicsServer3DExtensionShapeResult shape_result(MjBody &body, int shape) {
+ PhysicsServer3DExtensionShapeResult result{};
+ result.rid = body.rid; result.collider_id = ObjectID(body.object_id); result.shape = shape;
+ Object *object = body.object_id ? ObjectDB::get_instance(body.object_id) : nullptr;
+ result.collider = object ? reinterpret_cast<Object *>(object->_owner) : nullptr;
+ return result;
+}
+struct Overlap {
+ MjBody *body; int shape; mjPreContact contact; bool reversed; Vector3 target_normal;
+};
+Vector3 contact_point(const Overlap &hit, bool query);
+
+gmj_sweep::Vec support(int type, const mjtNum *size, const mjtNum *matrix, gmj_sweep::Vec n);
+// Analytic signed-distance magnitude to the original primitive surface. This
+// checks actual ownership, not just whether a narrowphase produced a contact.
+double surface_error(const mjModel *model, const mjData *data, int geom, const mjtNum *point) {
+ mjtNum offset[3],p[3]; mju_sub3(offset,point,data->geom_xpos+3*geom);
+ mju_mulMatTVec3(p,data->geom_xmat+9*geom,offset);
+ const mjtNum *size=model->geom_size+3*geom;
+ switch(model->geom_type[geom]) {
+ case mjGEOM_SPHERE:return std::abs(mju_norm3(p)-size[0]);
+ case mjGEOM_PLANE:return std::abs(p[2]);
+ case mjGEOM_CAPSULE:return std::abs(std::hypot(p[0],p[1],p[2]-std::clamp(p[2],-size[1],size[1]))-size[0]);
+ case mjGEOM_CYLINDER: {
+   double a=std::hypot(p[0],p[1])-size[0],b=std::abs(p[2])-size[1];
+   return std::abs(std::hypot(std::max(a,0.0),std::max(b,0.0))+std::min(std::max(a,b),0.0));
+ }
+ default: {
+   double a=std::abs(p[0])-size[0],b=std::abs(p[1])-size[1],c=std::abs(p[2])-size[2];
+   return std::abs(std::hypot(std::max(a,0.0),std::max(b,0.0),std::max(c,0.0))+std::min(std::max({a,b,c}),0.0));
+ }
+ }
+}
+bool valid_witnesses(const mjModel *model, const mjData *data, int a, int b, const mjPreContact &c) {
+ if(!std::isfinite(c.dist) || !std::isfinite(mju_norm3(c.normal)) || std::abs(mju_norm3(c.normal)-1)>1e-6) return false;
+ mjtNum p[3],q[3]; mju_addScl3(p,c.pos,c.normal,-.5*c.dist);mju_addScl3(q,c.pos,c.normal,.5*c.dist);
+ const double ea=surface_error(model,data,a,p), eb=surface_error(model,data,b,q);
+ return std::isfinite(ea) && std::isfinite(eb) &&
+     ea<=1e-6*std::max(1.0,model->geom_rbound[a]) && eb<=1e-6*std::max(1.0,model->geom_rbound[b]);
+}
+// Deep MPR portal displacements need not equal a target feature normal.
+// Derive rest normals from the target's actual surface/normal cone, keeping
+// the independently reconstructed witness pair and penetration depth intact.
+Vector3 witness_normal(const mjModel *model,const mjData *data,int geom,const mjtNum *point,const mjtNum *hint) {
+ mjtNum offset[3],p[3],h[3],n[3]={},world[3];
+ const mjtNum *mat=data->geom_xmat+9*geom,*size=model->geom_size+3*geom;
+ mju_sub3(offset,point,data->geom_xpos+3*geom);mju_mulMatTVec3(p,mat,offset);mju_mulMatTVec3(h,mat,hint);
+ double tolerance=1e-6*std::max(1e-8,model->geom_rbound[geom]);
+ int type=model->geom_type[geom];
+ if(type==mjGEOM_SPHERE) mju_copy3(n,p);
+ else if(type==mjGEOM_CAPSULE) {mju_copy3(n,p);n[2]-=std::clamp(p[2],-size[1],size[1]);}
+ else if(type==mjGEOM_PLANE) n[2]=1;
+ else if(type==mjGEOM_BOX) {
+   int nearest=0;
+   for(int i=0;i<3;++i) {
+     if(std::abs(std::abs(p[i])-size[i])<std::abs(std::abs(p[nearest])-size[nearest])) nearest=i;
+     if(std::abs(std::abs(p[i])-size[i])<=tolerance) n[i]=(p[i]<0?-1:1)*std::max(0.0,h[i]*(p[i]<0?-1:1));
+   }
+   if(mju_norm3(n)==0)n[nearest]=p[nearest]<0?-1:1;
+ } else {
+   double radial=std::hypot(p[0],p[1]), side=std::abs(radial-size[0]), cap=std::abs(std::abs(p[2])-size[1]);
+   double x=radial?p[0]/radial:1,y=radial?p[1]/radial:0,z=p[2]<0?-1:1;
+   if(side<=tolerance) {double weight=std::max(0.0,h[0]*x+h[1]*y);n[0]=weight*x;n[1]=weight*y;}
+   if(cap<=tolerance) n[2]=z*std::max(0.0,z*h[2]);
+   if(mju_norm3(n)==0) {if(side<=cap){n[0]=x;n[1]=y;}else n[2]=z;}
+ }
+ mju_normalize3(n);mju_mulMatVec3(world,mat,n);
+ return mj_to_godot(Vector3(world[0],world[1],world[2])).normalized();
+}
+struct SupportGeom { const mjModel *model; const mjData *data; int geom; const mjtNum *origin; };
+void primitive_support(const void *object, const ccd_vec3_t *direction, ccd_vec3_t *result) {
+ const auto &g=*static_cast<const SupportGeom *>(object);
+ auto v=support(g.model->geom_type[g.geom],g.model->geom_size+3*g.geom,g.data->geom_xmat+9*g.geom,
+     {direction->v[0],direction->v[1],direction->v[2]});
+ const mjtNum *p=g.data->geom_xpos+3*g.geom;
+ ccdVec3Set(result,v.x+(p[0]-g.origin[0]),v.y+(p[1]-g.origin[1]),v.z+(p[2]-g.origin[2]));
+}
+void primitive_center(const void *object, ccd_vec3_t *result) {
+ const auto &g=*static_cast<const SupportGeom *>(object);
+ mju_sub3(result->v,g.data->geom_xpos+3*g.geom,g.origin);
+ if(g.geom==0) {
+   // MPR permits any strictly interior reference point. A noncentral query
+   // reference avoids the coincident-center segment shortcut without moving
+   // either physical shape or any of its support vertices.
+   const mjtNum *s=g.model->geom_size;
+   mjtNum local[3],offset[3];
+   if(g.model->geom_type[0]==mjGEOM_BOX) {local[0]=.1*s[0];local[1]=.2*s[1];local[2]=.15*s[2];}
+   else {local[0]=.1*s[0];local[1]=.2*s[0];local[2]=.15*(g.model->geom_type[0]==mjGEOM_SPHERE?s[0]:s[1]);}
+   mju_mulMatVec3(offset,g.data->geom_xmat,local);mju_addTo3(result->v,offset);
+ }
+}
+bool primitive_witness(const mjModel *model, const mjData *data, mjPreContact &contact) {
+ const mjtNum *origin=data->geom_xpos;
+ SupportGeom a{model,data,0,origin},b{model,data,1,origin};
+ ccd_t options{}; options.support1=options.support2=primitive_support;
+ options.center1=options.center2=primitive_center; options.max_iterations=1000;
+ options.mpr_tolerance=1e-10*std::max({1.0,model->geom_rbound[0],model->geom_rbound[1]});
+ ccd_real_t depth; ccd_vec3_t normal,position,p,q;
+ if(gmj_ccdMPRWitness(&a,&b,&options,&depth,&normal,&position,&p,&q)!=0 || !(depth>0)) return false;
+ contact={}; contact.dist=-depth; mju_copy3(contact.normal,normal.v);
+ mju_add3(contact.pos,position.v,origin);
+ return valid_witnesses(model,data,0,1,contact);
+}
+// The scratch model has no ownership or dynamics relationship to the live space.
+// Dispatching MuJoCo narrowphase directly neither runs forward nor steps live data.
+std::vector<Overlap> overlaps(MjDirectSpaceState &state, const RID &rid, const Transform3D &transform,
+    const Vector3 &motion, float margin, uint32_t mask, bool bodies, bool areas, const MjBody *moving=nullptr, bool *valid=nullptr) {
+ if(valid)*valid=false;bool failed=false;
+ std::vector<Overlap> hits;
+ if (!transform.is_finite() || !transform.basis.is_orthogonal() ||
+     !transform.basis.get_scale().is_equal_approx(Vector3(1,1,1)) || transform.basis.determinant() <= 0 ||
+     !motion.is_finite() || !std::isfinite(margin) || margin < 0) return hits;
+ // Overlap APIs test the supplied pose; motion is intentionally ignored, as in Godot.
+ auto *shape = state.server ? state.server->shape(rid) : nullptr;
+ if (!shape || state.server->pending_free.count(rid.get_id())) return hits;
+ int type; mjtNum size[3] = {0,0,0}; Transform3D pose = transform;
+ switch (shape->type) {
+ case PhysicsServer3D::SHAPE_BOX: {
+   Vector3 v = shape->data; type = mjGEOM_BOX; size[0]=v.x; size[1]=v.z; size[2]=v.y; break;
+ }
+ case PhysicsServer3D::SHAPE_SPHERE: type=mjGEOM_SPHERE; size[0]=double(shape->data); break;
+ case PhysicsServer3D::SHAPE_CYLINDER: {
+   Dictionary d=shape->data; type=mjGEOM_CYLINDER; size[0]=double(d["radius"]); size[1]=double(d["height"])*.5; break;
+ }
+ case PhysicsServer3D::SHAPE_CAPSULE: {
+   Dictionary d=shape->data;size[0]=double(d["radius"]);size[1]=double(d["height"])*.5-size[0];
+   type=size[1]==0?mjGEOM_SPHERE:mjGEOM_CAPSULE;break;
+ }
+ case PhysicsServer3D::SHAPE_WORLD_BOUNDARY: {
+   Plane p=shape->data;
+   if (!std::isfinite(p.normal.length()) || !std::isfinite(p.d)) return hits;
+   Vector3 n=p.normal.normalized();
+   pose.origin += pose.basis.xform(n*(p.d/p.normal.length()));
+   pose.basis = pose.basis*Basis(Quaternion(Vector3(0,1,0),n));
+   type=mjGEOM_PLANE; size[2]=.1; break;
+ }
+ default: mj_unsupported("overlap query shape (only native primitives supported)"); return hits;
+ }
+ if (!pose.is_finite()) return hits;
+ for (mjtNum extent : size) if (!std::isfinite(extent) || extent < 0 || extent > std::numeric_limits<real_t>::max()) return hits;
+ auto *space = query_space(state,mask,bodies,areas); if (!space) return hits;
+ std::unique_ptr<mjSpec, decltype(&mj_deleteSpec)> spec(mj_makeSpec(),mj_deleteSpec);
+ for (int i=0;i<2;++i) { auto *g=mjs_addGeom(mjs_findBody(spec.get(),"world"),nullptr); g->type=mjGEOM_SPHERE; g->size[0]=1; }
+ std::unique_ptr<mjModel, decltype(&mj_deleteModel)> model(mj_compile(spec.get(),nullptr),mj_deleteModel);
+ if (!model) return hits;
+ std::unique_ptr<mjData, decltype(&mj_deleteData)> data(mj_makeData(model.get()),mj_deleteData);
+ if (!data) return hits;
+ model->geom_type[0]=type; mju_copy3(model->geom_size,size);
+ model->geom_rbound[0]=type==mjGEOM_SPHERE?size[0]:type==mjGEOM_CAPSULE?size[0]+size[1]:mju_norm3(size);
+ Vector3 pos=godot_to_mj(pose.origin);
+ Quaternion rotation=godot_to_mj(pose.basis).get_rotation_quaternion().normalized();
+ mjtNum quat[4]={rotation.w,rotation.x,rotation.y,rotation.z};mju_normalize4(quat);mju_quat2Mat(data->geom_xmat,quat);
+ for (int a=0;a<3;++a) data->geom_xpos[a]=pos[a];
+ for (int geom=0;geom<space->model->ngeom;++geom) {
+   auto *body=query_body(state,*space,geom,mask,false,moving); if (!body) continue;
+   int target=space->model->geom_type[geom];
+   // Heightfields need their own asset-aware path; imported geoms have no native owner.
+   if (!primitive(target)) { mj_unsupported("heightfield/nonprimitive overlap target"); failed=true;continue; }
+   model->geom_type[1]=target;
+   model->geom_rbound[1]=space->model->geom_rbound[geom];
+   mju_copy3(model->geom_size+3,space->model->geom_size+3*geom);
+   mju_copy3(data->geom_xpos+3,space->data->geom_xpos+3*geom);
+   mju_copy(data->geom_xmat+9,space->data->geom_xmat+9*geom,9);
+   bool reversed=type>target; int a=reversed?1:0,b=reversed?0:1;
+   auto collision=mjCOLLISIONFUNC[model->geom_type[a]][model->geom_type[b]];
+   if (!collision) continue; // In particular, no plane/plane finite manifold.
+   mjPreContact contacts[mjMAXCONPAIR]{};
+   int count=collision(model.get(),data.get(),contacts,a,b,margin);
+   bool invalid=false;
+   for(int i=0;i<count;++i) if(!valid_witnesses(model.get(),data.get(),a,b,contacts[i])) invalid=true;
+   // Raw contact positions are not universally witness midpoints. In
+   // particular, cylinder normal correction and perturbed manifolds break
+   // that assumption. Retain original support vertices and portal barycentric
+   // witnesses instead of swapping/projecting points or perturbing geometry.
+   bool finite_pair=type!=mjGEOM_PLANE && target!=mjGEOM_PLANE;
+   if(finite_pair && (invalid || (!count && (type==mjGEOM_CYLINDER || target==mjGEOM_CYLINDER || type==mjGEOM_CAPSULE || target==mjGEOM_CAPSULE)))) {
+     mjPreContact repaired{};
+     if(primitive_witness(model.get(),data.get(),repaired)) {
+       contacts[0]=repaired; count=1; reversed=false;
+     } else if(invalid) {
+       // Positive-margin separated witnesses come directly from the distance
+       // interface, never from a penetration midpoint estimate.
+       mjtNum pair[6];double distance=mj_geomDistance(model.get(),data.get(),0,1,margin+1e-8,pair);
+       repaired.dist=distance;
+       mju_add3(repaired.pos,pair,pair+3);mju_scl3(repaired.pos,repaired.pos,.5);
+       mju_sub3(repaired.normal,pair+3,pair);mju_normalize3(repaired.normal);
+       if(distance>=0 && distance<=margin && valid_witnesses(model.get(),data.get(),0,1,repaired)) {
+         contacts[0]=repaired;count=1;reversed=false;
+       } else {failed=true;mj_unsupported("primitive contact witness could not be validated");count=0;}
+     }
+   }
+   for(int i=0;i<count;++i) {
+     const auto &c=contacts[i];
+     Overlap hit{body,space->geom_owners[geom].second,c,reversed,{}};
+     mjtNum target_point[3],hint[3];
+     mju_addScl3(target_point,c.pos,c.normal,(reversed?-1:1)*.5*c.dist);
+     mju_scl3(hint,c.normal,reversed?1:-1);
+     hit.target_normal=witness_normal(model.get(),data.get(),1,target_point,hint);
+     if(!valid_witnesses(model.get(),data.get(),reversed?1:0,reversed?0:1,c) ||
+         !hit.target_normal.is_finite() || Math::abs(hit.target_normal.length_squared()-1)>1e-5) {
+       failed=true;mj_unsupported("primitive contact witness could not be validated");
+       continue;
+     }
+     if(!contact_point(hit,true).is_finite() || !contact_point(hit,false).is_finite()) {failed=true;continue;}
+     if(std::isfinite(c.dist) && c.dist<=margin &&
+         Vector3(c.normal[0],c.normal[1],c.normal[2]).is_finite() &&
+         contact_point(hit,true).is_finite() && contact_point(hit,false).is_finite()) hits.push_back(hit);
+   }
+ }
+ std::stable_sort(hits.begin(),hits.end(),[](const Overlap &a,const Overlap &b) {
+   if(a.body->rid!=b.body->rid) return a.body->rid.get_id()<b.body->rid.get_id();
+   return a.shape<b.shape;
+ });
+ if(valid)*valid=!failed;
+ return hits;
+}
+Vector3 contact_point(const Overlap &hit, bool query) {
+ const auto &c=hit.contact;
+ double sign=(query != hit.reversed)?-1:1;
+ return mj_to_godot(Vector3(c.pos[0]+sign*.5*c.dist*c.normal[0],c.pos[1]+sign*.5*c.dist*c.normal[1],c.pos[2]+sign*.5*c.dist*c.normal[2]));
+}
+
+void rest_result(MjSpace &space, MjBody &body, int shape, const Vector3 &point,
+    const Vector3 &normal, PhysicsServer3DExtensionShapeRestInfo &info) {
+ info={}; info.rid=body.rid; info.collider_id=ObjectID(body.object_id); info.shape=shape;
+ info.point=point; info.normal=normal;
+ if(body.mj_body>=0 && body.mode==PhysicsServer3D::BODY_MODE_RIGID) {
+   mjtNum velocity[6]; mj_objectVelocity(space.model,space.data,mjOBJ_BODY,body.mj_body,velocity,0);
+   Vector3 angular=mj_to_godot(Vector3(velocity[0],velocity[1],velocity[2]));
+   Vector3 linear=mj_to_godot(Vector3(velocity[3],velocity[4],velocity[5]));
+   const mjtNum *com=space.data->xipos+3*body.mj_body;
+   info.linear_velocity=linear+angular.cross(point-mj_to_godot(Vector3(com[0],com[1],com[2])));
+ } else if(body.mj_body>=0 && body.mode==PhysicsServer3D::BODY_MODE_KINEMATIC) {
+   const mjtNum *com=space.data->xipos+3*body.mj_body;
+   info.linear_velocity=body.linear_velocity+body.angular_velocity.cross(point-mj_to_godot(Vector3(com[0],com[1],com[2])));
+ }
+}
+// Support of a primitive in world direction, with sizes/axes in MuJoCo order.
+gmj_sweep::Vec support(int type, const mjtNum *size, const mjtNum *matrix, gmj_sweep::Vec n) {
+ mjtNum direction[3]={n.x,n.y,n.z}, local[3], v[3], world[3];
+ mju_mulMatTVec3(local,matrix,direction);
+ if(type==mjGEOM_SPHERE || type==mjGEOM_CAPSULE) { double length=mju_norm3(local); for(int i=0;i<3;++i) v[i]=length?size[0]*local[i]/length:0; if(type==mjGEOM_CAPSULE) v[2]+=local[2]>=0?size[1]:-size[1]; }
+ else if(type==mjGEOM_BOX) { for(int i=0;i<3;++i) v[i]=local[i]>=0?size[i]:-size[i]; }
+ else { double radial=std::hypot(local[0],local[1]); v[0]=radial?size[0]*local[0]/radial:0; v[1]=radial?size[0]*local[1]/radial:0; v[2]=local[2]>=0?size[1]:-size[1]; }
+ mju_mulMatVec3(world,matrix,v); return {world[0],world[1],world[2]};
+}
+
+// The float ABI can have no representable pose inside a very short collision
+// interval. Verify the rounded unsafe pose; never claim it actually contacts
+// when it has already crossed an entire thin obstacle or a grazing point.
+double sweep_gap(int type, const mjtNum *size, const mjtNum *matrix,
+    gmj_sweep::Vec origin, gmj_sweep::Vec velocity, int target, const mjtNum *ts,
+    const mjtNum *mat, gmj_sweep::Vec center, double margin, double fraction) {
+ using gmj_sweep::Vec;
+ Vec p=origin+velocity*fraction;
+ if(target==mjGEOM_PLANE) {
+   Vec n{mat[2],mat[5],mat[8]};
+   return (p+support(type,size,matrix,n*-1)-center).dot(n)-margin;
+ }
+ if(type==mjGEOM_PLANE) {
+   Vec n{matrix[2],matrix[5],matrix[8]};
+   return (center+support(target,ts,mat,n*-1)-p).dot(n)-margin;
+ }
+ Vec offset=p-center; mjtNum w[3]={offset.x,offset.y,offset.z}, local[3];
+ mju_mulMatTVec3(local,mat,w); Vec point{local[0],local[1],local[2]};
+ auto kind=target==mjGEOM_SPHERE?gmj_sweep::Kind::sphere:target==mjGEOM_BOX?gmj_sweep::Kind::box:target==mjGEOM_CAPSULE?gmj_sweep::Kind::capsule:gmj_sweep::Kind::cylinder;
+ mjtNum axis_world[3]={},axis_local[3];
+ if(type==mjGEOM_CAPSULE) for(int k=0;k<3;++k)axis_world[k]=matrix[3*k+2]*size[1];
+ mju_mulMatTVec3(axis_local,mat,axis_world);
+ return gmj_sweep::segment_closest({kind,{ts[0],ts[1],ts[2]}},point,
+     {axis_local[0],axis_local[1],axis_local[2]}).delta().length()-size[0]-margin;
+}
 } // namespace
 
 bool MjDirectSpaceState::_intersect_ray(const Vector3 &p_from, const Vector3 &p_to,
@@ -116,17 +420,12 @@ bool MjDirectSpaceState::_intersect_ray(const Vector3 &p_from, const Vector3 &p_
 
 	for (int geom = 0; geom < model->ngeom; ++geom) {
 		const auto &owner = query_space->geom_owners[geom];
-		MjBody *body = server->body(owner.first);
-		if (!body || body->space != rid || owner.second < 0 ||
-				static_cast<size_t>(owner.second) >= body->shapes.size() ||
-				body->shapes[owner.second].disabled || !(body->layer & p_collision_mask) ||
-				(p_pick_ray && !body->ray_pickable) || is_body_excluded_from_query(owner.first)) {
-			continue;
-		}
+		MjBody *body = query_body(*this, *query_space, geom, p_collision_mask, p_pick_ray);
+		if (!body) continue;
 		// A query's mask is matched against the body's layer. The body's own
 		// collision mask controls body/body contacts, not visibility to rays.
 		const int type = model->geom_type[geom];
-		if (type != mjGEOM_BOX && type != mjGEOM_SPHERE && type != mjGEOM_PLANE && type != mjGEOM_CYLINDER && type != mjGEOM_HFIELD) {
+		if (type != mjGEOM_BOX && type != mjGEOM_SPHERE && type != mjGEOM_PLANE && type != mjGEOM_CYLINDER && type != mjGEOM_CAPSULE && type != mjGEOM_HFIELD) {
 			mj_unsupported("ray queries for non-box/sphere/world-boundary shapes");
 			continue;
 		}
@@ -206,55 +505,440 @@ bool MjDirectSpaceState::_intersect_ray(const Vector3 &p_from, const Vector3 &p_
 	return true;
 }
 
-int32_t MjDirectSpaceState::_intersect_point(const Vector3 &, uint32_t, bool, bool,
-		PhysicsServer3DExtensionShapeResult *, int32_t) {
-	mj_unsupported("direct-space intersect_point");
-	return 0;
+int32_t MjDirectSpaceState::_intersect_point(const Vector3 &position, uint32_t mask, bool bodies, bool areas,
+    PhysicsServer3DExtensionShapeResult *results, int32_t max_results) {
+ if (!results || max_results<=0 || !position.is_finite()) return 0;
+ auto *space=query_space(*this,mask,bodies,areas); if(!space) return 0;
+ std::vector<PhysicsServer3DExtensionShapeResult> hits;
+ Vector3 p=godot_to_mj(position); mjtNum point[3]={p.x,p.y,p.z};
+ for(int geom=0;geom<space->model->ngeom;++geom) {
+   auto *body=query_body(*this,*space,geom,mask); if(!body) continue;
+   int type=space->model->geom_type[geom];
+   if(!primitive(type)) { mj_unsupported("heightfield/nonprimitive point target"); continue; }
+   mjtNum offset[3],local[3]; mju_sub3(offset,point,space->data->geom_xpos+3*geom);
+   mju_mulMatTVec3(local,space->data->geom_xmat+9*geom,offset);
+   if(point_inside_geom(type,local,space->model->geom_size+3*geom)) hits.push_back(shape_result(*body,space->geom_owners[geom].second));
+ }
+ std::sort(hits.begin(),hits.end(),[](const auto &a,const auto &b){return a.rid==b.rid?a.shape<b.shape:a.rid.get_id()<b.rid.get_id();});
+ int count=std::min(max_results,int(hits.size())); std::copy_n(hits.begin(),count,results); return count;
 }
 
-int32_t MjDirectSpaceState::_intersect_shape(const RID &, const Transform3D &, const Vector3 &,
-		float, uint32_t, bool, bool, PhysicsServer3DExtensionShapeResult *, int32_t) {
-	mj_unsupported("direct-space intersect_shape");
-	return 0;
+int32_t MjDirectSpaceState::_intersect_shape(const RID &shape, const Transform3D &pose, const Vector3 &motion,
+    float margin, uint32_t mask, bool bodies, bool areas, PhysicsServer3DExtensionShapeResult *results, int32_t max_results) {
+ if(!results || max_results<=0) return 0;
+ auto hits=overlaps(*this,shape,pose,motion,margin,mask,bodies,areas); int count=0;
+ for(const auto &hit:hits) {
+   if(count && results[count-1].rid==hit.body->rid && results[count-1].shape==hit.shape) continue;
+   results[count++]=shape_result(*hit.body,hit.shape); if(count==max_results) break;
+ }
+ return count;
 }
 
-bool MjDirectSpaceState::_cast_motion(const RID &, const Transform3D &, const Vector3 &,
-		float, uint32_t, bool, bool, float *p_closest_safe, float *p_closest_unsafe,
-		PhysicsServer3DExtensionShapeRestInfo *p_info) {
-	if (p_closest_safe) {
-		*p_closest_safe = 0;
-	}
-	if (p_closest_unsafe) {
-		*p_closest_unsafe = 0;
-	}
-	if (p_info) {
-		*p_info = {};
-	}
-	mj_unsupported("direct-space cast_motion");
-	return false;
+static bool cast_motion_impl(MjDirectSpaceState &state, const RID &shape_rid, const Transform3D &transform, const Vector3 &motion,
+    float margin, uint32_t mask, bool bodies, bool areas, float *safe, float *unsafe,
+    PhysicsServer3DExtensionShapeRestInfo *info, const MjBody *moving=nullptr) {
+ auto *server=state.server;auto rid=state.rid;
+ if(safe) *safe=0; if(unsafe) *unsafe=0; if(info) *info={};
+ if(!safe || !unsafe || !server || !transform.is_finite() || !motion.is_finite() ||
+     !transform.basis.is_orthogonal() || !transform.basis.get_scale().is_equal_approx(Vector3(1,1,1)) ||
+     transform.basis.determinant()<=0 || !std::isfinite(margin) || margin<0) return false;
+ auto *shape=server->shape(shape_rid);
+ if(!shape || server->pending_free.count(shape_rid.get_id())) return false;
+ if(areas) { mj_unsupported("continuous sweep of Area3D"); return false; }
+ int type; mjtNum size[3]={}; Transform3D pose=transform;
+ switch(shape->type) {
+ case PhysicsServer3D::SHAPE_SPHERE: type=mjGEOM_SPHERE; size[0]=double(shape->data); break;
+ case PhysicsServer3D::SHAPE_BOX: { type=mjGEOM_BOX; Vector3 v=shape->data; size[0]=v.x; size[1]=v.z; size[2]=v.y; break; }
+ case PhysicsServer3D::SHAPE_CYLINDER: { type=mjGEOM_CYLINDER; Dictionary d=shape->data; size[0]=double(d["radius"]); size[1]=double(d["height"])*.5; break; }
+ case PhysicsServer3D::SHAPE_CAPSULE: {
+   Dictionary d=shape->data;size[0]=double(d["radius"]);size[1]=double(d["height"])*.5-size[0];
+   type=size[1]==0?mjGEOM_SPHERE:mjGEOM_CAPSULE;break;
+ }
+ case PhysicsServer3D::SHAPE_WORLD_BOUNDARY: {
+   type=mjGEOM_PLANE; Plane p=shape->data;
+   if(!std::isfinite(p.normal.length()) || !std::isfinite(p.d)) return false;
+   Vector3 n=p.normal.normalized(); pose.origin+=pose.basis.xform(n*(p.d/p.normal.length()));
+   pose.basis=pose.basis*Basis(Quaternion(Vector3(0,1,0),n)); break;
+ }
+ default: mj_unsupported("continuous sweep query shape"); return false;
+ }
+ for(double extent:size) if(!std::isfinite(extent) || extent<0 || extent>std::numeric_limits<real_t>::max()) return false;
+ if(!pose.is_finite()) return false;
+ if(!bodies || !mask) { *safe=*unsafe=1; return true; }
+ auto *space=query_space(state,mask,bodies,false); if(!space) return false;
+ // Validate the complete candidate set first: never report a clear sweep by
+ // silently ignoring an unsupported native obstacle, even beyond a closer hit.
+ for(int geom=0;geom<space->model->ngeom;++geom) {
+   if(!query_body(state,*space,geom,mask,false,moving)) continue;
+   int target=space->model->geom_type[geom];
+   if(!primitive(target) || (type==mjGEOM_PLANE && target==mjGEOM_PLANE) ||
+       (type!=mjGEOM_SPHERE && type!=mjGEOM_CAPSULE && type!=mjGEOM_PLANE && target!=mjGEOM_PLANE)) {
+     mj_unsupported("continuous sweep pair (sphere/capsule to primitive or finite/plane only)"); return false;
+   }
+ }
+ using gmj_sweep::Vec;
+ Vector3 p=godot_to_mj(pose.origin), m=godot_to_mj(motion);
+ Vec origin{p.x,p.y,p.z}, velocity{m.x,m.y,m.z};
+ if(velocity.length()==0 && !moving) { *safe=*unsafe=1; return true; }
+ Quaternion rotation=godot_to_mj(pose.basis).get_rotation_quaternion().normalized();
+ mjtNum quat[4]={rotation.w,rotation.x,rotation.y,rotation.z}, matrix[9];
+ mju_normalize4(quat); mju_quat2Mat(matrix,quat);
+ std::vector<int> sweep_targets;
+ double first=2, lower=1, minimum=1; MjBody *nearest=nullptr; int nearest_shape=-1, nearest_geom=-1; Vec witness{},normal{};
+ for(int geom=0;geom<space->model->ngeom;++geom) {
+   auto *body=query_body(state,*space,geom,mask,false,moving); if(!body) continue;
+   int target=space->model->geom_type[geom];
+   const mjtNum *pos=space->data->geom_xpos+3*geom, *mat=space->data->geom_xmat+9*geom, *ts=space->model->geom_size+3*geom;
+   Vec center{pos[0],pos[1],pos[2]}, point{}, n{};
+   gmj_sweep::Result hit;
+   if(target==mjGEOM_PLANE) {
+     n={mat[2],mat[5],mat[8]};
+     Vec offset=support(type,size,matrix,n*-1);
+     double gap=(origin+offset-center).dot(n)-margin;
+     hit=gmj_sweep::plane(gap,velocity.dot(n));
+     if(hit.hit) { point=origin+offset+velocity*hit.unsafe; point=point-n*((point-center).dot(n)); }
+   } else if(type==mjGEOM_PLANE) {
+     Vec plane_normal{matrix[2],matrix[5],matrix[8]};
+     point=center+support(target,ts,mat,plane_normal*-1); n=plane_normal*-1;
+     hit=gmj_sweep::plane((point-origin).dot(plane_normal)-margin,-velocity.dot(plane_normal));
+   } else {
+     Vec rel=origin-center; mjtNum r[3]={rel.x,rel.y,rel.z}, v[3]={velocity.x,velocity.y,velocity.z}, local[3], direction[3];
+     mju_mulMatTVec3(local,mat,r); mju_mulMatTVec3(direction,mat,v);
+     auto kind=target==mjGEOM_SPHERE?gmj_sweep::Kind::sphere:target==mjGEOM_BOX?gmj_sweep::Kind::box:target==mjGEOM_CAPSULE?gmj_sweep::Kind::capsule:gmj_sweep::Kind::cylinder;
+     mjtNum axis_world[3]={},axis_local[3];
+     if(type==mjGEOM_CAPSULE) for(int k=0;k<3;++k)axis_world[k]=matrix[3*k+2]*size[1];
+     mju_mulMatTVec3(axis_local,mat,axis_world);
+     hit=gmj_sweep::capsule({kind,{ts[0],ts[1],ts[2]}},{local[0],local[1],local[2]},
+         {direction[0],direction[1],direction[2]},size[0]+double(margin),
+         {axis_local[0],axis_local[1],axis_local[2]});
+     mjtNum wp[3],wn[3],lp[3]={hit.point.x,hit.point.y,hit.point.z},ln[3]={hit.normal.x,hit.normal.y,hit.normal.z};
+     mju_mulMatVec3(wp,mat,lp); mju_mulMatVec3(wn,mat,ln);
+     point=center+Vec{wp[0],wp[1],wp[2]}; n={wn[0],wn[1],wn[2]};
+   }
+   if(!hit.valid) { mj_unsupported("continuous sweep numerical bracket could not be certified"); return false; }
+   // Recovery is mandatory for body motion: never inherit the public shape
+   // query's initial-overlap ignore policy if narrowphase recovery missed one.
+   if(moving && hit.initial_overlap) {
+     mj_unsupported("body motion initial penetration remains after recovery");return false;
+   }
+   if(!hit.initial_overlap) sweep_targets.push_back(geom);
+   if(!hit.hit) continue;
+   lower=std::min(lower,hit.safe);
+   auto owner=space->geom_owners[geom];
+   bool earlier=hit.unsafe<first;
+   bool tie=hit.unsafe==first && nearest && (body->rid.get_id()<nearest->rid.get_id() || (body->rid==nearest->rid && owner.second<nearest_shape));
+   if(earlier || tie) { first=hit.unsafe; minimum=hit.minimum; nearest=body; nearest_shape=owner.second; nearest_geom=geom; witness=point; normal=n; }
+ }
+ if(!nearest) { *safe=*unsafe=1; return true; }
+ Vector3 point=mj_to_godot(Vector3(witness.x,witness.y,witness.z));
+ Vector3 n=mj_to_godot(Vector3(normal.x,normal.y,normal.z)).normalized();
+ if(!point.is_finite() || !n.is_finite()) return false;
+ // Round outward, then independently verify the unsafe ABI pose below.
+ float lo=float(lower), hi=float(first);
+ if(double(lo)>lower) lo=std::nextafter(lo,0.0f);
+ if(double(hi)<first) hi=std::nextafter(hi,1.0f);
+ // Godot applies the fraction to real_t vectors, not double vectors. Verify
+ // those poses too: cancellation at large coordinates can consume the entire
+ // collision interval even when the fraction itself is representable.
+ lo=std::nextafter(lo,0.0f);
+ auto rounded_origin=[&](float fraction) {
+   Vector3 position=transform.origin+motion*fraction;
+   if(type==mjGEOM_PLANE) {
+     Plane plane=shape->data;
+     position+=transform.basis.xform(plane.normal.normalized()*(plane.d/plane.normal.length()));
+   }
+   Vector3 local=godot_to_mj(position); return Vec{local.x,local.y,local.z};
+ };
+ const mjtNum *target_pos=space->data->geom_xpos+3*nearest_geom;
+ auto abi_gap=[&](float fraction) { return sweep_gap(type,size,matrix,rounded_origin(fraction),{},
+     space->model->geom_type[nearest_geom],space->model->geom_size+3*nearest_geom,
+     space->data->geom_xmat+9*nearest_geom,{target_pos[0],target_pos[1],target_pos[2]},margin,0); };
+ auto continuous_gap=[&](float fraction) { return sweep_gap(type,size,matrix,origin,velocity,
+     space->model->geom_type[nearest_geom],space->model->geom_size+3*nearest_geom,
+     space->data->geom_xmat+9*nearest_geom,{target_pos[0],target_pos[1],target_pos[2]},margin,fraction); };
+ // Fraction rounding and vector arithmetic round independently. A single
+ // nextafter can leave an otherwise ordinary rotated face just outside at
+ // unsafe (or inside at safe). Search adjacent representable fractions only
+ // AFTER the continuous solver has established the first-contact bracket.
+ // These probes certify ABI outputs; they never discover or classify a sweep.
+ // Keep the continuous and float-pose predicates independent and exact: no
+ // penetration/gap tolerance can turn a miss into a certified contact.
+ auto safe_at=[&](float f) {
+   for(int geom:sweep_targets) {
+     const mjtNum *tp=space->data->geom_xpos+3*geom;
+     int target=space->model->geom_type[geom];
+     const mjtNum *ts=space->model->geom_size+3*geom,*mat=space->data->geom_xmat+9*geom;
+     Vec center{tp[0],tp[1],tp[2]};
+     double continuous=sweep_gap(type,size,matrix,origin,velocity,target,ts,mat,center,margin,f);
+     double actual=sweep_gap(type,size,matrix,rounded_origin(f),{},target,ts,mat,center,margin,0);
+     if(!std::isfinite(continuous) || !std::isfinite(actual) || continuous<0 || actual<0)return false;
+   }
+   return true;
+ };
+ auto unsafe_at=[&](float f) {
+   double continuous=continuous_gap(f),actual=abi_gap(f);
+   return std::isfinite(continuous) && std::isfinite(actual) && continuous<=0 && actual<=0;
+ };
+ bool safe_ok=safe_at(lo),unsafe_ok=unsafe_at(hi);
+ constexpr int max_fraction_neighbors=8;
+ for(int i=0;!safe_ok && lo>0 && i<max_fraction_neighbors;++i) {
+   lo=std::nextafter(lo,0.0f);safe_ok=safe_at(lo);
+ }
+ for(int i=0;!unsafe_ok && hi<1 && i<max_fraction_neighbors;++i) {
+   hi=std::nextafter(hi,1.0f);unsafe_ok=unsafe_at(hi);
+ }
+ // Near t=0, many fraction ULPs can fit inside one world-position ULP.
+ // If neighboring fractions do not suffice, use known continuous bounds:
+ // t=0 is a candidate safe endpoint and the convex solver's minimizer is a
+ // candidate interior point. Certification is still mandatory at both poses.
+ // Refine only a certified bracket, never replace failure with a tolerance.
+ if(!safe_ok && safe_at(0)) {
+   float a=0,b=lo;
+   for(int i=0;i<64;++i) {float mid=a+(b-a)*.5f;if(mid<=a||mid>=b)break;if(safe_at(mid))a=mid;else b=mid;}
+   lo=a;safe_ok=true;
+ }
+ if(!unsafe_ok) {
+   float middle=float(minimum);
+   for(float candidate:{middle,std::nextafter(middle,0.0f),std::nextafter(middle,1.0f)}) {
+     if(candidate<first || candidate>1 || !unsafe_at(candidate))continue;
+     float a=float(first),b=candidate;
+     for(int i=0;i<64;++i) {float mid=a+(b-a)*.5f;if(mid<=a||mid>=b)break;if(unsafe_at(mid))b=mid;else a=mid;}
+     hi=b;unsafe_ok=true;break;
+   }
+ }
+ if(!safe_ok || !unsafe_ok) {
+   mj_unsupported("continuous sweep contact has no certified float safe/unsafe poses"); return false;
+ }
+ *safe=std::clamp(lo,0.0f,1.0f); *unsafe=std::clamp(hi,0.0f,1.0f);
+ if(info) rest_result(*space,*nearest,nearest_shape,point,n,*info);
+ return true;
 }
 
-bool MjDirectSpaceState::_collide_shape(const RID &, const Transform3D &, const Vector3 &,
-		float, uint32_t, bool, bool, void *, int32_t, int32_t *p_result_count) {
-	if (p_result_count) {
-		*p_result_count = 0;
-	}
-	mj_unsupported("direct-space collide_shape");
-	return false;
+bool MjDirectSpaceState::_cast_motion(const RID &shape, const Transform3D &pose, const Vector3 &motion,
+    float margin,uint32_t mask,bool bodies,bool areas,float *safe,float *unsafe,PhysicsServer3DExtensionShapeRestInfo *info) {
+ return cast_motion_impl(*this,shape,pose,motion,margin,mask,bodies,areas,safe,unsafe,info);
 }
 
-bool MjDirectSpaceState::_rest_info(const RID &, const Transform3D &, const Vector3 &,
-		float, uint32_t, bool, bool, PhysicsServer3DExtensionShapeRestInfo *p_rest_info) {
-	if (p_rest_info) {
-		*p_rest_info = {};
-	}
-	mj_unsupported("direct-space rest_info");
-	return false;
+bool MjDirectSpaceState::_collide_shape(const RID &shape, const Transform3D &pose, const Vector3 &motion,
+    float margin, uint32_t mask, bool bodies, bool areas, void *results, int32_t max_results, int32_t *count) {
+ if(count) *count=0;
+ if(!count || !results || max_results<=0) return false;
+ auto hits=overlaps(*this,shape,pose,motion,margin,mask,bodies,areas);
+ auto *points=static_cast<Vector3 *>(results);
+ for(const auto &hit:hits) {
+   points[2*(*count)]=contact_point(hit,true); points[2*(*count)+1]=contact_point(hit,false);
+   if(++(*count)==max_results) break;
+ }
+ return *count>0;
+}
+
+bool MjDirectSpaceState::_rest_info(const RID &shape, const Transform3D &pose, const Vector3 &motion,
+    float margin, uint32_t mask, bool bodies, bool areas, PhysicsServer3DExtensionShapeRestInfo *info) {
+ if(!info) return false; *info={};
+ auto hits=overlaps(*this,shape,pose,motion,margin,mask,bodies,areas); if(hits.empty()) return false;
+ const auto &hit=*std::min_element(hits.begin(),hits.end(),[](const Overlap &a,const Overlap &b){return a.contact.dist<b.contact.dist;});
+ rest_result(*server->space(rid),*hit.body,hit.shape,contact_point(hit,false),hit.target_normal,*info);
+ return true;
 }
 
 Vector3 MjDirectSpaceState::_get_closest_point_to_object_volume(const RID &, const Vector3 &) const {
 	mj_unsupported("direct-space get_closest_point_to_object_volume");
 	return Vector3();
+}
+
+
+bool MjPhysicsServer3D::_body_test_motion(const RID &body_rid,const Transform3D &from,const Vector3 &motion,
+    float margin,int32_t max_collisions,bool collide_separation_ray,bool recovery_as_collision,
+    PhysicsServer3DExtensionMotionResult *output) const {
+ PhysicsServer3DExtensionMotionResult local{};auto &result=output?*output:local;result={};
+ result.travel=motion;result.collision_safe_fraction=result.collision_unsafe_fraction=1;
+ auto *moving=body(body_rid);auto *world=moving?space(moving->space):nullptr;
+ auto blocked=[&](const char *reason) {
+   mj_unsupported(reason);result={};result.remainder=motion;return false;
+ };
+ if(!moving || !world || pending_free.count(body_rid.get_id()) || !from.is_finite() || !motion.is_finite() ||
+     !from.basis.is_orthogonal() || !from.basis.get_scale().is_equal_approx(Vector3(1,1,1)) || from.basis.determinant()<=0 ||
+     !std::isfinite(margin) || margin<0 || max_collisions<1 || max_collisions>32)
+   return blocked("body motion invalid input or missing space");
+ std::vector<int> shapes;
+ for(int i=0;i<int(moving->shapes.size());++i) {
+   const auto &instance=moving->shapes[i];if(instance.disabled)continue;
+   auto*s=shape(instance.shape);
+   if(!s || pending_free.count(instance.shape.get_id()))continue;
+   if(s->type!=SHAPE_SPHERE && s->type!=SHAPE_CAPSULE)
+     return blocked("body motion moving shapes (sphere/capsule only)");
+   shapes.push_back(i);
+ }
+ // Separation-ray shapes cannot be created in this stage. The flag only
+ // selects such shapes if present; it does not change sphere/capsule behavior.
+ (void)collide_separation_ray;
+ if(shapes.empty() || !moving->mask)return false;
+ auto &state=*world->direct;
+ if(!query_space(state,moving->mask,true,false))return blocked("body motion space rebuild failed");
+ std::vector<PhysicsServer3DExtensionMotionCollision> recovered,collisions;
+ auto collision=[&](const Overlap &hit,int index,double depth) {
+   PhysicsServer3DExtensionMotionCollision c{};PhysicsServer3DExtensionShapeRestInfo rest;
+   rest_result(*world,*hit.body,hit.shape,contact_point(hit,false),hit.target_normal,rest);
+   c.position=rest.point;c.normal=rest.normal;c.collider_velocity=rest.linear_velocity;
+   c.collider_angular_velocity=hit.body->angular_velocity;c.depth=std::max(0.0,depth);
+   c.local_shape=index;c.collider_id=rest.collider_id;c.collider=rest.rid;c.collider_shape=rest.shape;return c;
+ };
+ auto remember=[](auto &items,const auto &c) {
+   for(auto &old:items)if(old.collider==c.collider && old.collider_shape==c.collider_shape && old.local_shape==c.local_shape) {
+     if(c.depth>old.depth)old=c;return;
+   }
+   items.push_back(c);
+ };
+ Transform3D pose=from;
+ // Recovery must leave every shape outside the margin before cast_motion,
+ // whose separate public contract ignores initial penetrations. A bounded
+ // failure stops travel explicitly instead of silently ignoring a wall.
+ // Slop is geometric, not proportional to unrelated world coordinates.
+ // Certify actual per-shape displacement below instead of inflating recovery
+ // by the largest body-origin ULP (e.g. huge X must not inflate floor Y).
+ constexpr double epsilon=1e-6;
+ struct RecoveryConstraint {Vector3 normal;double depth;int shape;};
+ bool clear=false;
+ for(int iteration=0;iteration<16;++iteration) {
+   std::vector<RecoveryConstraint> constraints;Vector3 correction;
+   for(int index:shapes) {
+     const auto &instance=moving->shapes[index];bool valid;
+     auto hits=overlaps(state,instance.shape,pose*instance.transform,{},margin,moving->mask,true,false,moving,&valid);
+     if(!valid)return blocked("body motion recovery witness unavailable");
+     for(const auto &hit:hits) {
+       double depth=double(margin)-hit.contact.dist;
+       if(depth>0) {
+         remember(recovered,collision(hit,index,depth));
+         constraints.push_back({hit.target_normal,depth,index});
+       }
+     }
+   }
+   if(constraints.empty()) {clear=true;break;}
+   // Solve all current contact half-spaces together. Recomputing just the
+   // deepest contact after each push can change its side and teleport a wedged
+   // body through one of two opposing obstacles.
+   bool feasible=false;
+   for(int pass=0;pass<32;++pass) {
+     for(const auto &c:constraints) {
+       double deficit=c.depth-c.normal.dot(correction);
+       if(deficit>0)correction+=c.normal*(deficit+epsilon);
+     }
+     feasible=true;for(const auto &c:constraints)if(c.normal.dot(correction)<c.depth){feasible=false;break;}
+     if(feasible)break;
+   }
+   if(!feasible)return blocked("body motion recovery did not converge");
+   if(!correction.is_finite() || pose.origin+correction==pose.origin)return blocked("body motion recovery has no representable displacement");
+   Transform3D next=pose;next.origin+=correction;
+   for(const auto &c:constraints) {
+     const auto &instance=moving->shapes[c.shape];
+     Vector3 actual=(next*instance.transform).origin-(pose*instance.transform).origin;
+     if(!actual.is_finite() || double(c.normal.dot(actual))<c.depth)
+       return blocked("body motion recovery has no certified directional displacement");
+   }
+   pose=next;
+ }
+ if(!clear)return blocked("body motion recovery did not converge");
+ float safe=1,unsafe=1;PhysicsServer3DExtensionShapeRestInfo nearest{};int local_shape=-1;
+ for(int index:shapes) {
+   const auto &instance=moving->shapes[index];float lo,hi;PhysicsServer3DExtensionShapeRestInfo rest{};
+   if(!cast_motion_impl(state,instance.shape,pose*instance.transform,motion,margin,moving->mask,true,false,&lo,&hi,&rest,moving))
+     return blocked("body motion continuous sweep could not be certified");
+   safe=std::min(safe,lo);
+   if(rest.rid.is_valid() && (local_shape<0 || hi<unsafe)) {unsafe=hi;nearest=rest;local_shape=index;}
+ }
+ // Certify the actual BODY application order, including local-shape offsets.
+ // (from.origin + travel) * local is not necessarily shape_origin + motion*f
+ // in float. Endpoint overlap alone cannot detect jumping across a thin wall,
+ // so re-sweep every shape along its actual resulting displacement.
+ auto body_travel=[&](float fraction,Vector3 &travel,Vector3 &progress) {
+   // Report requested vector arithmetic, as Godot does, rather than the
+   // subtraction of two large rounded origins (which can exceed the request).
+   progress=motion*fraction;travel=pose.origin-from.origin+progress;
+   Transform3D end=from;end.origin+=travel;
+   if(!travel.is_finite() || !end.is_finite())return false;
+   for(int index:shapes) {
+     const auto &instance=moving->shapes[index];Transform3D start=pose*instance.transform,finish=end*instance.transform;
+     Vector3 actual=finish.origin-start.origin;float lo,hi;PhysicsServer3DExtensionShapeRestInfo hit{};
+     if(!cast_motion_impl(state,instance.shape,start,actual,margin,moving->mask,true,false,&lo,&hi,&hit,moving))return false;
+     if(hit.rid.is_valid()) {
+       // Rounding can introduce an endpoint contact absent from the ideal
+       // path. Retain it only when the actual endpoint has a valid witness;
+       // then fraction itself is a certified unsafe body pose. A jump past
+       // an obstacle without such an endpoint remains an explicit rejection.
+       if(local_shape<0) {
+         bool valid;auto endpoint=overlaps(state,instance.shape,finish,{},margin,moving->mask,true,false,moving,&valid);
+         if(valid)for(const auto &contact:endpoint)if(contact.body->rid==hit.rid && contact.shape==hit.shape) {
+           nearest=hit;local_shape=index;unsafe=fraction;break;
+         }
+       }
+       return false;
+     }
+   }
+   if(end.origin==pose.origin) {progress={};travel=pose.origin-from.origin;}
+   return true;
+ };
+ Vector3 travel,progress;
+ if(!body_travel(safe,travel,progress)) {
+   // A rounded path can hit a target absent from the ideal path. Do not
+   // silently shorten a supposedly clear motion without collision metadata.
+   if(local_shape<0)return blocked("body motion rounded path introduced an uncertified collision");
+   Vector3 fallback,ignored;
+   if(!body_travel(0,fallback,ignored))return blocked("body motion final body pose could not be certified");
+   float a=0,b=safe;
+   for(int i=0;i<64;++i) {float mid=a+(b-a)*.5f;if(mid<=a||mid>=b)break;
+     Vector3 candidate,advance;if(body_travel(mid,candidate,advance))a=mid;else b=mid;
+   }
+   safe=a;
+   if(!body_travel(safe,travel,progress))return blocked("body motion final body pose could not be certified");
+ }
+ result.travel=travel;result.remainder=motion-progress;
+ if(motion.length_squared()>0)safe=std::min(safe,float(std::clamp(double(progress.dot(motion))/motion.length_squared(),0.0,1.0)));
+
+ if(local_shape>=0) {
+   // Certify unsafe using the same BODY + travel + local transform order as
+   // the caller. Shape-space contact alone cannot certify this float pose.
+   auto unsafe_contacts=[&](float fraction) {
+     collisions.clear();bool matched=false;
+     Transform3D contact_pose=from;contact_pose.origin+=pose.origin-from.origin+motion*fraction;
+     for(int index:shapes) {
+       const auto &instance=moving->shapes[index];bool valid;
+       auto hits=overlaps(state,instance.shape,contact_pose*instance.transform,{},margin,moving->mask,true,false,moving,&valid);
+       if(!valid)return false;
+       for(const auto &hit:hits) {
+         bool selected=index==local_shape && hit.body->rid==nearest.rid && hit.shape==nearest.shape;
+         if(selected || hit.target_normal.dot(motion)<0)
+           remember(collisions,collision(hit,index,double(margin)-hit.contact.dist));
+         matched|=selected;
+       }
+     }
+     return matched;
+   };
+   bool certified=unsafe_contacts(unsafe);
+   for(int i=0;!certified && unsafe<1 && i<256;++i) {
+     unsafe=std::nextafter(unsafe,1.0f);certified=unsafe_contacts(unsafe);
+   }
+   // Near zero, fraction ULPs can be much smaller than a body-position ULP.
+   // A certified endpoint can bound refinement after continuous detection;
+   // never infer a contact from an uncertified endpoint or sparse samples.
+   if(!certified && unsafe_contacts(1)) {
+     float a=unsafe,b=1;
+     for(int i=0;i<64;++i) {float mid=a+(b-a)*.5f;if(mid<=a||mid>=b)break;
+       if(unsafe_contacts(mid))b=mid;else a=mid;
+     }
+     unsafe=b;certified=unsafe_contacts(unsafe);
+   }
+   if(!certified)return blocked("body motion unsafe body pose has no certified contact");
+ } else if(recovery_as_collision)collisions=recovered;
+ result.collision_safe_fraction=safe;result.collision_unsafe_fraction=unsafe;
+ std::stable_sort(collisions.begin(),collisions.end(),[](const auto &a,const auto &b) {
+   if(a.depth!=b.depth)return a.depth>b.depth;
+   if(a.collider!=b.collider)return a.collider.get_id()<b.collider.get_id();
+   if(a.collider_shape!=b.collider_shape)return a.collider_shape<b.collider_shape;
+   return a.local_shape<b.local_shape;
+ });
+ result.collision_count=std::min(max_collisions,int(collisions.size()));
+ for(int i=0;i<result.collision_count;++i){result.collisions[i]=collisions[i];result.collision_depth=std::max(result.collision_depth,collisions[i].depth);}
+ return result.collision_count>0;
 }
 
 } // namespace godot

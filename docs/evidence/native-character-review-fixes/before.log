@@ -1,0 +1,3 @@
+RECOVERY_PROBE cancel=false hit=true travel=(0.0, 95.46843, 0.0) expected_y=0.101
+RECOVERY_PROBE cancel=true hit=true travel=(0.0, 95.46843, 0.0) expected_y=0.101
+UNSAFE_PROBE hit=true travel=(0.0, 0.0, 0.0) unsafe=0.5 actual_center=(8.0, 0.0, 0.0) contact_interval=[5,7] count=1

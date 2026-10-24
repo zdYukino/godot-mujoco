@@ -1,0 +1,105 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+PASS server_owned_MjDirectBodyState
+PASS server_owned_MjDirectSpaceState
+PASS server_owned_MjPhysicsServer3D
+MuJoCo: compile time (ms)
+  total:          0.3   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.3   (wall clock)
+PASS primitive_backend_identity
+PASS sphere_plane_rest_height
+PASS sphere_plane_rest_speed
+PASS sphere_ray_collider
+PASS sphere_ray_shape_index
+PASS sphere_ray_surface
+PASS sphere_ray_normal
+PASS plane_is_infinite
+PASS plane_ray_height
+PASS plane_ray_normal
+PASS inside_sphere_default_miss
+PASS inside_sphere_explicit_hit
+PASS sphere_exclusion_reveals_plane
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS contact_layers_filter_pair
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS ray_ignores_target_mask
+PASS ray_obeys_target_layer
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS body_collision_exception
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS removed_exception_restores_contact
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS transformed_plane_collider
+PASS transformed_plane_position
+PASS transformed_plane_normal
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS freed_primitives_absent
+PRIMITIVE_RESULT {"backend":"MjPhysicsServer3D","checks":[{"name":"server_owned_MjDirectBodyState","passed":true},{"name":"server_owned_MjDirectSpaceState","passed":true},{"name":"server_owned_MjPhysicsServer3D","passed":true},{"name":"primitive_backend_identity","passed":true},{"name":"sphere_plane_rest_height","passed":true},{"name":"sphere_plane_rest_speed","passed":true},{"name":"sphere_ray_collider","passed":true},{"name":"sphere_ray_shape_index","passed":true},{"name":"sphere_ray_surface","passed":true},{"name":"sphere_ray_normal","passed":true},{"name":"plane_is_infinite","passed":true},{"name":"plane_ray_height","passed":true},{"name":"plane_ray_normal","passed":true},{"name":"inside_sphere_default_miss","passed":true},{"name":"inside_sphere_explicit_hit","passed":true},{"name":"sphere_exclusion_reveals_plane","passed":true},{"name":"contact_layers_filter_pair","passed":true},{"name":"ray_ignores_target_mask","passed":true},{"name":"ray_obeys_target_layer","passed":true},{"name":"body_collision_exception","passed":true},{"name":"removed_exception_restores_contact","passed":true},{"name":"transformed_plane_collider","passed":true},{"name":"transformed_plane_position","passed":true},{"name":"transformed_plane_normal","passed":true},{"name":"freed_primitives_absent","passed":true}],"failed":0,"passed":25}

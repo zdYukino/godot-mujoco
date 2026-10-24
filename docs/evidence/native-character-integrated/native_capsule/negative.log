@@ -1,0 +1,87 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+PASS capsule setter copies dictionary
+ERROR: Capsule data requires radius and height
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:41)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:14)
+PASS invalid capsule update preserves old data
+ERROR: Capsule data requires radius and height
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:38)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:14)
+PASS invalid capsule update preserves old data
+ERROR: Capsule data requires radius and height
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:41)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:14)
+PASS invalid capsule update preserves old data
+ERROR: Capsule dimensions must be numeric
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:43)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:14)
+PASS invalid capsule update preserves old data
+ERROR: Capsule dimensions must be finite and positive
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:44)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:14)
+PASS invalid capsule update preserves old data
+ERROR: Capsule dimensions must be finite and positive
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:44)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:14)
+PASS invalid capsule update preserves old data
+ERROR: Capsule dimensions must be finite and positive
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:44)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:14)
+PASS invalid capsule update preserves old data
+ERROR: Capsule dimensions must be finite and positive
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:44)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:14)
+PASS invalid capsule update preserves old data
+ERROR: Capsule dimensions must be finite and positive
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:44)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:14)
+PASS invalid capsule update preserves old data
+ERROR: Capsule height must be at least twice radius
+   at: _shape_set_data (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:46)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:14)
+PASS invalid capsule update preserves old data
+ERROR: MuJoCo minimal backend requires unscaled rigid transforms; set shape dimensions instead
+   at: push_error (core/variant/variant_utility.cpp:1023)
+   GDScript backtrace (most recent call first):
+       [0] run (res://negative.gd:19)
+PASS scaled capsule local pose rejected
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+WARNING: MuJoCo minimal backend: unsupported continuous sweep contact has no certified float safe/unsafe poses
+     at: push_warning (core/variant/variant_utility.cpp:1033)
+     GDScript backtrace (most recent call first):
+         [0] run (res://negative.gd:27)
+PASS nonrepresentable zero-width capsule graze fails explicitly
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS collision interval narrower than float fraction fails explicitly
+CAPSULE_NEGATIVE_RESULT {"checks":14,"expected_errors":11,"failed":0,"sweep_rejections":2}

@@ -1,0 +1,14 @@
+{
+  "result": {
+    "failed": 0,
+    "passed": 10
+  },
+  "warnings": [
+    "WARNING: MuJoCo minimal backend: unsupported body motion moving shapes (sphere/capsule only)",
+    "WARNING: MuJoCo minimal backend: unsupported body motion invalid input or missing space",
+    "WARNING: MuJoCo minimal backend: unsupported body motion recovery did not converge",
+    "WARNING: MuJoCo minimal backend: unsupported continuous sweep contact has no certified float safe/unsafe poses",
+    "WARNING: MuJoCo minimal backend: unsupported body motion continuous sweep could not be certified",
+    "WARNING: MuJoCo minimal backend: unsupported body motion rounded path introduced an uncertified collision"
+  ]
+}

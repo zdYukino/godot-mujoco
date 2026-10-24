@@ -1,0 +1,275 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+MuJoCo: compile time (ms)
+  total:          0.6   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.6   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS import lightweight authored world
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.7   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.7   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS configure .01 single steps
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS paused single-step completes
+PASS priority gravity mode 0 physical velocity actual=(0.0, -0.07, 0.04) expected=(0.0, -0.07, 0.04)
+PASS gravity getter agrees 0 actual=(0.0, -7.0, 4.0) expected=(0.0, -7.0, 4.0)
+PASS paused single-step completes
+PASS priority gravity mode 1 physical velocity actual=(0.02, -0.07, 0.04) expected=(0.02, -0.07, 0.04)
+PASS gravity getter agrees 1 actual=(2.0, -7.0, 4.0) expected=(2.0, -7.0, 4.0)
+PASS paused single-step completes
+PASS priority gravity mode 2 physical velocity actual=(0.02, 0.0, 0.04) expected=(0.02, 0.0, 0.04)
+PASS gravity getter agrees 2 actual=(2.0, 0.0, 4.0) expected=(2.0, 0.0, 4.0)
+PASS paused single-step completes
+PASS priority gravity mode 3 physical velocity actual=(0.02, 0.0, 0.0) expected=(0.02, 0.0, 0.0)
+PASS gravity getter agrees 3 actual=(2.0, 0.0, 0.0) expected=(2.0, 0.0, 0.0)
+PASS paused single-step completes
+PASS priority gravity mode 4 physical velocity actual=(0.02, -0.07, 0.0) expected=(0.02, -0.07, 0.0)
+PASS gravity getter agrees 4 actual=(2.0, -7.0, 0.0) expected=(2.0, -7.0, 0.0)
+PASS paused single-step completes
+PASS priority edit changes processing before higher contribution actual=(0.02, 0.0, 0.0) expected=(0.02, 0.0, 0.0)
+PASS fields applied without monitor callbacks
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS paused single-step completes
+PASS body gravity_scale applies after replacement actual=(-0.04, 0.0, 0.0) expected=(-0.04, 0.0, 0.0)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS paused single-step completes
+PASS linear damping mode 0 physical velocity actual=(8.85, 0.0, 0.0) expected=(8.85, 0.0, 0.0)
+PASS angular damping mode 0 physical velocity actual=(0.0, 8.5, 0.0) expected=(0.0, 8.5, 0.0)
+PASS paused single-step completes
+PASS linear damping mode 1 physical velocity actual=(8.349999, 0.0, 0.0) expected=(8.35, 0.0, 0.0)
+PASS angular damping mode 1 physical velocity actual=(0.0, 7.9, 0.0) expected=(0.0, 7.9, 0.0)
+PASS paused single-step completes
+PASS linear damping mode 2 physical velocity actual=(9.150001, 0.0, 0.0) expected=(9.15, 0.0, 0.0)
+PASS angular damping mode 2 physical velocity actual=(0.0, 8.9, 0.0) expected=(0.0, 8.9, 0.0)
+PASS paused single-step completes
+PASS linear damping mode 3 physical velocity actual=(9.45, 0.0, 0.0) expected=(9.45, 0.0, 0.0)
+PASS angular damping mode 3 physical velocity actual=(0.0, 9.3, 0.0) expected=(0.0, 9.3, 0.0)
+PASS paused single-step completes
+PASS linear damping mode 4 physical velocity actual=(8.65, 0.0, 0.0) expected=(8.65, 0.0, 0.0)
+PASS angular damping mode 4 physical velocity actual=(0.0, 8.3, 0.0) expected=(0.0, 8.3, 0.0)
+PASS paused single-step completes
+PASS disabled field restores lower priority damping and World actual=(8.85, 0.0, 0.0) expected=(8.85, 0.0, 0.0)
+PASS paused single-step completes
+PASS reenabled field restores replacement damping actual=(9.45, 0.0, 0.0) expected=(9.45, 0.0, 0.0)
+PASS paused single-step completes
+PASS leaving all fields restores default damping actual=(9.85, 0.0, 0.0) expected=(9.85, 0.0, 0.0)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS paused single-step completes
+PASS body replace damping once per .03 interval actual=(9.85, 0.0, 0.0) expected=(9.85, 0.0, 0.0)
+PASS angular body replace ignores Area totals actual=(0.0, 9.700001, 0.0) expected=(0.0, 9.7, 0.0)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS paused single-step completes
+PASS multiple overlapping Area shapes contribute only once actual=(0.02, 0.0, 0.0) expected=(0.02, 0.0, 0.0)
+PASS paused single-step completes
+PASS combine includes default world gravity actual=(0.02, -0.1, 0.0) expected=(0.02, -0.1, 0.0)
+PASS paused single-step completes
+PASS leaving Area restores world gravity actual=(0.0, -0.1, 0.0) expected=(0.0, -0.1, 0.0)
+PASS paused single-step completes
+PASS disabled shapes restore world gravity actual=(0.0, -0.1, 0.0) expected=(0.0, -0.1, 0.0)
+PASS paused single-step completes
+PASS reenabled shape restores field actual=(0.02, 0.0, 0.0) expected=(0.02, 0.0, 0.0)
+PASS paused single-step completes
+PASS field mask filters body layer actual=(0.0, -0.1, 0.0) expected=(0.0, -0.1, 0.0)
+PASS paused single-step completes
+PASS world directional vector is not rotated or normalized actual=(0.06, 0.0, 0.0) expected=(0.06, 0.0, 0.0)
+PASS paused single-step completes
+PASS transformed point center inverse-square gravity actual=(0.02, 0.0, 0.0) expected=(0.02, 0.0, 0.0)
+PASS point gravity getter retains force interval sample actual=(2.0, 0.0, 0.0) expected=(2.0, 0.0, 0.0)
+PASS paused single-step completes
+PASS zero unit distance uses constant point strength actual=(0.08, 0.0, 0.0) expected=(0.08, 0.0, 0.0)
+PASS paused single-step completes
+PASS point center has zero gravity actual=(0.0, 0.0, 0.0) expected=(0.0, 0.0, 0.0)
+PASS paused single-step completes
+PASS callback change does not retroactively affect finished step actual=(0.02, 0.0, 0.0) expected=(0.02, 0.0, 0.0)
+PASS getter retains last integration gravity after queued parameter update actual=(2.0, 0.0, 0.0) expected=(2.0, 0.0, 0.0)
+PASS paused single-step completes
+PASS callback parameter change applies next step actual=(0.06, 0.0, 0.0) expected=(0.06, 0.0, 0.0)
+PASS paused world does not integrate field actual=(0.06, 0.0, 0.0) expected=(0.06, 0.0, 0.0)
+PASS paused single-step completes
+PASS custom integrator suppresses automatic Area gravity actual=(0.0, 0.0, 0.0) expected=(0.0, 0.0, 0.0)
+PASS paused single-step completes
+PASS explicit custom integration uses Area gravity actual=(0.06, 0.0, 0.0) expected=(0.06, 0.0, 0.0)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS paused single-step completes
+PASS replacement field damping before deletion actual=(9.45, 0.0, 0.0) expected=(9.45, 0.0, 0.0)
+PASS paused single-step completes
+PASS deleting field restores actual default damping actual=(9.85, 0.0, 0.0) expected=(9.85, 0.0, 0.0)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS paused single-step completes
+PASS deleting last field restores world gravity actual=(0.0, -0.1, 0.0) expected=(0.0, -0.1, 0.0)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS ordinary World actually advanced
+PASS ordinary default World plus Area actual velocity actual=(0.266667, 0.133333, 0.0) expected=(0.266667, 0.133333, 0.0)
+AREA_ENVIRONMENT_RESULT {"failed":0,"passed":85}
