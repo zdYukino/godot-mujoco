@@ -211,7 +211,7 @@ CMake 将 godot-cpp 获取到构建目录并静态链接进扩展，将 MuJoCo �
 
 - cold import 退出 **139** 未修复，按当前使用范围作为非阻断遗留；不能证明仅发生在无窗口模式。图形初始化后 API 编辑已有文件是已验证路径。
 - 要求主线程物理；同步候选编译可能阻塞 UI。一个 World3D 仅一个 `MjRuntimeWorld`，其他世界使用独立 World3D。
-- 支持专用静态 `MjStaticHeightField`；不支持通用 `HeightMapShape3D`、动态地形、完整 Godot body/joint 兼容、复杂几何 Area、完整 CharacterBody／移动平台／楼梯；文件系统模型包可搬迁，PCK/ZIP 内资产加载未验证。
+- 支持专用静态 `MjStaticHeightField`；新增[普通静态 `HeightMapShape3D` 与 Inspector 摩擦](docs/native-heightmap.zh-CN.md)的有界支持（待 dot 独立验收）；不支持动态地形、完整 Godot body/joint 兼容、复杂几何 Area、完整 CharacterBody／移动平台／楼梯；文件系统模型包可搬迁，PCK/ZIP 内资产加载未验证。
 - G1 默认固定基座；自由基座导入没有重力补偿、站立或步行控制，倒伏是预期行为。
 - Ubuntu 22.04 及其他宿主需独立核验动态库/驱动；Windows 等其他平台未适配本基线。
 
@@ -225,7 +225,7 @@ CMake 将 godot-cpp 获取到构建目录并静态链接进扩展，将 MuJoCo �
 
 [类型化 C# 控制 API](docs/typed-control.md)：请求入队与完成反馈、生命周期与轻量验证。原生 [`CylinderShape3D`](tests/native_cylinder/README.zh-CN.md) 支持普通静态/刚体圆柱；MJCF 圆柱编辑仍为独立模型入口。本轮圆柱改动等待 dot 独立构建与 GUI 验收。
 
-[静态固定网格高度场](docs/static-heightfield.md)：`MjStaticHeightField` / `MjHeightFieldData`，安全边界增删/替换、匹配可见网格和碰撞；不等于通用 `HeightMapShape3D` 支持。
+[静态固定网格高度场](docs/static-heightfield.md)：`MjStaticHeightField` / `MjHeightFieldData`，安全边界增删/替换、匹配可见网格和碰撞；普通 `HeightMapShape3D` 使用独立的[原生入口与 PhysicsMaterial](docs/native-heightmap.zh-CN.md)。
 
 专用地形现提供[编辑面板](docs/heightfield-editor.zh-CN.md)和[类型化 C# TerrainHandle](docs/typed-terrain.zh-CN.md)：场景草稿/预览/撤销、运行目标及完成反馈；已独立验收并通过 PR #2 合入，不改变已冻结基线记录。
 

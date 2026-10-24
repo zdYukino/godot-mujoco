@@ -23,6 +23,18 @@ void MjPhysicsServer3D::dirty(const RID &r) { if(auto *s=space(r)) s->dirty=true
 MjPhysicsServer3D::~MjPhysicsServer3D() { _finish(); }
 void MjPhysicsServer3D::_finish() { while(!native_joints.empty()) _free_rid(native_joints.begin()->second.rid); area_commands.clear();area_scratch.reset(); while(!areas.empty()) _free_rid(areas.begin()->second->rid); while(!bodies.empty()) _free_rid(bodies.begin()->second->rid); while(!spaces.empty()) _free_rid(spaces.begin()->second->rid); while(!shapes.empty()) _free_rid(shapes.begin()->second->rid); }
 RID MjPhysicsServer3D::make_shape(ShapeType type,const Variant &data) { RID r=handles.make_rid(0); auto s=std::make_unique<MjShape>(); s->rid=r;s->type=type;s->data=data; shapes.emplace(r.get_id(),std::move(s)); return r; }
+// Packed arrays in a Dictionary are shared Variants; copy the samples as well.
+static Dictionary copy_shape_dictionary(const Variant &value) {
+ Dictionary copy=Dictionary(value).duplicate(true);
+ if(copy.has("heights") && Variant(copy["heights"]).get_type()==Variant::PACKED_FLOAT32_ARRAY)
+  copy["heights"]=PackedFloat32Array(copy["heights"]).duplicate();
+ return copy;
+}
+RID MjPhysicsServer3D::_heightmap_shape_create() {
+ Dictionary grid;grid["width"]=2;grid["depth"]=2;
+ PackedFloat32Array heights;heights.resize(4);heights.fill(0);grid["heights"]=heights;
+ return make_shape(SHAPE_HEIGHTMAP,grid);
+}
 RID MjPhysicsServer3D::_box_shape_create() { return make_shape(SHAPE_BOX,Vector3(0.5,0.5,0.5)); }
 RID MjPhysicsServer3D::_sphere_shape_create() { return make_shape(SHAPE_SPHERE,0.5); }
 RID MjPhysicsServer3D::_cylinder_shape_create() {
@@ -34,7 +46,14 @@ RID MjPhysicsServer3D::_capsule_shape_create() {
  return make_shape(SHAPE_CAPSULE,data);
 }
 RID MjPhysicsServer3D::_world_boundary_shape_create() { return make_shape(SHAPE_WORLD_BOUNDARY,Plane(Vector3(0,1,0),0)); }
-void MjPhysicsServer3D::_shape_set_data(const RID&r,const Variant&v) { auto*s=shape(r); ERR_FAIL_NULL(s); if(s->type==SHAPE_BOX) { ERR_FAIL_COND(v.get_type()!=Variant::VECTOR3); Vector3 z=v; ERR_FAIL_COND(!z.is_finite()||z.x<=0||z.y<=0||z.z<=0); } else if(s->type==SHAPE_SPHERE) { ERR_FAIL_COND(!std::isfinite(double(v))||double(v)<=0); } else if(s->type==SHAPE_CYLINDER || s->type==SHAPE_CAPSULE) {
+void MjPhysicsServer3D::_shape_set_data(const RID&r,const Variant&v) { auto*s=shape(r); ERR_FAIL_NULL(s); if(s->type==SHAPE_HEIGHTMAP) {
+ ERR_FAIL_COND_MSG(v.get_type()!=Variant::DICTIONARY,"HeightMap requires a grid dictionary");
+ Dictionary grid=v;
+ ERR_FAIL_COND_MSG(grid.get("width",Variant()).get_type()!=Variant::INT || grid.get("depth",Variant()).get_type()!=Variant::INT || grid.get("heights",Variant()).get_type()!=Variant::PACKED_FLOAT32_ARRAY,"HeightMap requires integer width/depth and PackedFloat32Array heights");
+ int64_t w=grid["width"],d=grid["depth"];PackedFloat32Array h=grid["heights"];
+ ERR_FAIL_COND_MSG(w<2||d<2||w>256||d>256||h.size()!=w*d,"HeightMap dimensions must be 2..256 with width*depth samples");
+ for(int k=0;k<h.size();++k)ERR_FAIL_COND_MSG(!std::isfinite(h[k])||std::abs(h[k])>10000,"HeightMap samples must be finite within +/-10000; holes unsupported");
+ } else if(s->type==SHAPE_BOX) { ERR_FAIL_COND(v.get_type()!=Variant::VECTOR3); Vector3 z=v; ERR_FAIL_COND(!z.is_finite()||z.x<=0||z.y<=0||z.z<=0); } else if(s->type==SHAPE_SPHERE) { ERR_FAIL_COND(!std::isfinite(double(v))||double(v)<=0); } else if(s->type==SHAPE_CYLINDER || s->type==SHAPE_CAPSULE) {
  ERR_FAIL_COND_MSG(v.get_type()!=Variant::DICTIONARY,s->type==SHAPE_CAPSULE?"Capsule data requires radius and height":"Cylinder data requires radius and height");
  Dictionary data=v;
  for(const char *key:{"radius","height"}) {
@@ -44,8 +63,8 @@ void MjPhysicsServer3D::_shape_set_data(const RID&r,const Variant&v) { auto*s=sh
   ERR_FAIL_COND_MSG(!std::isfinite(double(value))||double(value)<=0,s->type==SHAPE_CAPSULE?"Capsule dimensions must be finite and positive":"Cylinder dimensions must be finite and positive");
  }
  ERR_FAIL_COND_MSG(s->type==SHAPE_CAPSULE && double(data["height"])*.5<double(data["radius"]),"Capsule height must be at least twice radius");
- } else { ERR_FAIL_COND(v.get_type()!=Variant::PLANE); Plane plane=v; ERR_FAIL_COND(!plane.normal.is_finite()||plane.normal.length_squared()<1e-12||!std::isfinite(plane.d)); } s->data=(s->type==SHAPE_CYLINDER || s->type==SHAPE_CAPSULE)?Variant(Dictionary(v).duplicate()):v; for(auto &b:bodies) for(auto &i:b.second->shapes) if(i.shape==r) dirty(b.second->space); }
-Variant MjPhysicsServer3D::_shape_get_data(const RID&r) const { auto*s=shape(r);return s?((s->type==SHAPE_CYLINDER || s->type==SHAPE_CAPSULE)?Variant(Dictionary(s->data).duplicate()):s->data):Variant(); }
+ } else { ERR_FAIL_COND(v.get_type()!=Variant::PLANE); Plane plane=v; ERR_FAIL_COND(!plane.normal.is_finite()||plane.normal.length_squared()<1e-12||!std::isfinite(plane.d)); } s->data=(s->type==SHAPE_CYLINDER || s->type==SHAPE_CAPSULE || s->type==SHAPE_HEIGHTMAP)?Variant(copy_shape_dictionary(v)):v; for(auto &b:bodies) for(auto &i:b.second->shapes) if(i.shape==r) dirty(b.second->space); }
+Variant MjPhysicsServer3D::_shape_get_data(const RID&r) const { auto*s=shape(r);return s?((s->type==SHAPE_CYLINDER || s->type==SHAPE_CAPSULE || s->type==SHAPE_HEIGHTMAP)?Variant(copy_shape_dictionary(s->data)):s->data):Variant(); }
 PhysicsServer3D::ShapeType MjPhysicsServer3D::_shape_get_type(const RID&r) const { auto*s=shape(r);return s?s->type:SHAPE_CUSTOM; }
 void MjPhysicsServer3D::_shape_set_margin(const RID&r,float v) { if(auto*s=shape(r)) s->margin=v; }
 float MjPhysicsServer3D::_shape_get_margin(const RID&r) const { auto*s=shape(r);return s?s->margin:0; }
@@ -92,13 +111,13 @@ void MjPhysicsServer3D::_body_set_space(const RID&r,const RID&s){if(flushing){ar
  for(bool angular:{false,true}){auto mode=angular?BODY_PARAM_ANGULAR_DAMP_MODE:BODY_PARAM_LINEAR_DAMP_MODE;auto damp=angular?BODY_PARAM_ANGULAR_DAMP:BODY_PARAM_LINEAR_DAMP;
  ERR_FAIL_COND(int(_body_get_param(r,mode))==0&&!std::isfinite(float(double(_body_get_param(r,damp))+(angular?target->angular_damp:target->linear_damp))));}}detach_native_joints(r);dirty(b->space);b->space=s;b->mj_body=-1;b->callback_pending=false;b->sync_pending=false;b->environment_valid=false;dirty(s);retire_area_pairs(r);}
 RID MjPhysicsServer3D::_body_get_space(const RID&r) const {auto*b=body(r);return b?b->space:RID();}
-void MjPhysicsServer3D::_body_set_mode(const RID&r,BodyMode m){if(flushing){area_commands.push_back([this,r,m]{_body_set_mode(r,m);});return;}auto*b=body(r);ERR_FAIL_NULL(b);if(m!=BODY_MODE_STATIC&&m!=BODY_MODE_RIGID&&m!=BODY_MODE_KINEMATIC){mj_unsupported("rigid-linear body mode");return;}if(b->mode!=m)detach_native_joints(r);b->mode=m;dirty(b->space);}
+void MjPhysicsServer3D::_body_set_mode(const RID&r,BodyMode m){if(flushing){area_commands.push_back([this,r,m]{_body_set_mode(r,m);});return;}auto*b=body(r);ERR_FAIL_NULL(b);if(m!=BODY_MODE_STATIC&&m!=BODY_MODE_RIGID&&m!=BODY_MODE_KINEMATIC){mj_unsupported("rigid-linear body mode");return;}if(m!=BODY_MODE_STATIC)for(auto&i:b->shapes)ERR_FAIL_COND_MSG(shape(i.shape)&&shape(i.shape)->type==SHAPE_HEIGHTMAP,"HeightMap requires StaticBody3D");if(b->mode!=m)detach_native_joints(r);b->mode=m;dirty(b->space);}
 PhysicsServer3D::BodyMode MjPhysicsServer3D::_body_get_mode(const RID&r) const {auto*b=body(r);return b?b->mode:BODY_MODE_STATIC;}
 // All shape-list mutations share one FIFO during callbacks. Validate indices
 // when dequeued, against the result of preceding add/remove/clear operations.
 #define DEFER_BODY_SHAPE(call) if(flushing){area_commands.push_back([=]{call;});return;}
-void MjPhysicsServer3D::_body_add_shape(const RID&r,const RID&s,const Transform3D&t,bool d){DEFER_BODY_SHAPE(_body_add_shape(r,s,t,d));auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_NULL(shape(s));if(!valid_rigid_transform(t))return;b->shapes.push_back({s,t,d});dirty(b->space);}
-void MjPhysicsServer3D::_body_set_shape(const RID&r,int32_t i,const RID&s){DEFER_BODY_SHAPE(_body_set_shape(r,i,s));auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());ERR_FAIL_NULL(shape(s));b->shapes[i].shape=s;dirty(b->space);}
+void MjPhysicsServer3D::_body_add_shape(const RID&r,const RID&s,const Transform3D&t,bool d){DEFER_BODY_SHAPE(_body_add_shape(r,s,t,d));auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_NULL(shape(s));ERR_FAIL_COND_MSG(shape(s)->type==SHAPE_HEIGHTMAP&&b->mode!=BODY_MODE_STATIC,"HeightMap requires StaticBody3D");if(!valid_rigid_transform(t))return;b->shapes.push_back({s,t,d});dirty(b->space);}
+void MjPhysicsServer3D::_body_set_shape(const RID&r,int32_t i,const RID&s){DEFER_BODY_SHAPE(_body_set_shape(r,i,s));auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());ERR_FAIL_NULL(shape(s));ERR_FAIL_COND_MSG(shape(s)->type==SHAPE_HEIGHTMAP&&b->mode!=BODY_MODE_STATIC,"HeightMap requires StaticBody3D");b->shapes[i].shape=s;dirty(b->space);}
 void MjPhysicsServer3D::_body_set_shape_transform(const RID&r,int32_t i,const Transform3D&t){DEFER_BODY_SHAPE(_body_set_shape_transform(r,i,t));auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());if(!valid_rigid_transform(t))return;b->shapes[i].transform=t;dirty(b->space);}
 void MjPhysicsServer3D::_body_set_shape_disabled(const RID&r,int32_t i,bool d){DEFER_BODY_SHAPE(_body_set_shape_disabled(r,i,d));auto*b=body(r);ERR_FAIL_NULL(b);ERR_FAIL_INDEX(i,b->shapes.size());b->shapes[i].disabled=d;dirty(b->space);}
 int32_t MjPhysicsServer3D::_body_get_shape_count(const RID&r) const {auto*b=body(r);return b?b->shapes.size():0;}
@@ -227,18 +246,23 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  double low=heights[0];for(int k=1;k<heights.size();++k)low=std::min(low,double(heights[k]));
  Transform3D t=b.transform;t.origin+=t.basis.xform(Vector3(0,low,0));
  xml<<"<geom name=\"g"<<owners.size()<<"\" type=\"hfield\" hfield=\"h"<<b.rid.get_id()<<"\"";pose_xml(xml,t);
- xml<<" contype=\""<<int32_t(b.mode==BODY_MODE_KINEMATIC?0:b.layer)<<"\" conaffinity=\""<<int32_t(b.mode==BODY_MODE_KINEMATIC?0:b.mask)<<"\" friction=\"1 .005 .0001\"/>";
+ xml<<" contype=\""<<int32_t(b.mode==BODY_MODE_KINEMATIC?0:b.layer)<<"\" conaffinity=\""<<int32_t(b.mode==BODY_MODE_KINEMATIC?0:b.mask)<<"\" friction=\""<<std::abs(double(_body_get_param(b.rid,BODY_PARAM_FRICTION)))<<" .005 .0001\"/>";
  owners.push_back({b.rid,0});continue;
  }
  xml<<"<body name=\"b"<<b.rid.get_id()<<"\"";pose_xml(xml,b.transform);if(b.mode==BODY_MODE_KINEMATIC)xml<<" mocap=\"true\"";xml<<">";
  if(b.mode==BODY_MODE_RIGID)xml<<"<freejoint name=\"native_joint_"<<b.rid.get_id()<<"\"/>";
- int count=0;double volume=0;for(auto&i:b.shapes)if(!i.disabled&&shape(i.shape)&&shape(i.shape)->type!=SHAPE_WORLD_BOUNDARY){++count;volume+=shape_volume(*shape(i.shape));}
+ int count=0;double volume=0;for(auto&i:b.shapes)if(!i.disabled&&shape(i.shape)&&shape(i.shape)->type!=SHAPE_WORLD_BOUNDARY&&shape(i.shape)->type!=SHAPE_HEIGHTMAP){++count;volume+=shape_volume(*shape(i.shape));}
  if(count&&(!std::isfinite(volume)||volume<=0)){s.last_error="Native shape volume is not finite and positive";return false;}
  if(b.mode==BODY_MODE_RIGID&&count==0)xml<<"<inertial pos=\"0 0 0\" mass=\""<<b.mass<<"\" diaginertia=\"0.001 0.001 0.001\"/>";
  for(int j=0;j<int(b.shapes.size());++j){auto&i=b.shapes[j];auto*sh=shape(i.shape);if(i.disabled||!sh)continue;if(sh->type==SHAPE_WORLD_BOUNDARY&&b.mode!=BODY_MODE_STATIC){mj_unsupported("WorldBoundaryShape3D on dynamic body");continue;}
  Transform3D t=i.transform;Vector3 scale=t.basis.get_scale().abs()*b.transform.basis.get_scale().abs();
  xml<<"<geom name=\"g"<<owners.size()<<"\" type=\"";
- if(sh->type==SHAPE_BOX){xml<<"box\" size=\"";Vector3 v=Vector3(sh->data)*scale;vector_xml(xml,Vector3(v.x,v.z,v.y));}
+ if(sh->type==SHAPE_HEIGHTMAP){
+ if(b.mode!=BODY_MODE_STATIC){s.last_error="HeightMap requires StaticBody3D";return false;}
+ Dictionary grid=sh->data;PackedFloat32Array h=grid["heights"];double low=h[0];for(int k=1;k<h.size();++k)low=std::min(low,double(h[k]));
+ t.origin+=t.basis.xform(Vector3(0,low,0));xml<<"hfield\" hfield=\"h"<<b.rid.get_id()<<"_"<<j;
+ }
+ else if(sh->type==SHAPE_BOX){xml<<"box\" size=\"";Vector3 v=Vector3(sh->data)*scale;vector_xml(xml,Vector3(v.x,v.z,v.y));}
  else if(sh->type==SHAPE_SPHERE){if(!Math::is_equal_approx(scale.x,scale.y)||!Math::is_equal_approx(scale.x,scale.z))mj_unsupported("nonuniform sphere scale");xml<<"sphere\" size=\""<<double(sh->data)*scale.x;}
  else if(sh->type==SHAPE_CAPSULE){Dictionary d=sh->data;double r=d["radius"],half=double(d["height"])*.5-r;
   // A zero cylinder segment is a sphere. MuJoCo capsules require a positive half-length.
@@ -269,12 +293,14 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
   xml<<"<pair geom1=\"g"<<i<<"\" geom2=\"g"<<j<<"\" condim=\"3\" friction=\""<<friction<<' '<<friction<<" 0 0 0\"/>";
  }
  xml<<"</contact><asset>";
- for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid||!b.heightfield)continue;
- Dictionary grid=shape(b.shapes[0].shape)->data;PackedFloat32Array h=grid["heights"];int w=grid["width"],d=grid["depth"];
+ for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;
+ for(int j=0;j<int(b.shapes.size());++j){auto&i=b.shapes[j];auto*sh=shape(i.shape);if(i.disabled||!sh||sh->type!=SHAPE_HEIGHTMAP)continue;
+ Dictionary grid=sh->data;PackedFloat32Array h=grid["heights"];int w=grid["width"],d=grid["depth"];
  double low=h[0],high=h[0];for(int k=1;k<h.size();++k){low=std::min(low,double(h[k]));high=std::max(high,double(h[k]));}
- xml<<"<hfield name=\"h"<<b.rid.get_id()<<"\" nrow=\""<<d<<"\" ncol=\""<<w<<"\" size=\""<<(w-1)*.5<<' '<<(d-1)*.5<<' '<<std::max(high-low,1e-6)<<" 1\" elevation=\"";
+ xml<<"<hfield name=\"h"<<b.rid.get_id();if(!b.heightfield)xml<<"_"<<j;
+ xml<<"\" nrow=\""<<d<<"\" ncol=\""<<w<<"\" size=\""<<(w-1)*.5<<' '<<(d-1)*.5<<' '<<std::max(high-low,1e-6)<<" 1\" elevation=\"";
  for(int k=0;k<h.size();++k)xml<<h[k]<<' ';xml<<"\"/>";
- }
+ }}
  xml<<"</asset><equality>";for(auto &entry:native_joints)if(native_joint_active(entry.second,s.rid))for(int point=0;point<(entry.second.hinge?2:1);++point)xml<<"<connect name=\"pin_"<<entry.first<<"_"<<point<<"\" site1=\"pin_"<<entry.first<<"_0_"<<point<<"\" site2=\"pin_"<<entry.first<<"_1_"<<point<<"\" solref=\".02 1\"/>";xml<<"</equality></mujoco>";
  char error[2048]={};mjSpec *spec=mj_parseXMLString(xml.str().c_str(),nullptr,error,sizeof(error));
  if(!spec){s.last_error=String::utf8(error);return false;}

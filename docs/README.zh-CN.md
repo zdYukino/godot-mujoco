@@ -30,3 +30,5 @@
 英文技术细节仍保留于 [MJCF 编辑器](mjcf-editor.md)、[高级属性](editor-advanced-properties.md)、[portable 模型](portable-models.md)、[运行编辑](runtime-safe-editing.md)、[动态世界](dynamic-world.md)。当前限制以中文入口和本阶段验证报告为准。
 
 原始日志、数字结果和截图不翻译或修饰：[当前证据目录](evidence/freebase-clock/)、[原始日志 ZIP](evidence/freebase-clock/raw-logs.zip)、[哈希清单](evidence/freebase-clock/raw-log-manifest.json)。任何普通运行日志出现 ERROR/泄漏，即使退出 0 也失败。只有事先定义的独立负向子进程允许精确匹配的预期错误。
+
+- [普通 HeightMapShape3D 与 Inspector 摩擦](native-heightmap.zh-CN.md)：静态原生地形、资源更新/保存重开及轻量验收。

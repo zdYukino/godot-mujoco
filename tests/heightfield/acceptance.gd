@@ -178,6 +178,59 @@ func run():
 	bridge.receive("apply",[{"id":reopened.live_id,"revision":0,"snapshot":snapshot}])
 	await settle(reopened,"pending_request")
 	check(reopened.body_rid.is_valid() and reopened.revision==1,"new identity readds independently")
+	# Dedicated terrain uses the same material semantics, committed only on explicit Apply.
+	reopened.physics_material_override=PhysicsMaterial.new()
+	reopened.physics_material_override.friction=.23
+	check(reopened.dirty(),"dedicated material design becomes dirty")
+	check(reopened.request_apply(),"dedicated material apply queued")
+	reopened.physics_material_override.friction=.67
+	await settle(reopened,"pending_request")
+	check(reopened.last_error.is_empty() and reopened.dirty() and is_equal_approx(reopened.state().committed.friction,.23),"pending material is immutable")
+	await step(world,100)
+	var details=world.info().contact_details
+	var native_seen=false;var imported_seen=false;var correct=true
+	for contact in details:
+		correct=correct and absf(contact.friction-.23)<.001
+		for name in contact.geoms:
+			if "arm_geom" in name: imported_seen=true
+			elif str(name).begins_with("g"): native_seen=true
+	check(correct and native_seen and imported_seen,"dedicated native and MJCF contact friction")
+	check(reopened.request_apply(),"dedicated changed material queued");await settle(reopened,"pending_request")
+	await step(world,100)
+	details=world.info().contact_details;correct=not details.is_empty()
+	for contact in details:correct=correct and absf(contact.friction-.67)<.001
+	check(correct and not reopened.dirty(),"dedicated changed material reaches actual contacts")
+	var material_scene=PackedScene.new()
+	check(material_scene.pack(reopened)==OK and ResourceSaver.save(material_scene,"res://material_terrain.tscn")==OK,"dedicated material saved")
+	reopened.queue_free();await process_frame;await process_frame
+	reopened=load("res://material_terrain.tscn").instantiate();world.add_child(reopened);await settle(reopened,"pending_request")
+	check(reopened.last_error.is_empty() and is_equal_approx(reopened.physics_material_override.friction,.67) and not reopened.dirty(),"dedicated material reopen and rebuild")
+	await step(world,30)
+	details=world.info().contact_details;correct=not details.is_empty()
+	for contact in details:correct=correct and absf(contact.friction-.67)<.001
+	check(correct,"reopened material actual contacts")
+	var material_revision=reopened.revision
+	reopened.physics_material_override.bounce=.2
+	check(reopened.request_apply(),"unsupported bounce queues validation");await settle(reopened,"pending_request")
+	check("bounce" in reopened.last_error and reopened.revision==material_revision and is_equal_approx(PhysicsServer3D.body_get_param(reopened.body_rid,PhysicsServer3D.BODY_PARAM_FRICTION),.67),"unsupported material rejected with previous physics retained")
+	reopened.physics_material_override.bounce=0
+	# Repeat the MJCF contact check with an ordinary HeightMapShape3D.
+	reopened.queue_free();await process_frame;await process_frame
+	var native_terrain=StaticBody3D.new();var native_collision=CollisionShape3D.new();var native_grid=HeightMapShape3D.new()
+	native_grid.map_width=grid.width;native_grid.map_depth=grid.depth;native_grid.map_data=grid.heights
+	native_collision.shape=native_grid;native_terrain.add_child(native_collision)
+	native_terrain.physics_material_override=PhysicsMaterial.new();native_terrain.physics_material_override.friction=.23
+	world.add_child(native_terrain);await step(world,100)
+	details=world.info().contact_details;correct=not details.is_empty();imported_seen=false
+	for contact in details:
+		correct=correct and absf(contact.friction-.23)<.001
+		for name in contact.geoms:
+			if "arm_geom" in name:imported_seen=true
+	check(correct and imported_seen,"ordinary heightmap native and MJCF contact friction")
+	native_terrain.physics_material_override.friction=.67;await step(world,30)
+	details=world.info().contact_details;correct=not details.is_empty()
+	for contact in details:correct=correct and absf(contact.friction-.67)<.001
+	check(correct,"ordinary heightmap material update reaches MJCF contacts")
 	# Queue and immediately delete; no orphan request/body may remain.
 	var doomed=Terrain.new();doomed.design=grid;world.add_child(doomed);doomed.queue_free()
 	await process_frame;await process_frame
