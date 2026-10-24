@@ -22,3 +22,11 @@ Sliding comparison over 30 physics frames, initial box speed 1.5 m/s: friction 0
 - `OUT=/tmp/gmj-heightmap-material-final bash tests/native_heightmap/run.sh`: import/positive/negative all exit 0, **26 positive checks and 12 expected rejection errors** after the follow-up.
 - Both runners enforce clean positive logs. MJCF fixture friction is explicitly 0.15; terrain 0.23 and 0.67 dominate under the existing MuJoCo combination. Arbitrary imported priority/solmix and explicit pair overrides are not asserted.
 - Existing Inspector terrain material is saved design, requiring explicit Apply at runtime. No new rolling/torsional/solver parameter surface was introduced.
+
+## P1 editor-to-runtime material payload correction
+
+Candidate 48da065 omitted friction/bounce from heightfield_panel.apply_live and did not include material in the editor baseline. Direct runtime-node tests did not cover that path. The follow-up adds explicit payload fields, isolated material draft controls, baseline/conflict detection, combined scene Undo/Redo, and persistence.
+
+`OUT=/tmp/gmj-panel-material-final bash tests/heightfield_panel/run.sh`: import/editor/prepare/material-runtime stages all exit 0. **58 editor checks + 6 separate runtime checks pass**, with clean logs. The fake debugger captures the actual panel Apply payload (editor .67); that serialized payload is then loaded by a separate runtime process whose terrain starts at .23. Real Bridge/request_snapshot, native commit/revision, node material and resulting MJCF contact friction all become .67.
+
+The initial new runtime test in `/tmp/gmj-panel-material-fix` failed because the previously editor-only fixture did not select MuJoCo as physics engine; its logs remain unchanged. The fixture now explicitly selects MuJoCo and the runtime test checks world readiness before proceeding. `/tmp/gmj-panel-material-fix-2` passed; the final run also records per-stage exit codes in executions.tsv. No C++ or native runtime behavior changed in this correction, so the preceding 26+12 native and 96 integration results remain separate coverage, not replacements for the editor-to-runtime checks. Actual dot debugger-session/GUI acceptance remains required.

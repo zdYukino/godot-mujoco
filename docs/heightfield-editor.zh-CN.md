@@ -68,3 +68,7 @@ Discard。原生 Undo/Redo 与面板操作使用同一场景历史。
 ## 地形摩擦
 
 选择场景里的 MjStaticHeightField，在 Inspector 的 Physics Material Override 新建 PhysicsMaterial，设置 Friction（0..1）和 Rough，Bounce 保持 0。保存场景可持久化材质；运行中的修改需沿用本面板 Apply 或 request_apply() 才提交，等待完成结果和新 revision。普通 HeightMapShape3D 则使用所属 StaticBody3D 的相同材质入口，资源变化自动触发物理边界重建。详见[地形材质规则与验证](native-heightmap.zh-CN.md)。
+
+面板现有独立的 Friction / Rough 草稿控件。Inspector 改材质时，干净面板同步新值；已有未提交草稿时标记冲突并保留草稿，必须 Discard 或明确“保留草稿并采用当前基线”。后者保留旧草稿材质，下一次 Apply 将有意覆盖当前场景材质。应用到场景将网格、掩码和材质放入同一 Undo/Redo 动作；面板保存前必须提交草稿。运行 Apply 显式发送带符号 friction 与 bounce，不再依赖运行实例旧材质补全；它不会自动保存场景。
+
+编辑器到运行回归：`GODOT_BIN=/path/to/godot OUT=/tmp/terrain-panel bash tests/heightfield_panel/run.sh`。包含 fake-debugger 实际 payload 检查，并在独立运行进程通过真实 Bridge/Apply 将运行旧值 0.23 替换为编辑器发送的 0.67，检查最终 MJCF 接触值。dot 仍应在真实 F5/F6 会话用 Inspector 从 0.23 改为 0.67 后点击“应用到运行实例”，确认 revision、完成结果与运行材质；检查 Undo/Redo、草稿冲突、保存关闭重开。

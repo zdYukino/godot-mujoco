@@ -41,3 +41,5 @@ runner 复制隔离项目和当前 native 库，检查正常阶段无 ERROR/leak
 在 dot 重新构建后，用固定 .NET 编辑器打开生成的 project，打开 Main.tscn：选择 Terrain 的材质，将 friction 从 0.23 改到 0.67，保存、关闭再打开，确认值保留；选择 Collision 的 HeightMap 修改高度数组与尺寸，观察网格更新，保存重开；F6 观察小球落在地形并滚落边缘。专用地形 GUI 验收还需打开 tests/heightfield runner 生成的 HeightfieldDemo.tscn：选择 Terrain 的 Physics Material Override 配置/保存摩擦；运行后通过地形面板或脚本明确 Apply，再观察 revision/dirty 和完成结果。
 
 自动脚本独立验证实际接触摩擦 0.23→0.67 和 rough 组合，并对照相同初速度盒子的零摩擦滑动与高摩擦停止，而非仅检查 Inspector 数字。运行时更改 Remote Inspector 材质，验证下一步重建；运行编辑不自动保存。不要把开发环境的 headless 自测当作 dot 图形验收。
+
+编辑器到运行的专项入口为 `tests/heightfield_panel/run.sh`：检查面板材质草稿、Inspector 同步/冲突、Undo/Redo/保存，以及实际发送 payload 在独立运行进程中的应用与接触摩擦。48da065 候选漏发材质字段的问题已由后续修复覆盖，不能仅凭直接改 runtime node 的 96 项测试认定编辑器链路通过。
