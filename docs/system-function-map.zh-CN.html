@@ -4,9 +4,9 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
 </style></head><body><header><small>SYSTEM ARCHITECTURE / 系统功能架构</small><div class="tag">可编辑 · 私人工作底稿</div><h1>Godot × MuJoCo <span>系统功能架构图</span></h1><p>系统 → 功能模块 → 子功能。完成状态仅作节点标签；点选查看能力边界、已验收范围与尚缺功能。</p></header><main><section class="summary" aria-label="叶子任务统计"><div class="stat"><strong id="completed">0</strong><span>已完成 / 全部叶子</span></div><div class="stat"><strong id="unfinished">0</strong><span>未完成 · 进行中 / 待验收 / 受阻</span></div><div class="stat"><strong id="planned">0</strong><span>待完成 · 待启动 / 暂缓</span></div><div class="stat"><strong id="chosen">0</strong><span>本轮拟推进 · 节点数</span></div></section><div class="toolbar"><input id="search" type="search" placeholder="搜索任务、备注或提交号…" aria-label="搜索任务"><select id="filter" aria-label="筛选状态"><option value="all">全部状态</option><option value="done">已完成</option><option value="unfinished">未完成</option><option value="planned">待完成</option><option value="selected">本轮拟推进</option></select><button id="expand">展开全部</button><button id="collapse">折叠全部</button><button id="addroot" class="primary">＋ 添加功能模块</button></div><div class="toolbar"><button id="exportHtml">下载当前 HTML</button><button id="exportJson">导出 JSON</button><button id="exportSeed">下载页面工程快照</button><button id="importJson">导入 JSON</button><button id="exportRound">导出本轮清单</button><button id="restoreBackup">恢复导入前备份</button><button id="undo" disabled>撤销修改</button><button id="reset" class="danger">恢复初始版本</button></div><div class="guide">主分支按功能架构组织，状态仅为属性。旧版浏览器缓存保留在原存储区，不会覆盖此架构版；如有旧版个人修改，请先从旧 HTML 导出再对照。<br>完成勾选是你的可编辑记录；侧栏“工程记录”保留内嵌证据，不随勾选改变。完成勾选只更改单个节点，不会自动勾选子任务。进度按叶子统计，父节点状态独立维护。<br>“本轮拟推进”仅为需求草案，不等于执行或合并授权。保存仅在当前浏览器，不会跨设备同步，也不会自动发送给助手；请下载最新 HTML 或 JSON 后发回对齐。</div><div class="savebar"><span id="saveStatus" role="status" aria-live="polite"></span><span id="baseline"></span></div><div class="map-controls"><button id="zoomOut" aria-label="缩小">−</button><span id="zoomValue">100%</span><button id="zoomIn" aria-label="放大">＋</button><button id="fit">适合全图</button><button id="focus">聚焦选中</button><button id="autoLayout">自动分层布局</button><span>拖动空白平移 · 滚轮缩放 · 拖动节点仅改布局</span></div><div class="workspace"><section id="viewport" aria-label="可拖动思维导图画布"><div id="world"><svg id="edges" aria-hidden="true"></svg><section id="tree" aria-label="系统功能架构图节点"></section></div></section><aside id="detail" aria-label="选中任务详情"></aside></div><footer id="revision"></footer></main><dialog id="editor"><form id="editform"><h2 id="dialogtitle">编辑任务</h2><label>任务名称<input id="editTitle" type="text" maxlength="300" required></label><label>状态<select id="editStatus"><option value="done">已完成</option><option value="in_progress">未完成 · 进行中</option><option value="awaiting_acceptance">待 dot 验收</option><option value="blocked">未完成 · 受阻</option><option value="planned">待完成 · 待启动</option><option value="deferred">待完成 · 暂缓</option></select></label><label>备注 / 验收标准<textarea id="editNote" maxlength="10000"></textarea></label><label>补充来源 / 提交（可编辑，不改写工程记录）<input id="editSource" type="text" maxlength="2000"></label><label><input id="editSelected" type="checkbox"> 本轮拟推进（仅草案）</label><div class="dialogactions"><button type="button" id="cancelEdit">取消</button><button class="primary" type="submit">保存任务</button></div></form></dialog><div id="toast" role="status" hidden></div><input type="file" id="fileInput" accept="application/json,.json"><script id="seed" type="application/json">{
   "schemaVersion": 1,
   "project": "Godot × MuJoCo",
-  "revision": 10,
-  "updatedAt": "2026-10-24T17:11:00Z",
-  "baseline": "功能架构视图 · main e6ecd1a · 2026-10-25 环境恢复/轻量验证完成 · 状态为节点属性，不代表全系统完成",
+  "revision": 11,
+  "updatedAt": "2026-10-24T18:02:00Z",
+  "baseline": "功能架构视图 · main d7461cd · 地形 PR #17 / 310d2a4 已验收待合并（草稿） · 完整后端仍未完成",
   "nodes": [
     {
       "id": "task-005",
@@ -270,12 +270,12 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
           "id": "native-full-shapes-remaining",
           "title": "完整 shape / heightfield / MJCF 原生兼容",
           "status": "planned",
-          "note": "复杂形状与完整查询/运动覆盖仍未完成；专用地形、模型通路与原生 API 的边界继续保留。",
-          "source": "2026-10-24 当前未完成清单",
+          "note": "复杂形状与完整查询/运动覆盖仍未完成。普通原生静态 HeightMapShape3D 有限子集已在 PR #17 分支 310d2a4 实际 dot 验收，尚未合入 main；不再把全部高度场支持笼统称为尚不支持。\n仅 StaticBody3D 静态高度场；宽/深各 2..256、固定 1 米间距、有限高度。支持刚性平移/旋转，不支持缩放、镜像、剪切、孔洞/NaN、动态地形。Bounce 必须为 0；查询、Character 与 Area 的既有限制不扩大。",
+          "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd",
           "selected": false,
           "evidence": {
             "status": "planned",
-            "source": "当前能力边界；未完成"
+            "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd"
           },
           "children": []
         },
@@ -528,55 +528,55 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
       "id": "task-018",
       "title": "05 · 地形系统",
       "status": "in_progress",
-      "note": "职责：专用静态 heightfield 的创建、编辑和类型化接口；不把通用地形、高级编辑与动态地形视为已完成。\n\n静态固定分辨率 heightfield 专用支持，不是通用 HeightMapShape3D。",
-      "source": "",
+      "note": "职责：专用静态 heightfield、原生静态 HeightMapShape3D 有限兼容、地形材质和编辑接口。原有专用地形已在 main；新增原生兼容/摩擦/面板链路在 PR #17 精确 310d2a4 实际 dot 验收通过，仍为草稿分支，未合并。\n仅 StaticBody3D 静态高度场；宽/深各 2..256、固定 1 米间距、有限高度。支持刚性平移/旋转，不支持缩放、镜像、剪切、孔洞/NaN、动态地形。Bounce 必须为 0；查询、Character 与 Area 的既有限制不扩大。\n完整地形系统仍未完成；通用查询兼容、高级编辑和动态扩展保持未完成。",
+      "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd",
       "selected": false,
       "children": [
         {
           "id": "task-015",
-          "title": "专用静态 heightfield",
+          "title": "专用静态 heightfield 与材质摩擦",
           "status": "done",
-          "note": "固定分辨率静态地形支持已验收并合并。",
-          "source": "",
+          "note": "原有固定分辨率专用静态地形支持已经合入主线。本轮 PR #17 新增专用 PhysicsMaterial 摩擦入口并独立验收，尚未合并。\n专用节点 Inspector 材质变化属于设计，运行中须明确 Apply / request_apply；成功提交后更新 revision，失败保持旧物理与 revision。\n实际 dot：专用地形 96 项通过；Inspector Friction 0.23→0.67，真实 F6 运行实例 Apply 成功，revision 1→2。\n仅 StaticBody3D 静态高度场；宽/深各 2..256、固定 1 米间距、有限高度。支持刚性平移/旋转，不支持缩放、镜像、剪切、孔洞/NaN、动态地形。Bounce 必须为 0；查询、Character 与 Area 的既有限制不扩大。",
+          "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd",
           "selected": false,
           "children": [],
           "evidence": {
             "status": "done",
-            "source": "沿用上一版工程记录；具体边界见备注"
+            "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd"
           }
         },
         {
           "id": "task-016",
           "title": "地形编辑面板与 typed C# 地形 API",
           "status": "done",
-          "note": "PR #2 已验收并合并。",
-          "source": "main · 8157253",
+          "note": "原有地形编辑面板与 typed C# API（PR #2 / main 8157253）已验收并合并。新增材质编辑链路在 PR #17 草稿分支已完成实际 dot 验收，待合并。\n面板 67 项及独立运行链路 6 项、typed terrain C# 50 项通过。修复 P1：编辑器 payload 漏发材质字段；修复 P2：共享 PhysicsMaterial 导致 Undo 丢失原值。\n真实 GUI：Inspector 0.23→0.67，live F6 Apply revision 1→2；面板 0.4 Apply Scene，Undo→0.67，Undo Inspector→0.23；保存、正常退出、新进程重开值正确。\nC# TerrainDesign 本轮未增加材质数值字段；通过节点 Inspector 设置。不要把直接 runtime node 测试当成整个编辑器传递链验证。",
+          "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd",
           "selected": false,
           "children": [],
           "evidence": {
             "status": "done",
-            "source": "main · 8157253"
+            "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd"
           }
         },
         {
           "id": "task-040",
-          "title": "通用地形兼容与扩展边界",
-          "status": "planned",
-          "note": "功能域：当前专用 heightfield 与普通 Godot HeightMapShape3D 通用兼容不是同一能力；下列扩展尚未实现。\n\n这里是路线候选，不是自动执行清单。",
-          "source": "",
+          "title": "原生地形兼容与扩展边界",
+          "status": "in_progress",
+          "note": "普通原生静态 HeightMapShape3D 的有限子集已在 PR #17 草稿分支验收，待合并；下列缩放、剪切、孔洞和动态扩展仍未实现。\n仅 StaticBody3D 静态高度场；宽/深各 2..256、固定 1 米间距、有限高度。支持刚性平移/旋转，不支持缩放、镜像、剪切、孔洞/NaN、动态地形。Bounce 必须为 0；查询、Character 与 Area 的既有限制不扩大。",
+          "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd",
           "selected": false,
           "children": [
             {
               "id": "task-037",
-              "title": "普通 HeightMapShape3D 通用兼容",
-              "status": "planned",
-              "note": "当前尚不支持。",
-              "source": "",
+              "title": "普通 HeightMapShape3D 有限兼容（分支已验收，待合并）",
+              "status": "done",
+              "note": "普通 StaticBody3D → CollisionShape3D → HeightMapShape3D 已在功能分支实现，无需专用地形脚本。支持原生资源 dirty 重建、碰撞/ray、尺寸/高度/材质保存重开。\n仅 StaticBody3D 静态高度场；宽/深各 2..256、固定 1 米间距、有限高度。支持刚性平移/旋转，不支持缩放、镜像、剪切、孔洞/NaN、动态地形。Bounce 必须为 0；查询、Character 与 Area 的既有限制不扩大。\n实际 dot：源码重建通过；native heightmap 26 项与 12 个预期拒绝通过。真实 GUI 将 Friction 0.23→0.67，保存、退出、独立进程重开值正确。\n这是 PR #17 草稿分支的验收结果，不代表当前 main 已拥有此功能，也不等于完整 HeightMapShape3D 通用兼容。",
+              "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd",
               "selected": false,
               "children": [],
               "evidence": {
-                "status": "planned",
-                "source": "沿用上一版工程记录；具体边界见备注"
+                "status": "done",
+                "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd"
               }
             },
             {
@@ -607,14 +607,14 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
             }
           ],
           "evidence": {
-            "status": "planned",
-            "source": "沿用上一版工程记录；具体边界见备注"
+            "status": "in_progress",
+            "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd"
           }
         }
       ],
       "evidence": {
         "status": "in_progress",
-        "source": "专用静态地形已验收；通用与动态地形扩展仍未完成。"
+        "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd"
       }
     },
     {
@@ -682,13 +682,13 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
           "id": "task-019",
           "title": "轻量验证工具与回归流程",
           "status": "done",
-          "note": "【环境恢复 · 2026-10-25 00:59 北京时间】实际 dot 验证环境已恢复：Godot 4.7.2 .NET、.NET SDK 8.0.426 / runtime 8.0.32、MuJoCo 3.16.0、CMake 3.31.10。完整 Git 仓库固定 main 对应 e6ecd1a，1471 个文件哈希及 Git 完整性核验通过。C++ 构建、strict MjWorld smoke 通过，C# typed_control 69/69 通过，真实桌面 .NET console 运行通过，编辑器轻量工程已实际打开。\n工具位于 /workspace/shared/tools；源码位于 /workspace/shared/projects/godot-mujoco。新终端使用 source /workspace/shared/tools/env.sh，打开工程使用 /workspace/shared/tools/open-project.sh。\n限制：GUI 仍有宿主 Vulkan surface / VSync 诊断；执行工具中的 NuGet-Migrations 互斥体错误与真实桌面终端成功分开记录。未实际重启，不保证云环境重建后持久；未重跑 G1 重负载。本次仅恢复环境，没有开发新功能、修改源码或新增合并。\n\n严格轻量验证工具已验收。",
-          "source": "2026-10-25 实际 dot 环境恢复与轻量复验 · main e6ecd1a",
+          "note": "【地形功能分支验收 · 2026-10-25 02:00 北京时间】PR #17 草稿，精确 310d2a4，尚未合并；main 仍为 d7461cd。实际 dot 源码重建、native heightmap 26 + 12 预期拒绝、专用地形 96、面板 67 + 独立 runtime 6、C# 50、原生语义及 backend 回归通过。原生摩擦保存重开、专用 Inspector / live F6 Apply / 面板 Apply Scene / 双层 Undo / 保存正常退出独立重开均已验证。P1 payload 漏字段与 P2 共享材质 Undo 缺陷已修复。此结论只覆盖受限静态地形范围，不等于全后端完成。\n\n【此前记录】\n【环境恢复 · 2026-10-25 00:59 北京时间】实际 dot 验证环境已恢复：Godot 4.7.2 .NET、.NET SDK 8.0.426 / runtime 8.0.32、MuJoCo 3.16.0、CMake 3.31.10。完整 Git 仓库固定 main 对应 e6ecd1a，1471 个文件哈希及 Git 完整性核验通过。C++ 构建、strict MjWorld smoke 通过，C# typed_control 69/69 通过，真实桌面 .NET console 运行通过，编辑器轻量工程已实际打开。\n工具位于 /workspace/shared/tools；源码位于 /workspace/shared/projects/godot-mujoco。新终端使用 source /workspace/shared/tools/env.sh，打开工程使用 /workspace/shared/tools/open-project.sh。\n限制：GUI 仍有宿主 Vulkan surface / VSync 诊断；执行工具中的 NuGet-Migrations 互斥体错误与真实桌面终端成功分开记录。未实际重启，不保证云环境重建后持久；未重跑 G1 重负载。本次仅恢复环境，没有开发新功能、修改源码或新增合并。\n\n严格轻量验证工具已验收。",
+          "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd",
           "selected": false,
           "children": [],
           "evidence": {
             "status": "done",
-            "source": "环境恢复完成：源码构建 / strict smoke 通过，C# 69/69；新终端验证通过，重启未验证。"
+            "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd"
           }
         },
         {
@@ -734,13 +734,13 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
           "id": "native-acceptance-gates",
           "title": "后端里程碑共同验收门",
           "status": "in_progress",
-          "note": "【2026-10-25 环境复验补充】工具链恢复后的源码构建、strict MjWorld smoke、C# typed_control 69/69 与真实编辑器启动通过。本次是环境恢复轻量检查，不冒充全量 22 套重跑；宿主 Vulkan / VSync 诊断、冷导入 139 和 G1 重负载等未完成边界继续保留。\n\n【最终阶段补充】实际 dot 精确 f70e937 验收与合并已完成；旧环境依赖阻碍消除。有界 Hinge 限位/速度电机新增完成，原本受限后端和被动 Hinge 的验收边界不扩大。\nPR #5 合并 48468f4f5157ddb295f8c6998a6618af8a055dbb；PR #8 合并 b3a9ad2d242ff094164fbaeacbd446845a87e861；PR #16 合并 e6ecd1a2f6e962f1cab731b12946c6f963edf789。main 源码树 7c056cd37df33830fb7a69cdc9a68dc955bc15f6 与验收 f70e937d46ce700fd43cdf494aeff58d7965feff 完全一致，差异 0。\n\n【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n最终 4c2f1f7 新鲜原生构建通过；21 套测试 + 5 组额外回归均退出码 0。RID 52 项 × 3、Character 23 项 × 3、reset 11 项、加强负例 18/0；原 sweep 432 项 × 3 通过。\n实际 Character GUI 19/0；此前其他阶段实际 GUI 已验收，包括纠正后的 Pin/Hinge 产品输入、保存重开。最终源码干净，3 个 P2 问题与 reset 差异已关闭。\n工程证据：最终验收归档 416 KB；前阶段 1e2d10e 扩展验收独立保留。GUI 与 headless 分别记录，历史阶段失败不删除。\n冷导入 139、编译器/分配故障注入、G1 重负载、打包/Windows 的原有未完成或暂缓状态不变。",
-          "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+          "note": "【地形功能分支验收 · 2026-10-25 02:00 北京时间】PR #17 草稿，精确 310d2a4，尚未合并；main 仍为 d7461cd。实际 dot 源码重建、native heightmap 26 + 12 预期拒绝、专用地形 96、面板 67 + 独立 runtime 6、C# 50、原生语义及 backend 回归通过。原生摩擦保存重开、专用 Inspector / live F6 Apply / 面板 Apply Scene / 双层 Undo / 保存正常退出独立重开均已验证。P1 payload 漏字段与 P2 共享材质 Undo 缺陷已修复。此结论只覆盖受限静态地形范围，不等于全后端完成。\n\n【此前记录】\n【2026-10-25 环境复验补充】工具链恢复后的源码构建、strict MjWorld smoke、C# typed_control 69/69 与真实编辑器启动通过。本次是环境恢复轻量检查，不冒充全量 22 套重跑；宿主 Vulkan / VSync 诊断、冷导入 139 和 G1 重负载等未完成边界继续保留。\n\n【最终阶段补充】实际 dot 精确 f70e937 验收与合并已完成；旧环境依赖阻碍消除。有界 Hinge 限位/速度电机新增完成，原本受限后端和被动 Hinge 的验收边界不扩大。\nPR #5 合并 48468f4f5157ddb295f8c6998a6618af8a055dbb；PR #8 合并 b3a9ad2d242ff094164fbaeacbd446845a87e861；PR #16 合并 e6ecd1a2f6e962f1cab731b12946c6f963edf789。main 源码树 7c056cd37df33830fb7a69cdc9a68dc955bc15f6 与验收 f70e937d46ce700fd43cdf494aeff58d7965feff 完全一致，差异 0。\n\n【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n最终 4c2f1f7 新鲜原生构建通过；21 套测试 + 5 组额外回归均退出码 0。RID 52 项 × 3、Character 23 项 × 3、reset 11 项、加强负例 18/0；原 sweep 432 项 × 3 通过。\n实际 Character GUI 19/0；此前其他阶段实际 GUI 已验收，包括纠正后的 Pin/Hinge 产品输入、保存重开。最终源码干净，3 个 P2 问题与 reset 差异已关闭。\n工程证据：最终验收归档 416 KB；前阶段 1e2d10e 扩展验收独立保留。GUI 与 headless 分别记录，历史阶段失败不删除。\n冷导入 139、编译器/分配故障注入、G1 重负载、打包/Windows 的原有未完成或暂缓状态不变。",
+          "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd",
           "selected": false,
           "children": [],
           "evidence": {
             "status": "in_progress",
-            "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+            "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd"
           }
         }
       ],
@@ -753,8 +753,8 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
       "id": "task-036",
       "title": "08 · 安装部署与版本交付",
       "status": "in_progress",
-      "note": "职责：当前主线版本、构建/运行环境以及平台交付边界。当前 e6ecd1a 已合并；2026-10-25 环境恢复与轻量验证完成，未实际重启，跨云重建持久性不保证。\n\n【最新环境状态 · 2026-10-25 00:59 北京时间】验证工具链与完整仓库已恢复；轻量构建与 C# 复验通过。项目代码仍为 main e6ecd1a，本轮未新增功能或提交。详见“轻量验证工具与回归流程”节点。\n\n本阶段完成：运行时原子预设、受限原生集成与有界 Hinge 已验收并入主线。最终实际 dot 代码和 GUI 验收完成；旧依赖阻碍消除。\nPR #5 合并 48468f4f5157ddb295f8c6998a6618af8a055dbb；PR #8 合并 b3a9ad2d242ff094164fbaeacbd446845a87e861；PR #16 合并 e6ecd1a2f6e962f1cab731b12946c6f963edf789。main 源码树 7c056cd37df33830fb7a69cdc9a68dc955bc15f6 与验收 f70e937d46ce700fd43cdf494aeff58d7965feff 完全一致，差异 0。\n此阶段完成不代表完整原生后端完成。Character 平台/楼梯/双向推挤、完整 shape/heightfield/MJCF 覆盖、CCD/睡眠/轴锁、冷导入139等仍保留未完成边界；不因此授权打包、Windows 或新增功能。",
-      "source": "实际 dot 最终验收通过；PR #5 / #8 / #16 已合并；main e6ecd1a2f6e962f1cab731b12946c6f963edf789",
+      "note": "【当前版本边界】main 为 d7461cd；地形 PR #17 仍为 DRAFT，310d2a4 已通过实际 dot 验收但未合并。此前 e6ecd1a 是环境恢复时的历史主线，不作为最新主线。\n\n【此前记录】\n职责：当前主线版本、构建/运行环境以及平台交付边界。当前 e6ecd1a 已合并；2026-10-25 环境恢复与轻量验证完成，未实际重启，跨云重建持久性不保证。\n\n【最新环境状态 · 2026-10-25 00:59 北京时间】验证工具链与完整仓库已恢复；轻量构建与 C# 复验通过。项目代码仍为 main e6ecd1a，本轮未新增功能或提交。详见“轻量验证工具与回归流程”节点。\n\n本阶段完成：运行时原子预设、受限原生集成与有界 Hinge 已验收并入主线。最终实际 dot 代码和 GUI 验收完成；旧依赖阻碍消除。\nPR #5 合并 48468f4f5157ddb295f8c6998a6618af8a055dbb；PR #8 合并 b3a9ad2d242ff094164fbaeacbd446845a87e861；PR #16 合并 e6ecd1a2f6e962f1cab731b12946c6f963edf789。main 源码树 7c056cd37df33830fb7a69cdc9a68dc955bc15f6 与验收 f70e937d46ce700fd43cdf494aeff58d7965feff 完全一致，差异 0。\n此阶段完成不代表完整原生后端完成。Character 平台/楼梯/双向推挤、完整 shape/heightfield/MJCF 覆盖、CCD/睡眠/轴锁、冷导入139等仍保留未完成边界；不因此授权打包、Windows 或新增功能。",
+      "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd",
       "selected": false,
       "children": [
         {
@@ -812,7 +812,7 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
       ],
       "evidence": {
         "status": "in_progress",
-        "source": "当前主线/验证环境可用；正式 Linux 打包与 Windows 交付尚未完成。"
+        "source": "PR #17 草稿 · 310d2a425b131e6a0c25cb0204f3f8d322b264bd · 实际 dot 已验收，尚未合并；main 仍为 d7461cd"
       }
     }
   ]
