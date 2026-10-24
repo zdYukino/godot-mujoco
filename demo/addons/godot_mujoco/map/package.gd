@@ -37,6 +37,32 @@ static func validate(path: String) -> String:
 		var file := path.path_join(relative)
 		if not FileAccess.file_exists(file): return "缺少地图依赖: " + relative
 		if FileAccess.get_sha256(file) != manifest.files[relative]: return "地图依赖哈希不匹配: " + relative
+	var scene_path := path.path_join("map.tscn")
+	var text := FileAccess.get_file_as_string(scene_path)
+	# Inspect text dependencies and required direct children before loading resources.
+	# Native packages contain only installed addon scripts as external resources.
+	if text.contains("script/source =") or text.contains('[sub_resource type="GDScript"'):
+		return "地图包不接受内联脚本"
+	var allowed := ["res://addons/godot_mujoco/map/map_root.gd","res://addons/godot_mujoco/map/map_camera.gd","res://addons/godot_mujoco/model/static_heightfield.gd","res://addons/godot_mujoco/model/heightfield_data.gd"]
+	var attribute := RegEx.new(); attribute.compile('([a-z_]+)="([^"]*)"')
+	var required := {"Visual":false,"Physics":false}; var roots := 0
+	for raw_line in text.split("\n"):
+		var line := raw_line.strip_edges()
+		if not line.begins_with("[ext_resource ") and not line.begins_with("[node "): continue
+		var fields := {}
+		for match_value in attribute.search_all(line): fields[match_value.get_string(1)] = match_value.get_string(2)
+		if line.begins_with("[ext_resource "):
+			var dependency: String = fields.get("path","")
+			if fields.get("type") != "Script" or dependency not in allowed: return "地图场景含未支持的外部依赖: " + dependency
+			if not FileAccess.file_exists(dependency): return "缺少实际场景依赖: " + dependency
+		else:
+			if not fields.has("parent"):
+				roots += 1
+				if fields.get("type") != "Node3D": return "地图根节点必须是 Node3D"
+			elif fields.parent == "." and required.has(fields.get("name")):
+				if fields.get("type") != "Node3D": return "地图 Visual/Physics 节点必须是 Node3D"
+				required[fields.name] = true
+	if roots != 1 or not required.Visual or not required.Physics: return "地图结构缺少唯一根节点、Visual 或 Physics"
 	return ""
 
 static func pack(session: RefCounted, parent: String) -> Dictionary:

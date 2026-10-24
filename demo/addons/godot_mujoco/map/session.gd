@@ -27,6 +27,8 @@ func import_file(path: String, selected_unit: String, selected_axes: String, dis
 	if not candidate_watch.capture(path, existing): candidate.free(); error = candidate_watch.error; return false
 	for dependency in importer.dependencies:
 		if not FileAccess.file_exists(dependency): candidate_watch.hashes[dependency] = "missing"
+	if candidate_watch.hashes != importer.source_hashes:
+		candidate.free(); error = "导入解析和来源记录之间内容已变，安全拒绝；请重试"; return false
 	if is_instance_valid(visual): visual.free()
 	visual = candidate; watch = candidate_watch; source = path; unit = selected_unit; axes = selected_axes
 	diagnostics = importer.diagnostics; terrains = []; specs = {}; view = {}; dirty = false; error = ""; history.clear_history()
@@ -101,9 +103,16 @@ func close() -> void:
 	if is_instance_valid(history): history.clear_history(); history.free()
 	history = null
 
-func import_height(path: String, contract: Dictionary) -> bool:
+func import_height(path: String, contract: Dictionary, contract_path := "") -> bool:
+	var contract_hash := ""
+	if not contract_path.is_empty():
+		if not FileAccess.file_exists(contract_path): error = "高度契约文件缺失"; return false
+		contract_hash = FileAccess.get_sha256(contract_path)
+		var actual: Variant = JSON.parse_string(FileAccess.get_file_as_string(contract_path))
+		if actual != contract or FileAccess.get_sha256(contract_path) != contract_hash: error = "高度契约读取期间已变，安全拒绝"; return false
 	var result := preload("height_import.gd").read(path,contract)
 	if not result.error.is_empty(): error = result.error; return false
+	if not contract_path.is_empty() and FileAccess.get_sha256(contract_path) != contract_hash: error = "高度契约导入期间已变，安全拒绝"; return false
 	if not visual:
 		visual = Node3D.new(); visual.name = "Map"
 		unit = "m"; axes = "Y_UP"; source = path
@@ -112,6 +121,7 @@ func import_height(path: String, contract: Dictionary) -> bool:
 	var mesh := MeshInstance3D.new(); mesh.name = name; mesh.mesh = result.grid.mesh(); visual.add_child(mesh); mesh.owner = visual
 	terrains.append({"name":name,"grid":result.grid,"pose":Transform3D.IDENTITY,"material":PhysicsMaterial.new(),"contract":contract.duplicate(true)})
 	watch.hashes[path] = result.source_hash
+	if not contract_path.is_empty(): watch.hashes[contract_path] = contract_hash
 	dirty = true; error = "高度场已按契约导入；可通过地形面板编辑材质并显式 Apply"; return true
 
 func _notification(what: int) -> void:

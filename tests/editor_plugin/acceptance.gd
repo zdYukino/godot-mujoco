@@ -154,7 +154,7 @@ func run(plugin: EditorPlugin) -> void:
 	var saved: Dictionary = doc.snapshot()
 	check(panel.save_document("user://acceptance.gmj.json"), "atomic document save")
 	check(panel.execute({"op":"delete","kind":"body","name":"cylinder"}), "change after save")
-	check(panel.open_document("user://acceptance.gmj.json"), "reopen document")
+	check(panel.open_document("user://acceptance.gmj.json",true), "reopen document")
 	check(same_snapshot(doc.snapshot(), saved), "persistence restores full model control and state")
 	check(not panel.save_document("res://fixtures/pendulum.xml"), "source XML overwrite rejected")
 	for i in range(3):
@@ -164,7 +164,7 @@ func run(plugin: EditorPlugin) -> void:
 		doc = plugin.state.document
 		check(same_snapshot(doc.snapshot(), saved), "session reactivate " + str(i))
 	var retained: Dictionary = doc.snapshot()
-	check(panel.import_mjcf("res://fixtures/external/model.xml"), "relative include plus external OBJ")
+	check(panel.import_mjcf("res://fixtures/external/model.xml",true), "relative include plus external OBJ")
 	check(panel.meshes.tetra_geom.mesh is ArrayMesh, "imported mesh actual triangles")
 	check(panel.save_document("user://external.gmj.json"), "save external asset document")
 	check(panel.open_document("user://external.gmj.json"), "reopen resolved external asset paths")
@@ -178,7 +178,7 @@ func run(plugin: EditorPlugin) -> void:
 	panel.pending = true
 	panel.save_recovery()
 	panel.pending = false
-	check(panel.open_document(panel.recovery_path), "recovery document opens")
+	check(panel.open_document(panel.recovery_path,true), "recovery document opens")
 	check(panel.pending and panel.inputs.size.text == "[0.4, 0.6, 0]", "unapplied draft survives recovery")
 	panel.pending = false
 	panel.refresh()
@@ -334,7 +334,7 @@ func primitive_ui_regression(panel: Control, doc: RefCounted) -> void:
 		var undo: UndoRedo = panel.plugin.get_undo_redo().get_history_undo_redo(panel.plugin.get_undo_redo().get_object_history_id(panel.state))
 		check(undo.undo() and same_snapshot(doc.snapshot(),before),"new " + shape + " resize undo")
 		check(undo.redo() and entity(doc,"geom",geom).size==resized,"new " + shape + " resize redo")
-		check(panel.write_document("user://primitive-ui.json") and panel.open_document("user://primitive-ui.json") and entity(doc,"geom",geom).size==resized,"new " + shape + " resize save reopen")
+		check(panel.save_document("user://primitive-ui.json") and panel.open_document("user://primitive-ui.json") and entity(doc,"geom",geom).size==resized,"new " + shape + " resize save reopen")
 		if shape=="sphere":
 			var mesh: SphereMesh = panel.meshes[geom].mesh
 			check(is_equal_approx(mesh.radius,.275) and is_equal_approx(mesh.height,.55) and panel.meshes[geom].scale==Vector3.ONE,"sphere remains spherical in viewport and physics")

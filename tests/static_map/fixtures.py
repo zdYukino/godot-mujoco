@@ -46,3 +46,5 @@ png=b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',2,2,8,2,0,0,0))+ch
 (p/'texture.mtl').write_text('newmtl surface\nKd 1 1 1\nmap_Kd texture.png\n')
 (p/'room.obj').write_text('mtllib texture.mtl\nusemtl surface\n'+(p/'room.obj').read_text())
 (p/'asset.xml').write_text('<mujoco><asset><mesh name="cube" file="box.obj"/><texture name="texture" type="2d" file="texture.png"/><material name="surface" texture="texture"/></asset><worldbody><geom type="mesh" mesh="cube" material="surface"/></worldbody></mujoco>')
+
+(p/"box_tabs_crlf.stl").write_bytes((p/"box.stl").read_text().replace(" ","\t").replace("\n","\r\n").encode())

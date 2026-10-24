@@ -37,6 +37,7 @@ func run():
 		check(session.bounds().size.distance_to(Vector3.ONE)<.00001,"P0 1m calibration "+file)
 	check(session.import_file("res://fixtures/box.stl","mm","Z_UP"),"P1 ASCII STL adapter")
 	check(session.bounds().size.distance_to(Vector3.ONE)<.00001,"P0 mm STL converted to metres")
+	check(session.import_file("res://fixtures/box_tabs_crlf.stl","mm","Y_UP") and session.bounds().size.distance_to(Vector3.ONE)<.00001,"P1 ASCII STL tabs and CRLF whitespace")
 	check(session.import_file("res://fixtures/hierarchy.gltf","m","Y_UP"),"P1 external glTF")
 	check(session.bounds().size.distance_to(Vector3(1,2,3))<.00001 and session.bounds().get_center().distance_to(Vector3(3,3,4))<.00001,"P0 asymmetric hierarchy transforms")
 	var original = session.visual
@@ -114,6 +115,9 @@ func run():
 	var contract := {"width":3,"depth":2,"spacing_x":1.0,"spacing_z":1.0,"unit":"m","row_order":"increasing_z","encoding":"float32_le"}
 	var height := Height.read("res://fixtures/ramp.raw",contract)
 	check(height.error.is_empty() and height.grid.heights == PackedFloat32Array([-1,0,1,-1,0,1]),"P2 negative non-square RAW slope")
+	for invalid_width in [2.5,NAN,INF,1,257]:
+		var invalid: Dictionary = contract.duplicate(); invalid.width = invalid_width
+		check(not Height.read("res://fixtures/ramp.raw",invalid).error.is_empty(),"P2 invalid height dimension "+str(invalid_width))
 	contract.spacing_x = .5; check(not Height.read("res://fixtures/ramp.raw",contract).error.is_empty(),"P2 unsupported spacing explicit rejection"); contract.spacing_x = 1.0
 	check(session.import_height("res://fixtures/ramp.raw",contract),"P2 import supported HeightField")
 	var terrain = preload("res://addons/godot_mujoco/model/static_heightfield.gd").new(); terrain.design = height.grid; scene.add_child(terrain); await ticks(10)
@@ -125,16 +129,27 @@ func run():
 	output.passed = passed; output.failed = failed
 	print("STATIC_MAP_RESULT ",JSON.stringify(output)); quit(1 if failed else 0)
 func sliding():
-	var body := StaticBody3D.new(); var shape := CollisionShape3D.new(); shape.shape = BoxShape3D.new(); shape.shape.size = Vector3(20,.2,6); shape.position.y = -.1; body.add_child(shape)
-	var material := PhysicsMaterial.new(); material.friction = 0; body.physics_material_override = material; scene.add_child(body)
-	var box := RigidBody3D.new(); box.position = Vector3(-2,.25,0); box.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE; box.linear_damp = 0
-	var c := CollisionShape3D.new(); c.shape = BoxShape3D.new(); c.shape.size = Vector3(.5,.5,.5); box.add_child(c); scene.add_child(box)
-	await ticks(30); box.linear_velocity = Vector3(1.5,0,0); var start := box.position.x; await ticks(30)
-	var low := box.position.x-start; check(low > .65,"P3 low friction actual sliding")
-	box.position = Vector3(-2,.25,0); box.rotation = Vector3.ZERO; box.linear_velocity = Vector3.ZERO; box.angular_velocity = Vector3.ZERO; material.friction = .8
-	await ticks(30); box.linear_velocity = Vector3(1.5,0,0); start = box.position.x; await ticks(30)
-	var high := box.position.x-start; check(high < low*.5 and absf(box.linear_velocity.x)<.1,"P3 high friction stops")
-	var info: Dictionary = PhysicsServer3D.call("scene_info",scene.get_world_3d().space)
-	check(not info.contact_details.is_empty() and absf(info.contact_details[0].friction-.8)<.001,"P3 final compiled contact friction")
-	output.low_friction_distance = low; output.high_friction_distance = high
-	box.queue_free(); body.queue_free(); await ticks(3)
+	var map_session := Session.new()
+	check(map_session.import_file("res://fixtures/box.obj","m","Y_UP"),"P3 friction map source import")
+	var mesh: MeshInstance3D = map_session.meshes()[0]
+	mesh.scale = Vector3(20,.2,6); mesh.position.y = -.1
+	var path := mesh_path(map_session); var distances := []
+	for friction in [0.0,.8]:
+		check(map_session.configure(path,{"kind":"box","friction":friction,"layer":1,"mask":1}),"P3 configure map friction "+str(friction))
+		var package := Package.pack(map_session,"res://friction_packages")
+		check(package.error.is_empty(),"P3 save friction map "+str(friction))
+		if not package.error.is_empty(): map_session.close(); return
+		var reopened := ResourceLoader.load(package.path.path_join("map.tscn"),"",ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
+		var map := reopened.instantiate(); scene.add_child(map)
+		var box := RigidBody3D.new(); box.position = Vector3(-2,.25,0); box.linear_damp_mode = RigidBody3D.DAMP_MODE_REPLACE; box.linear_damp = 0
+		var c := CollisionShape3D.new(); c.shape = BoxShape3D.new(); c.shape.size = Vector3(.5,.5,.5); box.add_child(c); scene.add_child(box)
+		await ticks(30); box.linear_velocity = Vector3(1.5,0,0); var start := box.position.x; await ticks(30)
+		distances.append(box.position.x-start)
+		var info: Dictionary = PhysicsServer3D.call("scene_info",scene.get_world_3d().space)
+		check(not info.contact_details.is_empty() and absf(info.contact_details[0].friction-friction)<.001,"P3 reopened map compiled contact friction "+str(friction))
+		if friction > 0: check(absf(box.linear_velocity.x)<.1,"P3 reopened high-friction map stops box")
+		box.queue_free(); map.queue_free(); await ticks(3)
+	check(distances[0]>.65,"P3 reopened low-friction map actual sliding")
+	check(distances[1]<distances[0]*.5,"P3 reopened high-friction map observable reduction")
+	output.low_friction_distance = distances[0]; output.high_friction_distance = distances[1]
+	map_session.close()

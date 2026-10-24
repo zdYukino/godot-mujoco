@@ -258,8 +258,37 @@ func open_package(path: String) -> bool:
 	var error := Package.validate(path)
 	if not error.is_empty(): session.error = error; refresh_status(); return false
 	var scene := ResourceLoader.load(path.path_join("map.tscn"),"",ResourceLoader.CACHE_MODE_IGNORE) as PackedScene
-	if not scene: return false
-	var node := scene.instantiate(); var visual := node.get_node("Visual"); node.remove_child(visual)
+	if not scene: session.error = "地图场景资源加载失败"; refresh_status(); return false
+	var node := scene.instantiate()
+	if not node: session.error = "地图场景实例化失败"; refresh_status(); return false
+	var visual := node.get_node_or_null("Visual")
+	if not visual is Node3D or not node.get_node_or_null("Physics") is Node3D:
+		node.free(); session.error = "地图结构缺少 Visual/Physics"; refresh_status(); return false
+	for key in ["map_specs","map_view","source_hashes","contract"]:
+		if not node.get_meta(key,null) is Dictionary:
+			node.free(); session.error = "地图元数据缺失或类型错误: " + key; refresh_status(); return false
+	if not node.get_meta("map_terrains",[]) is Array or not node.get_meta("diagnostics",[]) is Array:
+		node.free(); session.error = "地图地形/诊断元数据类型错误"; refresh_status(); return false
+	for design in node.get_meta("map_terrains",[]):
+		if not design is Dictionary or not design.get("name") is String or not design.get("grid") is MjHeightFieldData or not design.get("pose") is Transform3D or not design.get("material") is PhysicsMaterial:
+			node.free(); session.error = "地图地形元数据不完整"; refresh_status(); return false
+	var view: Dictionary = node.get_meta("map_view",{})
+	var saved_view: Variant = view.get("camera",{})
+	if not saved_view is Dictionary or not saved_view.get("center",Vector3.ZERO) is Vector3:
+		node.free(); session.error = "地图相机设置无效"; refresh_status(); return false
+	for key in ["distance","yaw","pitch"]:
+		var value: Variant = saved_view.get(key,4.0 if key=="distance" else .3)
+		if typeof(value) not in [TYPE_FLOAT,TYPE_INT] or not is_finite(value) or (key=="distance" and value<=0):
+			node.free(); session.error = "地图相机参数无效: " + key; refresh_status(); return false
+	var contract_check: Dictionary = node.get_meta("contract")
+	if contract_check.get("unit") not in ["m","cm","mm"] or contract_check.get("axes") not in ["Y_UP","Z_UP"] or not contract_check.get("source","") is String:
+		node.free(); session.error = "地图来源/单位契约无效"; refresh_status(); return false
+	if not view.get("hidden",[]) is Array:
+		node.free(); session.error = "地图显隐设置无效"; refresh_status(); return false
+	for hidden in view.get("hidden",[]):
+		if not hidden is String:
+			node.free(); session.error = "地图显隐节点路径无效"; refresh_status(); return false
+	node.remove_child(visual)
 	session.close(); session.history = UndoRedo.new(); session.terrains = node.get_meta("map_terrains",[]); session.visual = visual; session.specs = node.get_meta("map_specs",{}); session.view = node.get_meta("map_view",{}); session.watch.hashes = node.get_meta("source_hashes",{}); session.diagnostics = node.get_meta("diagnostics",[])
 	var contract: Dictionary = node.get_meta("contract",{}); session.unit = contract.get("unit", ""); session.axes = contract.get("axes", ""); session.source = contract.get("source", ""); session.watch.source = session.source
 	for design in session.terrains:
@@ -296,7 +325,7 @@ func browse_height() -> void:
 	dialog.file_selected.connect(func(path):
 		var contract: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
 		if not contract is Dictionary or not contract.get("file") is String: session.error = "高度契约 JSON 必须含 file"
-		else: session.import_height(path.get_base_dir().path_join(contract.file),contract)
+		else: session.import_height(path.get_base_dir().path_join(contract.file),contract,path)
 		rebuild(); dialog.queue_free())
 	dialog.canceled.connect(dialog.queue_free); dialog.popup_centered_ratio(.7)
 

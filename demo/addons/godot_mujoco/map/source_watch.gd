@@ -33,3 +33,26 @@ func inspect(dirty: bool) -> Dictionary:
 	elif not changes.is_empty(): state = "冲突" if dirty else "源已变"
 	elif dirty: state = "本地脏"
 	return {"state":state, "changes":changes, "error":error, "exported_hash":exported_hash}
+
+func snapshot() -> Dictionary:
+	return {"source":source,"hashes":hashes.duplicate(true),"exported_hash":exported_hash,"error":error}
+
+func restore(value: Dictionary) -> void:
+	source = value.get("source",""); hashes = value.get("hashes",{}).duplicate(true)
+	exported_hash = value.get("exported_hash",""); error = value.get("error","")
+
+static func import_verified(path: String, between_reads: Callable = Callable()) -> Dictionary:
+	# Optimistic stable-read check, not an atomic filesystem snapshot. The first
+	# compile discovers dependencies; only the second compile may be committed.
+	var probe: RefCounted = ClassDB.instantiate("MjEditorDocument")
+	if not probe.import_file(path): return {"error":probe.get_error()}
+	var script = load("res://addons/godot_mujoco/map/source_watch.gd")
+	var before = script.new()
+	if not before.capture(path,probe.asset_manifest().assets): return {"error":before.error}
+	if between_reads.is_valid(): between_reads.call()
+	var candidate: RefCounted = ClassDB.instantiate("MjEditorDocument")
+	if not candidate.import_file(path): return {"error":candidate.get_error()}
+	var after = script.new()
+	if not after.capture(path,candidate.asset_manifest().assets): return {"error":after.error}
+	if before.hashes != after.hashes: return {"error":"导入期间来源/依赖变化，安全拒绝；请重试。旧文档保持不动"}
+	return {"error":"","document":candidate,"watch":after}

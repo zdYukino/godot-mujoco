@@ -78,9 +78,16 @@ func _gltf(path: String) -> Node3D:
 	if document.append_from_file(path, state) != OK: return fail("glTF 解析失败；旧地图保持不动")
 	var result := document.generate_scene(state)
 	if not result: return fail("glTF 场景生成失败")
+	_clear_import_owners(result)
 	result = _bake_importer_meshes(result)
 	_strip_nonvisual(result)
 	return result
+
+func _clear_import_owners(node: Node) -> void:
+	# Reparenting editor-generated ImporterMesh nodes must not retain owners from
+	# the temporary glTF scene. Normalize once, after conversion, in _owners.
+	node.owner = null
+	for child in node.get_children(): _clear_import_owners(child)
 
 func _bake_importer_meshes(node: Node3D) -> Node3D:
 	# Godot's editor generates ImporterMeshInstance3D; runtime generates MeshInstance3D.
@@ -128,7 +135,7 @@ func _stl(path: String) -> Node3D:
 		if not text.strip_edges().begins_with("solid") or not text.contains("endsolid"): return fail("STL 二进制长度或 ASCII 结构无效")
 		var face := []; var inside := false
 		for line in text.split("\n"):
-			var parts := line.strip_edges().split(" ", false)
+			var parts := line.strip_edges().replace("\t", " ").split(" ", false)
 			if parts.is_empty(): continue
 			if parts[0] == "facet":
 				if inside: return fail("STL facet 嵌套无效")

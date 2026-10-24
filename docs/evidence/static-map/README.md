@@ -17,3 +17,11 @@ SDF 研究作为后续，不是本轮 Godot 功能：官方 cow 与无插件房�
 开发中实际发现并修复：未配置运行世界导致 HeightField 失败；编辑器 ImporterMesh 与运行 MeshInstance 类型差异；debug mesh 无 index 数组；UndoRedo Object 未释放；BUNDLE_RESOURCES 内联 class_name 脚本导致混合包重开失败。另发现 Dummy renderer 无法生成含相机的编辑器保存缩略图；headless runner 改用 PackedScene 保存，GUI runner 保留实际 EditorInterface.save_scene 路径。失败轮次没有作为通过证据。
 
 当前限制与验收命令见 ../../static-map.zh-CN.md。整图普通对象运行热替换未实现，设计 Apply 后显式重新运行；地形与 MJCF 仍使用各自已有运行 Apply 事务。非 1 m 高度间距、自动凸分解、任意凹 Shape、SDF 产品接入、P4 UE 不在已实现范围。
+
+## dot 审查驱动修复（e6db312 之后）
+
+初版实际 dot 暴露来源覆盖/Undo 一致性问题，不能因原 runner 通过而视为总体通过。`source-transaction-red.txt` 记录失败先行的 6 个实际失败；绿色回归另含确认覆盖、失败保留 pending、解析窗口变更拒绝、源版本 Undo 后保存、真实 JSON 高度契约及文件变化检测。
+
+最终新结果见 `source-fix-*.json`：核心 78/0、两轮独立重开各 8/0、包结构/依赖诊断 6/0、编辑器 45/0（来源事务 20/0），既有编辑器 160/0。旧编辑器测试中有意丢弃 dirty 后重开用例改为显式 discard 参数，普通保存重开改用 save_document，未取消保护或过滤失败日志。新摩擦路径是实际地图配置→保存→重新加载→接触；低高距离仍约 0.723/0.143 m。
+
+还修复真实 JSON 数值类型差异、STL Tab/CRLF，复核 glTF owner。包缺少 Visual 与未列外部依赖即便 manifest 哈希更新匹配也会拒绝，旧视图保留。来源稳定检查是前后哈希校验，不声称文件系统原子快照。新提交仍等待父任务 dot 复验；不创建 PR、不合并 main。

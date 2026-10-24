@@ -38,7 +38,7 @@ for stage,prefix in [('positive','STATIC_MAP_RESULT '),('reopen','STATIC_MAP_REO
  assert 'SCRIPT ERROR:' not in s and 'leak' not in s.lower(),(stage,s)
  # Invalid source XML is deliberately rejected by native importer without engine error.
  assert 'ERROR:' not in s,(stage,s)
-damage=(p/'damaged.log').read_text();assert 'STATIC_MAP_DAMAGE 3 passed' in damage and 'ERROR:' not in damage
-results['dependency_diagnostics']={'passed':3,'failed':0}
+damage=(p/'damaged.log').read_text();assert 'STATIC_MAP_DAMAGE 6 passed' in damage and 'ERROR:' not in damage
+results['dependency_diagnostics']={'passed':6,'failed':0}
 (p/'results.json').write_text(json.dumps(results,indent=2)+'\n');print('STATIC MAP PASS',p,results)
 PY

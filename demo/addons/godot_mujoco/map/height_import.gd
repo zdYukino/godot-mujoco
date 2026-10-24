@@ -8,9 +8,14 @@ static func read(path: String, contract: Dictionary) -> Dictionary:
 	if contract.row_order != "increasing_z" or contract.spacing_x != 1.0 or contract.spacing_z != 1.0:
 		return {"error":"当前原生 HeightField 契约：按行 +Z、X 优先、1 m 间距；其他间距须外部显式重采样"}
 	if not contract.unit in ["m","cm","mm"]: return {"error":"高度单位必须显式选择"}
-	if not contract.width is int or not contract.depth is int or contract.width < 2 or contract.depth < 2 or contract.width > 256 or contract.depth > 256:
-		return {"error":"宽深必须为 2..256 整数"}
+	contract = contract.duplicate(true)
+	for dimension in ["width","depth"]:
+		var value: Variant = contract[dimension]
+		if typeof(value) not in [TYPE_INT,TYPE_FLOAT] or not is_finite(value) or value < 2 or value > 256 or floor(value) != value:
+			return {"error":"宽深必须为 2..256 整数"}
+		contract[dimension] = int(value)
 	if not FileAccess.file_exists(path): return {"error":"缺少高度输入: " + path}
+	var source_hash := FileAccess.get_sha256(path)
 	var samples := PackedFloat32Array()
 	match contract.encoding:
 		"float32_le":
@@ -38,4 +43,5 @@ static func read(path: String, contract: Dictionary) -> Dictionary:
 	var grid := Grid.new(); grid.width = contract.width; grid.depth = contract.depth; grid.heights = samples
 	var error := grid.validate()
 	if not error.is_empty(): return {"error":error}
-	return {"error":"", "grid":grid, "source_hash":FileAccess.get_sha256(path),"contract":contract.duplicate(true)}
+	if FileAccess.get_sha256(path) != source_hash: return {"error":"高度数据读取期间已变，安全拒绝"}
+	return {"error":"", "grid":grid, "source_hash":source_hash,"contract":contract.duplicate(true)}

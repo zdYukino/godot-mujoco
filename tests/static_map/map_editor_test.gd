@@ -32,6 +32,16 @@ func run(plugin):
 	if package.error.is_empty():
 		check(panel.open_package(package.path),"P3 viewer package reopen")
 		check(panel.session.specs[path].layer==2 and panel.session.specs[path].mask==3,"P3 viewer layer/mask persistence")
+	# A correctly rehashed but structurally incomplete package must fail before load.
+	if package.error.is_empty():
+		var damaged := "res://broken_map"; DirAccess.make_dir_recursive_absolute(damaged)
+		var text := FileAccess.get_file_as_string(package.path.path_join("map.tscn"))
+		var manifest: Dictionary = JSON.parse_string(FileAccess.get_file_as_string(package.path.path_join("manifest.json")))
+		var file := FileAccess.open(damaged.path_join("map.tscn"),FileAccess.WRITE); file.store_string(text.replace('[node name="Visual"','[node name="MissingVisual"')); file.close()
+		manifest.files["map.tscn"] = FileAccess.get_sha256(damaged.path_join("map.tscn"))
+		file = FileAccess.open(damaged.path_join("manifest.json"),FileAccess.WRITE); file.store_string(JSON.stringify(manifest)); file.close()
+		var retained = panel.session.visual
+		check(not panel.open_package(damaged) and panel.session.visual==retained and panel.session.error.contains("结构"),"P3 malformed package opens with diagnostic and retains previous view")
 	var edit_root := Node3D.new(); edit_root.name = "MapHost"
 	var packed := PackedScene.new(); packed.pack(edit_root); ResourceSaver.save(packed,"res://MapHost.tscn"); edit_root.free()
 	EditorInterface.open_scene_from_path("res://MapHost.tscn")
@@ -53,6 +63,8 @@ func run(plugin):
 	var snapshot: Dictionary = plugin.state.document.snapshot()
 	var file := FileAccess.open("res://fixtures/include.xml",FileAccess.WRITE); file.store_string('<mujoco><geom type="invalid"/></mujoco>'); file.close()
 	check(not plugin.panel.reimport_source() and plugin.state.document.snapshot()==snapshot,"P0 UI bad source atomic rollback")
+	var source_result = preload("res://source_transaction_test.gd").new().run(plugin)
+	passed += source_result.passed; failed += source_result.failed
 	print("STATIC_MAP_EDITOR ",JSON.stringify({"passed":passed,"failed":failed}))
 	panel.session.dirty = false; plugin.state.dirty = false
 	panel.get_tree().quit(1 if failed else 0)
