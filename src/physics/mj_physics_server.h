@@ -24,6 +24,7 @@ struct MjNativeJoint {
  RID rid,a,b; Vector3 anchor_a,anchor_b,axis_a,axis_b,reference_a,reference_b;
  bool hinge=false,pin=false,disable_collisions=true,use_limit=false,motor=false,antiparallel=false;
  double lower=-Math_PI/2,upper=Math_PI/2,target_velocity=1,max_impulse=1,step_angle=0;
+ bool pending_limits=false;double pending_lower=0,pending_upper=0;
 };
 struct MjShape { RID rid; PhysicsServer3D::ShapeType type; Variant data; float margin=0.04f; };
 struct MjShapeInstance { RID shape; Transform3D transform; bool disabled=false; };

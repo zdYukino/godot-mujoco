@@ -1,0 +1,106 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+PASS native backend identity 
+MuJoCo: compile time (ms)
+  total:          0.3   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.3   (wall clock)
+PASS pause isolated world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS configure lightweight exact-step world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+EXPECT_DRIVE_ERROR Native Hinge drive numerical state rejected
+ERROR: Native Hinge drive numerical state rejected
+   at: _step (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:459)
+PASS guard no simulated time advance { "authored_options": true, "options": { "timestep": 0.01, "impratio": 1.0, "tolerance": 0.00000001, "ls_tolerance": 0.01, "noslip_tolerance": 0.000001, "ccd_tolerance": 0.000001, "sleep_tolerance": 0.001, "gravity": [0.0, 0.0, -10.0], "wind": [0.0, 0.0, 0.0], "magnetic": [0.0, -0.5, 0.0], "density": 0.0, "viscosity": 0.0, "o_margin": 0.0, "o_solref": [0.02, 1.0], "o_solimp": [0.9, 0.95, 0.001, 0.5, 2.0], "o_friction": [1.0, 1.0, 0.005, 0.0001, 0.0001], "integrator": 0, "cone": 0, "jacobian": 2, "solver": 2, "iterations": 100, "ls_iterations": 50, "noslip_iterations": 0, "ccd_iterations": 35, "disableflags": 0, "enableflags": 0, "disableactuator": 0, "sdf_initpoints": 40, "sdf_iterations": 10 }, "paused": true, "has_checkpoint": false, "timestep": 0.01, "revision": 3, "last_error": "Native Hinge drive numerical state rejected", "objects": [], "nbody": 2, "ngeom": 1, "njnt": 1, "nu": 0, "ncon": 0, "time": 0.0, "version": "3.16.0", "warning_count": 0, "applied_force_norm": 0.0, "warmstart_norm": 0.0, "contacts": [], "contact_details": [] }
+PASS guard leaves world paused { "authored_options": true, "options": { "timestep": 0.01, "impratio": 1.0, "tolerance": 0.00000001, "ls_tolerance": 0.01, "noslip_tolerance": 0.000001, "ccd_tolerance": 0.000001, "sleep_tolerance": 0.001, "gravity": [0.0, 0.0, -10.0], "wind": [0.0, 0.0, 0.0], "magnetic": [0.0, -0.5, 0.0], "density": 0.0, "viscosity": 0.0, "o_margin": 0.0, "o_solref": [0.02, 1.0], "o_solimp": [0.9, 0.95, 0.001, 0.5, 2.0], "o_friction": [1.0, 1.0, 0.005, 0.0001, 0.0001], "integrator": 0, "cone": 0, "jacobian": 2, "solver": 2, "iterations": 100, "ls_iterations": 50, "noslip_iterations": 0, "ccd_iterations": 35, "disableflags": 0, "enableflags": 0, "disableactuator": 0, "sdf_initpoints": 40, "sdf_iterations": 10 }, "paused": true, "has_checkpoint": false, "timestep": 0.01, "revision": 3, "last_error": "Native Hinge drive numerical state rejected", "objects": [], "nbody": 2, "ngeom": 1, "njnt": 1, "nu": 0, "ncon": 0, "time": 0.0, "version": "3.16.0", "warning_count": 0, "applied_force_norm": 0.0, "warmstart_norm": 0.0, "contacts": [], "contact_details": [] }
+PASS guard preserves pre-step velocity including unapplied damping (0.0, 0.0, 1.0)
+PASS guard leaves pose untouched [X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]
+PASS guard does not emit fictitious integration callback 0
+PASS guard does not report failed step as successful { "request": 1, "command": "step", "success": false, "error": "Native Hinge drive numerical state rejected", "time": 0.0, "paused": true }
+PASS completion time equals actual simulated time { "request": 1, "command": "step", "success": false, "error": "Native Hinge drive numerical state rejected", "time": 0.0, "paused": true }
+PASS bounded exact step completes { "request": 2, "command": "step", "success": true, "error": "", "time": 0.01, "paused": true }
+PASS retry consumes original one-shot torque exactly once (0.0, 0.0, 0.99)
+HINGE_GUARD_RESULT {"checks":[{"detail":"","name":"native backend identity","passed":true},{"detail":"","name":"pause isolated world","passed":true},{"detail":"","name":"configure lightweight exact-step world","passed":true},{"detail":"{ \"authored_options\": true, \"options\": { \"timestep\": 0.01, \"impratio\": 1.0, \"tolerance\": 0.00000001, \"ls_tolerance\": 0.01, \"noslip_tolerance\": 0.000001, \"ccd_tolerance\": 0.000001, \"sleep_tolerance\": 0.001, \"gravity\": [0.0, 0.0, -10.0], \"wind\": [0.0, 0.0, 0.0], \"magnetic\": [0.0, -0.5, 0.0], \"density\": 0.0, \"viscosity\": 0.0, \"o_margin\": 0.0, \"o_solref\": [0.02, 1.0], \"o_solimp\": [0.9, 0.95, 0.001, 0.5, 2.0], \"o_friction\": [1.0, 1.0, 0.005, 0.0001, 0.0001], \"integrator\": 0, \"cone\": 0, \"jacobian\": 2, \"solver\": 2, \"iterations\": 100, \"ls_iterations\": 50, \"noslip_iterations\": 0, \"ccd_iterations\": 35, \"disableflags\": 0, \"enableflags\": 0, \"disableactuator\": 0, \"sdf_initpoints\": 40, \"sdf_iterations\": 10 }, \"paused\": true, \"has_checkpoint\": false, \"timestep\": 0.01, \"revision\": 3, \"last_error\": \"Native Hinge drive numerical state rejected\", \"objects\": [], \"nbody\": 2, \"ngeom\": 1, \"njnt\": 1, \"nu\": 0, \"ncon\": 0, \"time\": 0.0, \"version\": \"3.16.0\", \"warning_count\": 0, \"applied_force_norm\": 0.0, \"warmstart_norm\": 0.0, \"contacts\": [], \"contact_details\": [] }","name":"guard no simulated time advance","passed":true},{"detail":"{ \"authored_options\": true, \"options\": { \"timestep\": 0.01, \"impratio\": 1.0, \"tolerance\": 0.00000001, \"ls_tolerance\": 0.01, \"noslip_tolerance\": 0.000001, \"ccd_tolerance\": 0.000001, \"sleep_tolerance\": 0.001, \"gravity\": [0.0, 0.0, -10.0], \"wind\": [0.0, 0.0, 0.0], \"magnetic\": [0.0, -0.5, 0.0], \"density\": 0.0, \"viscosity\": 0.0, \"o_margin\": 0.0, \"o_solref\": [0.02, 1.0], \"o_solimp\": [0.9, 0.95, 0.001, 0.5, 2.0], \"o_friction\": [1.0, 1.0, 0.005, 0.0001, 0.0001], \"integrator\": 0, \"cone\": 0, \"jacobian\": 2, \"solver\": 2, \"iterations\": 100, \"ls_iterations\": 50, \"noslip_iterations\": 0, \"ccd_iterations\": 35, \"disableflags\": 0, \"enableflags\": 0, \"disableactuator\": 0, \"sdf_initpoints\": 40, \"sdf_iterations\": 10 }, \"paused\": true, \"has_checkpoint\": false, \"timestep\": 0.01, \"revision\": 3, \"last_error\": \"Native Hinge drive numerical state rejected\", \"objects\": [], \"nbody\": 2, \"ngeom\": 1, \"njnt\": 1, \"nu\": 0, \"ncon\": 0, \"time\": 0.0, \"version\": \"3.16.0\", \"warning_count\": 0, \"applied_force_norm\": 0.0, \"warmstart_norm\": 0.0, \"contacts\": [], \"contact_details\": [] }","name":"guard leaves world paused","passed":true},{"detail":"(0.0, 0.0, 1.0)","name":"guard preserves pre-step velocity including unapplied damping","passed":true},{"detail":"[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]","name":"guard leaves pose untouched","passed":true},{"detail":"0","name":"guard does not emit fictitious integration callback","passed":true},{"detail":"{ \"request\": 1, \"command\": \"step\", \"success\": false, \"error\": \"Native Hinge drive numerical state rejected\", \"time\": 0.0, \"paused\": true }","name":"guard does not report failed step as successful","passed":true},{"detail":"{ \"request\": 1, \"command\": \"step\", \"success\": false, \"error\": \"Native Hinge drive numerical state rejected\", \"time\": 0.0, \"paused\": true }","name":"completion time equals actual simulated time","passed":true},{"detail":"{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.01, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"(0.0, 0.0, 0.99)","name":"retry consumes original one-shot torque exactly once","passed":true}],"failed":0,"passed":12}

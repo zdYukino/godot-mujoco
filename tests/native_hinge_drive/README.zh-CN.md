@@ -8,7 +8,7 @@ source /workspace/shared/tools/env.sh
 OUT=/tmp/hinge-drive-check bash tests/native_hinge_drive/run.sh
 ```
 
-复用已验收 Pin/Hinge 辅助脚本，仅复制到临时项目，不改旧测试。保存八阶段日志与真实退出码：import、positive、negative、guard、poststep、alias、gui-smoke、input-smoke。正常日志出现 ERROR／泄漏即失败；negative 精确匹配 10 条预期错误；guard 独立匹配 1 条预期错误和 12/12 断言；poststep 与 alias 各严格匹配 2 条预期错误，分别要求 18/18 和 11/11 断言。任何额外 ERROR、SCRIPT ERROR 或泄漏失败。`results.json` 包含逐项结果和 native SHA256。导入失败后未运行阶段不能显示通过。
+复用已验收 Pin/Hinge 辅助脚本，仅复制到临时项目，不改旧测试。保存十阶段日志与真实退出码：import、positive、negative、guard、poststep、alias、range-loading、range-negative、gui-smoke、input-smoke。正常日志出现 ERROR／泄漏即失败；negative 精确匹配 10 条预期错误；guard 独立匹配 1 条预期错误和 12/12 断言；poststep 与 alias 各严格匹配 2 条预期错误，分别要求 18/18 和 11/11 断言。range-negative 另外严格匹配 7 条错误，正常 range-loading 不能有任何 ERROR。任何额外 ERROR、SCRIPT ERROR 或泄漏失败。`results.json` 包含逐项结果和 native SHA256。导入失败后未运行阶段不能显示通过。
 
 ## 数值契约与覆盖
 
@@ -28,7 +28,7 @@ OUT=/tmp/hinge-drive-check bash tests/native_hinge_drive/run.sh
 
 另外，poststep/alias 两个独立探针覆盖外力矩越过角度分支、后续子步失败回滚先前已积分子步，以及单子步整圈 2π 回到相同 wrapped angle 的混叠。必须检查实际角速度 × dt，不能只比较包裹角差。inactive 空间、重复请求、取消请求也要求真实失败／无执行结果，不产生虚假完成。
 
-脚本覆盖计数为正向 65、负向 18、guard 12、poststep 18、alias 11、输入 smoke 14；实测结果以此次 native 对应的 `results.json` 为准。GUI smoke 和输入 smoke 都是 headless；真实桌面须 dot 独立验收。
+脚本覆盖计数为正向 65、负向 18、guard 12、poststep 18、alias 11、range-loading 143、range-negative 15、输入 smoke 14；实测结果以此次 native 对应的 `results.json` 为准。GUI smoke 和输入 smoke 都是 headless；真实桌面须 dot 独立验收。
 
 ## dot GUI 操作
 
@@ -45,3 +45,13 @@ GUI 复用真实 Node `_input` 派发，不把 SceneTree 上的同名函数冒�
 5. 检查退出日志无 ERROR／泄漏。异常 guard 属独立负例，不在正常 GUI 日志中放行。
 
 未覆盖：复杂机构或共享端点驱动、大角速度/大步长越界运行、任意求解参数映射、重负载和 GUI 桌面自动化。本套通过不替代其他原生后端回归。
+
+## 同号限位保存重开回归
+
+`range_loading.gd` 覆盖 `[-2.5,-2]`、`[-2,-2]`、`[2,2.5]`、`[2,2]`。未启用驱动时分别采用 upper-first/lower-first；真实 PackedScene 加载、节点换端点、出树重入后，检查节点缓存与 native pair 完整一致，并从配置参考角零实际步进收敛到上下界／等限。没有预设到区间中点来绕过大初始误差。反向驱动分别检验两端边界。
+
+未启用时临时倒置 pair 只可暂存，getter 保持已接受 pair；不完整 pending 到 flag 边界必须拒绝，重复启用也不能绕过，补齐另一端后可恢复。已启用时非法修改立即拒绝，保留范围、flags、非零物理状态、暂停与时间；非有限／越界标量保护不放宽。
+
+旧备份 native SHA256 `c25f92e782aa348fa7aaa92291810230838d3b8311acf3b490fdc2cac51637c9` 的开发探针曾实测失败：负范围被读为 `[-2.5,1.570796]`，正范围 lower-first 被读为 `[-1.570796,2.6]`，真实 PackedScene 负范围亦复现。修复后的开发结果必须与独立 dot 官方 4.7.2.NET 最终验收区分；这些脚本通过不代表已完成 dot 桌面验收。
+
+换端点与出树重入前另外显式开启 native motor+limit，并断言旧状态确实 active；重配后核对 node 缓存 flags 与服务器重新一致。失败候选 make_hinge（有限但不安全的 1e20 锚点）独立验证旧已接受范围、active flag、姿态、速度、暂停及时间不变，并严格隔离其一条预期错误。

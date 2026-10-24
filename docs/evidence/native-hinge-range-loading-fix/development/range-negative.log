@@ -1,0 +1,162 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+PASS native backend identity 
+MuJoCo: compile time (ms)
+  total:          0.3   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.3   (wall clock)
+PASS pause isolated world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS configure lightweight exact-step world 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS passive hinge actual type 
+EXPECT_RANGE_ERROR active inversion
+ERROR: Native Hinge invalid limit range
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:104)
+   GDScript backtrace (most recent call first):
+       [0] hp (res://acceptance.gd:3)
+       [1] run_negative (res://range_loading.gd:79)
+       [2] run (res://range_loading.gd:20)
+PASS active inverted update preserves accepted range and flag 
+EXPECT_RANGE_ERROR nonfinite
+ERROR: Native Hinge invalid parameter
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:96)
+   GDScript backtrace (most recent call first):
+       [0] hp (res://acceptance.gd:3)
+       [1] run_negative (res://range_loading.gd:82)
+       [2] run (res://range_loading.gd:20)
+PASS nonfinite update preserves pair 
+PASS active invalid updates preserve nonzero physical state and pause/time 
+EXPECT_RANGE_ERROR incomplete activation
+ERROR: Native Hinge incomplete or inverted limit pair; accepted limits retained
+   at: _hinge_joint_set_flag (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:124)
+   GDScript backtrace (most recent call first):
+       [0] run_negative (res://range_loading.gd:89)
+       [1] run (res://range_loading.gd:20)
+PASS incomplete pending range refuses activation without replacing accepted pair 
+EXPECT_RANGE_ERROR repeated incomplete activation
+ERROR: Native Hinge incomplete or inverted limit pair; accepted limits retained
+   at: _hinge_joint_set_flag (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:124)
+   GDScript backtrace (most recent call first):
+       [0] run_negative (res://range_loading.gd:93)
+       [1] run (res://range_loading.gd:20)
+PASS repeated activation cannot bypass unresolved pending range 
+EXPECT_RANGE_ERROR repeated incomplete activation
+ERROR: Native Hinge incomplete or inverted limit pair; accepted limits retained
+   at: _hinge_joint_set_flag (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:124)
+   GDScript backtrace (most recent call first):
+       [0] run_negative (res://range_loading.gd:93)
+       [1] run (res://range_loading.gd:20)
+PASS repeated activation cannot bypass unresolved pending range 
+EXPECT_RANGE_ERROR scalar out of range
+ERROR: Native Hinge invalid limit range
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:100)
+   GDScript backtrace (most recent call first):
+       [0] hp (res://acceptance.gd:3)
+       [1] run_negative (res://range_loading.gd:96)
+       [2] run (res://range_loading.gd:20)
+PASS invalid scalar cannot replace accepted or pending range 
+PASS correcting pending other endpoint commits valid pair 
+PASS corrected pending range can enable normally 
+EXPECT_RANGE_ERROR candidate dynamics rollback
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+ERROR: Native Pin candidate rejected; previous model retained
+   at: commit_native_joint (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:29)
+   GDScript backtrace (most recent call first):
+       [0] run_negative (res://range_loading.gd:105)
+       [1] run (res://range_loading.gd:20)
+PASS failed replacement candidate retains accepted range type and active flag 
+PASS failed replacement candidate retains physics state pause and time 
+HINGE_RANGE_NEGATIVE_RESULT {"checks":[{"detail":"","name":"native backend identity","passed":true},{"detail":"","name":"pause isolated world","passed":true},{"detail":"","name":"configure lightweight exact-step world","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"","name":"active inverted update preserves accepted range and flag","passed":true},{"detail":"","name":"nonfinite update preserves pair","passed":true},{"detail":"","name":"active invalid updates preserve nonzero physical state and pause/time","passed":true},{"detail":"","name":"incomplete pending range refuses activation without replacing accepted pair","passed":true},{"detail":"","name":"repeated activation cannot bypass unresolved pending range","passed":true},{"detail":"","name":"repeated activation cannot bypass unresolved pending range","passed":true},{"detail":"","name":"invalid scalar cannot replace accepted or pending range","passed":true},{"detail":"","name":"correcting pending other endpoint commits valid pair","passed":true},{"detail":"","name":"corrected pending range can enable normally","passed":true},{"detail":"","name":"failed replacement candidate retains accepted range type and active flag","passed":true},{"detail":"","name":"failed replacement candidate retains physics state pause and time","passed":true}],"failed":0,"passed":15}

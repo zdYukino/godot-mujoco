@@ -11,7 +11,7 @@ bool MjPhysicsServer3D::native_joint_active(const MjNativeJoint &j,const RID &s)
 bool MjPhysicsServer3D::native_joint_collision_disabled(const RID&a,const RID&b) const {
  for(auto &e:native_joints){auto&j=e.second;if(j.pin&&j.disable_collisions&&((j.a==a&&j.b==b)||(j.a==b&&j.b==a)))return true;}return false;
 }
-void MjPhysicsServer3D::detach_native_joints(const RID&r){for(auto&e:native_joints)if(e.second.a==r||e.second.b==r){auto*a=body(e.second.a);if(a)dirty(a->space);e.second.pin=false;e.second.a=RID();e.second.b=RID();}}
+void MjPhysicsServer3D::detach_native_joints(const RID&r){for(auto&e:native_joints)if(e.second.a==r||e.second.b==r){auto*a=body(e.second.a);if(a)dirty(a->space);e.second.pin=false;e.second.pending_limits=false;e.second.motor=false;e.second.use_limit=false;e.second.a=RID();e.second.b=RID();}}
 bool MjPhysicsServer3D::commit_native_joint(const MjNativeJoint&candidate){
  auto it=native_joints.find(candidate.rid.get_id());if(it==native_joints.end()||pending_free.count(candidate.rid.get_id()))return false;
  auto*a=body(candidate.a);auto*b=body(candidate.b);auto*s=a?space(a->space):nullptr;
@@ -33,8 +33,8 @@ bool MjPhysicsServer3D::commit_native_joint(const MjNativeJoint&candidate){
 }
 RID MjPhysicsServer3D::_joint_create(){RID r=handles.make_rid(0);MjNativeJoint j;j.rid=r;native_joints.emplace(r.get_id(),j);return r;}
 #define DEFER_JOINT(call) if(flushing){area_commands.push_back([=]{call;});return;}
-void MjPhysicsServer3D::_joint_clear(const RID&r){DEFER_JOINT(_joint_clear(r));auto it=native_joints.find(r.get_id());if(it==native_joints.end())return;if(auto*b=body(it->second.a))dirty(b->space);it->second.pin=false;it->second.a=RID();it->second.b=RID();}
-void MjPhysicsServer3D::_joint_make_pin(const RID&r,const RID&a,const Vector3&pa,const RID&b,const Vector3&pb){DEFER_JOINT(_joint_make_pin(r,a,pa,b,pb));auto it=native_joints.find(r.get_id());ERR_FAIL_COND(it==native_joints.end());auto j=it->second;j.a=a;j.b=b;j.anchor_a=pa;j.anchor_b=pb;j.pin=true;j.hinge=false;commit_native_joint(j);}
+void MjPhysicsServer3D::_joint_clear(const RID&r){DEFER_JOINT(_joint_clear(r));auto it=native_joints.find(r.get_id());if(it==native_joints.end())return;if(auto*b=body(it->second.a))dirty(b->space);it->second.pin=false;it->second.pending_limits=false;it->second.motor=false;it->second.use_limit=false;it->second.a=RID();it->second.b=RID();}
+void MjPhysicsServer3D::_joint_make_pin(const RID&r,const RID&a,const Vector3&pa,const RID&b,const Vector3&pb){DEFER_JOINT(_joint_make_pin(r,a,pa,b,pb));auto it=native_joints.find(r.get_id());ERR_FAIL_COND(it==native_joints.end());auto j=it->second;j.a=a;j.b=b;j.anchor_a=pa;j.anchor_b=pb;j.pin=true;j.hinge=false;j.pending_limits=false;j.motor=false;j.use_limit=false;commit_native_joint(j);}
 void MjPhysicsServer3D::_pin_joint_set_local_a(const RID&r,const Vector3&p){DEFER_JOINT(_pin_joint_set_local_a(r,p));auto it=native_joints.find(r.get_id());ERR_FAIL_COND(it==native_joints.end()||!it->second.pin||it->second.hinge);auto j=it->second;j.anchor_a=p;commit_native_joint(j);}
 void MjPhysicsServer3D::_pin_joint_set_local_b(const RID&r,const Vector3&p){DEFER_JOINT(_pin_joint_set_local_b(r,p));auto it=native_joints.find(r.get_id());ERR_FAIL_COND(it==native_joints.end()||!it->second.pin||it->second.hinge);auto j=it->second;j.anchor_b=p;commit_native_joint(j);}
 Vector3 MjPhysicsServer3D::_pin_joint_get_local_a(const RID&r)const{auto i=native_joints.find(r.get_id());return i==native_joints.end()?Vector3():i->second.anchor_a;}
@@ -70,6 +70,10 @@ void MjPhysicsServer3D::make_native_hinge(const RID&r,const RID&a,const Vector3&
  // The one-metre auxiliary lever must survive Godot's float coordinate ABI.
  if(!pa.is_finite()||!pb.is_finite()||((pa+axis_a)-pa-axis_a).length()>1e-4||((pb+axis_b)-pb-axis_b).length()>1e-4){ERR_PRINT("Native passive Hinge auxiliary anchor not representable");return;}
  auto j=it->second;j.a=a;j.b=b;j.anchor_a=pa;j.anchor_b=pb;j.axis_a=axis_a;j.axis_b=axis_b;j.pin=true;j.hinge=true;j.antiparallel=antiparallel;
+ // Like a freshly constructed Godot Hinge, a successful reconfiguration resets
+ // type-specific parameters. Godot then replays all parameters before flags.
+ j.use_limit=false;j.motor=false;j.pending_limits=false;
+ j.lower=-Math_PI/2;j.upper=Math_PI/2;j.target_velocity=1;j.max_impulse=1;
  Vector3 world_ref=wa.cross(std::abs(wa.x)<.8?Vector3(1,0,0):Vector3(0,1,0)).normalized();
  j.reference_a=ba->transform.basis.transposed().xform(world_ref);
  j.reference_b=bb?bb->transform.basis.transposed().xform(world_ref):world_ref;
@@ -92,8 +96,18 @@ void MjPhysicsServer3D::_hinge_joint_set_param(const RID&r,HingeJointParam p,flo
  if(p<HINGE_JOINT_BIAS||p>HINGE_JOINT_MOTOR_MAX_IMPULSE||!std::isfinite(v)){ERR_PRINT("Native Hinge invalid parameter");return;}
  auto j=it->second;
  switch(p){
- case HINGE_JOINT_LIMIT_LOWER:if(v < -3 || v>j.upper){ERR_PRINT("Native Hinge invalid limit range");return;}j.lower=v;break;
- case HINGE_JOINT_LIMIT_UPPER:if(v > 3 || v<j.lower){ERR_PRINT("Native Hinge invalid limit range");return;}j.upper=v;break;
+ case HINGE_JOINT_LIMIT_LOWER:case HINGE_JOINT_LIMIT_UPPER:{
+  if(v < -3 || v > 3){ERR_PRINT("Native Hinge invalid limit range");return;}
+  double lower=j.pending_limits?j.pending_lower:j.lower,upper=j.pending_limits?j.pending_upper:j.upper;
+  if(p==HINGE_JOINT_LIMIT_LOWER)lower=v;else upper=v;
+  if(lower>upper){
+   if(j.use_limit||j.motor){ERR_PRINT("Native Hinge invalid limit range");return;}
+   // A disabled joint is loaded upper-first by Godot. Keep the accepted pair
+   // unchanged until the other bound completes a valid pair (either order).
+   j.pending_limits=true;j.pending_lower=lower;j.pending_upper=upper;
+  }else{j.lower=lower;j.upper=upper;j.pending_limits=false;}
+  break;
+ }
  case HINGE_JOINT_MOTOR_TARGET_VELOCITY:if(std::abs(v)>100){ERR_PRINT("Native Hinge velocity outside supported range");return;}j.target_velocity=v;break;
  case HINGE_JOINT_MOTOR_MAX_IMPULSE:if(v<0||v>1000){ERR_PRINT("Native Hinge impulse outside supported range");return;}j.max_impulse=v;break;
  default:if(v!=hinge_default(p)){ERR_PRINT("Native Hinge custom solver response unsupported");return;}
@@ -107,6 +121,7 @@ float MjPhysicsServer3D::_hinge_joint_get_param(const RID&r,HingeJointParam p)co
 void MjPhysicsServer3D::_hinge_joint_set_flag(const RID&r,HingeJointFlag f,bool enabled){
  DEFER_JOINT(_hinge_joint_set_flag(r,f,enabled));auto it=native_joints.find(r.get_id());ERR_FAIL_COND(it==native_joints.end());auto j=it->second;
  if(f<HINGE_JOINT_FLAG_USE_LIMIT||f>HINGE_JOINT_FLAG_ENABLE_MOTOR){ERR_PRINT("Native Hinge invalid flag");return;}
+ if(j.pending_limits){ERR_PRINT("Native Hinge incomplete or inverted limit pair; accepted limits retained");return;}
  if(f==HINGE_JOINT_FLAG_USE_LIMIT)j.use_limit=enabled;else j.motor=enabled;
  if(enabled&&(!j.pin||!j.hinge||!native_hinge_isolated(j))){ERR_PRINT("Native driven Hinge requires configured isolated rigid endpoints and aligned frame axes");return;}
  it->second=j;
@@ -151,7 +166,8 @@ bool MjPhysicsServer3D::apply_native_hinge_drives(MjSpace&s,double interval){
   if(j.motor){double budget=j.max_impulse*dt/interval;impulse=std::clamp((j.target_velocity-velocity)/inverse_inertia,-budget,budget);desired+=impulse*inverse_inertia;}
   if(j.use_limit){double lower=(j.lower-angle)/dt,upper=(j.upper-angle)/dt;
    // Outside the interval, use fixed .3 error reduction, without teleporting.
-   if(angle<j.lower)lower*=.3;if(angle>j.upper)upper*=.3;
+   if(angle<j.lower)lower=std::min(lower*.3,.2/dt);
+   if(angle>j.upper)upper=std::max(upper*.3,-.2/dt);
    desired=std::clamp(desired,lower,upper);impulse=(desired-velocity)/inverse_inertia;
   }
   if(!std::isfinite(angle)||!std::isfinite(impulse)||!std::isfinite(desired)||std::abs(desired)*dt>.25)return false;

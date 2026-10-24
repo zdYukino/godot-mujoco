@@ -1,0 +1,211 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+PASS native backend identity 
+MuJoCo: compile time (ms)
+  total:          0.3   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.3   (wall clock)
+PASS pause isolated world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS configure lightweight exact-step world 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS passive hinge actual type 
+EXPECT_DRIVE_REJECTION parameter 6 value nan
+ERROR: Native Hinge invalid parameter
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:96)
+   GDScript backtrace (most recent call first):
+       [0] hp (res://acceptance.gd:3)
+       [1] <anonymous lambda> (res://negative.gd:10)
+       [2] rejected (res://negative.gd:3)
+       [3] run (res://negative.gd:10)
+PASS invalid finite/range update retains accepted parameter 
+EXPECT_DRIVE_REJECTION parameter 6 value 101.0
+ERROR: Native Hinge velocity outside supported range
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:111)
+   GDScript backtrace (most recent call first):
+       [0] hp (res://acceptance.gd:3)
+       [1] <anonymous lambda> (res://negative.gd:10)
+       [2] rejected (res://negative.gd:3)
+       [3] run (res://negative.gd:10)
+PASS invalid finite/range update retains accepted parameter 
+EXPECT_DRIVE_REJECTION parameter 6 value -101.0
+ERROR: Native Hinge velocity outside supported range
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:111)
+   GDScript backtrace (most recent call first):
+       [0] hp (res://acceptance.gd:3)
+       [1] <anonymous lambda> (res://negative.gd:10)
+       [2] rejected (res://negative.gd:3)
+       [3] run (res://negative.gd:10)
+PASS invalid finite/range update retains accepted parameter 
+EXPECT_DRIVE_REJECTION parameter 7 value -1.0
+ERROR: Native Hinge impulse outside supported range
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:112)
+   GDScript backtrace (most recent call first):
+       [0] hp (res://acceptance.gd:3)
+       [1] <anonymous lambda> (res://negative.gd:10)
+       [2] rejected (res://negative.gd:3)
+       [3] run (res://negative.gd:10)
+PASS invalid finite/range update retains accepted parameter 
+EXPECT_DRIVE_REJECTION parameter 7 value 1001.0
+ERROR: Native Hinge impulse outside supported range
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:112)
+   GDScript backtrace (most recent call first):
+       [0] hp (res://acceptance.gd:3)
+       [1] <anonymous lambda> (res://negative.gd:10)
+       [2] rejected (res://negative.gd:3)
+       [3] run (res://negative.gd:10)
+PASS invalid finite/range update retains accepted parameter 
+EXPECT_DRIVE_REJECTION parameter 2 value -3.1
+ERROR: Native Hinge invalid limit range
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:100)
+   GDScript backtrace (most recent call first):
+       [0] hp (res://acceptance.gd:3)
+       [1] <anonymous lambda> (res://negative.gd:10)
+       [2] rejected (res://negative.gd:3)
+       [3] run (res://negative.gd:10)
+PASS invalid finite/range update retains accepted parameter 
+EXPECT_DRIVE_REJECTION parameter 1 value 3.1
+ERROR: Native Hinge invalid limit range
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:100)
+   GDScript backtrace (most recent call first):
+       [0] hp (res://acceptance.gd:3)
+       [1] <anonymous lambda> (res://negative.gd:10)
+       [2] rejected (res://negative.gd:3)
+       [3] run (res://negative.gd:10)
+PASS invalid finite/range update retains accepted parameter 
+EXPECT_DRIVE_REJECTION parameter 2 value 2.0
+ERROR: Native Hinge invalid limit range
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:104)
+   GDScript backtrace (most recent call first):
+       [0] hp (res://acceptance.gd:3)
+       [1] <anonymous lambda> (res://negative.gd:10)
+       [2] rejected (res://negative.gd:3)
+       [3] run (res://negative.gd:10)
+PASS invalid finite/range update retains accepted parameter 
+PASS rejected parameters do not alter paused state 
+EXPECT_DRIVE_REJECTION extra native joint on driven endpoint
+ERROR: Native driven Hinge requires isolated rigid endpoints and aligned frame axes
+   at: commit_native_joint (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:27)
+   GDScript backtrace (most recent call first):
+       [0] <anonymous lambda> (res://negative.gd:14)
+       [1] rejected (res://negative.gd:3)
+       [2] run (res://negative.gd:14)
+PASS driven endpoint graph violation leaves old motor and graph intact 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS bounded exact step completes { "request": 1, "command": "step", "success": true, "error": "", "time": 0.3, "paused": true }
+PASS old accepted motor still acts after rejected graph change (0.0, 0.0, 0.625)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS passive hinge actual type 
+EXPECT_DRIVE_REJECTION antiparallel active axis unsupported
+ERROR: Native driven Hinge requires configured isolated rigid endpoints and aligned frame axes
+   at: _hinge_joint_set_flag (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:126)
+   GDScript backtrace (most recent call first):
+       [0] <anonymous lambda> (res://negative.gd:18)
+       [1] rejected (res://negative.gd:3)
+       [2] run (res://negative.gd:18)
+       [3] step (res://pin_support.gd:37)
+       [4] ticks (res://pin_support.gd:13)
+PASS antiparallel activation rejection retains passive hinge 
+HINGE_DRIVE_NEGATIVE_RESULT {"checks":[{"detail":"","name":"native backend identity","passed":true},{"detail":"","name":"pause isolated world","passed":true},{"detail":"","name":"configure lightweight exact-step world","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"","name":"invalid finite/range update retains accepted parameter","passed":true},{"detail":"","name":"invalid finite/range update retains accepted parameter","passed":true},{"detail":"","name":"invalid finite/range update retains accepted parameter","passed":true},{"detail":"","name":"invalid finite/range update retains accepted parameter","passed":true},{"detail":"","name":"invalid finite/range update retains accepted parameter","passed":true},{"detail":"","name":"invalid finite/range update retains accepted parameter","passed":true},{"detail":"","name":"invalid finite/range update retains accepted parameter","passed":true},{"detail":"","name":"invalid finite/range update retains accepted parameter","passed":true},{"detail":"","name":"rejected parameters do not alter paused state","passed":true},{"detail":"","name":"driven endpoint graph violation leaves old motor and graph intact","passed":true},{"detail":"{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.3, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"(0.0, 0.0, 0.625)","name":"old accepted motor still acts after rejected graph change","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"","name":"antiparallel activation rejection retains passive hinge","passed":true}],"failed":0,"passed":18}

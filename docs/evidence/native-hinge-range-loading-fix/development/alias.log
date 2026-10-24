@@ -1,0 +1,107 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+PASS native backend identity 
+MuJoCo: compile time (ms)
+  total:          0.3   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS pause isolated world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS configure lightweight exact-step world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+EXPECT_POSTSTEP_ERROR wrap
+ERROR: Native Hinge drive post-step state rejected
+   at: _step (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:462)
+PASS external torque wrap rejected after integration { "request": 1, "command": "step", "success": false, "error": "Native Hinge drive post-step state rejected", "time": 0.0, "paused": true }
+PASS wrap rollback time and completion agree { "authored_options": true, "options": { "timestep": 0.01, "impratio": 1.0, "tolerance": 0.00000001, "ls_tolerance": 0.01, "noslip_tolerance": 0.000001, "ccd_tolerance": 0.000001, "sleep_tolerance": 0.001, "gravity": [0.0, 0.0, -10.0], "wind": [0.0, 0.0, 0.0], "magnetic": [0.0, -0.5, 0.0], "density": 0.0, "viscosity": 0.0, "o_margin": 0.0, "o_solref": [0.02, 1.0], "o_solimp": [0.9, 0.95, 0.001, 0.5, 2.0], "o_friction": [1.0, 1.0, 0.005, 0.0001, 0.0001], "integrator": 0, "cone": 0, "jacobian": 2, "solver": 2, "iterations": 100, "ls_iterations": 50, "noslip_iterations": 0, "ccd_iterations": 35, "disableflags": 0, "enableflags": 0, "disableactuator": 0, "sdf_initpoints": 40, "sdf_iterations": 10 }, "paused": true, "has_checkpoint": false, "timestep": 0.01, "revision": 3, "last_error": "Native Hinge drive post-step state rejected", "objects": [], "nbody": 2, "ngeom": 1, "njnt": 1, "nu": 0, "ncon": 0, "time": 0.0, "version": "3.16.0", "warning_count": 0, "applied_force_norm": 0.0, "warmstart_norm": 0.0, "contacts": [], "contact_details": [] }
+PASS wrap rollback preserves pose and pause [X: (-0.988532, 0.151013, 0.0), Y: (-0.151013, -0.988532, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]
+PASS wrap rollback preserves velocity and callbacks 0
+PASS bounded exact step completes { "request": 2, "command": "step", "success": true, "error": "", "time": 0.01, "paused": true }
+PASS wrap failure retained transient torque for explicit cancellation [X: (-0.988532, 0.151013, 0.0), Y: (-0.151013, -0.988532, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]
+ERROR: Native Hinge drive post-step state rejected
+   at: _step (/workspace/godot-mujoco/src/physics/mj_physics_server.cpp:462)
+PASS full revolution external torque rejected { "request": 3, "command": "step", "success": false, "error": "Native Hinge drive post-step state rejected", "time": 0.01, "paused": true }
+PASS full revolution rollback (0.0, 0.0, 0.0)
+HINGE_ALIAS_RESULT {"checks":[{"detail":"","name":"native backend identity","passed":true},{"detail":"","name":"pause isolated world","passed":true},{"detail":"","name":"configure lightweight exact-step world","passed":true},{"detail":"{ \"request\": 1, \"command\": \"step\", \"success\": false, \"error\": \"Native Hinge drive post-step state rejected\", \"time\": 0.0, \"paused\": true }","name":"external torque wrap rejected after integration","passed":true},{"detail":"{ \"authored_options\": true, \"options\": { \"timestep\": 0.01, \"impratio\": 1.0, \"tolerance\": 0.00000001, \"ls_tolerance\": 0.01, \"noslip_tolerance\": 0.000001, \"ccd_tolerance\": 0.000001, \"sleep_tolerance\": 0.001, \"gravity\": [0.0, 0.0, -10.0], \"wind\": [0.0, 0.0, 0.0], \"magnetic\": [0.0, -0.5, 0.0], \"density\": 0.0, \"viscosity\": 0.0, \"o_margin\": 0.0, \"o_solref\": [0.02, 1.0], \"o_solimp\": [0.9, 0.95, 0.001, 0.5, 2.0], \"o_friction\": [1.0, 1.0, 0.005, 0.0001, 0.0001], \"integrator\": 0, \"cone\": 0, \"jacobian\": 2, \"solver\": 2, \"iterations\": 100, \"ls_iterations\": 50, \"noslip_iterations\": 0, \"ccd_iterations\": 35, \"disableflags\": 0, \"enableflags\": 0, \"disableactuator\": 0, \"sdf_initpoints\": 40, \"sdf_iterations\": 10 }, \"paused\": true, \"has_checkpoint\": false, \"timestep\": 0.01, \"revision\": 3, \"last_error\": \"Native Hinge drive post-step state rejected\", \"objects\": [], \"nbody\": 2, \"ngeom\": 1, \"njnt\": 1, \"nu\": 0, \"ncon\": 0, \"time\": 0.0, \"version\": \"3.16.0\", \"warning_count\": 0, \"applied_force_norm\": 0.0, \"warmstart_norm\": 0.0, \"contacts\": [], \"contact_details\": [] }","name":"wrap rollback time and completion agree","passed":true},{"detail":"[X: (-0.988532, 0.151013, 0.0), Y: (-0.151013, -0.988532, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]","name":"wrap rollback preserves pose and pause","passed":true},{"detail":"0","name":"wrap rollback preserves velocity and callbacks","passed":true},{"detail":"{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.01, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[X: (-0.988532, 0.151013, 0.0), Y: (-0.151013, -0.988532, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]","name":"wrap failure retained transient torque for explicit cancellation","passed":true},{"detail":"{ \"request\": 3, \"command\": \"step\", \"success\": false, \"error\": \"Native Hinge drive post-step state rejected\", \"time\": 0.01, \"paused\": true }","name":"full revolution external torque rejected","passed":true},{"detail":"(0.0, 0.0, 0.0)","name":"full revolution rollback","passed":true}],"failed":0,"passed":11}

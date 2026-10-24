@@ -5,7 +5,7 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 : "${OUT:=$(mktemp -d /tmp/gmj-hinge-drive.XXXXXX)}"
 [[ ! -e "$OUT/project" ]] || exit 2
 mkdir -p "$OUT/project"
-cp "$ROOT/tests/native_hinge_drive/"{project.godot,acceptance.gd,negative.gd,gui.gd,input_smoke.gd,guard.gd,poststep.gd,alias.gd} "$OUT/project/"
+cp "$ROOT/tests/native_hinge_drive/"{project.godot,acceptance.gd,negative.gd,gui.gd,input_smoke.gd,guard.gd,poststep.gd,alias.gd,range_loading.gd} "$OUT/project/"
 cp "$ROOT/tests/native_joints/acceptance.gd" "$OUT/project/pin_support.gd"
 cp "$ROOT/tests/native_hinge/acceptance.gd" "$OUT/project/hinge_support.gd"
 cp "$ROOT/tests/native_hinge/gui.gd" "$OUT/project/passive_gui.gd"
@@ -25,13 +25,15 @@ run_stage negative "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 
 run_stage guard "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 --script res://guard.gd
 run_stage poststep "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 --script res://poststep.gd
 run_stage alias "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 --script res://alias.gd
+run_stage range-loading "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 --script res://range_loading.gd
+run_stage range-negative "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 --script res://range_loading.gd -- --negative
 run_stage gui-smoke "$GODOT_BIN" --headless --path "$OUT/project" --script res://gui.gd --quit-after 120
 run_stage input-smoke "$GODOT_BIN" --headless --path "$OUT/project" --script res://input_smoke.gd
 python3 - "$OUT" <<'PY'
 import pathlib,sys,json,hashlib
 from collections import Counter
 p=pathlib.Path(sys.argv[1])
-for name in ['import','gui-smoke','input-smoke','positive']:
+for name in ['import','gui-smoke','input-smoke','range-loading','positive']:
  s=(p/(name+'.log')).read_text();assert 'ERROR:' not in s and 'leak' not in s.lower(),s
 r=json.loads(next(x.split(' ',1)[1] for x in s.splitlines() if x.startswith('HINGE_DRIVE_RESULT ')));assert r['failed']==0
 s=(p/'negative.log').read_text();assert 'SCRIPT ERROR:' not in s and 'leak' not in s.lower()
@@ -61,6 +63,11 @@ for stage,prefix,count in [('poststep','HINGE_POSTSTEP_RESULT ',18),('alias','HI
  result=json.loads(next(x[len(prefix):] for x in s.splitlines() if x.startswith(prefix)))
  assert result['failed']==0 and result['passed']==count,(stage,result)
  r[stage]=result;r[stage+'_expected_errors']=2
+s=(p/'range-loading.log').read_text();result=json.loads(next(x.split(' ',1)[1] for x in s.splitlines() if x.startswith('HINGE_RANGE_LOADING_RESULT ')));assert result['failed']==0;r['range_loading']=result
+s=(p/'range-negative.log').read_text();assert 'SCRIPT ERROR:' not in s and 'leak' not in s.lower()
+errors=[x for x in s.splitlines() if x.startswith('ERROR:')]
+assert Counter(errors)==Counter({'ERROR: Native Hinge invalid limit range':2,'ERROR: Native Hinge invalid parameter':1,'ERROR: Native Hinge incomplete or inverted limit pair; accepted limits retained':3,'ERROR: Native Pin candidate rejected; previous model retained':1}),errors
+result=json.loads(next(x.split(' ',1)[1] for x in s.splitlines() if x.startswith('HINGE_RANGE_NEGATIVE_RESULT ')));assert result['failed']==0;r['range_negative']=result;r['range_expected_errors']=7
 r['extension_sha256']=hashlib.sha256((p/'project/addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so').read_bytes()).hexdigest()
 (p/'results.json').write_text(json.dumps(r,indent=2)+'\n');print('HINGE DRIVE PASS',r['passed'],n['passed'],p)
 PY
