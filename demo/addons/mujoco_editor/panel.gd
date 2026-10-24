@@ -2,6 +2,9 @@
 extends VBoxContainer
 const PackageBuilder = preload("res://addons/godot_mujoco/model/package_builder.gd")
 const SceneBuilder = preload("res://addons/godot_mujoco/model/scene_builder.gd")
+var source_watch = preload("res://addons/godot_mujoco/map/source_watch.gd").new()
+var source_status: Label
+var source_poll := 0.0
 var runtime_targets: OptionButton
 var runtime_status: Label
 var runtime_apply: Button
@@ -44,6 +47,9 @@ func _ready() -> void:
 	var toolbar := HFlowContainer.new()
 	add_child(toolbar)
 	button(toolbar, "Import MJCF", func(): file_dialog(false, true))
+	button(toolbar, "检查来源", check_sources)
+	button(toolbar, "重导入来源（明确丢弃本地）", confirm_reimport)
+	button(toolbar, "保留本地 / 另存副本", func(): file_dialog(true, false))
 	button(toolbar, "Import fixed G1", import_g1_dialog)
 	button(toolbar, "Import free G1 (relaxed)", func(): import_g1_dialog(true))
 	button(toolbar, "Open document", func(): file_dialog(false, false))
@@ -59,6 +65,7 @@ func _ready() -> void:
 	button(toolbar, "Frame all", frame_all)
 	for shape in ["box", "sphere", "cylinder"]:
 		button(toolbar, "+ " + shape, add_primitive.bind(shape))
+	source_status = Label.new(); source_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; add_child(source_status)
 	var runtime_bar := HFlowContainer.new()
 	add_child(runtime_bar)
 	runtime_targets = OptionButton.new()
@@ -210,9 +217,12 @@ func import_mjcf(path: String) -> bool:
 	if not state.document.import_file(path):
 		show_error(state.document.get_error())
 		return false
+	source_watch.capture(path, state.document.asset_manifest().assets)
 	project_model_path = ""
 	model_provenance = {}
 	record_change(before, "MuJoCo import")
+	state.dirty = false
+	check_sources()
 	frame_all()
 	return true
 
@@ -245,6 +255,7 @@ func write_document(path: String) -> bool:
 		show_error("Cannot write document " + path)
 		return false
 	var payload: Dictionary = state.document.snapshot()
+	payload["source_tracking"] = {"source":source_watch.source,"hashes":source_watch.hashes,"exported_hash":source_watch.exported_hash}
 	if pending:
 		var draft := {}
 		for key in inputs:
@@ -277,6 +288,9 @@ func open_document(path: String) -> bool:
 	if not state.document.restore(json.data):
 		show_error(state.document.get_error())
 		return false
+	source_watch = preload("res://addons/godot_mujoco/map/source_watch.gd").new()
+	var tracking: Dictionary = json.data.get("source_tracking",{})
+	source_watch.source = tracking.get("source",""); source_watch.hashes = tracking.get("hashes",{}); source_watch.exported_hash = tracking.get("exported_hash","")
 	project_model_path = ""
 	model_provenance = {}
 	record_change(before, "MuJoCo open document")
@@ -335,12 +349,14 @@ func create_runtime_scene_dialog(playground: bool = false) -> void:
 func save_project_model() -> void:
 	if not can_leave_fields():
 		return
+	model_provenance["imported_source_hashes"] = source_watch.hashes.duplicate()
 	var result: Dictionary = PackageBuilder.pack(state.document, "res://mujoco_models", "model", model_provenance, project_model_path.get_base_dir() if not project_model_path.is_empty() else "")
 	if not result.error.is_empty():
 		show_error(result.error)
 		return
 	state.dirty = false
 	project_model_path = result.path
+	source_watch.exported_hash = FileAccess.get_sha256(result.path.get_base_dir().path_join("model.xml"))
 	project_model_snapshot = state.document.snapshot().duplicate(true)
 	model_provenance = ResourceLoader.load(project_model_path).provenance.duplicate(true)
 	refresh_project_files()
@@ -376,6 +392,10 @@ func open_project_model(path: String) -> bool:
 		return false
 	project_model_path = path
 	model_provenance = resource.provenance.duplicate(true)
+	source_watch = preload("res://addons/godot_mujoco/map/source_watch.gd").new()
+	source_watch.source = model_provenance.get("source","")
+	source_watch.hashes = model_provenance.get("sources",{}).duplicate()
+	source_watch.hashes.merge(model_provenance.get("assets",{}),true)
 	record_change(before, "MuJoCo open project model")
 	frame_all()
 	return true
@@ -622,6 +642,9 @@ func rebuild_meshes() -> void:
 	highlight_selection()
 
 func _process(delta: float) -> void:
+	source_poll += delta
+	if source_poll >= 2.0:
+		source_poll = 0.0; check_sources()
 	if not state.document or not visible:
 		return
 	if visible:
@@ -845,3 +868,30 @@ func runtime_preset_dialog()->void:
 		elif not plugin.live_debugger.send(key,"preset",{"preset":input.value}):show_error("Runtime target unavailable or pending")
 		dialog.queue_free())
 	dialog.canceled.connect(dialog.queue_free);dialog.popup_centered_ratio(.65)
+
+func check_sources() -> void:
+	if source_watch.source.is_empty(): source_status.text = "来源未跟踪（打开旧文档请先导入来源）"; return
+	var result: Dictionary = source_watch.inspect(state.dirty or pending)
+	source_status.text = "来源：" + result.state + "  " + ", ".join(result.changes) + "  " + result.error
+
+func confirm_reimport() -> void:
+	if source_watch.source.is_empty(): show_error("没有已跟踪的来源"); return
+	var dialog := ConfirmationDialog.new()
+	dialog.dialog_text = "显式从原来源重新导入。未保存编辑与字段草稿会被替换；可先保留本地并另存副本。解析失败保持旧文档。运行实例不自动 Apply。"
+	add_child(dialog)
+	dialog.confirmed.connect(func(): reimport_source(); dialog.queue_free())
+	dialog.canceled.connect(dialog.queue_free)
+	dialog.popup_centered()
+
+func reimport_source() -> bool:
+	var candidate: RefCounted = ClassDB.instantiate("MjEditorDocument")
+	if not candidate.import_file(source_watch.source):
+		source_watch.error = candidate.get_error(); show_error(source_watch.error); check_sources(); return false
+	var next_watch = preload("res://addons/godot_mujoco/map/source_watch.gd").new()
+	if not next_watch.capture(source_watch.source, candidate.asset_manifest().assets):
+		show_error(next_watch.error); return false
+	var before: Dictionary = state.document.snapshot()
+	if not state.document.restore(candidate.snapshot()): show_error(state.document.get_error()); return false
+	pending = false; source_watch = next_watch; project_model_path = ""; model_provenance = {}
+	record_change(before, "显式重新导入来源")
+	state.dirty = false; refresh(); check_sources(); return true
