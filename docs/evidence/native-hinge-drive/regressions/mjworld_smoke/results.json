@@ -1,0 +1,90 @@
+{
+  "status": "passed",
+  "toolchain": {
+    "platform": "Linux-x86_64",
+    "godot_version": "4.7.2.stable.mono.official.ed1daf0bf",
+    "godot_url": "https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable/Godot_v4.7.2-stable_mono_linux_x86_64.zip",
+    "godot_archive_sha256": "129f82db7bafd54ae14bb5bb284041c73860e8c7a009a3a026ca5e946cbff247",
+    "godot_archive_sha512": "1855960b27ee3ef5e66e5e228cced69d55637b24334a7411162687dcd077d8f9f645348cdb8eae984bec8135d49ed855a1e3a16476786b8bce60774fd8402d13",
+    "godot_binary": "Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64",
+    "godot_binary_sha256": "fc1bd592b5e771c65d52968f99835b4f2b7fe7b7cbc141e202cb63e01c95ec4d",
+    "mujoco_version": "3.16.0",
+    "mujoco_url": "https://github.com/google-deepmind/mujoco/releases/download/3.16.0/mujoco-3.16.0-linux-x86_64.tar.gz",
+    "mujoco_archive_sha256": "139577c541d43716a63992ab698cbc7b09788b1d547fb82b682d59b40ef49b9d",
+    "mujoco_binary_sha256": "d89b5532a1ec9c4ca8744449d648233a2f7ae5d9e7b2ccddd692e11955f6cb04"
+  },
+  "stages": {
+    "verify": {
+      "status": "passed",
+      "godot": "/workspace/shared/tools/Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64",
+      "version_process": {
+        "argv": [
+          "/workspace/shared/tools/Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64",
+          "--version"
+        ],
+        "exit_code": 0,
+        "timed_out": false
+      },
+      "extension_sha256": "c25f92e782aa348fa7aaa92291810230838d3b8311acf3b490fdc2cac51637c9",
+      "mujoco_sha256": "d89b5532a1ec9c4ca8744449d648233a2f7ae5d9e7b2ccddd692e11955f6cb04"
+    },
+    "import": {
+      "argv": [
+        "/workspace/shared/tools/Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64",
+        "--headless",
+        "--editor",
+        "--path",
+        "/workspace/shared/validation/hinge-drive-final6/mjworld_smoke/project",
+        "--import",
+        "--frame-delay",
+        "1000"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "passed",
+      "reason": ""
+    },
+    "positive": {
+      "argv": [
+        "/workspace/shared/tools/Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64",
+        "--headless",
+        "--path",
+        "/workspace/shared/validation/hinge-drive-final6/mjworld_smoke/project",
+        "res://HeadlessTest.tscn"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "passed"
+    },
+    "negative": {
+      "argv": [
+        "/workspace/shared/tools/Godot_v4.7.2-stable_mono_linux_x86_64/Godot_v4.7.2-stable_mono_linux.x86_64",
+        "--headless",
+        "--path",
+        "/workspace/shared/validation/hinge-drive-final6/mjworld_smoke/project",
+        "--script",
+        "res://invalid_qpos.gd"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "passed"
+    },
+    "audit_tests": {
+      "argv": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "-m",
+        "unittest",
+        "discover",
+        "-s",
+        "/workspace/godot-mujoco/tests/mjworld_smoke",
+        "-p",
+        "test_*.py"
+      ],
+      "exit_code": 0,
+      "timed_out": false,
+      "status": "passed"
+    }
+  },
+  "fresh_scope": "New project cache; shared SDK/XDG retained. Not an independent cold-environment stability test.",
+  "source_commit": "4c2f1f728416f03922c2bc7d84babd1b0bed94a4"
+}

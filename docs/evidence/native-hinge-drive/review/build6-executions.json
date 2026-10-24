@@ -1,0 +1,12 @@
+{
+  "exit_code": 0,
+  "passed": 11,
+  "failed": 0,
+  "native_sha256": "c25f92e782aa348fa7aaa92291810230838d3b8311acf3b490fdc2cac51637c9",
+  "script_sha256": "1c6cc87070536c27c7fea0249a72ef8e7fe64732b38424b6952dae117c129526",
+  "errors": [
+    "EXPECT_POSTSTEP_ERROR wrap",
+    "ERROR: Native Hinge drive post-step state rejected",
+    "ERROR: Native Hinge drive post-step state rejected"
+  ]
+}

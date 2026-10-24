@@ -1,0 +1,376 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+PASS native backend identity 
+MuJoCo: compile time (ms)
+  total:          0.3   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.3   (wall clock)
+PASS pause isolated world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS configure lightweight exact-step world 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS passive hinge actual type 
+PASS bounded exact step completes { "request": 1, "command": "step", "success": true, "error": "", "time": 0.01, "paused": true }
+PASS motor impulse budget is per actual span with 1 substeps (0.0, 0.0, 0.0625)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS passive hinge actual type 
+PASS bounded exact step completes { "request": 2, "command": "step", "success": true, "error": "", "time": 0.11, "paused": true }
+PASS motor impulse budget is per actual span with 10 substeps (0.0, 0.0, 0.0625)
+PASS subdividing a span does not multiply motor impulse 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS passive hinge actual type 
+PASS bounded exact step completes { "request": 3, "command": "step", "success": true, "error": "", "time": 0.31, "paused": true }
+PASS zero impulse budget does not secretly drive body 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS passive hinge actual type 
+PASS bounded exact step completes { "request": 4, "command": "step", "success": true, "error": "", "time": 0.81, "paused": true }
+PASS positive radian target reaches actual speed and angle (0.0, 0.0, 2.0)
+PASS bounded exact step completes { "request": 5, "command": "step", "success": true, "error": "", "time": 1.31, "paused": true }
+PASS negative target reverses actual angular velocity (0.0, 0.0, -2.0)
+PASS bounded exact step completes { "request": 6, "command": "step", "success": true, "error": "", "time": 2.30999999999999, "paused": true }
+PASS positive drive reaches upper angle bound 0.39999999783407
+PASS bounded exact step completes { "request": 7, "command": "step", "success": true, "error": "", "time": 3.30999999999997, "paused": true }
+PASS reverse drive reaches lower angle bound -0.29999997416252
+PASS bounded exact step completes { "request": 8, "command": "step", "success": true, "error": "", "time": 4.30999999999995, "paused": true }
+PASS limit resists external torque with motor off -0.30041669114676
+PASS bounded exact step completes { "request": 9, "command": "step", "success": true, "error": "", "time": 5.30999999999993, "paused": true }
+PASS equal limits lock angle 0.0
+PASS world command capture { "request": 10, "command": "capture", "success": true, "error": "", "time": 5.30999999999993, "paused": true }
+PASS paused drive updates do not advance state 
+PASS bounded exact step completes { "request": 11, "command": "step", "success": true, "error": "", "time": 5.60999999999992, "paused": true }
+PASS world command reset { "request": 12, "command": "reset", "success": true, "error": "", "time": 5.30999999999993, "paused": true }
+PASS checkpoint reset preserves newer joint design 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS passive hinge actual type 
+PASS bounded exact step completes { "request": 13, "command": "step", "success": true, "error": "", "time": 5.40999999999993, "paused": true }
+PASS unequal-mass two-body motor delivers equal opposite impulse [(0.0, 0.0, 0.0625), (0.0, 0.0, -0.03125)]
+PASS unequal-mass weighted angular momentum conserved 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS passive hinge actual type 
+PASS bounded exact step completes { "request": 14, "command": "step", "success": true, "error": "", "time": 5.41999999999993, "paused": true }
+PASS eccentric anchor uses parallel-axis inertia not COM inertia (-0.0, 0.0, 0.000984)
+PASS eccentric motor induces matching COM tangential velocity (0.000984, 0.0, 0.0)
+PASS eccentric driven anchor remains constrained 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS passive hinge actual type 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS passive hinge actual type 
+PASS bounded exact step completes { "request": 15, "command": "step", "success": true, "error": "", "time": 5.42999999999993, "paused": true }
+PASS callback update does not retroactively change completed span 
+PASS callback target update isolated from second pair 
+PASS second pair keeps independent first-span physical response 
+PASS bounded exact step completes { "request": 16, "command": "step", "success": true, "error": "", "time": 5.43999999999993, "paused": true }
+PASS next span consumes callback-updated target and impulse budget 
+PASS same-callback parameter update then clear removes only its own pair 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS bounded exact step completes { "request": 17, "command": "step", "success": true, "error": "", "time": 5.44999999999993, "paused": true }
+PASS cleared body stays free while independent motor continues 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS passive hinge actual type 
+PASS bounded exact step completes { "request": 18, "command": "step", "success": true, "error": "", "time": 5.54999999999993, "paused": true }
+PASS rotated frame offset COM asymmetric inertia motor response (0.000474, -0.000086, 0.001099)
+PASS static endpoint holds offset COM anchor 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS bounded exact step completes { "request": 19, "command": "step", "success": true, "error": "", "time": 5.64999999999992, "paused": true }
+PASS clear driven hinge releases transverse rotation 
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+PASS passive hinge actual type 
+PASS bounded exact step completes { "request": 20, "command": "step", "success": true, "error": "", "time": 6.44999999999991, "paused": true }
+PASS limit angle includes relative frame phase -0.29999997416252
+PASS save actual driven HingeJoint3D design 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS configure saved drive world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS reopened native flags match saved design 
+PASS bounded exact step completes { "request": 21, "command": "step", "success": true, "error": "", "time": 0.5, "paused": true }
+PASS reopened motor reaches saved physical target velocity (0.0, 0.0, 1.5)
+HINGE_DRIVE_RESULT {"checks":[{"detail":"","name":"native backend identity","passed":true},{"detail":"","name":"pause isolated world","passed":true},{"detail":"","name":"configure lightweight exact-step world","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.01, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"(0.0, 0.0, 0.0625)","name":"motor impulse budget is per actual span with 1 substeps","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.11, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"(0.0, 0.0, 0.0625)","name":"motor impulse budget is per actual span with 10 substeps","passed":true},{"detail":"","name":"subdividing a span does not multiply motor impulse","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"{ \"request\": 3, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.31, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"zero impulse budget does not secretly drive body","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"{ \"request\": 4, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.81, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"(0.0, 0.0, 2.0)","name":"positive radian target reaches actual speed and angle","passed":true},{"detail":"{ \"request\": 5, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.31, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"(0.0, 0.0, -2.0)","name":"negative target reverses actual angular velocity","passed":true},{"detail":"{ \"request\": 6, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.30999999999999, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"0.39999999783407","name":"positive drive reaches upper angle bound","passed":true},{"detail":"{ \"request\": 7, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 3.30999999999997, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"-0.29999997416252","name":"reverse drive reaches lower angle bound","passed":true},{"detail":"{ \"request\": 8, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 4.30999999999995, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"-0.30041669114676","name":"limit resists external torque with motor off","passed":true},{"detail":"{ \"request\": 9, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.30999999999993, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"0.0","name":"equal limits lock angle","passed":true},{"detail":"{ \"request\": 10, \"command\": \"capture\", \"success\": true, \"error\": \"\", \"time\": 5.30999999999993, \"paused\": true }","name":"world command capture","passed":true},{"detail":"","name":"paused drive updates do not advance state","passed":true},{"detail":"{ \"request\": 11, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.60999999999992, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"{ \"request\": 12, \"command\": \"reset\", \"success\": true, \"error\": \"\", \"time\": 5.30999999999993, \"paused\": true }","name":"world command reset","passed":true},{"detail":"","name":"checkpoint reset preserves newer joint design","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"{ \"request\": 13, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.40999999999993, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(0.0, 0.0, 0.0625), (0.0, 0.0, -0.03125)]","name":"unequal-mass two-body motor delivers equal opposite impulse","passed":true},{"detail":"","name":"unequal-mass weighted angular momentum conserved","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"{ \"request\": 14, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.41999999999993, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"(-0.0, 0.0, 0.000984)","name":"eccentric anchor uses parallel-axis inertia not COM inertia","passed":true},{"detail":"(0.000984, 0.0, 0.0)","name":"eccentric motor induces matching COM tangential velocity","passed":true},{"detail":"","name":"eccentric driven anchor remains constrained","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"{ \"request\": 15, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.42999999999993, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"callback update does not retroactively change completed span","passed":true},{"detail":"","name":"callback target update isolated from second pair","passed":true},{"detail":"","name":"second pair keeps independent first-span physical response","passed":true},{"detail":"{ \"request\": 16, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.43999999999993, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"next span consumes callback-updated target and impulse budget","passed":true},{"detail":"","name":"same-callback parameter update then clear removes only its own pair","passed":true},{"detail":"{ \"request\": 17, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.44999999999993, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"cleared body stays free while independent motor continues","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"{ \"request\": 18, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.54999999999993, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"(0.000474, -0.000086, 0.001099)","name":"rotated frame offset COM asymmetric inertia motor response","passed":true},{"detail":"","name":"static endpoint holds offset COM anchor","passed":true},{"detail":"{ \"request\": 19, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.64999999999992, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"","name":"clear driven hinge releases transverse rotation","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"{ \"request\": 20, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 6.44999999999991, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"-0.29999997416252","name":"limit angle includes relative frame phase","passed":true},{"detail":"","name":"save actual driven HingeJoint3D design","passed":true},{"detail":"","name":"configure saved drive world","passed":true},{"detail":"","name":"reopened native flags match saved design","passed":true},{"detail":"{ \"request\": 21, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.5, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"(0.0, 0.0, 1.5)","name":"reopened motor reaches saved physical target velocity","passed":true}],"failed":0,"passed":65}

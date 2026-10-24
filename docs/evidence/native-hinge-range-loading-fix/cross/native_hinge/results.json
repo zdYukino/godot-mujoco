@@ -1,0 +1,303 @@
+{
+  "checks": [
+    {
+      "detail": "",
+      "name": "native backend identity",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "pause isolated world",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "configure lightweight exact-step world",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "passive hinge actual type",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "hinge initialization compatibility default 0",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "hinge initialization compatibility default 1",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "hinge initialization compatibility default 2",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "hinge initialization compatibility default 3",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "hinge initialization compatibility default 4",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "hinge initialization compatibility default 5",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "hinge initialization compatibility default 6",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "hinge initialization compatibility default 7",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.4, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "(0.0, 0.0, 2.0)",
+      "name": "world hinge retains axial spin",
+      "passed": true
+    },
+    {
+      "detail": "[X: (0.696707, 0.717356, 0.0), Y: (-0.717356, 0.696707, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]",
+      "name": "axial spin changes actual body orientation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "world hinge position and axis remain constrained",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.7, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "(0.000004, 0.000017, 2.0)",
+      "name": "transverse angular motion is suppressed",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "transverse constraint preserves free axial degree",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "hinge rebuild preserves pose and both velocities",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "paused hinge keeps state fixed",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "passive hinge actual type",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 3, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.1, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "(0.534522, 1.069045, 1.603568)",
+      "name": "rotated and antiparallel frame axes retain intended axial spin",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "rotated world hinge anchor stays fixed",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "passive hinge actual type",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 4, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.6, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "offset local frame anchor remains constrained",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "offset frame allows rotation around hinge axis",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "passive hinge actual type",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 5, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.0, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "two dynamic hinge anchors coincide",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "two dynamic hinge axes remain aligned",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "two dynamic hinge retains relative axial rotation",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 6, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.29999999999999, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "cleared hinge releases translation",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 7, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.49999999999999, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "cleared hinge RID reused",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "endpoint deletion clears hinge",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "save real HingeJoint3D scene",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "configure reopened hinge world",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "reopened node path creates real hinge",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 8, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.5, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "reopened hinge swings while preserving anchor and axis",
+      "passed": true
+    }
+  ],
+  "failed": 0,
+  "passed": 44,
+  "negative": {
+    "checks": [
+      {
+        "detail": "",
+        "name": "native backend identity",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "pause isolated world",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "configure lightweight exact-step world",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "passive hinge actual type",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "unsupported parameter retains compatibility default 0",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "unsupported parameter retains compatibility default 3",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "unsupported parameter retains compatibility default 4",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "unsupported parameter retains compatibility default 5",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "failed replacements keep hinge type",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "failed replacements preserve live pose and velocity",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "failed replacements preserve pause and simulation time",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.3, \"paused\": true }",
+        "name": "bounded exact step completes",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "old hinge still physically constrains and spins after rejected replacements",
+        "passed": true
+      }
+    ],
+    "failed": 0,
+    "passed": 13
+  },
+  "expected_rejections": 10,
+  "input_smoke": {
+    "failed": 0,
+    "passed": 11
+  },
+  "extension_sha256": "db56f1db873c71f43db4daec091fd1361e2b835e8ef59cb97a7cf31999f128c8"
+}

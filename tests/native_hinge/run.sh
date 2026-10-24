@@ -32,7 +32,7 @@ rows=[x.split(' ',1)[1] for x in s.splitlines() if x.startswith('HINGE_RESULT ')
 r=json.loads(rows[0]);assert r['failed']==0
 s=(p/'negative.log').read_text();errors=[x for x in s.splitlines() if x.startswith('ERROR:')]
 expected=[line.removeprefix('EXPECT_HINGE_ERROR ') for line in s.splitlines() if line.startswith('EXPECT_HINGE_ERROR ')]
-assert len(errors)==len(expected)==16,(errors,expected)
+assert len(errors)==len(expected)==10,(errors,expected)
 for message in expected:
  matches=[line for line in errors if message in line]
  assert matches,(message,errors)

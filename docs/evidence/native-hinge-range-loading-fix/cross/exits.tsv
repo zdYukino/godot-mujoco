@@ -1,0 +1,11 @@
+native_hinge 0
+native_joints 0
+typed_terrain 0
+typed_control 0
+runtime_clock 0
+runtime_presets 0
+native_contacts 0
+native_semantics 0
+native_area_environment 0
+native_motion 0
+mjworld_smoke 0

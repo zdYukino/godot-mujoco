@@ -1,0 +1,17 @@
+{
+  "runs": [
+    {
+      "failed": 0,
+      "passed": 864
+    },
+    {
+      "failed": 0,
+      "passed": 864
+    },
+    {
+      "failed": 0,
+      "passed": 864
+    }
+  ],
+  "extension_sha256": "c25f92e782aa348fa7aaa92291810230838d3b8311acf3b490fdc2cac51637c9"
+}

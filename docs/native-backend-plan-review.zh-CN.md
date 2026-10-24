@@ -1,21 +1,21 @@
 # 原生 PhysicsServer 后端推进计划与阶段状态
 
-开发基点：已验收的 `8d3976e`（PR #5，未合 main）。用户已授权按优先级开发原生后端；集成分支为 `codex/native-backend-integration`。P0 先收口现有刚体语义，接触报告与查询由独立任务开发，必须逐个集成和验证；以下后续能力不能因已授权而记为完成。
+当前后端候选 `4c2f1f7` 已通过 dot 独立源码构建、21 套轻量回归及 GUI 验收，仍在 draft PR #8，未合 main。2026-10-24 后续功能分支 `codex/hinge-limits-motor` 仅推进有界 Hinge 限位/速度电机及直接依赖，不自动扩展全部后端。新阶段仍需其独立验收；HTML 由父任务更新。
 
 以下区分普通Godot节点能力与MJCF模型能力；未运行的能力不因MuJoCo底层支持而视作Godot支持。HTML由父任务维护。
 
 | 分类 | 已有能力 | 主要缺口与代码依据 |
 |---|---|---|
-| Body/形状 | StaticBody3D、RigidBody3D；box/sphere/plane/cylinder；刚性姿态、尺寸、质量推导、层/掩码、exception | mj_physics_server.cpp只接受STATIC/RIGID；scale/shear/镜像拒绝；capsule、convex、concave、通用HeightMapShape3D在mj_unsupported.cpp仍stub |
-| 地形 | 专用MjStaticHeightField固定网格，安全增删替换，视觉/碰撞/ray | 不等于Godot HeightMapShape3D，不含动态雕刻或大地图 |
-| 查询 | ray、有限已支持几何、collider/RID/shape身份、mask/exclude/inside；专用地形backface处理 | mj_direct_space_state.cpp的point/shape overlap、cast_motion、collide_shape、rest_info、closest point未实现；mesh模型存在不代表ray支持其mesh |
-| CharacterBody/运动学 | 暂无普通CharacterBody3D行为保证 | _body_test_motion stub；KINEMATIC模式拒绝。缺连续运动查询、初始穿透恢复、safe/unsafe fraction、接触法线/多命中；不能仅打开mode枚举便宣称move_and_slide支持 |
-| Area | space默认环境重力/阻尼的有限处理 | _area_create及监测回调/形状/层/变换等stub；默认space参数不等于Area3D重叠与环境覆写 |
-| 原生关节 | MJCF实例自身关节由MuJoCo模拟 | 普通Godot Pin/Hinge/Slider/ConeTwist/Generic6DOF Joint3D均stub；不能将MJCF关节编辑算作Godot Joint3D支持 |
-| 接触/高级刚体 | P0数值验证的力/冲量/重力/阻尼/质量/摩擦；Godot direct-state接触报告与contact_monitor | 接触报告仅最后实际子步，冲量不是整帧累计，中间短暂接触不累计；导入geom无原生Body身份。sleep、CCD、axis lock、自定义惯量/质心等仍不支持 |
-| 生命周期 | RID管理、free延迟、实例身份/revision、队列、兼容迁移回滚；本轮整份预设边界事务 | 每新增对象类型必须接入同一free/rebuild/rollback协议；不能依赖原shape/body生命周期测试覆盖Area/joint的新依赖图 |
+| Body/形状 | Static/Rigid，box/sphere/plane/cylinder/capsule；质量、力/冲量、摩擦、重力/阻尼与 COM 数值语义 | scale/shear/镜像拒绝；convex/concave、通用HeightMap、rigid-linear未支持 |
+| 地形 | 专用MjStaticHeightField固定网格、安全替换、视觉/碰撞/ray | 不等于HeightMapShape3D；无动态雕刻/大地图 |
+| 查询 | 原生primitive point/shape overlap、collide/rest、受限连续translation sweep；ray身份过滤 | overlap/sweep不覆盖heightfield/MJCF；无法认证float端点明确拒绝；无旋转sweep/CCD |
+| CharacterBody/运动学 | sphere/capsule最小body-motion恢复/连续运动；move_and_collide/slide、floor snap；kinematic mocap与reset一致 | 单向查询障碍，不推动态体；非完整平台/楼梯；无heightfield/MJCF motion或moving box/cylinder |
+| Area | 原生形状无冲量监测，enter/exit、FIFO生命周期；priority重力/阻尼覆写 | 无复杂shape/MJCF监测、Area空间查询或CCD |
+| 原生关节 | 已验收Pin/passive Hinge：freebody、forest、碰撞排除、world/static/两rigid；本分支新增独立Hinge限位/速度电机，见[边界](native-hinge-drive.zh-CN.md) | 主动关节链、闭环、多圈、反平行主动frame、自定义求解响应未支持；Slider/ConeTwist/6DOF未实现 |
+| 接触/高级刚体 | 最后实际子步的接触/冲量、direct-state/contact_monitor；P0数值语义 | 非整帧累计；导入geom无原生Body身份；sleep/CCD/axis lock等未支持 |
+| 生命周期 | RID/延迟free/FIFO、候选迁移回滚、实例revision；新Hinge失败步整区间回滚及实际完成反馈 | 新阶段的独立dot验收待完成；分配失败未强制注入，重负载未覆盖 |
 
-后续里程碑（依赖阶段通过后推进，未实现项保持未完成）：
+原优先级路线（0–5 的有界实现已进入上述已验收候选；下列条目是验证目标，不表示所有细节均完成。当前仅推进 6 的独立 Hinge 主动阶段，其余缺口待选择）：
 
 0. **P0 现有刚体语义**：见 [支持与拒绝契约](native-body-semantics.zh-CN.md)。以数值测试验证质量、摩擦、重力缩放、阻尼、力/冲量、自定义积分与暂停/重置回调；不能以 setter/getter 存值代替动力学效果。
 1. **查询基础与接触身份**：先为现有形状补point/shape overlap、collide/rest info与稳定结果排序/身份。验证层/掩码、exclude、多个shape索引、移除后RID失效、边界点/退化输入、重建前后身份；不宣称连续运动。

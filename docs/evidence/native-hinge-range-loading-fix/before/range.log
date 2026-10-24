@@ -1,0 +1,455 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+PASS native backend identity 
+MuJoCo: compile time (ms)
+  total:          0.3   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.3   (wall clock)
+PASS pause isolated world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS configure lightweight exact-step world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS passive hinge actual type 
+ERROR: Native Hinge invalid limit range
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:96)
+   GDScript backtrace (most recent call first):
+       [0] hp (res://acceptance.gd:3)
+       [1] set_range (res://range_loading.gd:5)
+       [2] run (res://range_loading.gd:29)
+FAIL inactive two-setter order preserves full same-sign pair [(-2.5, -2.0), true, (-2.5, 1.570796)]
+PASS bounded exact step completes { "request": 1, "command": "step", "success": true, "error": "", "time": 0.8, "paused": true }
+FAIL loaded upper bound physically stops positive motor [(-2.5, -2.0), -1.57304688080667]
+PASS bounded exact step completes { "request": 2, "command": "step", "success": true, "error": "", "time": 1.6, "paused": true }
+FAIL loaded lower bound physically stops reverse motor [(-2.5, -2.0), -1.87101567519952]
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS passive hinge actual type 
+PASS inactive two-setter order preserves full same-sign pair [(-2.5, -2.0), false, (-2.5, -2.0)]
+PASS bounded exact step completes { "request": 3, "command": "step", "success": true, "error": "", "time": 2.39999999999999, "paused": true }
+PASS loaded upper bound physically stops positive motor [(-2.5, -2.0), -2.00000015122777]
+PASS bounded exact step completes { "request": 4, "command": "step", "success": true, "error": "", "time": 3.19999999999998, "paused": true }
+PASS loaded lower bound physically stops reverse motor [(-2.5, -2.0), -2.49999994347577]
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS passive hinge actual type 
+PASS inactive two-setter order preserves full same-sign pair [(2.0, 2.6), true, (2.0, 2.6)]
+PASS bounded exact step completes { "request": 5, "command": "step", "success": true, "error": "", "time": 3.99999999999996, "paused": true }
+PASS loaded upper bound physically stops positive motor [(2.0, 2.6), 2.59999977708446]
+PASS bounded exact step completes { "request": 6, "command": "step", "success": true, "error": "", "time": 4.79999999999994, "paused": true }
+PASS loaded lower bound physically stops reverse motor [(2.0, 2.6), 1.99999990963009]
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS passive hinge actual type 
+ERROR: Native Hinge invalid limit range
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:95)
+   GDScript backtrace (most recent call first):
+       [0] hp (res://acceptance.gd:3)
+       [1] set_range (res://range_loading.gd:7)
+       [2] run (res://range_loading.gd:29)
+       [3] physical_bounds (res://range_loading.gd:20)
+       [4] step (res://pin_support.gd:37)
+       [5] ticks (res://pin_support.gd:13)
+FAIL inactive two-setter order preserves full same-sign pair [(2.0, 2.6), false, (-1.570796, 2.6)]
+PASS bounded exact step completes { "request": 7, "command": "step", "success": true, "error": "", "time": 5.59999999999993, "paused": true }
+PASS loaded upper bound physically stops positive motor [(2.0, 2.6), 2.59999977708446]
+PASS bounded exact step completes { "request": 8, "command": "step", "success": true, "error": "", "time": 6.39999999999991, "paused": true }
+FAIL loaded lower bound physically stops reverse motor [(2.0, 2.6), 1.92304669813796]
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS passive hinge actual type 
+PASS inactive two-setter order preserves full same-sign pair [(-0.7, -0.2), true, (-0.7, -0.2)]
+PASS bounded exact step completes { "request": 9, "command": "step", "success": true, "error": "", "time": 7.19999999999989, "paused": true }
+PASS loaded upper bound physically stops positive motor [(-0.7, -0.2), -0.2000000092268]
+PASS bounded exact step completes { "request": 10, "command": "step", "success": true, "error": "", "time": 7.99999999999987, "paused": true }
+PASS loaded lower bound physically stops reverse motor [(-0.7, -0.2), -0.69999997073711]
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS passive hinge actual type 
+PASS inactive two-setter order preserves full same-sign pair [(-0.7, -0.2), false, (-0.7, -0.2)]
+PASS bounded exact step completes { "request": 11, "command": "step", "success": true, "error": "", "time": 8.79999999999986, "paused": true }
+PASS loaded upper bound physically stops positive motor [(-0.7, -0.2), -0.2000000092268]
+PASS bounded exact step completes { "request": 12, "command": "step", "success": true, "error": "", "time": 9.59999999999984, "paused": true }
+PASS loaded lower bound physically stops reverse motor [(-0.7, -0.2), -0.69999997073711]
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS passive hinge actual type 
+PASS inactive two-setter order preserves full same-sign pair [(0.2, 0.9), true, (0.2, 0.9)]
+PASS bounded exact step completes { "request": 13, "command": "step", "success": true, "error": "", "time": 10.3999999999998, "paused": true }
+PASS loaded upper bound physically stops positive motor [(0.2, 0.9), 0.89999999508567]
+PASS bounded exact step completes { "request": 14, "command": "step", "success": true, "error": "", "time": 11.1999999999998, "paused": true }
+PASS loaded lower bound physically stops reverse motor [(0.2, 0.9), 0.2230468609261]
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS passive hinge actual type 
+PASS inactive two-setter order preserves full same-sign pair [(0.2, 0.9), false, (0.2, 0.9)]
+PASS bounded exact step completes { "request": 15, "command": "step", "success": true, "error": "", "time": 11.9999999999998, "paused": true }
+PASS loaded upper bound physically stops positive motor [(0.2, 0.9), 0.89999999508567]
+PASS bounded exact step completes { "request": 16, "command": "step", "success": true, "error": "", "time": 12.7999999999998, "paused": true }
+PASS loaded lower bound physically stops reverse motor [(0.2, 0.9), 0.2230468609261]
+PASS save same-sign range scene 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS configure paused range reload world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+ERROR: Native Hinge invalid limit range
+   at: _hinge_joint_set_param (/workspace/godot-mujoco/src/physics/mj_native_joint.cpp:96)
+   GDScript backtrace (most recent call first):
+       [0] run (res://range_loading.gd:46)
+       [1] physical_bounds (res://range_loading.gd:20)
+       [2] step (res://pin_support.gd:37)
+       [3] ticks (res://pin_support.gd:13)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+FAIL saved scene native pair exactly matches both authored limits [(-2.5, -2.0), (-2.5, 1.570796)]
+PASS saved enabled limit restored 
+PASS bounded exact step completes { "request": 17, "command": "step", "success": true, "error": "", "time": 0.8, "paused": true }
+FAIL loaded upper bound physically stops positive motor [(-2.5, -2.0), -1.57304688080667]
+PASS bounded exact step completes { "request": 18, "command": "step", "success": true, "error": "", "time": 1.6, "paused": true }
+FAIL loaded lower bound physically stops reverse motor [(-2.5, -2.0), -1.91076238901227]
+PASS save same-sign range scene 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+PASS configure paused range reload world 
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+PASS saved scene native pair exactly matches both authored limits [(2.0, 2.6), (2.0, 2.6)]
+PASS saved enabled limit restored 
+PASS bounded exact step completes { "request": 19, "command": "step", "success": true, "error": "", "time": 0.8, "paused": true }
+PASS loaded upper bound physically stops positive motor [(2.0, 2.6), 2.59999977708446]
+PASS bounded exact step completes { "request": 20, "command": "step", "success": true, "error": "", "time": 1.6, "paused": true }
+PASS loaded lower bound physically stops reverse motor [(2.0, 2.6), 1.99999990963009]
+HINGE_RANGE_LOADING_RESULT {"checks":[{"detail":"","name":"native backend identity","passed":true},{"detail":"","name":"pause isolated world","passed":true},{"detail":"","name":"configure lightweight exact-step world","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"[(-2.5, -2.0), true, (-2.5, 1.570796)]","name":"inactive two-setter order preserves full same-sign pair","passed":false},{"detail":"{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.8, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(-2.5, -2.0), -1.57304688080667]","name":"loaded upper bound physically stops positive motor","passed":false},{"detail":"{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.6, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(-2.5, -2.0), -1.87101567519952]","name":"loaded lower bound physically stops reverse motor","passed":false},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"[(-2.5, -2.0), false, (-2.5, -2.0)]","name":"inactive two-setter order preserves full same-sign pair","passed":true},{"detail":"{ \"request\": 3, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.39999999999999, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(-2.5, -2.0), -2.00000015122777]","name":"loaded upper bound physically stops positive motor","passed":true},{"detail":"{ \"request\": 4, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 3.19999999999998, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(-2.5, -2.0), -2.49999994347577]","name":"loaded lower bound physically stops reverse motor","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"[(2.0, 2.6), true, (2.0, 2.6)]","name":"inactive two-setter order preserves full same-sign pair","passed":true},{"detail":"{ \"request\": 5, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 3.99999999999996, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(2.0, 2.6), 2.59999977708446]","name":"loaded upper bound physically stops positive motor","passed":true},{"detail":"{ \"request\": 6, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 4.79999999999994, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(2.0, 2.6), 1.99999990963009]","name":"loaded lower bound physically stops reverse motor","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"[(2.0, 2.6), false, (-1.570796, 2.6)]","name":"inactive two-setter order preserves full same-sign pair","passed":false},{"detail":"{ \"request\": 7, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.59999999999993, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(2.0, 2.6), 2.59999977708446]","name":"loaded upper bound physically stops positive motor","passed":true},{"detail":"{ \"request\": 8, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 6.39999999999991, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(2.0, 2.6), 1.92304669813796]","name":"loaded lower bound physically stops reverse motor","passed":false},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"[(-0.7, -0.2), true, (-0.7, -0.2)]","name":"inactive two-setter order preserves full same-sign pair","passed":true},{"detail":"{ \"request\": 9, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 7.19999999999989, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(-0.7, -0.2), -0.2000000092268]","name":"loaded upper bound physically stops positive motor","passed":true},{"detail":"{ \"request\": 10, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 7.99999999999987, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(-0.7, -0.2), -0.69999997073711]","name":"loaded lower bound physically stops reverse motor","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"[(-0.7, -0.2), false, (-0.7, -0.2)]","name":"inactive two-setter order preserves full same-sign pair","passed":true},{"detail":"{ \"request\": 11, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 8.79999999999986, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(-0.7, -0.2), -0.2000000092268]","name":"loaded upper bound physically stops positive motor","passed":true},{"detail":"{ \"request\": 12, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 9.59999999999984, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(-0.7, -0.2), -0.69999997073711]","name":"loaded lower bound physically stops reverse motor","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"[(0.2, 0.9), true, (0.2, 0.9)]","name":"inactive two-setter order preserves full same-sign pair","passed":true},{"detail":"{ \"request\": 13, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 10.3999999999998, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(0.2, 0.9), 0.89999999508567]","name":"loaded upper bound physically stops positive motor","passed":true},{"detail":"{ \"request\": 14, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 11.1999999999998, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(0.2, 0.9), 0.2230468609261]","name":"loaded lower bound physically stops reverse motor","passed":true},{"detail":"","name":"passive hinge actual type","passed":true},{"detail":"[(0.2, 0.9), false, (0.2, 0.9)]","name":"inactive two-setter order preserves full same-sign pair","passed":true},{"detail":"{ \"request\": 15, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 11.9999999999998, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(0.2, 0.9), 0.89999999508567]","name":"loaded upper bound physically stops positive motor","passed":true},{"detail":"{ \"request\": 16, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 12.7999999999998, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(0.2, 0.9), 0.2230468609261]","name":"loaded lower bound physically stops reverse motor","passed":true},{"detail":"","name":"save same-sign range scene","passed":true},{"detail":"","name":"configure paused range reload world","passed":true},{"detail":"[(-2.5, -2.0), (-2.5, 1.570796)]","name":"saved scene native pair exactly matches both authored limits","passed":false},{"detail":"","name":"saved enabled limit restored","passed":true},{"detail":"{ \"request\": 17, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.8, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(-2.5, -2.0), -1.57304688080667]","name":"loaded upper bound physically stops positive motor","passed":false},{"detail":"{ \"request\": 18, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.6, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(-2.5, -2.0), -1.91076238901227]","name":"loaded lower bound physically stops reverse motor","passed":false},{"detail":"","name":"save same-sign range scene","passed":true},{"detail":"","name":"configure paused range reload world","passed":true},{"detail":"[(2.0, 2.6), (2.0, 2.6)]","name":"saved scene native pair exactly matches both authored limits","passed":true},{"detail":"","name":"saved enabled limit restored","passed":true},{"detail":"{ \"request\": 19, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.8, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(2.0, 2.6), 2.59999977708446]","name":"loaded upper bound physically stops positive motor","passed":true},{"detail":"{ \"request\": 20, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.6, \"paused\": true }","name":"bounded exact step completes","passed":true},{"detail":"[(2.0, 2.6), 1.99999990963009]","name":"loaded lower bound physically stops reverse motor","passed":true}],"failed":8,"passed":59}

@@ -35,9 +35,10 @@ void MjPhysicsServer3D::process_world_commands(){
   auto apply=[&]()->String {
    auto*s=space(request.space);if(!s||!s->authored_options)return "Configured runtime world was removed";
    if(!rebuild(*s))return s->last_error;
+   if(s->pending_step_request)return "Previous simulation step still pending";
    String command=request.command;
    if(command=="pause"||command=="resume"){s->paused=command=="pause";s->accumulator=0;return {};}
-   if(command=="step"){if(!s->paused)return "Single-step requires a paused simulation";if(request.count<1||request.count>1000)return "Step count must be 1..1000";s->single_steps=request.count;return {};}
+   if(command=="step"){if(!active||!s->active)return "Single-step requires an active physics space";if(!s->paused)return "Single-step requires a paused simulation";if(request.count<1||request.count>1000)return "Step count must be 1..1000";s->single_steps=request.count;s->pending_step_request=request.request;s->skip_tick=false;return {};}
    if(command=="capture"){s->checkpoint=capture(s->model,s->data);s->skip_tick=true;return {};}
    if(command!="reset")return "Unknown simulation command";
    if(s->checkpoint.is_empty())return "No simulation checkpoint; capture one before resetting";
@@ -66,8 +67,16 @@ void MjPhysicsServer3D::process_world_commands(){
    return {};
   };
   String error=apply();result["success"]=error.is_empty();result["error"]=error;
-  auto*s=space(request.space);if(s&&s->data){result["time"]=s->data->time+(request.command=="step"&&error.is_empty()?request.count*s->options.timestep:0);result["paused"]=s->paused;}
+  if(request.command=="step"&&error.is_empty())continue; // Complete only after real integration.
+  auto*s=space(request.space);if(s&&s->data){result["time"]=s->data->time;result["paused"]=s->paused;}
   std::lock_guard<std::mutex> lock(edits_mutex);world_command_results[request.request]=result;
  }
 }
+void MjPhysicsServer3D::complete_world_step(MjSpace&s,const String&error){
+ if(!s.pending_step_request)return;
+ Dictionary result;result["request"]=s.pending_step_request;result["command"]="step";
+ result["success"]=error.is_empty();result["error"]=error;result["time"]=s.data?s.data->time:0;result["paused"]=s.paused;
+ std::lock_guard<std::mutex> lock(edits_mutex);world_command_results[s.pending_step_request]=result;s.pending_step_request=0;
+}
+
 }

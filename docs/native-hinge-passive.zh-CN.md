@@ -1,4 +1,6 @@
-# 原生 Hinge：受限被动阶段（非完整功能）
+# 原生 Hinge：受限被动阶段（历史阶段说明）
+
+后续[独立 Hinge 限位与速度电机](native-hinge-drive.zh-CN.md)已新增有界实现；本页以下未实现项描述被动阶段当时的边界，不替代当前能力矩阵。
 
 继承原生 Pin 的 free-body、forest、candidate验证和生命周期契约。支持两个原生自由刚体，或自由刚体连接世界/静态体的被动转轴。Godot hinge frame 的局部 Z 为轴，origin 为锚点；simple API 的轴归一化。初始世界轴必须近似平行或反平行（abs(dot)>=.9999），反平行时内部翻转 B 轴；斜交初始轴明确拒绝，保留旧连接。frame 必须无缩放、剪切和镜像。
 

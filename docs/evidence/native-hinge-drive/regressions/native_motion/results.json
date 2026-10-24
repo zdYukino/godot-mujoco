@@ -1,0 +1,155 @@
+{
+  "kinematic_reset": {
+    "checks": [
+      {
+        "detail": "",
+        "label": "import empty world",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "label": "configure world",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "label": "compile original mocap pose",
+        "passed": true
+      },
+      {
+        "detail": {
+          "command": "capture",
+          "error": "",
+          "paused": true,
+          "request": 1,
+          "success": true,
+          "time": 0.0
+        },
+        "label": "capture completed",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "label": "movement reflected before reset",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "label": "motion sees moved target before reset",
+        "passed": true
+      },
+      {
+        "detail": {
+          "command": "reset",
+          "error": "",
+          "paused": true,
+          "request": 2,
+          "success": true,
+          "time": 0.0
+        },
+        "label": "reset completed",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "label": "reset preserves kinematic transform cache",
+        "passed": true
+      },
+      {
+        "detail": {
+          "collider": "<Object#null>",
+          "collider_id": 0,
+          "face_index": -1,
+          "normal": "(0.0, 1.0, 0.0)",
+          "position": "(4.0, 0.5, 0.0)",
+          "rid": "RID(103079215106)",
+          "shape": 0
+        },
+        "label": "reset preserves current query geometry",
+        "passed": true
+      },
+      {
+        "detail": {},
+        "label": "reset does not resurrect compiled original position",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "label": "motion sees current target after reset",
+        "passed": true
+      }
+    ],
+    "failed": 0,
+    "passed": 11
+  },
+  "runs": [
+    {
+      "test": "rid",
+      "repeat": 1,
+      "failed": 0,
+      "passed": 52
+    },
+    {
+      "test": "rid",
+      "repeat": 2,
+      "failed": 0,
+      "passed": 52
+    },
+    {
+      "test": "rid",
+      "repeat": 3,
+      "failed": 0,
+      "passed": 52
+    },
+    {
+      "test": "character",
+      "repeat": 1,
+      "diagnostic": {
+        "ceiling_frames": 15,
+        "floor_frames": 100,
+        "grounded_frames": 67,
+        "on_ceiling": false,
+        "on_floor": true,
+        "on_wall": false,
+        "position": "(0.0, 1.0, 0.0)",
+        "wall_frames": 51
+      },
+      "failed": 0,
+      "passed": 23
+    },
+    {
+      "test": "character",
+      "repeat": 2,
+      "diagnostic": {
+        "ceiling_frames": 15,
+        "floor_frames": 100,
+        "grounded_frames": 67,
+        "on_ceiling": false,
+        "on_floor": true,
+        "on_wall": false,
+        "position": "(0.0, 1.0, 0.0)",
+        "wall_frames": 51
+      },
+      "failed": 0,
+      "passed": 23
+    },
+    {
+      "test": "character",
+      "repeat": 3,
+      "diagnostic": {
+        "ceiling_frames": 15,
+        "floor_frames": 100,
+        "grounded_frames": 67,
+        "on_ceiling": false,
+        "on_floor": true,
+        "on_wall": false,
+        "position": "(0.0, 1.0, 0.0)",
+        "wall_frames": 51
+      },
+      "failed": 0,
+      "passed": 23
+    }
+  ],
+  "problems": [],
+  "extension_sha256": "c25f92e782aa348fa7aaa92291810230838d3b8311acf3b490fdc2cac51637c9"
+}
