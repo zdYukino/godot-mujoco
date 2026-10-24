@@ -83,7 +83,7 @@ static func pack(session: RefCounted, parent: String) -> Dictionary:
 	for dependency in deps:
 		var path: String = dependency.split("::")[-1]
 		if not path.begins_with("res://addons/godot_mujoco/"): return Builder.failure(stage,"包仍有外部依赖: " + path)
-	var manifest := {"version":1,"backend":"MuJoCo 3.16.0 native primitives and fixed-spacing heightfields","engine":"Godot 4.7.2 .NET","files":{"map.tscn":FileAccess.get_sha256(stage.path_join("map.tscn"))},"sources":session.watch.hashes,"units":session.unit,"axes":session.axes,"diagnostics":session.diagnostics,"physical_readiness":"authored collision; independently verify traversal/contact","requires_addon":"godot_mujoco"}
+	var manifest := {"version":1,"backend":"MuJoCo 3.16.0 native shapes and map MJCF", "collision_schema":1, "world_settings":session.world_settings,"engine":"Godot 4.7.2 .NET","files":{"map.tscn":FileAccess.get_sha256(stage.path_join("map.tscn"))},"sources":session.watch.hashes,"units":session.unit,"axes":session.axes,"diagnostics":session.diagnostics,"physical_readiness":"authored collision; independently verify traversal/contact","requires_addon":"godot_mujoco"}
 	var file := FileAccess.open(stage.path_join("manifest.json"),FileAccess.WRITE)
 	if not file: return Builder.failure(stage,"manifest 写入失败")
 	file.store_string(JSON.stringify(manifest,"\t",true,true)); file.close()

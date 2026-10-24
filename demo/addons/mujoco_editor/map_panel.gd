@@ -3,6 +3,11 @@ extends VBoxContainer
 const Session = preload("res://addons/godot_mujoco/map/session.gd")
 const Collision = preload("res://addons/godot_mujoco/map/collision.gd")
 const Package = preload("res://addons/godot_mujoco/map/package.gd")
+var layout_scroll: ScrollContainer
+var layout_content: VBoxContainer
+var preview_split: SplitContainer
+var preview_container: SubViewportContainer
+var layout_note: Label
 var plugin: EditorPlugin
 var session = Session.new()
 var viewport: SubViewport
@@ -15,10 +20,15 @@ var status: Label
 var path_field: LineEdit
 var unit: OptionButton
 var axes: OptionButton
+var slice_level: SpinBox
 var strategy: OptionButton
 var friction: SpinBox
 var layer: SpinBox
 var mask: SpinBox
+var native_contact: CheckBox
+var advanced: LineEdit
+var relations: LineEdit
+var world_options: LineEdit
 var parts: LineEdit
 var selected := ""
 var items := {}
@@ -37,8 +47,13 @@ func button(row: Node, label: String, action: Callable) -> void:
 	var control := Button.new(); control.text = label; control.pressed.connect(action); row.add_child(control)
 
 func _ready() -> void:
-	custom_minimum_size = Vector2(600,440)
-	var row := HFlowContainer.new(); add_child(row)
+	custom_minimum_size = Vector2(300,180)
+	layout_scroll = ScrollContainer.new(); layout_scroll.name="MapScroll"
+	layout_scroll.size_flags_horizontal=Control.SIZE_EXPAND_FILL; layout_scroll.size_flags_vertical=Control.SIZE_EXPAND_FILL
+	layout_scroll.horizontal_scroll_mode=ScrollContainer.SCROLL_MODE_AUTO; layout_scroll.vertical_scroll_mode=ScrollContainer.SCROLL_MODE_AUTO; layout_scroll.follow_focus=true
+	add_child(layout_scroll)
+	layout_content=VBoxContainer.new(); layout_content.name="MapContent"; layout_content.size_flags_horizontal=Control.SIZE_EXPAND_FILL; layout_scroll.add_child(layout_content)
+	var row := HFlowContainer.new(); layout_content.add_child(row)
 	path_field = LineEdit.new(); path_field.placeholder_text = "静态地图源文件路径"; path_field.custom_minimum_size.x = 250; row.add_child(path_field)
 	button(row,"浏览",browse)
 	unit = OptionButton.new()
@@ -53,35 +68,58 @@ func _ready() -> void:
 	button(row,"保存独立地图包",save_package)
 	button(row,"Apply 到编辑场景",apply_scene)
 	button(row,"导入高度契约",browse_height)
-	row = HFlowContainer.new(); add_child(row)
+	row = HFlowContainer.new(); layout_content.add_child(row)
 	button(row,"聚焦全图",func(): focus(""))
 	button(row,"聚焦选中",func(): focus(selected))
 	button(row,"选中显隐",toggle_selected)
 	button(row,"视觉显隐",func(): show_visual = not show_visual; if preview: preview.visible = show_visual)
 	button(row,"碰撞线框",func(): show_collision = not show_collision; if collision_preview: collision_preview.visible = show_collision)
+	slice_level = number(row,"SDF 切片高度比例",0,1,.01); slice_level.value=.33
+	button(row,"更新距离切片",func(): session.view.sdf_slice=slice_level.value; session.dirty=true; rebuild())
 	button(row,"撤销草稿",func(): session.history.undo(); rebuild())
 	button(row,"重做草稿",func(): session.history.redo(); rebuild())
-	var note := Label.new(); note.text = "右键轨道 · 中键平移 · 滚轮缩放 · 左键精确选面 | 视觉就绪 ≠ 物理验证通过 | 运行地图需显式重新运行；地形运行 Apply 使用地形面板"; add_child(note)
-	var split := HSplitContainer.new(); split.size_flags_vertical = Control.SIZE_EXPAND_FILL; add_child(split)
-	tree = Tree.new(); tree.custom_minimum_size.x = 230; tree.hide_root = false; split.add_child(tree); tree.item_selected.connect(select_tree)
-	var container := SubViewportContainer.new(); container.stretch = true; container.size_flags_horizontal = Control.SIZE_EXPAND_FILL; container.size_flags_vertical = Control.SIZE_EXPAND_FILL; container.custom_minimum_size = Vector2(400,260); split.add_child(container)
+	layout_note = Label.new(); layout_note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART; layout_note.size_flags_horizontal=Control.SIZE_EXPAND_FILL; layout_note.text = "碰撞：真实凸包/基础体/高度场；SDF 65×65 原生距离切片（红内/蓝外/黄零轮廓，采样近似） | 右键轨道 · 中键平移 · 滚轮缩放 · 左键精确选面 | 视觉就绪 ≠ 物理验证通过 | 运行地图需显式重新运行；地形运行 Apply 使用地形面板"; layout_content.add_child(layout_note)
+	preview_split = SplitContainer.new(); preview_split.size_flags_horizontal=Control.SIZE_EXPAND_FILL; layout_content.add_child(preview_split)
+	tree = Tree.new(); tree.custom_minimum_size = Vector2(180,140); tree.hide_root = false; preview_split.add_child(tree); tree.item_selected.connect(select_tree)
+	var container := SubViewportContainer.new(); container.stretch = true; container.size_flags_horizontal = Control.SIZE_EXPAND_FILL; container.size_flags_vertical = Control.SIZE_EXPAND_FILL; container.custom_minimum_size = Vector2(280,260); preview_split.add_child(container); preview_container=container
 	viewport = SubViewport.new(); viewport.own_world_3d = true; viewport.size = Vector2i(600,320); viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS; container.add_child(viewport)
 	world = Node3D.new(); viewport.add_child(world)
 	camera = Camera3D.new(); camera.current = true; world.add_child(camera)
 	var light := DirectionalLight3D.new(); light.rotation_degrees = Vector3(-45,-25,0); world.add_child(light)
 	var env := WorldEnvironment.new(); env.environment = Environment.new(); env.environment.background_mode = Environment.BG_COLOR; env.environment.background_color = Color(.08,.10,.13); env.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR; env.environment.ambient_light_color = Color.WHITE; env.environment.ambient_light_energy = .5; world.add_child(env)
 	container.gui_input.connect(input_view)
-	row = HFlowContainer.new(); add_child(row)
+	row = HFlowContainer.new(); layout_content.add_child(row)
 	strategy = OptionButton.new()
 	for label in ["visual","box","sphere","capsule","cylinder","compound_boxes"]: strategy.add_item(label)
-	strategy.add_item("SDF（原生探针通过，编辑器尚未接入）"); strategy.set_item_disabled(strategy.item_count-1,true)
+	for mode in Session.Native.MODES: strategy.add_item(mode)
+	strategy.add_item("hfield（使用高度契约导入）"); strategy.set_item_disabled(strategy.item_count-1,true)
+	strategy.select(9) # preferred SDF candidate, never auto-applied
 	row.add_child(strategy)
+	strategy.item_selected.connect(func(_index): refresh_contact_controls())
 	friction = number(row,"摩擦",0,1,.01); friction.value = 1
 	layer = number(row,"Layer",0,4294967295,1); layer.value = 1
 	mask = number(row,"Mask",0,4294967295,1); mask.value = 1
-	parts = LineEdit.new(); parts.placeholder_text = '组合 JSON: [{"center":[0,0,0],"size":[1,1,1]}]'; parts.custom_minimum_size.x = 290; row.add_child(parts)
+	parts = LineEdit.new(); parts.placeholder_text = '组合 JSON: [{"center":[0,0,0],"size":[1,1,1]}]'; parts.custom_minimum_size.x = 250; row.add_child(parts)
+	native_contact = CheckBox.new(); native_contact.text="使用 MuJoCo 原生接触"; row.add_child(native_contact)
+	native_contact.toggled.connect(func(_on): refresh_contact_controls())
+	advanced = LineEdit.new(); advanced.placeholder_text = '原生接触 JSON: {"condim":3,"friction":[1,.005,.0001]}'; advanced.custom_minimum_size.x = 250; row.add_child(advanced)
 	button(row,"验证并应用碰撞草稿",configure)
-	status = Label.new(); status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; add_child(status)
+	row = HFlowContainer.new(); layout_content.add_child(row)
+	world_options = LineEdit.new(); world_options.placeholder_text = '世界高级 JSON（空保持默认）: {"solver":"Newton","nativeccd":true}'; world_options.custom_minimum_size.x = 250; row.add_child(world_options)
+	button(row,"应用世界设置",func():
+		var value: Variant = JSON.parse_string(world_options.text if not world_options.text.is_empty() else "{}")
+		if value is Dictionary: session.configure_world(value)
+		else: session.error = "世界设置必须为 JSON 对象"
+		rebuild())
+	row=HFlowContainer.new(); layout_content.add_child(row)
+	relations=LineEdit.new(); relations.placeholder_text='地图原生节点关系 JSON: {"pairs":[{"first":"节点路径","second":"另一节点路径","condim":3}],"excludes":[]}'; relations.custom_minimum_size.x=250; row.add_child(relations)
+	button(row,"应用 pair/exclude",func():
+		var value: Variant=JSON.parse_string(relations.text if not relations.text.is_empty() else "{}")
+		if value is Dictionary: session.configure_relations(value)
+		else: session.error="关系配置必须为 JSON 对象"
+		rebuild())
+	status = Label.new(); status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; layout_content.add_child(status)
+	layout_scroll.resized.connect(update_layout); update_layout()
 	update_camera(); refresh_status()
 
 func number(row: Node, title: String, low: float, high: float, step: float) -> SpinBox:
@@ -113,6 +151,12 @@ func rebuild() -> void:
 	for mesh in session.meshes():
 		var path := str(session.visual.get_path_to(mesh)); var spec: Dictionary = session.specs.get(path,{})
 		if spec.get("kind","visual") == "visual": continue
+		if Session.Native.uses_native(spec):
+			var native := Session.Native.build(mesh,session.visual,spec,session.world_settings)
+			if native.error.is_empty():
+				var geometry: Array = native.document.collision_preview(session.view.get("sdf_slice",.33),65)
+				collision_preview.add_child(preload("res://addons/godot_mujoco/map/collision_preview.gd").create(geometry,native.pose))
+			continue
 		var result := Collision.build(mesh,session.visual,spec)
 		if result.error.is_empty(): collision_preview.add_child(Collision.wireframe(result.body)); result.body.free()
 	for terrain in session.terrains:
@@ -138,15 +182,23 @@ func select_tree() -> void:
 	var item := tree.get_selected()
 	if not item: return
 	selected = item.get_metadata(0); var spec: Dictionary = session.specs.get(selected,{})
+	native_contact.set_pressed_no_signal(spec.get("native_contact",false))
+	advanced.editable = native_contact.button_pressed or spec.get("kind","sdf") in Session.Native.MODES
+	advanced.tooltip_text = "原生接触三摩擦/condim/求解参数；基础体和高度场必须显式勾选，未勾选保留旧 Godot 材质"
 	for i in strategy.item_count:
-		if strategy.get_item_text(i) == spec.get("kind","visual"): strategy.select(i)
+		if strategy.get_item_text(i) == spec.get("kind","sdf"): strategy.select(i)
+	advanced.text = JSON.stringify(spec.get("contact",{})); world_options.text = JSON.stringify(session.world_settings)
 	friction.value = spec.get("friction",1); layer.value = spec.get("layer",1); mask.value = spec.get("mask",1)
+	strategy.disabled=false
 	for terrain in session.terrains:
-		if selected == terrain.name: friction.value = terrain.material.friction; layer.value = terrain.get("layer",1); mask.value = terrain.get("mask",1)
+		if selected == terrain.name:
+			strategy.select(strategy.item_count-1); strategy.disabled=true
+			native_contact.set_pressed_no_signal(terrain.has("native_contact")); advanced.text=JSON.stringify(terrain.get("native_contact",{})); advanced.editable=native_contact.button_pressed
+			friction.value = terrain.material.friction; layer.value = terrain.get("layer",1); mask.value = terrain.get("mask",1)
 	var values := []
 	for part in spec.get("parts",[]): values.append({"center":[part.center.x,part.center.y,part.center.z],"size":[part.size.x,part.size.y,part.size.z]})
 	parts.text = JSON.stringify(values)
-	show_bounds(); refresh_status()
+	refresh_contact_controls(); show_bounds(); refresh_status()
 
 func show_bounds() -> void:
 	if highlights: highlights.free(); highlights = null
@@ -164,8 +216,16 @@ func show_bounds() -> void:
 func configure() -> bool:
 	for terrain in session.terrains:
 		if selected == terrain.name:
-			var ok: bool = session.configure_terrain(terrain.name,friction.value,int(layer.value),int(mask.value)); rebuild(); return ok
+			var contact: Variant=JSON.parse_string(advanced.text if not advanced.text.is_empty() else "{}")
+			if native_contact.button_pressed and not contact is Dictionary: session.error="接触 JSON 必须为对象"; refresh_status(); return false
+			var ok: bool=session.configure_terrain_native(terrain.name,contact if native_contact.button_pressed else null,{"friction":friction.value,"layer":int(layer.value),"mask":int(mask.value)})
+			rebuild(); return ok
 	var spec := {"kind":strategy.get_item_text(strategy.selected),"friction":friction.value,"layer":int(layer.value),"mask":int(mask.value)}
+	spec.native_contact=native_contact.button_pressed
+	if Session.Native.uses_native(spec):
+		var contact: Variant = JSON.parse_string(advanced.text if not advanced.text.is_empty() else "{}")
+		if not contact is Dictionary: session.error = "接触设置必须为 JSON 对象"; refresh_status(); return false
+		spec.contact = contact
 	if spec.kind == "compound_boxes":
 		var values: Variant = JSON.parse_string(parts.text)
 		if not values is Array: session.error = "组合 JSON 必须为数组"; refresh_status(); return false
@@ -227,7 +287,7 @@ func pick(point: Vector2) -> void:
 func refresh_status() -> void:
 	if not status: return
 	var state: Dictionary = session.watch.inspect(session.dirty)
-	status.text = state.state + " | " + session.error + " | " + "; ".join(session.diagnostics)
+	status.text = str(session.last_collision_attempt) + "\n" + state.state + " | " + session.error + " | " + "; ".join(session.diagnostics)
 	if session.visual:
 		var meshes: Array = session.meshes(); var triangles := 0; var materials := 0
 		for mesh in meshes:
@@ -235,8 +295,10 @@ func refresh_status() -> void:
 			for i in mesh.mesh.get_surface_count():
 				if mesh.get_active_material(i): materials += 1
 		var bounds: AABB = session.bounds(session.visual.get_node(NodePath(selected)) if session.visual.has_node(NodePath(selected)) else session.visual)
+		status.text += "\n选中节点路径: " + selected
 		status.text += "\n网格 %d / 三角形 %d / 材质 %d | 尺寸 m: %s | 源单位: %s | 碰撞配置 %d；物理验证待独立运行" % [meshes.size(),triangles,materials,str(bounds.size),session.unit,session.specs.size()]
-		if session.specs.has(selected) and session.visual.has_node(NodePath(selected)):
+		if session.specs.has(selected): status.text += "\nrequested/actual: " + str(session.specs[selected].get("capability",{}))
+		if session.specs.has(selected) and session.visual.has_node(NodePath(selected)) and not Session.Native.uses_native(session.specs[selected]):
 			var result := Collision.build(session.visual.get_node(NodePath(selected)),session.visual,session.specs[selected])
 			if result.error.is_empty():
 				status.text += "\n碰撞顶点采样误差 m: %.6f（非 Hausdorff，不保证门洞正确；需实际测试）" % result.body.get_meta("vertex_error_m")
@@ -272,6 +334,8 @@ func open_package(path: String) -> bool:
 	for design in node.get_meta("map_terrains",[]):
 		if not design is Dictionary or not design.get("name") is String or not design.get("grid") is MjHeightFieldData or not design.get("pose") is Transform3D or not design.get("material") is PhysicsMaterial:
 			node.free(); session.error = "地图地形元数据不完整"; refresh_status(); return false
+	for key in ["map_world_settings","map_contact_relations"]:
+		if not node.get_meta(key,{}) is Dictionary: node.free(); session.error="地图元数据类型错误: "+key; refresh_status(); return false
 	var view: Dictionary = node.get_meta("map_view",{})
 	var saved_view: Variant = view.get("camera",{})
 	if not saved_view is Dictionary or not saved_view.get("center",Vector3.ZERO) is Vector3:
@@ -289,13 +353,15 @@ func open_package(path: String) -> bool:
 		if not hidden is String:
 			node.free(); session.error = "地图显隐节点路径无效"; refresh_status(); return false
 	node.remove_child(visual)
-	session.close(); session.history = UndoRedo.new(); session.terrains = node.get_meta("map_terrains",[]); session.visual = visual; session.specs = node.get_meta("map_specs",{}); session.view = node.get_meta("map_view",{}); session.watch.hashes = node.get_meta("source_hashes",{}); session.diagnostics = node.get_meta("diagnostics",[])
+	session.contact_relations=node.get_meta("map_contact_relations",{}); session.world_settings = node.get_meta("map_world_settings",{}); session.close(); session.history = UndoRedo.new(); session.terrains = node.get_meta("map_terrains",[]); session.visual = visual; session.specs = node.get_meta("map_specs",{}); session.view = node.get_meta("map_view",{}); session.watch.hashes = node.get_meta("source_hashes",{}); session.diagnostics = node.get_meta("diagnostics",[])
 	var contract: Dictionary = node.get_meta("contract",{}); session.unit = contract.get("unit", ""); session.axes = contract.get("axes", ""); session.source = contract.get("source", ""); session.watch.source = session.source
 	for design in session.terrains:
+		if session.visual.has_node(NodePath(design.name)): continue
 		var mesh := MeshInstance3D.new(); mesh.name = design.name; mesh.mesh = design.grid.mesh(); mesh.transform = design.pose; session.visual.add_child(mesh); mesh.owner = session.visual
 	node.free(); selected = ""; session.dirty = false; session.error = "已打开独立包；原来源缺失只影响重导入"
 	var saved: Dictionary = session.view.get("camera",{})
 	center = saved.get("center",Vector3.ZERO); distance = saved.get("distance",4.0); yaw = saved.get("yaw",.6); pitch = saved.get("pitch",.35)
+	slice_level.value=session.view.get("sdf_slice",.33); relations.text=JSON.stringify(session.contact_relations); world_options.text=JSON.stringify(session.world_settings)
 	rebuild(); update_camera(); return true
 
 func apply_scene() -> bool:
@@ -335,3 +401,20 @@ func _process(delta: float) -> void:
 
 func shutdown() -> void:
 	session.close()
+
+func refresh_contact_controls() -> void:
+	var kind:=strategy.get_item_text(strategy.selected)
+	var unsupported:=not strategy.disabled and kind in ["compound_boxes","visual"]
+	native_contact.disabled=unsupported
+	native_contact.tooltip_text="compound_boxes 仅支持原有 Godot 组合路径，尚未接入原生接触 JSON；visual 不生成碰撞" if unsupported else "显式使用 MuJoCo 接触，保留未选用时的 Godot 材质语义"
+	if unsupported: native_contact.set_pressed_no_signal(false)
+	advanced.editable=not unsupported and (native_contact.button_pressed or kind in Session.Native.MODES)
+
+# Scroll the complete workflow rather than forcing the editor dock to its content width.
+func update_layout() -> void:
+	if not preview_split: return
+	var stacked:=layout_scroll.size.x<640
+	preview_split.vertical=stacked
+	preview_split.custom_minimum_size.y=410 if stacked else 260
+	tree.size_flags_horizontal=Control.SIZE_EXPAND_FILL if stacked else Control.SIZE_FILL
+	preview_container.size_flags_horizontal=Control.SIZE_EXPAND_FILL

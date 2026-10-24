@@ -33,7 +33,7 @@ static func create(geom: Dictionary) -> MeshInstance3D:
 			var mesh := BoxMesh.new()
 			mesh.size = Vector3(size.x,size.z,size.y)*2
 			instance.mesh = mesh
-		7:
+		1, 7, 8:
 			var mesh := ArrayMesh.new()
 			var arrays := []
 			arrays.resize(Mesh.ARRAY_MAX)
