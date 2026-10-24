@@ -145,8 +145,12 @@ func apply_scene() -> bool:
 	undo.add_do_property(target,"design",draft.duplicate(true));undo.add_undo_property(target,"design",target.design)
 	for item in [["collision_layer",draft_layer],["collision_mask",draft_mask]]:
 		undo.add_do_property(target,item[0],item[1]);undo.add_undo_property(target,item[0],target.get(item[0]))
-	undo.add_do_property(target,"physics_material_override",draft_material.duplicate(true))
-	undo.add_undo_property(target,"physics_material_override",target.physics_material_override.duplicate(true) if target.physics_material_override else null)
+	# Material drafts are local to this terrain. Keep sharing for grid-only edits;
+	# material edits create an independent resource, while Undo restores the exact
+	# original reference so earlier Inspector history still targets that resource.
+	if _material_state(draft_material)!=_material_state(target.physics_material_override):
+		undo.add_do_property(target,"physics_material_override",draft_material.duplicate(true))
+		undo.add_undo_property(target,"physics_material_override",target.physics_material_override)
 	undo.commit_action();EditorInterface.mark_scene_as_unsaved();discard();return true
 func undo_scene() -> void:
 	if dirty: error="先应用或 Discard 草稿";_show_status();return

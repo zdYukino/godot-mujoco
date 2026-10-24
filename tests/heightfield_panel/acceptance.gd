@@ -150,6 +150,31 @@ func run(plugin:EditorPlugin):
 	check(not panel.apply_live() and "Bounce" in panel.error,"unsupported Inspector bounce cannot send successful payload")
 	first.physics_material_override.bounce=0;panel.discard()
 	fake.changed.disconnect(panel.refresh_live);panel.debugger=real_debugger;real_debugger.changed.connect(panel.refresh_live);panel.selected_key="";panel.refresh_live()
+	# Same scene history as an Inspector resource edit, with two owners of one material.
+	var shared_material=PhysicsMaterial.new();shared_material.friction=.23
+	first.physics_material_override=shared_material;second.physics_material_override=shared_material;panel.discard()
+	var manager=plugin.get_undo_redo()
+	manager.create_action("Inspector shared terrain friction",UndoRedo.MERGE_DISABLE,first)
+	manager.add_do_property(shared_material,"friction",.31);manager.add_undo_property(shared_material,"friction",.23);manager.commit_action()
+	panel._sync_external()
+	check(is_equal_approx(first.physics_material_override.friction,.31) and second.physics_material_override==shared_material,"Inspector edit updates shared material")
+	panel.friction.value=.67
+	check(panel.apply_scene() and first.physics_material_override!=shared_material and second.physics_material_override==shared_material and is_equal_approx(shared_material.friction,.31),"panel material Apply isolates selected terrain only")
+	history.undo();panel._sync_external()
+	check(first.physics_material_override==shared_material and second.physics_material_override==shared_material,"panel Undo restores exact shared resource identity")
+	history.undo();panel._sync_external()
+	check(first.physics_material_override==shared_material and is_equal_approx(first.physics_material_override.friction,.23) and is_equal_approx(second.physics_material_override.friction,.23),"earlier Inspector Undo reaches both terrain references")
+	history.redo();panel._sync_external()
+	check(first.physics_material_override==shared_material and is_equal_approx(first.physics_material_override.friction,.31),"Inspector Redo preserves shared identity")
+	history.redo();panel._sync_external()
+	check(first.physics_material_override!=shared_material and is_equal_approx(first.physics_material_override.friction,.67) and second.physics_material_override==shared_material,"panel Redo restores isolated material")
+	history.undo();panel._sync_external();panel.save_scene()
+	var shared_saved=ResourceLoader.load("res://TerrainScene.tscn","",ResourceLoader.CACHE_MODE_IGNORE).instantiate()
+	check(shared_saved.get_node("First").physics_material_override==shared_saved.get_node("Second").physics_material_override,"save after Undo preserves material sharing");shared_saved.free()
+	panel.heights.text="1 1 1 1";panel.heights.text_changed.emit()
+	check(panel.apply_scene() and first.physics_material_override==shared_material and second.physics_material_override==shared_material,"grid-only Apply preserves shared material identity")
+	history.undo();panel._sync_external()
+	check(first.physics_material_override==shared_material,"grid-only Undo preserves shared material identity")
 	var report={"passed":passed,"failed":failed}
 	var path:=""
 	for arg in OS.get_cmdline_user_args():

@@ -72,3 +72,7 @@ Discard。原生 Undo/Redo 与面板操作使用同一场景历史。
 面板现有独立的 Friction / Rough 草稿控件。Inspector 改材质时，干净面板同步新值；已有未提交草稿时标记冲突并保留草稿，必须 Discard 或明确“保留草稿并采用当前基线”。后者保留旧草稿材质，下一次 Apply 将有意覆盖当前场景材质。应用到场景将网格、掩码和材质放入同一 Undo/Redo 动作；面板保存前必须提交草稿。运行 Apply 显式发送带符号 friction 与 bounce，不再依赖运行实例旧材质补全；它不会自动保存场景。
 
 编辑器到运行回归：`GODOT_BIN=/path/to/godot OUT=/tmp/terrain-panel bash tests/heightfield_panel/run.sh`。包含 fake-debugger 实际 payload 检查，并在独立运行进程通过真实 Bridge/Apply 将运行旧值 0.23 替换为编辑器发送的 0.67，检查最终 MJCF 接触值。dot 仍应在真实 F5/F6 会话用 Inspector 从 0.23 改为 0.67 后点击“应用到运行实例”，确认 revision、完成结果与运行材质；检查 Undo/Redo、草稿冲突、保存关闭重开。
+
+### 共享材质与撤销
+
+Inspector 直接编辑共享 PhysicsMaterial 会影响引用它的所有地形，沿用 Godot 资源语义。面板材质草稿属于当前所选地形：只有材质数值改变并“应用到场景”时才为该地形建立独立材质；纯网格/掩码编辑保留原材质引用。撤销面板材质动作会恢复**原来的同一个资源**（包括 null），从而恢复共享关系，并允许更早的 Inspector 资源属性 Undo/Redo 继续作用于原资源。Redo 再恢复面板创建的独立材质。保存后共享关系也应保留。
