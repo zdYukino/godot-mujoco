@@ -10,6 +10,13 @@ func run(plugin):
 	var panel = plugin.map_panel
 	for i in 15: await panel.get_tree().process_frame
 	check(is_instance_valid(panel.camera) and is_instance_valid(panel.tree),"P1 editor panel initialized")
+	panel.browse_package()
+	var picker: FileDialog
+	for child in panel.get_children():
+		if child is FileDialog: picker = child
+	check(picker != null and picker.file_mode == FileDialog.FILE_MODE_OPEN_FILE and picker.filters.size() == 1 and picker.filters[0].get_slice(";",0).strip_edges() == "*.json", "P3 package picker uses selectable JSON wildcard filter")
+	if picker: picker.hide(); picker.canceled.emit()
+	await panel.get_tree().process_frame
 	panel.path_field.text = "res://fixtures/box.glb"; panel.unit.select(1); panel.axes.select(0)
 	check(panel.import_source(false),"P1 viewer imports GLB")
 	var path := str(panel.session.visual.get_path_to(panel.session.meshes()[0]))

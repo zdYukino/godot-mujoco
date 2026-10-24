@@ -250,7 +250,7 @@ func save_package() -> void:
 	refresh_status()
 
 func browse_package() -> void:
-	var dialog := FileDialog.new(); dialog.access = FileDialog.ACCESS_RESOURCES; dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE; dialog.filters = PackedStringArray(["manifest.json ; 地图 manifest"]); add_child(dialog)
+	var dialog := FileDialog.new(); dialog.access = FileDialog.ACCESS_RESOURCES; dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE; dialog.filters = PackedStringArray(["*.json ; 地图 manifest"]); add_child(dialog)
 	dialog.file_selected.connect(func(path): open_package(path.get_base_dir()); dialog.queue_free()); dialog.canceled.connect(dialog.queue_free); dialog.popup_centered_ratio(.7)
 
 func open_package(path: String) -> bool:
