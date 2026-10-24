@@ -2,13 +2,15 @@
 
 在 Godot 中导入、编辑和运行 MuJoCo 模型。项目由 C++ GDExtension、MuJoCo 编辑器插件和场景运行组件组成：既可以编辑 MJCF，也可以把保存的模型放入 Godot 场景，与受支持的普通刚体共享物理空间。
 
-[English](README.en.md) · [安装详解](docs/linux-install.zh-CN.md) · [中文文档](docs/README.zh-CN.md) · [开发基线](docs/linux-development-baseline-20261022.zh-CN.md)
+[English](README.en.md) · [安装详解](docs/linux-install.zh-CN.md) · [中文文档](docs/README.zh-CN.md) · [开发基线](docs/linux-development-baseline-20261022.zh-CN.md) · [系统功能架构图（可编辑 HTML）](docs/system-function-map.zh-CN.html)
 
 ![MuJoCo 工作区：模型树、三维预览和属性面板](docs/evidence/mouse-gui-fix/viewport-shapes.png)
 
 *仓库现有真实编辑器截图，展示球、圆柱与属性编辑；截图中的夹具和生成文件不是安装所需内容。*
 
 ## 功能与支持范围
+
+[系统功能架构图](docs/system-function-map.zh-CN.html)按功能模块组织当前能力、限制与后续计划，状态作为节点标签。下载 HTML 后用浏览器打开，可拖动、编辑并导出；浏览器中的个人修改不会自动回写仓库。图中计划项不等于已实现功能。
 
 - **MJCF 编辑**：body/joint/geom/actuator 树、视口选择、移动/旋转/尺寸操作、质量与惯量、关节限位/阻尼/摩擦、适用的位置 PD 参数，以及撤销/重做。
 - **模型资源与场景**：保存包含依赖资产的模型包，使用 `MjRuntimeWorld` 和 `MjModelInstance` 组织独立实例；支持整个文件系统项目搬迁。

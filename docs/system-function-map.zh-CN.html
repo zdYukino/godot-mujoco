@@ -1,0 +1,866 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Godot × MuJoCo · 系统功能架构图</title><style>
+:root{color-scheme:light;--ink:#213a39;--muted:#647873;--line:#dce5df;--paper:#f4f6ef;--green:#207466;--accent:#d8ec69}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 system-ui,-apple-system,'Segoe UI',sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:1px solid #cbd9d0;border-radius:8px;background:white;color:var(--ink);padding:8px 12px}button:hover{background:#edf5e8}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid #487ef0;outline-offset:2px}button:disabled{opacity:.4;cursor:default}.primary{background:var(--green);color:white;border-color:var(--green)}.primary:hover{background:#145c50}header{background:#163e36;color:white;padding:34px max(24px,calc((100vw - 1240px)/2));position:relative}header small{color:#b3ccbd;letter-spacing:.16em}h1{font-size:clamp(28px,4vw,44px);line-height:1.15;letter-spacing:-.04em;margin:13px 0}header p{color:#c9d8ce;max-width:820px;margin:14px 0}header .tag{position:absolute;right:max(24px,calc((100vw - 1240px)/2));top:38px;background:var(--accent);color:#29442c;border-radius:20px;padding:4px 14px;font-size:12px}main{max-width:1290px;margin:0 auto;padding:24px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}.stat{background:white;border:1px solid var(--line);border-radius:12px;padding:16px 20px}.stat strong{font-size:29px;display:block;line-height:1.25}.stat span{color:var(--muted);font-size:13px}.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.toolbar input{flex:1;min-width:210px}.toolbar input,select,textarea,input[type=text]{padding:9px 12px;border:1px solid #c6d5ca;border-radius:8px;background:white;color:var(--ink)}.guide{border-left:3px solid #a9bb55;padding:6px 14px;color:var(--muted);font-size:13px;margin:18px 0}.savebar{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:14px}.tree{display:grid;gap:14px}.node{background:white;border:1px solid var(--line);border-radius:11px;overflow:hidden}.node .node{border-radius:8px;margin:8px 0}.head{display:flex;align-items:flex-start;gap:10px;padding:15px}.toggle{border:none;padding:1px 4px;min-width:24px;font-size:18px;background:transparent}.donebox{width:19px;height:19px;accent-color:var(--green);margin-top:4px;flex-shrink:0}.titlearea{flex:1;min-width:0}.title{font-weight:650;font-size:16px;overflow-wrap:anywhere}.evidence{font-size:12px;color:#35635a;background:#f0f6f2;border-left:2px solid #88b3a0;padding:5px 8px;margin-top:7px;overflow-wrap:anywhere}.meta{font-size:12px;color:var(--muted);margin-top:3px}.pill{display:inline-block;border-radius:20px;background:#eaf2e6;padding:2px 9px;font-size:11px;margin-right:7px;font-weight:600}.status-awaiting_acceptance{background:#fff2cb;color:#78601d}.status-in_progress{background:#fff2cb;color:#78601d}.status-blocked{background:#ffe6df;color:#963f2c}.status-deferred{background:#edeaf4;color:#6b5d84}.status-planned{background:#e9eef3;color:#50687c}.note{font-size:13px;color:#65766e;white-space:pre-wrap;margin-top:5px;overflow-wrap:anywhere}.actions{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.actions button{font-size:12px;padding:5px 8px}.selectround{font-size:11px;white-space:nowrap;padding:4px 7px;border:1px solid #dce5df;border-radius:6px}.selectround:has(input:checked){background:#f1f6cb;border-color:#c1ce6e}.children{margin:0 14px 14px 35px;border-left:2px solid #dce5df;padding-left:15px}.root>.head{background:#fbfcf7}.empty{padding:40px;text-align:center;color:var(--muted)}footer{font-size:12px;color:var(--muted);margin:25px 0}.danger{color:#ad412a}dialog{border:1px solid #b9ccc0;border-radius:14px;width:min(560px,95vw);padding:24px;box-shadow:0 20px 80px #163e3633}dialog::backdrop{background:#173e3670}dialog h2{margin:0 0 16px}dialog label{display:block;margin:13px 0}dialog input[type=text],dialog textarea,dialog select{width:100%}dialog textarea{min-height:100px;resize:vertical}.dialogactions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}.progress{height:5px;width:110px;background:#e7ece3;border-radius:5px;display:inline-block;vertical-align:middle;overflow:hidden;margin-right:8px}.progress i{height:100%;display:block;background:#6f9f6e}#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);max-width:90vw;background:#173e36;color:white;border-radius:10px;padding:12px 18px;box-shadow:0 4px 30px #0002;z-index:5}body>input[type=file]{display:none}@media(max-width:760px){header .tag{position:static;display:inline-block;margin-top:10px}header{padding:25px 18px}main{padding:16px 10px}.summary{grid-template-columns:repeat(2,1fr);gap:8px}.stat{padding:12px}.head{flex-wrap:wrap;padding:12px}.actions{margin-left:35px;width:100%}.children{margin-left:14px;padding-left:8px}.title{font-size:14px}.toolbar button{flex-grow:1}.guide{margin:15px 4px}}
+body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}header h1{font-size:26px;margin:5px 0}header h1 span{font-size:16px;font-weight:400;margin-left:12px;color:#d4e5dd}header p{font-size:12px;margin:6px 0;max-width:100%}header .tag{top:25px;right:24px}main{max-width:none;padding:12px 18px}.summary{display:flex;gap:12px;margin:0 0 8px}.stat{padding:5px 12px;display:flex;gap:10px;align-items:center;flex:1}.stat strong{font-size:20px}.stat span{font-size:11px}.toolbar{margin:7px 0;gap:6px}.toolbar button{font-size:12px;padding:5px 9px}.toolbar input,.toolbar select{font-size:12px;padding:6px 10px}.guide{font-size:11px;line-height:1.55;margin:8px 0;padding:3px 10px}.savebar{margin:6px 0;font-size:11px}.map-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 0}.map-controls button{padding:5px 10px;font-size:12px}.map-controls span{font-size:11px;color:#667f74}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 300px;min-height:520px;height:calc(100vh - 365px);gap:12px}#viewport{position:relative;overflow:hidden;background:#eef3ee;background-image:radial-gradient(#c5d3c7 .8px,transparent .8px);background-size:18px 18px;border:1px solid #cbd8ce;border-radius:12px;touch-action:none;cursor:grab}#viewport:active{cursor:grabbing}#world{position:absolute;left:0;top:0;transform-origin:0 0;width:0;height:0}#edges{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none}.edge{fill:none;stroke:#89a99b;stroke-width:2}.edge.depth-1{stroke:#347d69;stroke-width:3}#tree{position:absolute;left:0;top:0;display:block}.map-node{position:absolute;width:270px;height:112px;background:white;border:1px solid #ccd9d0;border-left:5px solid #8aab9b;border-radius:10px;box-shadow:0 3px 10px #2449390b;padding:10px 12px;touch-action:none;cursor:grab;user-select:none}.map-node.depth-1{border-left-color:#236b54;background:#f9fcf8}.map-node.depth-2{border-left-color:#5d8d78}.map-node.selected{outline:3px solid #e0bb42;outline-offset:2px}.map-node.project-node{background:#173f34;color:white;border:0;display:flex;flex-direction:column;justify-content:center;gap:3px}.project-node small{color:#b3d0c1;font-size:11px}.project-node strong{font-size:22px}.project-node span{font-size:11px;color:#bdd4c6}.node-row{display:flex;gap:7px;align-items:flex-start}.map-title{font-size:14px;line-height:1.45;max-height:62px;text-align:left;border:0;background:transparent!important;padding:0;flex:1;overflow:hidden;font-weight:650;cursor:grab}.donebox{width:17px;height:17px;margin-top:3px}.node-meta{position:absolute;bottom:9px;left:12px;right:12px;display:flex;align-items:center;gap:4px;font-size:10px;color:#678074}.node-meta .pill{font-size:10px;padding:2px 7px}.node-meta button{margin-left:auto;font-size:11px;padding:1px 7px;min-width:36px}#detail{overflow:auto;background:#fff;border:1px solid #d5e0d8;border-radius:12px;padding:17px;min-width:0}#detail h2{font-size:18px;margin:10px 0;overflow-wrap:anywhere}#detail p{font-size:13px}.breadcrumb{font-size:11px;color:#688477;line-height:1.6}.detail-actions{display:flex;flex-wrap:wrap;gap:6px;margin:15px 0}.detail-actions button{font-size:12px;padding:6px 10px}.roundfield{font-size:12px;display:block;margin-top:15px}footer{font-size:10px;margin:8px 0}@media(max-width:800px){header{padding:14px}header .tag{display:none}header h1{font-size:22px}header h1 span{font-size:13px}main{padding:9px}.summary{flex-wrap:wrap;gap:5px}.stat{flex-basis:45%;padding:5px 8px}.workspace{grid-template-columns:1fr;height:auto;min-height:0}#viewport{height:65vh;min-height:400px}#detail{max-height:380px}.toolbar button{flex-grow:0}.guide{font-size:10px}.map-controls span:last-child{width:100%}}
+</style></head><body><header><small>SYSTEM ARCHITECTURE / 系统功能架构</small><div class="tag">可编辑 · 私人工作底稿</div><h1>Godot × MuJoCo <span>系统功能架构图</span></h1><p>系统 → 功能模块 → 子功能。完成状态仅作节点标签；点选查看能力边界、已验收范围与尚缺功能。</p></header><main><section class="summary" aria-label="叶子任务统计"><div class="stat"><strong id="completed">0</strong><span>已完成 / 全部叶子</span></div><div class="stat"><strong id="unfinished">0</strong><span>未完成 · 进行中 / 待验收 / 受阻</span></div><div class="stat"><strong id="planned">0</strong><span>待完成 · 待启动 / 暂缓</span></div><div class="stat"><strong id="chosen">0</strong><span>本轮拟推进 · 节点数</span></div></section><div class="toolbar"><input id="search" type="search" placeholder="搜索任务、备注或提交号…" aria-label="搜索任务"><select id="filter" aria-label="筛选状态"><option value="all">全部状态</option><option value="done">已完成</option><option value="unfinished">未完成</option><option value="planned">待完成</option><option value="selected">本轮拟推进</option></select><button id="expand">展开全部</button><button id="collapse">折叠全部</button><button id="addroot" class="primary">＋ 添加功能模块</button></div><div class="toolbar"><button id="exportHtml">下载当前 HTML</button><button id="exportJson">导出 JSON</button><button id="exportSeed">下载页面工程快照</button><button id="importJson">导入 JSON</button><button id="exportRound">导出本轮清单</button><button id="restoreBackup">恢复导入前备份</button><button id="undo" disabled>撤销修改</button><button id="reset" class="danger">恢复初始版本</button></div><div class="guide">主分支按功能架构组织，状态仅为属性。旧版浏览器缓存保留在原存储区，不会覆盖此架构版；如有旧版个人修改，请先从旧 HTML 导出再对照。<br>完成勾选是你的可编辑记录；侧栏“工程记录”保留内嵌证据，不随勾选改变。完成勾选只更改单个节点，不会自动勾选子任务。进度按叶子统计，父节点状态独立维护。<br>“本轮拟推进”仅为需求草案，不等于执行或合并授权。保存仅在当前浏览器，不会跨设备同步，也不会自动发送给助手；请下载最新 HTML 或 JSON 后发回对齐。</div><div class="savebar"><span id="saveStatus" role="status" aria-live="polite"></span><span id="baseline"></span></div><div class="map-controls"><button id="zoomOut" aria-label="缩小">−</button><span id="zoomValue">100%</span><button id="zoomIn" aria-label="放大">＋</button><button id="fit">适合全图</button><button id="focus">聚焦选中</button><button id="autoLayout">自动分层布局</button><span>拖动空白平移 · 滚轮缩放 · 拖动节点仅改布局</span></div><div class="workspace"><section id="viewport" aria-label="可拖动思维导图画布"><div id="world"><svg id="edges" aria-hidden="true"></svg><section id="tree" aria-label="系统功能架构图节点"></section></div></section><aside id="detail" aria-label="选中任务详情"></aside></div><footer id="revision"></footer></main><dialog id="editor"><form id="editform"><h2 id="dialogtitle">编辑任务</h2><label>任务名称<input id="editTitle" type="text" maxlength="300" required></label><label>状态<select id="editStatus"><option value="done">已完成</option><option value="in_progress">未完成 · 进行中</option><option value="awaiting_acceptance">待 dot 验收</option><option value="blocked">未完成 · 受阻</option><option value="planned">待完成 · 待启动</option><option value="deferred">待完成 · 暂缓</option></select></label><label>备注 / 验收标准<textarea id="editNote" maxlength="10000"></textarea></label><label>补充来源 / 提交（可编辑，不改写工程记录）<input id="editSource" type="text" maxlength="2000"></label><label><input id="editSelected" type="checkbox"> 本轮拟推进（仅草案）</label><div class="dialogactions"><button type="button" id="cancelEdit">取消</button><button class="primary" type="submit">保存任务</button></div></form></dialog><div id="toast" role="status" hidden></div><input type="file" id="fileInput" accept="application/json,.json"><script id="seed" type="application/json">{
+  "schemaVersion": 1,
+  "project": "Godot × MuJoCo",
+  "revision": 10,
+  "updatedAt": "2026-10-24T17:11:00Z",
+  "baseline": "功能架构视图 · main e6ecd1a · 2026-10-25 环境恢复/轻量验证完成 · 状态为节点属性，不代表全系统完成",
+  "nodes": [
+    {
+      "id": "task-005",
+      "title": "01 · 原生物理后端",
+      "status": "in_progress",
+      "note": "职责：将受支持的 Godot 物理对象、查询与约束映射到 MuJoCo；当前仅为有限子集，并非完整 PhysicsServer3D 替代。\n\n【最新能力边界】原子预设、受限原生后端和有界 Hinge 已验收并合并；完整后端 / 完整原生关节仍未完成。有界 Hinge 不包括主动链、闭环、多圈等能力。此前“主动限位/电机尚未验收”与环境阻碍记录已被本次最终验收取代。\n\n【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n本轮优先级子集完成，最终集成 4c2f1f7 已独立验收。包括 P0/P1、有限查询、Capsule、Area、无环 Pin/被动 Hinge 与最小平移 Character。\n完整原生后端仍为进行中，不是 Godot Physics 的全面替代。复杂形状、完整查询、完整 Character、Hinge limits/motor、其他关节、CCD、睡眠/轴锁等未实现。\n主线仍为 4637c33；PR #8 为草稿且未合并，合并决定与实现验收分开。\n\n【2026-10-24 当前进度】继续推进 Hinge 主动限位/电机。08:53 被动 Hinge 回归通过；主动能力仍在开发验证，不能将本周已验收的被动范围扩大为主动范围。\n\n【2026-10-24 09:30 当前阶段】PR #16 · f70e937d46ce700fd43cdf494aeff58d7965feff · draft，未合并 · 待 dot 验收。有界限位/速度电机与区间加载修复已有开发自测证据，最终代码及 GUI 必须在实际 dot 云电脑验收；当前因 SDK/hostfxr 等环境依赖未就绪而尚未验收。开发自测不算最终完成。",
+      "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+      "selected": false,
+      "children": [
+        {
+          "id": "task-001",
+          "title": "静态 / 自由刚体 Box、Sphere、WorldBoundary",
+          "status": "done",
+          "note": "已验证碰撞、射线与生命周期。",
+          "source": "main ≤ 8157253",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "main ≤ 8157253"
+          }
+        },
+        {
+          "id": "task-002",
+          "title": "原生 CylinderShape3D 静态 / 刚体",
+          "status": "done",
+          "note": "尺寸、惯量、射线、接触及保存旋转已独立验收，PR #3 已合并。",
+          "source": "main · 732f92d（PR #3 已合并）",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "main · 732f92d（PR #3 已合并）"
+          }
+        },
+        {
+          "id": "native-capsule-primitive",
+          "title": "Capsule 原生基础形状全链路",
+          "status": "done",
+          "note": "【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n原生 Capsule 创建、参数与基础形状碰撞/查询链路已在声明范围内独立验收。此项不代表完整 CharacterBody3D、全部 sweep 组合或 MJCF / heightfield motion。",
+          "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+          }
+        },
+        {
+          "id": "native-body-contract",
+          "title": "P0 · 能力契约与普通刚体语义收口",
+          "status": "done",
+          "note": "【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n范围内完成：质量、摩擦、重力、阻尼、force/impulse、COM 坐标语义及 unsupported 明确拒绝。\n独立自动化与实际 GUI 已验收。自定义 COM/inertia、bounce、完整 Godot 刚体语义不由此自动获得支持。",
+          "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+          }
+        },
+        {
+          "id": "native-contact-reporting",
+          "title": "P1 · 普通刚体接触报告",
+          "status": "done",
+          "note": "【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n范围内完成：接触报告容量、getter 与 contact_monitor 链路；坐标与接触身份按已声明的原生范围返回。\n冲量仅报告最后一个子步，不是整帧累计冲量。不得把导入 MJCF / heightfield 伪装为完整原生 RID 接触覆盖。独立自动化与实际 GUI 已验收。",
+          "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+          }
+        },
+        {
+          "id": "native-query",
+          "title": "空间查询：射线、重叠与扫掠",
+          "status": "in_progress",
+          "note": "【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n有限原生重叠与连续扫掠子集已实现并验收；完整空间查询仍未完成。\n形状组合、旋转与数值可表达范围按能力矩阵限制，unsupported 明确拒绝；不包含全部 MJCF / heightfield。",
+          "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+          "selected": false,
+          "children": [
+            {
+              "id": "native-query-overlap",
+              "title": "P2.1 · 原生重叠 / 接触信息有限子集",
+              "status": "done",
+              "note": "【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n范围内完成：原生 Box / Sphere / Cylinder / Capsule 的有限组合重叠与接触信息。\n不覆盖全部形状组合、MJCF 或 heightfield；不将部分查询实现描述为通用闭环。独立自动化与实际 GUI 已验收。",
+              "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+              "selected": false,
+              "children": [],
+              "evidence": {
+                "status": "done",
+                "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+              }
+            },
+            {
+              "id": "native-query-sweep",
+              "title": "P2.2 · 连续扫掠有限子集",
+              "status": "done",
+              "note": "【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n范围内完成：有限连续 cast_motion，unsupported 或数值不可表达的输入明确拒绝；不是离散重叠伪装连续扫掠。\n早期 17 项 empty / rotated 失败已修复；对应复验 432 项、0 失败，连续 3 次通过。此结果不代替最终 Character 集成复验。\n查询 sweep 不等于动态刚体 CCD；完整形状/旋转扫掠仍未支持。",
+              "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+              "selected": false,
+              "children": [],
+              "evidence": {
+                "status": "done",
+                "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+              }
+            }
+          ],
+          "evidence": {
+            "status": "in_progress",
+            "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+          }
+        },
+        {
+          "id": "task-003",
+          "title": "区域与角色运动",
+          "status": "in_progress",
+          "note": "【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\nArea 有限范围与最小平移 Character 已独立验收。完整 CharacterBody3D / Area3D 兼容仍未完成；移动平台、完整台阶、旋转运动及其他未声明能力不算完成。",
+          "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+          "selected": false,
+          "children": [
+            {
+              "id": "native-character",
+              "title": "P3A · 最小 Character / 运动学平移子集",
+              "status": "done",
+              "note": "【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n最小范围完成并独立验收：Sphere / Capsule body_test_motion、恢复、float 可表达性校验、运动学显式速度与受限平移角色移动。\n最终 4c2f1f7：RID 52 项 × 3、Character 23 项 × 3、reset 11 项、加强负例 18/0；真实 Character GUI 19/0，覆盖地面、贴墙滑动、墙角、snap、20° 斜坡、暂停、节点重置/当前查询几何与第二实例。\n历史阶段失败曾阻断验收；3 个 P2 问题与 reset 差异已修复并通过独立源码复核、最终数值及 GUI 复验，不能将早期阶段结果当作当时已通过。\n单向运动学交互不推动动态刚体；完整移动平台/台阶、旋转运动、CCD、heightfield / MJCF motion 未实现。",
+              "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+              "selected": false,
+              "children": [],
+              "evidence": {
+                "status": "done",
+                "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+              }
+            },
+            {
+              "id": "native-area-monitoring",
+              "title": "P3B.1 · Area3D 非实体监测",
+              "status": "done",
+              "note": "【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n范围内完成：Boolean 监测、不施加实体冲量、FIFO 安全事件处理；原生支持形状范围内的进出与生命周期验收通过。\n独立自动化与实际 GUI 已验收；不宣称全部 Godot Area 行为或全部导入几何覆盖。",
+              "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+              "selected": false,
+              "children": [],
+              "evidence": {
+                "status": "done",
+                "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+              }
+            },
+            {
+              "id": "native-area-overrides",
+              "title": "P3B.2 · Area 重力 / 阻尼覆盖",
+              "status": "done",
+              "note": "【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n范围内完成：优先级重力 / 阻尼覆盖、方向重力与点重力。\n独立自动化与实际 GUI 已验收；具体组合和边界按能力契约，不扩展为完整 Godot Area 兼容。",
+              "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+              "selected": false,
+              "children": [],
+              "evidence": {
+                "status": "done",
+                "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+              }
+            },
+            {
+              "id": "native-character-full-remaining",
+              "title": "Character 平台 / 楼梯 / 双向推挤",
+              "status": "planned",
+              "note": "完整移动平台、楼梯和双向推挤尚未完成；已有最小平移子集不代表这些能力已通过。",
+              "source": "2026-10-24 当前未完成清单",
+              "selected": false,
+              "evidence": {
+                "status": "planned",
+                "source": "当前能力边界；未完成"
+              },
+              "children": []
+            }
+          ],
+          "evidence": {
+            "status": "in_progress",
+            "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+          }
+        },
+        {
+          "id": "task-004",
+          "title": "Godot 原生关节映射",
+          "status": "in_progress",
+          "note": "【最新能力边界】原子预设、受限原生后端和有界 Hinge 已验收并合并；完整后端 / 完整原生关节仍未完成。有界 Hinge 不包括主动链、闭环、多圈等能力。此前“主动限位/电机尚未验收”与环境阻碍记录已被本次最终验收取代。\n\n【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n原生 Pin 与被动 Hinge 最小范围已验收。完整 Joint3D 兼容未完成；limits、motor、闭环与其他关节不在完成范围。\n\n【2026-10-24 当前进度】主动限位 / 电机为本日进行中任务，尚未完成验收。首版主动配置拒绝反平行 frame；被动 Hinge 仍支持。正增加子步角速度数值检查。\n\n【2026-10-24 09:30 当前阶段】PR #16 · f70e937d46ce700fd43cdf494aeff58d7965feff · draft，未合并 · 待 dot 验收。有界限位/速度电机与区间加载修复已有开发自测证据，最终代码及 GUI 必须在实际 dot 云电脑验收；当前因 SDK/hostfxr 等环境依赖未就绪而尚未验收。开发自测不算最终完成。",
+          "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+          "selected": false,
+          "children": [
+            {
+              "id": "native-joint-feasibility",
+              "title": "P3C.1 · 约束映射与拓扑边界",
+              "status": "done",
+              "note": "【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n已验证无环世界/刚体连接拓扑；不支持的闭环与参数明确拒绝。\n映射、生命周期和重建范围经独立自动化及实际 GUI 验收；MJCF / URDF 导入关节仍是不同通路。",
+              "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+              "selected": false,
+              "children": [],
+              "evidence": {
+                "status": "done",
+                "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+              }
+            },
+            {
+              "id": "native-joint-pin-hinge",
+              "title": "P3C.2 · Pin / 被动 Hinge 最小集合",
+              "status": "done",
+              "note": "【最终阶段补充】实际 dot 精确 f70e937 验收与合并已完成；旧环境依赖阻碍消除。有界 Hinge 限位/速度电机新增完成，原本受限后端和被动 Hinge 的验收边界不扩大。\nPR #5 合并 48468f4f5157ddb295f8c6998a6618af8a055dbb；PR #8 合并 b3a9ad2d242ff094164fbaeacbd446845a87e861；PR #16 合并 e6ecd1a2f6e962f1cab731b12946c6f963edf789。main 源码树 7c056cd37df33830fb7a69cdc9a68dc955bc15f6 与验收 f70e937d46ce700fd43cdf494aeff58d7965feff 完全一致，差异 0。\n\n【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n范围内完成：无环 Pin（世界/刚体）与被动 Hinge 软轴约束。\n不支持 Hinge limits / motor，不支持闭环；不能称为完整 Pin/Hinge Godot 参数集合。\n独立自动化及实际 GUI 已验收，包括纠正后的产品 Pin/Hinge 输入、保存与重开。\n\n【2026-10-24 当前进度】今天被动 Hinge 回归通过。此节点仍只代表原有被动集合；反平行 frame 被动支持不等于主动配置支持。",
+              "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+              "selected": false,
+              "children": [],
+              "evidence": {
+                "status": "done",
+                "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+              }
+            },
+            {
+              "id": "native-hinge-active-20261024",
+              "title": "P3C.4 · Hinge 有界限位 / 速度电机（已验收并入主线）",
+              "status": "done",
+              "note": "已完成：有界限位、速度电机，以及负值同号 / 等限区间保存重开后缓存与 native 不一致的修复。\n最终验收在实际 dot 云电脑完成：精确 f70e937d46ce700fd43cdf494aeff58d7965feff 的 1471 个源码 blob 复核未改；Hinge 10 阶段、21 项交叉与 22 个 runner 均退出 0。真实 GUI 验证限位、电机反转、暂停、单步、删除重建、保存重开通过。\n原生二进制 SHA256：3319a2955bc5bbd9cfe094649105e6a31443f9c5b567fba9df544c105f17a0cb。\nGodot / .NET SDK / CMake / MuJoCo 依赖已备齐，旧 SDK / hostfxr 和 GUI 环境阻碍已消除。OpenGL3 + Dummy 验收干净；默认编辑器 Vulkan / ALSA 宿主诊断保留，不隐藏历史失败。开发 saved 环境自测不替代本次实际 dot 最终验收；旧未运行测试仍保留其原有历史状态，不追认为当时通过。\n边界：仅有界能力完成，不包括主动链、闭环、多圈等。首版反平行 frame 主动配置拒绝、被动支持的限制保留，不扩大完成范围。\nPR #5 合并 48468f4f5157ddb295f8c6998a6618af8a055dbb；PR #8 合并 b3a9ad2d242ff094164fbaeacbd446845a87e861；PR #16 合并 e6ecd1a2f6e962f1cab731b12946c6f963edf789。main 源码树 7c056cd37df33830fb7a69cdc9a68dc955bc15f6 与验收 f70e937d46ce700fd43cdf494aeff58d7965feff 完全一致，差异 0。\n开发证据：https://github.com/zdYukino/godot-mujoco/blob/f70e937d46ce700fd43cdf494aeff58d7965feff/docs/evidence/native-hinge-range-loading-fix/README.md\n最终实际 dot 验收归档已另行提供。",
+              "source": "实际 dot 云电脑验收 f70e937d46ce700fd43cdf494aeff58d7965feff；PR #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789",
+              "selected": false,
+              "evidence": {
+                "status": "done",
+                "source": "实际 dot 云电脑验收 f70e937d46ce700fd43cdf494aeff58d7965feff；PR #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789"
+              },
+              "children": []
+            },
+            {
+              "id": "native-joint-advanced",
+              "title": "P3C.3 · Slider / ConeTwist / 6DOF",
+              "status": "deferred",
+              "note": "交付 / 用途：远期候选，不属于最小实用阶段。\n依赖 / 顺序：待 Pin/Hinge 证明映射和生命周期后重新评估。\n验收门：先定义能力矩阵、独立场景与失败行为，再决定实现。",
+              "source": "审查方案，未授权实施 · 代码基线 4637c33",
+              "selected": false,
+              "children": [],
+              "evidence": {
+                "status": "deferred",
+                "source": "审查方案，未授权实施 · 代码基线 4637c33"
+              }
+            }
+          ],
+          "evidence": {
+            "status": "in_progress",
+            "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+          }
+        },
+        {
+          "id": "native-capability-limits",
+          "title": "原生后端：范围内成果与未完成能力",
+          "status": "in_progress",
+          "note": "【最终阶段补充】实际 dot 精确 f70e937 验收与合并已完成；旧环境依赖阻碍消除。有界 Hinge 限位/速度电机新增完成，原本受限后端和被动 Hinge 的验收边界不扩大。\nPR #5 合并 48468f4f5157ddb295f8c6998a6618af8a055dbb；PR #8 合并 b3a9ad2d242ff094164fbaeacbd446845a87e861；PR #16 合并 e6ecd1a2f6e962f1cab731b12946c6f963edf789。main 源码树 7c056cd37df33830fb7a69cdc9a68dc955bc15f6 与验收 f70e937d46ce700fd43cdf494aeff58d7965feff 完全一致，差异 0。\n\n【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n已验收：原有 Static/Rigid 与 Box/Sphere/Cylinder/静态 WorldBoundary，加 Capsule、P0 刚体语义、最后子步接触报告、有限重叠/连续查询、Area 监测与覆盖、无环 Pin/被动 Hinge、最小 Sphere/Capsule 平移 Character。\n未完成：复杂 Convex/Concave/SeparationRay/原生 HeightMap、完整查询、全 Character 平台/台阶/旋转交互、完整 Hinge limits/motor、其他 Joint、闭环、CCD、睡眠/轴锁、soft body 等。运动学不推动动态刚体；MJCF / heightfield motion 不支持。\n缩放/镜像/剪切与不可表达输入按契约拒绝；查询 sweep 不等于 CCD，contact impulse 不是整帧累计。",
+          "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "in_progress",
+            "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+          }
+        },
+        {
+          "id": "native-full-shapes-remaining",
+          "title": "完整 shape / heightfield / MJCF 原生兼容",
+          "status": "planned",
+          "note": "复杂形状与完整查询/运动覆盖仍未完成；专用地形、模型通路与原生 API 的边界继续保留。",
+          "source": "2026-10-24 当前未完成清单",
+          "selected": false,
+          "evidence": {
+            "status": "planned",
+            "source": "当前能力边界；未完成"
+          },
+          "children": []
+        },
+        {
+          "id": "native-dynamics-remaining",
+          "title": "CCD / 睡眠 / 轴锁",
+          "status": "planned",
+          "note": "尚未完成；查询 sweep 不等于动态刚体 CCD。此处仅列未完成能力，不构成新增实施授权。",
+          "source": "2026-10-24 当前未完成清单",
+          "selected": false,
+          "evidence": {
+            "status": "planned",
+            "source": "当前能力边界；未完成"
+          },
+          "children": []
+        },
+        {
+          "id": "native-advanced-deferred",
+          "title": "原生后端高级扩展：暂缓候选",
+          "status": "deferred",
+          "note": "交付 / 用途：复杂形状、CCD、睡眠/轴锁、完整兼容与性能扩展。\n依赖 / 顺序：最小实用阶段之外；按具体需求重新审查。\n验收门：实施前先约定兼容矩阵与性能/正确性基准。\n边界 / 风险：不暗示已批准；平台交付和 G1 重负载仍见原质量分支。",
+          "source": "审查方案，未授权实施 · 代码基线 4637c33",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "deferred",
+            "source": "审查方案，未授权实施 · 代码基线 4637c33"
+          }
+        }
+      ],
+      "evidence": {
+        "status": "in_progress",
+        "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+      }
+    },
+    {
+      "id": "task-009",
+      "title": "02 · 模型资源与场景",
+      "status": "done",
+      "note": "职责：MJCF 导入、资源封装、实例化与共享物理世界的安全生命周期。核心组件：MjModelResource、MjModelInstance、MjRuntimeWorld。\n\n已实现的支持范围，不等于所有模型或大规模负载均通过。",
+      "source": "",
+      "selected": false,
+      "children": [
+        {
+          "id": "task-006",
+          "title": "MJCF 机器人/模型导入与资源实例",
+          "status": "done",
+          "note": "支持模型可视化、关节编辑、独立实例和共享接触。",
+          "source": "",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "沿用上一版工程记录；具体边界见备注"
+          }
+        },
+        {
+          "id": "task-007",
+          "title": "资源可迁移与兼容迁移",
+          "status": "done",
+          "note": "可移植模型资产与兼容迁移路径。",
+          "source": "",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "沿用上一版工程记录；具体边界见备注"
+          }
+        },
+        {
+          "id": "task-008",
+          "title": "动态增删 / 安全边界应用",
+          "status": "done",
+          "note": "包含重建与回滚路径；故障注入边界见质量分支。",
+          "source": "",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "沿用上一版工程记录；具体边界见备注"
+          }
+        }
+      ],
+      "evidence": {
+        "status": "done",
+        "source": "沿用上一版工程记录；具体边界见备注"
+      }
+    },
+    {
+      "id": "task-013",
+      "title": "03 · 可视化编辑器",
+      "status": "done",
+      "note": "职责：MJCF 模型树、预览、属性编辑、几何体创建、撤销与文档持久化。关节控制预设的执行语义见“仿真运行与控制”。\n\n基础工作流与编辑器几何/文档控制预设已验收；PR #4 已合并至 main 4637c33。运行时整份预设原子应用另见 PR #5。",
+      "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）",
+      "selected": false,
+      "children": [
+        {
+          "id": "task-010",
+          "title": "模型树、关节/执行器属性编辑与保存重开",
+          "status": "done",
+          "note": "已有模型属性 / 关节编辑、撤销、保存重开验证。",
+          "source": "",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "沿用上一版工程记录；具体边界见备注"
+          }
+        },
+        {
+          "id": "task-012",
+          "title": "编辑器几何体与控制入口",
+          "status": "done",
+          "note": "PR #4 已独立验收并合并至 main 4637c33。",
+          "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）",
+          "selected": false,
+          "children": [
+            {
+              "id": "task-031",
+              "title": "几何体创建与属性",
+              "status": "done",
+              "note": "23 项场景测试通过；真实 GUI 验证创建、尺寸/质量/碰撞参数、撤销、保存及球体溢出拒绝。普通物体下落/接触 GUI 未运行，不标为通过。",
+              "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）",
+              "selected": false,
+              "children": [
+                {
+                  "id": "task-028",
+                  "title": "创建三类几何体",
+                  "status": "done",
+                  "note": "Box / Sphere / Cylinder 已验收。",
+                  "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）",
+                  "selected": false,
+                  "children": [],
+                  "evidence": {
+                    "status": "done",
+                    "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）"
+                  }
+                },
+                {
+                  "id": "task-029",
+                  "title": "编辑尺寸、质量和碰撞属性",
+                  "status": "done",
+                  "note": "有效输入与无效输入拒绝已验收；物体下落/接触 GUI 尚未执行。",
+                  "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）",
+                  "selected": false,
+                  "children": [],
+                  "evidence": {
+                    "status": "done",
+                    "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）"
+                  }
+                },
+                {
+                  "id": "task-030",
+                  "title": "新增能力回归与独立验收",
+                  "status": "done",
+                  "note": "23 scene + 39 preset + 160 editor + 44 heightfield，共 266 项断言通过，独立 GUI 验收完成。",
+                  "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）",
+                  "selected": false,
+                  "children": [],
+                  "evidence": {
+                    "status": "done",
+                    "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）"
+                  }
+                }
+              ],
+              "evidence": {
+                "status": "done",
+                "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）"
+              }
+            }
+          ],
+          "evidence": {
+            "status": "done",
+            "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）"
+          }
+        }
+      ],
+      "evidence": {
+        "status": "done",
+        "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）"
+      }
+    },
+    {
+      "id": "task-034",
+      "title": "04 · 仿真运行与关节控制",
+      "status": "done",
+      "note": "职责：世界级暂停、精确步进、快照重置、关节目标/PD 预设以及运行时原子应用。运行实例与编辑器预览相互区分。\n\n文档级目标/PD 预设保存、兼容性校验、原子加载与撤销已验收；不是运行时整份预设原子应用。",
+      "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）",
+      "selected": false,
+      "children": [
+        {
+          "id": "task-011",
+          "title": "暂停 / 继续 / 精确单步 / 快照重置",
+          "status": "done",
+          "note": "运行时控制与重建、回滚路径已验证。",
+          "source": "",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "沿用上一版工程记录；具体边界见备注"
+          }
+        },
+        {
+          "id": "task-032",
+          "title": "关节目标与 PD 预设保存 / 加载",
+          "status": "done",
+          "note": "预设 v2 校验关节轴、锚点和传动兼容；旧 v1 需重新保存。速度 PD 归一化已修复。",
+          "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）"
+          }
+        },
+        {
+          "id": "task-033",
+          "title": "预设持久化与恢复验收",
+          "status": "done",
+          "note": "GUI 验证保存/加载、Undo/Redo、取消、脏草稿拒绝、无效 JSON 和末项无效执行器的整份拒绝；加载不改变两个 live instance 快照。显式 Apply/Send 仅影响所选实例。",
+          "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）"
+          }
+        },
+        {
+          "id": "task-runtime-preset-atomic",
+          "title": "运行时整份预设原子批量应用",
+          "status": "done",
+          "note": "【最终阶段补充】实际 dot 精确 f70e937 验收与合并已完成；旧环境依赖阻碍消除。有界 Hinge 限位/速度电机新增完成，原本受限后端和被动 Hinge 的验收边界不扩大。\nPR #5 合并 48468f4f5157ddb295f8c6998a6618af8a055dbb；PR #8 合并 b3a9ad2d242ff094164fbaeacbd446845a87e861；PR #16 合并 e6ecd1a2f6e962f1cab731b12946c6f963edf789。main 源码树 7c056cd37df33830fb7a69cdc9a68dc955bc15f6 与验收 f70e937d46ce700fd43cdf494aeff58d7965feff 完全一致，差异 0。\n\n【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n交付：显式将整份控制预设原子应用到所选运行时实例；候选模型迁移 live state 与控制、执行 forward 并验证动态数值后再交换，失败保留原实例。\n验收：独立原生构建通过；48 runtime + 7 UI + 39 文档预设 + 149 native + 69 typed C# + 160 editor + 73 heightfield，另有 strict smoke 通过。GUI 验证整份有效预设、末项无效时整体回滚、两个实例隔离、运行/暂停恢复、提交后取消、选择器取消及停止重启；24 份设计快照保持一致。退出码 0，无 ERROR / SCRIPT ERROR / ALSA / 泄漏，仅 V-Sync 提示。\n覆盖区分：pending / stale / 安全边界前取消由自动化验证，不冒充桌面竞态复现。\n极值回归：kp=1e308 被拒绝，原 revision=0 / gain=20 / qpos=2 保持，下一步数值有限且 warning=0。\n边界：文档预设加载与运行时 Apply 仍区分；PR #5 未合并。编译器/分配失败未做强制故障注入；冷导入退出码 139 仍未根治。",
+          "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+          }
+        }
+      ],
+      "evidence": {
+        "status": "done",
+        "source": "PR #4 · 4637c336510ef216f12c52bd27c202077d76df9e（PR #4 已验收并合并）"
+      }
+    },
+    {
+      "id": "task-018",
+      "title": "05 · 地形系统",
+      "status": "in_progress",
+      "note": "职责：专用静态 heightfield 的创建、编辑和类型化接口；不把通用地形、高级编辑与动态地形视为已完成。\n\n静态固定分辨率 heightfield 专用支持，不是通用 HeightMapShape3D。",
+      "source": "",
+      "selected": false,
+      "children": [
+        {
+          "id": "task-015",
+          "title": "专用静态 heightfield",
+          "status": "done",
+          "note": "固定分辨率静态地形支持已验收并合并。",
+          "source": "",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "沿用上一版工程记录；具体边界见备注"
+          }
+        },
+        {
+          "id": "task-016",
+          "title": "地形编辑面板与 typed C# 地形 API",
+          "status": "done",
+          "note": "PR #2 已验收并合并。",
+          "source": "main · 8157253",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "main · 8157253"
+          }
+        },
+        {
+          "id": "task-040",
+          "title": "通用地形兼容与扩展边界",
+          "status": "planned",
+          "note": "功能域：当前专用 heightfield 与普通 Godot HeightMapShape3D 通用兼容不是同一能力；下列扩展尚未实现。\n\n这里是路线候选，不是自动执行清单。",
+          "source": "",
+          "selected": false,
+          "children": [
+            {
+              "id": "task-037",
+              "title": "普通 HeightMapShape3D 通用兼容",
+              "status": "planned",
+              "note": "当前尚不支持。",
+              "source": "",
+              "selected": false,
+              "children": [],
+              "evidence": {
+                "status": "planned",
+                "source": "沿用上一版工程记录；具体边界见备注"
+              }
+            },
+            {
+              "id": "task-038",
+              "title": "地形缩放 / 剪切 / 孔洞",
+              "status": "planned",
+              "note": "当前尚不支持，需要另行明确需求。",
+              "source": "",
+              "selected": false,
+              "children": [],
+              "evidence": {
+                "status": "planned",
+                "source": "沿用上一版工程记录；具体边界见备注"
+              }
+            },
+            {
+              "id": "task-039",
+              "title": "动态变形 / 雕刻 / 流式地形",
+              "status": "planned",
+              "note": "当前尚不支持，不属于现有静态地形验收范围。",
+              "source": "",
+              "selected": false,
+              "children": [],
+              "evidence": {
+                "status": "planned",
+                "source": "沿用上一版工程记录；具体边界见备注"
+              }
+            }
+          ],
+          "evidence": {
+            "status": "planned",
+            "source": "沿用上一版工程记录；具体边界见备注"
+          }
+        }
+      ],
+      "evidence": {
+        "status": "in_progress",
+        "source": "专用静态地形已验收；通用与动态地形扩展仍未完成。"
+      }
+    },
+    {
+      "id": "task-026",
+      "title": "06 · 脚本与 API 集成",
+      "status": "in_progress",
+      "note": "职责：面向 GDScript/C# 的模型、世界与地形接口，以及模型、地形、原生对象的协同使用边界。\n\n以有限范围的 PhysicsServer 后端为基础，逐步打通模型、编辑器、运行时与 C#。父节点状态手动维护，进度仅统计叶子任务。",
+      "source": "",
+      "selected": false,
+      "children": [
+        {
+          "id": "task-014",
+          "title": "模型 / 世界 typed C# API",
+          "status": "done",
+          "note": "已验收并合并。",
+          "source": "",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "沿用上一版工程记录；具体边界见备注"
+          }
+        },
+        {
+          "id": "task-017",
+          "title": "双模型 + 地形 + 箱体综合场景",
+          "status": "done",
+          "note": "类型化控制、暂停、单步、checkpoint/reset：9 项轻量测试通过。",
+          "source": "main · 732f92d（PR #3 已合并）",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "main · 732f92d（PR #3 已合并）"
+          }
+        },
+        {
+          "id": "native-route-boundaries",
+          "title": "专用模型 / 地形与原生 API 的边界",
+          "status": "planned",
+          "note": "交付 / 用途：把模型通路、专用地形与原生 Body/Shape/Joint/Query 能力分开呈现。\n依赖 / 顺序：所有路线说明与验收必须采用同一边界。\n验收门：导入关节不等于 Joint3D；专用 heightfield 不等于 HeightMapShape3D；原生 ray 不宣称覆盖全部导入 MJCF 几何。\n边界 / 风险：ray 依赖 geom→原生 RID 所有权映射；触碰导入模型的查询/接触身份需明确设计。",
+          "source": "审查方案，未授权实施 · 代码基线 4637c33",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "planned",
+            "source": "审查方案，未授权实施 · 代码基线 4637c33"
+          }
+        }
+      ],
+      "evidence": {
+        "status": "in_progress",
+        "source": "沿用上一版工程记录；具体边界见备注"
+      }
+    },
+    {
+      "id": "task-025",
+      "title": "07 · 测试与可靠性",
+      "status": "in_progress",
+      "note": "职责：轻量回归、独立图形验收、失败回滚与已知缺陷跟踪。G1 重负载由用户接管，不能从轻量通过推断重负载已验收。\n\n轻量验证与交付范围分开；不将待测重模型标为通过。",
+      "source": "",
+      "selected": false,
+      "children": [
+        {
+          "id": "task-019",
+          "title": "轻量验证工具与回归流程",
+          "status": "done",
+          "note": "【环境恢复 · 2026-10-25 00:59 北京时间】实际 dot 验证环境已恢复：Godot 4.7.2 .NET、.NET SDK 8.0.426 / runtime 8.0.32、MuJoCo 3.16.0、CMake 3.31.10。完整 Git 仓库固定 main 对应 e6ecd1a，1471 个文件哈希及 Git 完整性核验通过。C++ 构建、strict MjWorld smoke 通过，C# typed_control 69/69 通过，真实桌面 .NET console 运行通过，编辑器轻量工程已实际打开。\n工具位于 /workspace/shared/tools；源码位于 /workspace/shared/projects/godot-mujoco。新终端使用 source /workspace/shared/tools/env.sh，打开工程使用 /workspace/shared/tools/open-project.sh。\n限制：GUI 仍有宿主 Vulkan surface / VSync 诊断；执行工具中的 NuGet-Migrations 互斥体错误与真实桌面终端成功分开记录。未实际重启，不保证云环境重建后持久；未重跑 G1 重负载。本次仅恢复环境，没有开发新功能、修改源码或新增合并。\n\n严格轻量验证工具已验收。",
+          "source": "2026-10-25 实际 dot 环境恢复与轻量复验 · main e6ecd1a",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "环境恢复完成：源码构建 / strict smoke 通过，C# 69/69；新终端验证通过，重启未验证。"
+          }
+        },
+        {
+          "id": "task-020",
+          "title": "冷导入退出码 139 根因",
+          "status": "blocked",
+          "note": "仍未根治；不能把已有绕过或热启动通过视为修复。",
+          "source": "",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "blocked",
+            "source": "沿用上一版工程记录；具体边界见备注"
+          }
+        },
+        {
+          "id": "task-021",
+          "title": "G1 / 多 G1 重负载与站立行走验证",
+          "status": "planned",
+          "note": "由用户进行重模型测试，结果待提供；实现 free-base/contact 不等于站立行走验收通过。",
+          "source": "",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "planned",
+            "source": "沿用上一版工程记录；具体边界见备注"
+          }
+        },
+        {
+          "id": "task-022",
+          "title": "强制编译器 / 分配失败回滚注入",
+          "status": "planned",
+          "note": "尚未执行故障注入。",
+          "source": "",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "planned",
+            "source": "沿用上一版工程记录；具体边界见备注"
+          }
+        },
+        {
+          "id": "native-acceptance-gates",
+          "title": "后端里程碑共同验收门",
+          "status": "in_progress",
+          "note": "【2026-10-25 环境复验补充】工具链恢复后的源码构建、strict MjWorld smoke、C# typed_control 69/69 与真实编辑器启动通过。本次是环境恢复轻量检查，不冒充全量 22 套重跑；宿主 Vulkan / VSync 诊断、冷导入 139 和 G1 重负载等未完成边界继续保留。\n\n【最终阶段补充】实际 dot 精确 f70e937 验收与合并已完成；旧环境依赖阻碍消除。有界 Hinge 限位/速度电机新增完成，原本受限后端和被动 Hinge 的验收边界不扩大。\nPR #5 合并 48468f4f5157ddb295f8c6998a6618af8a055dbb；PR #8 合并 b3a9ad2d242ff094164fbaeacbd446845a87e861；PR #16 合并 e6ecd1a2f6e962f1cab731b12946c6f963edf789。main 源码树 7c056cd37df33830fb7a69cdc9a68dc955bc15f6 与验收 f70e937d46ce700fd43cdf494aeff58d7965feff 完全一致，差异 0。\n\n【当前结论 · 2026-10-24 11:19 UTC】相关 PR #5 / #8 / #16 已合并至 main e6ecd1a2f6e962f1cab731b12946c6f963edf789。完整兼容性以各节点范围为准。以下此前阶段记录中的“草稿/未合并/旧 main”仅为历史，不是当前合并状态。\n\n最终 4c2f1f7 新鲜原生构建通过；21 套测试 + 5 组额外回归均退出码 0。RID 52 项 × 3、Character 23 项 × 3、reset 11 项、加强负例 18/0；原 sweep 432 项 × 3 通过。\n实际 Character GUI 19/0；此前其他阶段实际 GUI 已验收，包括纠正后的 Pin/Hinge 产品输入、保存重开。最终源码干净，3 个 P2 问题与 reset 差异已关闭。\n工程证据：最终验收归档 416 KB；前阶段 1e2d10e 扩展验收独立保留。GUI 与 headless 分别记录，历史阶段失败不删除。\n冷导入 139、编译器/分配故障注入、G1 重负载、打包/Windows 的原有未完成或暂缓状态不变。",
+          "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "in_progress",
+            "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+          }
+        }
+      ],
+      "evidence": {
+        "status": "in_progress",
+        "source": "沿用上一版工程记录；具体边界见备注"
+      }
+    },
+    {
+      "id": "task-036",
+      "title": "08 · 安装部署与版本交付",
+      "status": "in_progress",
+      "note": "职责：当前主线版本、构建/运行环境以及平台交付边界。当前 e6ecd1a 已合并；2026-10-25 环境恢复与轻量验证完成，未实际重启，跨云重建持久性不保证。\n\n【最新环境状态 · 2026-10-25 00:59 北京时间】验证工具链与完整仓库已恢复；轻量构建与 C# 复验通过。项目代码仍为 main e6ecd1a，本轮未新增功能或提交。详见“轻量验证工具与回归流程”节点。\n\n本阶段完成：运行时原子预设、受限原生集成与有界 Hinge 已验收并入主线。最终实际 dot 代码和 GUI 验收完成；旧依赖阻碍消除。\nPR #5 合并 48468f4f5157ddb295f8c6998a6618af8a055dbb；PR #8 合并 b3a9ad2d242ff094164fbaeacbd446845a87e861；PR #16 合并 e6ecd1a2f6e962f1cab731b12946c6f963edf789。main 源码树 7c056cd37df33830fb7a69cdc9a68dc955bc15f6 与验收 f70e937d46ce700fd43cdf494aeff58d7965feff 完全一致，差异 0。\n此阶段完成不代表完整原生后端完成。Character 平台/楼梯/双向推挤、完整 shape/heightfield/MJCF 覆盖、CCD/睡眠/轴锁、冷导入139等仍保留未完成边界；不因此授权打包、Windows 或新增功能。",
+      "source": "实际 dot 最终验收通过；PR #5 / #8 / #16 已合并；main e6ecd1a2f6e962f1cab731b12946c6f963edf789",
+      "selected": false,
+      "children": [
+        {
+          "id": "task-027",
+          "title": "PR #3 · 已验收成果并入主线",
+          "status": "done",
+          "note": "用户已同意合并；GitHub 已确认 2026-10-22 13:57:05 UTC 合并。",
+          "source": "main · 732f92dee996870d8d8ccdec65feba3b95755cae",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "main · 732f92dee996870d8d8ccdec65feba3b95755cae"
+          }
+        },
+        {
+          "id": "task-035",
+          "title": "新功能分支的主线合并决定",
+          "status": "done",
+          "note": "用户本轮批准的 PR #4 主线合并已完成。新运行时功能 PR #5 仍为草稿、未合并；不得把本次授权扩大到 PR #5 自动合并。",
+          "source": "main 4637c336510ef216f12c52bd27c202077d76df9e · PR #4 merged=true",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "main 4637c336510ef216f12c52bd27c202077d76df9e · PR #4 merged=true"
+          }
+        },
+        {
+          "id": "task-023",
+          "title": "Linux 打包、安装、导出与 ABI 交付",
+          "status": "deferred",
+          "note": "用户明确暂缓；Ubuntu 22.04 是曾提议的平台，不是已确认的通用要求。",
+          "source": "",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "deferred",
+            "source": "沿用上一版工程记录；具体边界见备注"
+          }
+        },
+        {
+          "id": "task-024",
+          "title": "Windows 适配与交付",
+          "status": "deferred",
+          "note": "用户明确暂缓。",
+          "source": "",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "deferred",
+            "source": "沿用上一版工程记录；具体边界见备注"
+          }
+        }
+      ],
+      "evidence": {
+        "status": "in_progress",
+        "source": "当前主线/验证环境可用；正式 Linux 打包与 Windows 交付尚未完成。"
+      }
+    }
+  ]
+}</script><script>
+'use strict';
+const $=id=>document.getElementById(id), clone=x=>JSON.parse(JSON.stringify(x));
+const INITIAL=JSON.parse($('seed').textContent), KEY='godot-mujoco-functions-v2', statusNames={awaiting_acceptance:'待 dot 验收',done:'已完成',in_progress:'未完成 · 进行中',blocked:'未完成 · 受阻',planned:'待完成 · 待启动',deferred:'待完成 · 暂缓'};
+let state=clone(INITIAL),history=[],collapsed=new Set(),editContext=null,toastTimer,lastStored=null;
+function validate(raw){if(!raw||raw.schemaVersion!==1||!Array.isArray(raw.nodes))throw Error('需要 schemaVersion=1 的任务树 JSON');let count=0,ids=new Set();function scan(arr,depth){if(depth>30)throw Error('层级不能超过 30 层');return arr.map(n=>{if(++count>5000)throw Error('节点不能超过 5000 个');if(!n||typeof n.id!=='string'||!n.id||ids.has(n.id))throw Error('节点 ID 缺失或重复');ids.add(n.id);if(typeof n.title!=='string'||!n.title.trim()||n.title.length>300||!statusNames[n.status]||!Array.isArray(n.children))throw Error('节点名称、状态或子节点无效');if((n.note||'').length>10000||(n.source||'').length>2000)throw Error('备注或来源过长');return {id:n.id,title:n.title,status:n.status,note:typeof n.note==='string'?n.note:'',source:typeof n.source==='string'?n.source:'',selected:n.selected===true,...(n.position&&Number.isFinite(n.position.x)&&Number.isFinite(n.position.y)?{position:{x:Math.max(-100000,Math.min(100000,n.position.x)),y:Math.max(-100000,Math.min(100000,n.position.y))}}:{}),...(n.evidence&&statusNames[n.evidence.status]&&typeof n.evidence.source==='string'?{evidence:{status:n.evidence.status,source:n.evidence.source.slice(0,2000)}}:{}),children:scan(n.children,depth+1)}})}return {schemaVersion:1,project:'Godot × MuJoCo',revision:Number.isSafeInteger(raw.revision)?raw.revision:1,updatedAt:typeof raw.updatedAt==='string'?raw.updatedAt:'',baseline:typeof raw.baseline==='string'?raw.baseline.slice(0,2000):'',nodes:scan(raw.nodes,0)}}
+try{const saved=localStorage.getItem(KEY);lastStored=saved;if(saved){let parsed=validate(JSON.parse(saved));state=parsed;$('saveStatus').textContent='已恢复此浏览器的本地修改（不会被网站新版本覆盖）';if(INITIAL.updatedAt>state.updatedAt||INITIAL.baseline!==state.baseline){$('saveStatus').textContent+=' · 此页面内嵌了不同的工程快照，请先导出本地修改，再核对 / 导入新快照。'}}else $('saveStatus').textContent='初始版本 · 尚无本地修改'}catch(e){$('saveStatus').textContent='本地恢复失败；当前显示初始版本。请导入备份。'}
+function toast(s){$('toast').textContent=s;$('toast').hidden=false;clearTimeout(toastTimer);toastTimer=setTimeout(()=>$('toast').hidden=true,4500)}
+function save(){state.updatedAt=new Date().toISOString();state.revision++;try{lastStored=JSON.stringify(state);localStorage.setItem(KEY,lastStored);$('saveStatus').textContent='已保存到此浏览器 · '+new Date(state.updatedAt).toLocaleString()}catch(e){$('saveStatus').textContent='本地保存失败！修改仅在内存，请立即下载 HTML / JSON。';toast('保存失败，请导出备份。')}render()}
+function mutate(fn){try{if(localStorage.getItem(KEY)!==lastStored){toast('检测到其他标签页修改。请先下载本页 HTML / JSON，再刷新后重新编辑。');return false}}catch(e){}history.push(clone(state));if(history.length>50)history.shift();fn();save();return true}
+function all(nodes=state.nodes){return nodes.flatMap(n=>[n,...all(n.children)])}
+function locate(id,nodes=state.nodes){for(let i=0;i<nodes.length;i++){if(nodes[i].id===id)return {node:nodes[i],array:nodes,index:i};const found=locate(id,nodes[i].children);if(found)return found}}
+function leaves(n){return n.children.length?n.children.flatMap(leaves):[n]}
+function element(tag,cls,text){const e=document.createElement(tag);if(cls)e.className=cls;if(text!==undefined)e.textContent=text;return e}
+function button(text,fn,label){const b=element('button','',text);b.type='button';b.onclick=fn;if(label)b.setAttribute('aria-label',label);return b}
+function matches(n){let q=$('search').value.trim().toLocaleLowerCase(),f=$('filter').value;return (!q||[n.title,n.note,n.source,n.evidence?.source||''].join(' ').toLocaleLowerCase().includes(q))&&(f==='all'||f==='selected'&&n.selected||f==='done'&&n.status==='done'||f==='unfinished'&&['in_progress','blocked','awaiting_acceptance'].includes(n.status)||f==='planned'&&['planned','deferred'].includes(n.status))}
+function visible(n){return matches(n)||n.children.some(visible)}
+let camera={x:35,y:35,z:1},selectedId=null,positions=new Map(),visibleNodes=[],drag=null;
+const W=270,H=112,GX=350,GY=142;
+function mapInitCollapse(){function walk(ns,depth=0){for(const n of ns){if(depth>0&&n.children.length)collapsed.add(n.id);walk(n.children,depth+1)}}walk(state.nodes);state.nodes.forEach(n=>collapsed.add(n.id))}
+function graphLayout(){positions=new Map();visibleNodes=[];let cursor=0,filtering=$('search').value.trim()||$('filter').value!=='all';function visit(n,depth,parent){if(!visible(n))return null;let kids=(!collapsed.has(n.id)||filtering)?n.children.filter(visible):[];let start=cursor;const row={node:n,depth,parent};visibleNodes.push(row);for(const child of kids)visit(child,depth+1,n.id);if(!kids.length)cursor+=GY;let y=kids.length?(start+cursor-GY)/2:start;let p=n.position&&Number.isFinite(n.position.x)&&Number.isFinite(n.position.y)?n.position:{x:depth*GX,y};positions.set(n.id,{x:p.x,y:p.y});return y}for(const n of state.nodes){visit(n,1,'__root');cursor+=48}positions.set('__root',{x:0,y:Math.max(0,(cursor-GY-48)/2)});if(!filtering&&state.nodes.every(n=>collapsed.has(n.id))){state.nodes.forEach((n,i)=>{const p=n.position||{x:(i<4?-1:1)*GX,y:(i%4)*GY};positions.set(n.id,p)});positions.set('__root',{x:0,y:1.5*GY})}}
+function transform(){ $('world').style.transform=`translate(${camera.x}px,${camera.y}px) scale(${camera.z})`;$('zoomValue').textContent=Math.round(camera.z*100)+'%'}
+function fit(){if(!positions.size)return;const ps=[...positions.values()],minX=Math.min(...ps.map(p=>p.x)),maxX=Math.max(...ps.map(p=>p.x+W)),minY=Math.min(...ps.map(p=>p.y)),maxY=Math.max(...ps.map(p=>p.y+H));const rect=$('viewport').getBoundingClientRect();camera.z=Math.max(.08,Math.min(1,(rect.width-70)/(maxX-minX),(rect.height-70)/(maxY-minY)));camera.x=(rect.width-(maxX-minX)*camera.z)/2-minX*camera.z;camera.y=(rect.height-(maxY-minY)*camera.z)/2-minY*camera.z;transform()}
+function focusNode(id){const p=positions.get(id);if(!p)return;const r=$('viewport').getBoundingClientRect();camera.z=1;camera.x=r.width/2-p.x-W/2;camera.y=r.height/2-p.y-H/2;transform()}
+function zoom(f,cx,cy){const r=$('viewport').getBoundingClientRect();cx=cx??r.width/2;cy=cy??r.height/2;let z=Math.max(.08,Math.min(2,camera.z*f));camera.x=cx-(cx-camera.x)*z/camera.z;camera.y=cy-(cy-camera.y)*z/camera.z;camera.z=z;transform()}
+function drawEdges(){const svg=$('edges');svg.replaceChildren();for(const v of visibleNodes){const a=positions.get(v.parent),b=positions.get(v.node.id);if(!a||!b)continue;let path=document.createElementNS('http://www.w3.org/2000/svg','path');const left=b.x<a.x, x=left?a.x:a.x+W,y=a.y+H/2,xx=left?b.x+W:b.x,yy=b.y+H/2,sign=left?-1:1;path.setAttribute('d',`M ${x} ${y} C ${x+45*sign} ${y}, ${xx-45*sign} ${yy}, ${xx} ${yy}`);path.setAttribute('class','edge depth-'+Math.min(v.depth,3));svg.append(path)}}
+function selectNode(id){selectedId=id;renderDetails();for(const el of $('tree').children)el.classList.toggle('selected',el.dataset.id===id)}
+function renderDetails(){const panel=$('detail');panel.replaceChildren();if(!selectedId||!locate(selectedId)){panel.append(element('h2','','点选模块，看清系统能力'),element('p','','拖动节点只改变位置，不会改变父子关系。双击节点进入编辑。滚轮缩放，拖动画布平移。'));return}const n=locate(selectedId).node;const path=[];function findPath(ns,trail=[]){for(const x of ns){if(x.id===n.id)return [...trail,x.title];const r=findPath(x.children,[...trail,x.title]);if(r)return r}}panel.append(element('div','breadcrumb',(findPath(state.nodes)||[]).join(' → ')),element('h2','',n.title),element('span','pill status-'+n.status,statusNames[n.status]));if(n.evidence)panel.append(element('div','evidence','工程记录（内嵌）：'+statusNames[n.evidence.status]+' · '+n.evidence.source));panel.append(element('p','note',n.note));if(n.source)panel.append(element('p','meta','补充来源：'+n.source));let actions=element('div','detail-actions');actions.append(button('编辑任务',()=>edit('edit',n.id)),button('＋子任务',()=>edit('child',n.id)),button('＋同级任务',()=>edit('sibling',n.id)),button('聚焦节点',()=>focusNode(n.id)),button('删除任务',()=>{if(confirm('删除“'+n.title+'”及其全部子任务？可撤销。'))mutate(()=>{let x=locate(n.id);x.array.splice(x.index,1);selectedId=null})}));const round=element('label','roundfield'),input=element('input');input.type='checkbox';input.checked=n.selected;input.onchange=()=>mutate(()=>n.selected=input.checked);round.append(input,document.createTextNode(' 本轮拟推进（仅草案）'));panel.append(round,actions,element('p','meta','节点 ID：'+n.id));}
+function renderNode(n,depth){const box=element('article','map-node depth-'+Math.min(depth,3));box.dataset.id=n.id;box.setAttribute('aria-label',n.title);const p=positions.get(n.id);box.style.left=p.x+'px';box.style.top=p.y+'px';if(selectedId===n.id)box.classList.add('selected');const row=element('div','node-row');const check=element('input','donebox');check.type='checkbox';check.checked=n.status==='done';check.setAttribute('aria-label','完成 '+n.title);check.onchange=()=>mutate(()=>n.status=check.checked?'done':'planned');const title=button(n.title,()=>selectNode(n.id),'查看 '+n.title);title.className='map-title';row.append(check,title);box.append(row);const meta=element('div','node-meta');meta.append(element('span','pill status-'+n.status,statusNames[n.status]));if(n.children.length){const l=leaves(n);meta.append(element('span','',l.filter(x=>x.status==='done').length+'/'+l.length+' 完成'),button((collapsed.has(n.id)?'＋':'−')+' '+n.children.length,()=>{collapsed.has(n.id)?collapsed.delete(n.id):collapsed.add(n.id);render()},'展开或折叠 '+n.title))}else meta.append(element('span','',n.selected?'本轮拟推进':'叶子任务'));box.append(meta);box.ondblclick=e=>{if(!e.target.closest('input'))edit('edit',n.id)};box.onpointerdown=e=>{if(e.target.closest('input')||e.target.closest('.node-meta button'))return;if(e.button!==0)return;selectNode(n.id);drag={id:n.id,startX:e.clientX,startY:e.clientY,x:p.x,y:p.y,moved:false};box.setPointerCapture(e.pointerId);e.stopPropagation()};box.onpointermove=e=>{if(!drag||drag.id!==n.id)return;const dx=(e.clientX-drag.startX)/camera.z,dy=(e.clientY-drag.startY)/camera.z;if(Math.abs(dx)+Math.abs(dy)>3)drag.moved=true;positions.set(n.id,{x:drag.x+dx,y:drag.y+dy});box.style.left=(drag.x+dx)+'px';box.style.top=(drag.y+dy)+'px';drawEdges()};box.onpointerup=box.onpointercancel=e=>{if(!drag||drag.id!==n.id)return;const moved=drag.moved,pos=positions.get(n.id);drag=null;if(moved)mutate(()=>n.position={x:Math.round(pos.x),y:Math.round(pos.y)})};return box}
+function render(){const flat=all(),l=state.nodes.flatMap(leaves);$('completed').textContent=l.filter(n=>n.status==='done').length+' / '+l.length;$('unfinished').textContent=l.filter(n=>['in_progress','blocked','awaiting_acceptance'].includes(n.status)).length;$('planned').textContent=l.filter(n=>['planned','deferred'].includes(n.status)).length;$('chosen').textContent=flat.filter(n=>n.selected).length;$('baseline').textContent=state.baseline;$('revision').textContent=`数据修订 ${state.revision} · ${state.updatedAt} · 拖动不改变任务层级`;$('undo').disabled=!history.length;graphLayout();$('tree').replaceChildren();const root=element('div','map-node project-node');root.style.left=positions.get('__root').x+'px';root.style.top=positions.get('__root').y+'px';root.append(element('small','','系统总览'),element('strong','','Godot × MuJoCo'),element('span','',state.nodes.length+' 个功能模块 · 点击展开'));$('tree').append(root);for(const v of visibleNodes)$('tree').append(renderNode(v.node,v.depth));drawEdges();renderDetails();transform()}
+
+function edit(mode,id){editContext={mode,id};let n=mode==='edit'?locate(id).node:{title:'',status:'planned',note:'',source:'',selected:false};$('dialogtitle').textContent=mode==='edit'?'编辑任务':'添加任务';$('editTitle').value=n.title;$('editStatus').value=n.status;$('editNote').value=n.note;$('editSource').value=n.source;$('editSelected').checked=n.selected;$('editor').showModal();$('editTitle').focus()}
+$('editform').onsubmit=e=>{e.preventDefault();if(!$('editTitle').value.trim())return;const values={title:$('editTitle').value.trim(),status:$('editStatus').value,note:$('editNote').value,source:$('editSource').value,selected:$('editSelected').checked};mutate(()=>{const {mode,id}=editContext;if(mode==='edit')Object.assign(locate(id).node,values);else{let n={id:'task-'+(globalThis.crypto?.randomUUID?.()||Date.now()+'-'+Math.random().toString(36).slice(2)),...values,children:[]};if(mode==='root')state.nodes.push(n);else if(mode==='child')locate(id).node.children.push(n);else{let x=locate(id);x.array.splice(x.index+1,0,n)}if(id)collapsed.delete(id)}});$('editor').close()};$('cancelEdit').onclick=()=>$('editor').close();$('addroot').onclick=()=>edit('root');$('search').oninput=()=>{render();fit()};$('filter').onchange=()=>{render();fit()};$('expand').onclick=()=>{collapsed.clear();render();fit()};$('collapse').onclick=()=>{collapsed=new Set(all().map(n=>n.id));render();fit()};$('undo').onclick=()=>{try{if(localStorage.getItem(KEY)!==lastStored){toast('其他标签页已有修改。请先导出本页，再刷新。');return}}catch(e){}if(history.length){let rev=state.revision;state=history.pop();state.revision=Math.max(rev,state.revision);save();toast('已撤销上一步修改')}};$('reset').onclick=()=>{if(confirm('恢复此 HTML 内嵌的初始版本？当前本地修改将被覆盖。建议先导出备份；本次操作可撤销。'))mutate(()=>{let rev=state.revision;state=clone(INITIAL);state.revision=rev})};
+function download(content,name,type){let u=URL.createObjectURL(new Blob([content],{type}));let a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),30000)}
+const stamp=()=>new Date().toISOString().slice(0,10)+'-r'+state.revision;
+$('exportSeed').onclick=()=>{download(JSON.stringify(INITIAL,null,2),'godot-mujoco-engineering-snapshot.json','application/json');toast('已发起页面内嵌工程快照下载；不会覆盖当前编辑。')};
+$('exportJson').onclick=()=>{download(JSON.stringify(state,null,2),'godot-mujoco-tasks-'+stamp()+'.json','application/json');toast('已发起 JSON 下载；请检查浏览器下载列表。')};
+$('exportHtml').onclick=()=>{const doc=document.documentElement.cloneNode(true);doc.querySelector('#seed').textContent=JSON.stringify(state).replace(/</g,'\\u003c');doc.querySelector('#editor').removeAttribute('open');doc.querySelector('#tree').replaceChildren();doc.querySelector('#toast').hidden=true;download('<!doctype html>\n'+doc.outerHTML,'godot-mujoco-tasks-'+stamp()+'.html','text/html');toast('已发起 HTML 下载，内嵌当前修改。打开时仍优先保留该浏览器已有版本。')};
+$('exportRound').onclick=()=>{let chosen=all().filter(n=>n.selected),text=['Godot × MuJoCo · 本轮拟推进（需求草案，并非执行或合并授权）','修订 '+state.revision+' / '+state.updatedAt,state.baseline,'',...chosen.map(n=>'- '+n.title+' ['+statusNames[n.status]+']\n  '+n.note+(n.source?'\n  证据：'+n.source:''))].join('\n');download(text,'godot-mujoco-round-'+stamp()+'.txt','text/plain');toast(chosen.length?'已发起本轮清单下载。':'当前未勾选本轮任务，已导出空清单。')};
+$('importJson').onclick=()=>$('fileInput').click();$('fileInput').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;try{if(f.size>5*1024*1024)throw Error('文件超过 5 MB');let incoming=validate(JSON.parse(await f.text()));let oldIds=new Set(all().map(n=>n.id)),newIds=new Set(all(incoming.nodes).map(n=>n.id)),added=[...newIds].filter(id=>!oldIds.has(id)).length,removed=[...oldIds].filter(id=>!newIds.has(id)).length;if(!confirm('导入预览：当前 '+oldIds.size+' 个节点 → '+newIds.size+' 个节点；新增 '+added+' 个，移除 '+removed+' 个。\n同 ID 节点以导入文件为准，不自动合并。会保留导入前备份。确认替换？'))return;try{localStorage.setItem(KEY+'-backup',JSON.stringify(state))}catch(e){download(JSON.stringify(state,null,2),'godot-mujoco-before-import-'+stamp()+'.json','application/json');if(!confirm('无法保存浏览器内备份，已发起备份下载。请确认下载成功后继续导入。'))return}mutate(()=>{let rev=state.revision;state=incoming;state.revision=Math.max(rev,incoming.revision)});toast('导入完成；文字仅按文本展示。')}catch(err){toast('导入失败：'+err.message)}};
+$('restoreBackup').onclick=()=>{try{const old=localStorage.getItem(KEY+'-backup');if(!old){toast('没有可恢复的导入前备份。');return}const previous=validate(JSON.parse(old));if(confirm('恢复最近一次导入前的任务树？当前修改将被替换，本次操作可撤销。'))mutate(()=>{let rev=state.revision;state=previous;state.revision=Math.max(rev,previous.revision)})}catch(e){toast('恢复失败：'+e.message)}};
+window.addEventListener('storage',e=>{if(e.key===KEY){$('saveStatus').textContent='另一个标签页修改了本地数据。请先导出本页修改，再刷新对齐，避免互相覆盖。'}});
+$('zoomIn').onclick=()=>zoom(1.2);$('zoomOut').onclick=()=>zoom(1/1.2);$('fit').onclick=fit;$('focus').onclick=()=>selectedId?focusNode(selectedId):toast('先点选一个节点');$('autoLayout').onclick=()=>{if(confirm('恢复自动分层布局？仅清除拖动位置，不改父子关系和任务内容，可撤销。')){mutate(()=>all().forEach(n=>delete n.position));fit()}};
+$('viewport').onwheel=e=>{e.preventDefault();const r=$('viewport').getBoundingClientRect();zoom(Math.exp(-e.deltaY*.0015),e.clientX-r.left,e.clientY-r.top)};
+let pan=null;$('viewport').onpointerdown=e=>{if(e.button!==0||e.target.closest('.map-node'))return;pan={x:e.clientX,y:e.clientY,cx:camera.x,cy:camera.y};$('viewport').setPointerCapture(e.pointerId)};$('viewport').onpointermove=e=>{if(pan){camera.x=pan.cx+e.clientX-pan.x;camera.y=pan.cy+e.clientY-pan.y;transform()}};$('viewport').onpointerup=$('viewport').onpointercancel=()=>pan=null;
+window.addEventListener('resize',()=>transform());mapInitCollapse();render();requestAnimationFrame(fit);
+
+</script></body></html>
