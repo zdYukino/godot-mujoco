@@ -8,7 +8,7 @@ exactly width*depth finite samples, within +/-10000 metres. Samples increase in
 local X across columns and local Z across rows, centred horizontally, with one
 metre spacing. Node poses support translation/rotation; scale and shear fail.
 
-This is a dedicated static terrain node. General Godot `HeightMapShape3D`, dynamic
+This is a dedicated static terrain node. Ordinary Godot `HeightMapShape3D` now has a separate [bounded native path](native-heightmap.zh-CN.md). Dynamic
 terrain bodies, holes/NaNs, sculpting and streaming are unsupported. Existing
 native shapes include box/sphere/plane and [CylinderShape3D](../tests/native_cylinder/README.zh-CN.md). Native cylinders and MJCF cylinder model editing have separate entry points.
 
@@ -75,4 +75,4 @@ Known verification limit: input/stale/pose/resolution failure paths are exercise
 allocator exhaustion and an artificially forced MuJoCo compiler failure are not
 injected. The candidate compiler rollback branch is implemented but is not claimed
 as a forced-failure runtime test. Terrain UI polish, a typed C# terrain-specific
-facade and generic HeightMapShape3D integration remain possible future work.
+facade remain separate workflows; generic HeightMapShape3D now has the native entry point linked above.

@@ -1,0 +1,37 @@
+# 普通 HeightMapShape3D 与地形摩擦
+
+本功能分支面向 Linux x86_64、Godot **4.7.2 .NET**、MuJoCo **3.16.0**，待 dot 独立重建和图形验收。
+普通 `StaticBody3D → CollisionShape3D → HeightMapShape3D` 可直接使用 MuJoCo 后端，不需要挂专用地形脚本，也不要求 MjRuntimeWorld。已有专用 `MjStaticHeightField` 的显式 Apply / revision 接口保持原语义。
+
+## 支持边界
+
+- 宽、深各 2..256，数据恰好 width × depth 个有限 float，范围 ±10000 米。按 Godot 原生行序：列沿 X、行沿 Z、居中、一米间隔。支持负高度、平地、非方形网格。
+- 支持 body 与 CollisionShape 的平移、旋转和组合；节点及祖先必须无缩放、无镜像、无剪切。非单位缩放明确报错并保留最后有效物理姿态，不要忽略错误继续使用视觉节点的位置。间距暂固定为一米。
+- 仅静态刚体；RigidBody3D、AnimatableBody3D/kinematic、Area3D 地形形状不支持，设置时明确报错。孔洞/NaN、无穷、越界高度/尺寸拒绝并保留最后有效数据。后端拒绝不会自动回写 Inspector 的无效设计，须修正后再运行。
+- 普通资源编辑会触发后端 dirty，在下一物理边界重建；可改分辨率、共享资源、禁用/启用、释放。普通 Godot 编辑不使用专用地形 Apply/revision 事务。
+- 普通 PackedScene/ResourceSaver 保存尺寸、高度、刚性变换、碰撞层及 PhysicsMaterial；重开重新构建。资源本身不生成可见网格；示例脚本生成匹配网格，仅作演示。
+- 高度场用 MuJoCo 实体：含侧面和最低点以下一米底座；不是无限薄双面三角网格。碰撞及 ray 支持，保持 collider/RID/shape index；原有 overlap、point、continuous sweep / CharacterBody 对高度场限制未扩展，Area 监测不覆盖地形。不要将该支持解释为完整 Godot Physics 兼容。
+
+## 在 Inspector 调节摩擦
+
+选择 **StaticBody3D → Physics Material Override → New PhysicsMaterial**，展开资源：
+
+- `Friction`：滑动摩擦，建议 0..1；资源 changed 信号会更新后端并重建接触参数。
+- `Rough`：沿用已有原生材质组合；普通原生刚体间使用 `abs(min(signed_friction_a, signed_friction_b))`，rough 的值带负号，双方 rough 时较大摩擦优先。
+- `Bounce` 必须保持 0；已有后端不支持非零反弹，会提示不支持，不能认为它已生效。滚动/扭转摩擦、solref/solimp 不在本轮入口范围。
+
+普通原生接触对使用 condim=3；与导入 MJCF 模型接触继续采用 MuJoCo 的 geom/priority/solmix 组合，可能由对方材质决定最终摩擦，不保证等于地形单方数值。本轮不修改导入模型的材质规则。专用 MjStaticHeightField 仍使用其原有固定材质；需要本入口请使用普通 StaticBody3D 地形。
+
+## 自测与 dot 验收
+
+```bash
+cmake --build /path/to/build -j2
+GODOT_BIN=/path/to/Godot_v4.7.2-stable_mono_linux.x86_64 \
+  OUT=/tmp/native-heightmap-check bash tests/native_heightmap/run.sh
+GODOT_BIN=/path/to/Godot_v4.7.2-stable_mono_linux.x86_64 \
+  OUT=/tmp/dedicated-heightfield-check bash tests/heightfield/run.sh
+```
+
+runner 复制隔离项目和当前 native 库，检查正常阶段无 ERROR/leak，负例单独进程精确计数；失败日志保留，不将退出 139 视为通过。结果在 results.json、executions.tsv 与各阶段日志。无 G1 或多机器人重负载。
+
+在 dot 重新构建后，用固定 .NET 编辑器打开生成的 project，打开 Main.tscn：选择 Terrain 的材质，将 friction 从 0.23 改到 0.67，保存、关闭再打开，确认值保留；选择 Collision 的 HeightMap 修改高度数组与尺寸，观察网格更新，保存重开；F6 观察小球落在地形并滚落边缘。自动脚本独立验证实际接触摩擦 0.23→0.67 和 rough 组合，并对照相同初速度盒子的零摩擦滑动与高摩擦停止，而非仅检查 Inspector 数字。运行时更改 Remote Inspector 材质，验证下一步重建；运行编辑不自动保存。不要把开发环境的 headless 自测当作 dot 图形验收。
