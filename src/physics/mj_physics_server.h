@@ -20,7 +20,11 @@ class MjPhysicsServer3D;
 class MjDirectBodyState;
 class MjDirectSpaceState;
 struct MjAreaScratch;
-struct MjNativeJoint { RID rid,a,b; Vector3 anchor_a,anchor_b,axis_a,axis_b; bool hinge=false; bool pin=false,disable_collisions=true; };
+struct MjNativeJoint {
+ RID rid,a,b; Vector3 anchor_a,anchor_b,axis_a,axis_b,reference_a,reference_b;
+ bool hinge=false,pin=false,disable_collisions=true,use_limit=false,motor=false,antiparallel=false;
+ double lower=-Math_PI/2,upper=Math_PI/2,target_velocity=1,max_impulse=1,step_angle=0;
+};
 struct MjShape { RID rid; PhysicsServer3D::ShapeType type; Variant data; float margin=0.04f; };
 struct MjShapeInstance { RID shape; Transform3D transform; bool disabled=false; };
 struct MjImported {
@@ -61,6 +65,7 @@ struct MjArea {
 };
 struct MjSpace {
  bool paused=false; uint64_t revision=0; String last_error;
+ int64_t pending_step_request=0;
  Dictionary born_state, checkpoint; int single_steps=0; bool skip_tick=false;
  bool authored_options=false; mjOption options{};
  std::map<uint64_t,std::unique_ptr<MjImported>> imported;
@@ -138,6 +143,11 @@ public:
  bool native_joint_collision_disabled(const RID &a,const RID &b) const;
  void detach_native_joints(const RID &body);
  bool commit_native_joint(const MjNativeJoint &joint);
+ void make_native_hinge(const RID&,const RID&,const Vector3&,const Vector3&,const RID&,const Vector3&,const Vector3&,const Vector3&,const Vector3&);
+ bool native_hinge_isolated(const MjNativeJoint &joint) const;
+ bool apply_native_hinge_drives(MjSpace &space,double interval);
+ bool validate_native_hinge_step(MjSpace &space);
+ void complete_world_step(MjSpace &space,const String &error=String());
  std::set<uint64_t> pending_free;
  RID_Owner<int> handles;
  std::map<uint64_t,std::unique_ptr<MjShape>> shapes;

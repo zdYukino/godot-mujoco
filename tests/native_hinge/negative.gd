@@ -3,13 +3,9 @@ func expect(message:String):print("EXPECT_HINGE_ERROR ",message)
 func run():
  setup()
  var a=body(Vector3.ZERO);var accepted=hinge(a,Transform3D.IDENTITY)
- for flag in [PhysicsServer3D.HINGE_JOINT_FLAG_USE_LIMIT,PhysicsServer3D.HINGE_JOINT_FLAG_ENABLE_MOTOR]:
-  expect("Native passive Hinge limits and motor enable unsupported")
-  PhysicsServer3D.hinge_joint_set_flag(accepted,flag,true)
-  check(not PhysicsServer3D.hinge_joint_get_flag(accepted,flag),"unsupported hinge flag remains false")
- for parameter in 8:
+ for parameter in [PhysicsServer3D.HINGE_JOINT_BIAS,PhysicsServer3D.HINGE_JOINT_LIMIT_BIAS,PhysicsServer3D.HINGE_JOINT_LIMIT_SOFTNESS,PhysicsServer3D.HINGE_JOINT_LIMIT_RELAXATION]:
   var old=PhysicsServer3D.hinge_joint_get_param(accepted,parameter)
-  expect("Native passive Hinge custom response, limit and motor parameters unsupported")
+  expect("Native Hinge custom solver response unsupported")
   PhysicsServer3D.hinge_joint_set_param(accepted,parameter,old+.1)
   check(PhysicsServer3D.hinge_joint_get_param(accepted,parameter)==old,"unsupported parameter retains compatibility default %s"%parameter)
  var old_pose=pose(a);var old_velocity=velocity(a);var old_time:float=PhysicsServer3D.call("scene_info",space).time

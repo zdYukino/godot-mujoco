@@ -1,0 +1,659 @@
+{
+  "checks": [
+    {
+      "detail": "",
+      "name": "native backend identity",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "pause isolated world",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "configure lightweight exact-step world",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "passive hinge actual type",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.01, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "(0.0, 0.0, 0.0625)",
+      "name": "motor impulse budget is per actual span with 1 substeps",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "passive hinge actual type",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.11, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "(0.0, 0.0, 0.0625)",
+      "name": "motor impulse budget is per actual span with 10 substeps",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "subdividing a span does not multiply motor impulse",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "passive hinge actual type",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 3, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.31, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "zero impulse budget does not secretly drive body",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "passive hinge actual type",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 4, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.81, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "(0.0, 0.0, 2.0)",
+      "name": "positive radian target reaches actual speed and angle",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 5, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 1.31, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "(0.0, 0.0, -2.0)",
+      "name": "negative target reverses actual angular velocity",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 6, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 2.30999999999999, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "0.39999999783407",
+      "name": "positive drive reaches upper angle bound",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 7, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 3.30999999999997, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "-0.29999997416252",
+      "name": "reverse drive reaches lower angle bound",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 8, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 4.30999999999995, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "-0.30041669114676",
+      "name": "limit resists external torque with motor off",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 9, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.30999999999993, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "0.0",
+      "name": "equal limits lock angle",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 10, \"command\": \"capture\", \"success\": true, \"error\": \"\", \"time\": 5.30999999999993, \"paused\": true }",
+      "name": "world command capture",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "paused drive updates do not advance state",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 11, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.60999999999992, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 12, \"command\": \"reset\", \"success\": true, \"error\": \"\", \"time\": 5.30999999999993, \"paused\": true }",
+      "name": "world command reset",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "checkpoint reset preserves newer joint design",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "passive hinge actual type",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 13, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.40999999999993, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "[(0.0, 0.0, 0.0625), (0.0, 0.0, -0.03125)]",
+      "name": "unequal-mass two-body motor delivers equal opposite impulse",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "unequal-mass weighted angular momentum conserved",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "passive hinge actual type",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 14, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.41999999999993, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "(-0.0, 0.0, 0.000984)",
+      "name": "eccentric anchor uses parallel-axis inertia not COM inertia",
+      "passed": true
+    },
+    {
+      "detail": "(0.000984, 0.0, 0.0)",
+      "name": "eccentric motor induces matching COM tangential velocity",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "eccentric driven anchor remains constrained",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "passive hinge actual type",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "passive hinge actual type",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 15, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.42999999999993, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "callback update does not retroactively change completed span",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "callback target update isolated from second pair",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "second pair keeps independent first-span physical response",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 16, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.43999999999993, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "next span consumes callback-updated target and impulse budget",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "same-callback parameter update then clear removes only its own pair",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 17, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.44999999999993, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "cleared body stays free while independent motor continues",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "passive hinge actual type",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 18, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.54999999999993, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "(0.000474, -0.000086, 0.001099)",
+      "name": "rotated frame offset COM asymmetric inertia motor response",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "static endpoint holds offset COM anchor",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 19, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 5.64999999999992, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "clear driven hinge releases transverse rotation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "passive hinge actual type",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 20, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 6.44999999999991, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "-0.29999997416252",
+      "name": "limit angle includes relative frame phase",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "save actual driven HingeJoint3D design",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "configure saved drive world",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "reopened native flags match saved design",
+      "passed": true
+    },
+    {
+      "detail": "{ \"request\": 21, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.5, \"paused\": true }",
+      "name": "bounded exact step completes",
+      "passed": true
+    },
+    {
+      "detail": "(0.0, 0.0, 1.5)",
+      "name": "reopened motor reaches saved physical target velocity",
+      "passed": true
+    }
+  ],
+  "failed": 0,
+  "passed": 65,
+  "negative": {
+    "checks": [
+      {
+        "detail": "",
+        "name": "native backend identity",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "pause isolated world",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "configure lightweight exact-step world",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "passive hinge actual type",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "invalid finite/range update retains accepted parameter",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "invalid finite/range update retains accepted parameter",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "invalid finite/range update retains accepted parameter",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "invalid finite/range update retains accepted parameter",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "invalid finite/range update retains accepted parameter",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "invalid finite/range update retains accepted parameter",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "invalid finite/range update retains accepted parameter",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "invalid finite/range update retains accepted parameter",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "rejected parameters do not alter paused state",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "driven endpoint graph violation leaves old motor and graph intact",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 1, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.3, \"paused\": true }",
+        "name": "bounded exact step completes",
+        "passed": true
+      },
+      {
+        "detail": "(0.0, 0.0, 0.625)",
+        "name": "old accepted motor still acts after rejected graph change",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "passive hinge actual type",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "antiparallel activation rejection retains passive hinge",
+        "passed": true
+      }
+    ],
+    "failed": 0,
+    "passed": 18
+  },
+  "expected_errors": 10,
+  "input": {
+    "failed": 0,
+    "passed": 14
+  },
+  "guard": {
+    "checks": [
+      {
+        "detail": "",
+        "name": "native backend identity",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "pause isolated world",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "configure lightweight exact-step world",
+        "passed": true
+      },
+      {
+        "detail": "{ \"authored_options\": true, \"options\": { \"timestep\": 0.01, \"impratio\": 1.0, \"tolerance\": 0.00000001, \"ls_tolerance\": 0.01, \"noslip_tolerance\": 0.000001, \"ccd_tolerance\": 0.000001, \"sleep_tolerance\": 0.001, \"gravity\": [0.0, 0.0, -10.0], \"wind\": [0.0, 0.0, 0.0], \"magnetic\": [0.0, -0.5, 0.0], \"density\": 0.0, \"viscosity\": 0.0, \"o_margin\": 0.0, \"o_solref\": [0.02, 1.0], \"o_solimp\": [0.9, 0.95, 0.001, 0.5, 2.0], \"o_friction\": [1.0, 1.0, 0.005, 0.0001, 0.0001], \"integrator\": 0, \"cone\": 0, \"jacobian\": 2, \"solver\": 2, \"iterations\": 100, \"ls_iterations\": 50, \"noslip_iterations\": 0, \"ccd_iterations\": 35, \"disableflags\": 0, \"enableflags\": 0, \"disableactuator\": 0, \"sdf_initpoints\": 40, \"sdf_iterations\": 10 }, \"paused\": true, \"has_checkpoint\": false, \"timestep\": 0.01, \"revision\": 3, \"last_error\": \"Native Hinge drive numerical state rejected\", \"objects\": [], \"nbody\": 2, \"ngeom\": 1, \"njnt\": 1, \"nu\": 0, \"ncon\": 0, \"time\": 0.0, \"version\": \"3.16.0\", \"warning_count\": 0, \"applied_force_norm\": 0.0, \"warmstart_norm\": 0.0, \"contacts\": [], \"contact_details\": [] }",
+        "name": "guard no simulated time advance",
+        "passed": true
+      },
+      {
+        "detail": "{ \"authored_options\": true, \"options\": { \"timestep\": 0.01, \"impratio\": 1.0, \"tolerance\": 0.00000001, \"ls_tolerance\": 0.01, \"noslip_tolerance\": 0.000001, \"ccd_tolerance\": 0.000001, \"sleep_tolerance\": 0.001, \"gravity\": [0.0, 0.0, -10.0], \"wind\": [0.0, 0.0, 0.0], \"magnetic\": [0.0, -0.5, 0.0], \"density\": 0.0, \"viscosity\": 0.0, \"o_margin\": 0.0, \"o_solref\": [0.02, 1.0], \"o_solimp\": [0.9, 0.95, 0.001, 0.5, 2.0], \"o_friction\": [1.0, 1.0, 0.005, 0.0001, 0.0001], \"integrator\": 0, \"cone\": 0, \"jacobian\": 2, \"solver\": 2, \"iterations\": 100, \"ls_iterations\": 50, \"noslip_iterations\": 0, \"ccd_iterations\": 35, \"disableflags\": 0, \"enableflags\": 0, \"disableactuator\": 0, \"sdf_initpoints\": 40, \"sdf_iterations\": 10 }, \"paused\": true, \"has_checkpoint\": false, \"timestep\": 0.01, \"revision\": 3, \"last_error\": \"Native Hinge drive numerical state rejected\", \"objects\": [], \"nbody\": 2, \"ngeom\": 1, \"njnt\": 1, \"nu\": 0, \"ncon\": 0, \"time\": 0.0, \"version\": \"3.16.0\", \"warning_count\": 0, \"applied_force_norm\": 0.0, \"warmstart_norm\": 0.0, \"contacts\": [], \"contact_details\": [] }",
+        "name": "guard leaves world paused",
+        "passed": true
+      },
+      {
+        "detail": "(0.0, 0.0, 1.0)",
+        "name": "guard preserves pre-step velocity including unapplied damping",
+        "passed": true
+      },
+      {
+        "detail": "[X: (1.0, 0.0, 0.0), Y: (0.0, 1.0, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]",
+        "name": "guard leaves pose untouched",
+        "passed": true
+      },
+      {
+        "detail": "0",
+        "name": "guard does not emit fictitious integration callback",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 1, \"command\": \"step\", \"success\": false, \"error\": \"Native Hinge drive numerical state rejected\", \"time\": 0.0, \"paused\": true }",
+        "name": "guard does not report failed step as successful",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 1, \"command\": \"step\", \"success\": false, \"error\": \"Native Hinge drive numerical state rejected\", \"time\": 0.0, \"paused\": true }",
+        "name": "completion time equals actual simulated time",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.01, \"paused\": true }",
+        "name": "bounded exact step completes",
+        "passed": true
+      },
+      {
+        "detail": "(0.0, 0.0, 0.99)",
+        "name": "retry consumes original one-shot torque exactly once",
+        "passed": true
+      }
+    ],
+    "failed": 0,
+    "passed": 12
+  },
+  "guard_expected_errors": 1,
+  "poststep": {
+    "checks": [
+      {
+        "detail": "",
+        "name": "native backend identity",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "pause isolated world",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "configure lightweight exact-step world",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 1, \"command\": \"step\", \"success\": false, \"error\": \"Native Hinge drive post-step state rejected\", \"time\": 0.0, \"paused\": true }",
+        "name": "external torque wrap rejected after integration",
+        "passed": true
+      },
+      {
+        "detail": "{ \"authored_options\": true, \"options\": { \"timestep\": 0.01, \"impratio\": 1.0, \"tolerance\": 0.00000001, \"ls_tolerance\": 0.01, \"noslip_tolerance\": 0.000001, \"ccd_tolerance\": 0.000001, \"sleep_tolerance\": 0.001, \"gravity\": [0.0, 0.0, -10.0], \"wind\": [0.0, 0.0, 0.0], \"magnetic\": [0.0, -0.5, 0.0], \"density\": 0.0, \"viscosity\": 0.0, \"o_margin\": 0.0, \"o_solref\": [0.02, 1.0], \"o_solimp\": [0.9, 0.95, 0.001, 0.5, 2.0], \"o_friction\": [1.0, 1.0, 0.005, 0.0001, 0.0001], \"integrator\": 0, \"cone\": 0, \"jacobian\": 2, \"solver\": 2, \"iterations\": 100, \"ls_iterations\": 50, \"noslip_iterations\": 0, \"ccd_iterations\": 35, \"disableflags\": 0, \"enableflags\": 0, \"disableactuator\": 0, \"sdf_initpoints\": 40, \"sdf_iterations\": 10 }, \"paused\": true, \"has_checkpoint\": false, \"timestep\": 0.01, \"revision\": 3, \"last_error\": \"Native Hinge drive post-step state rejected\", \"objects\": [], \"nbody\": 2, \"ngeom\": 1, \"njnt\": 1, \"nu\": 0, \"ncon\": 0, \"time\": 0.0, \"version\": \"3.16.0\", \"warning_count\": 0, \"applied_force_norm\": 0.0, \"warmstart_norm\": 0.0, \"contacts\": [], \"contact_details\": [] }",
+        "name": "wrap rollback time and completion agree",
+        "passed": true
+      },
+      {
+        "detail": "[X: (-0.988532, 0.151013, 0.0), Y: (-0.151013, -0.988532, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]",
+        "name": "wrap rollback preserves pose and pause",
+        "passed": true
+      },
+      {
+        "detail": "0",
+        "name": "wrap rollback preserves velocity and callbacks",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.01, \"paused\": true }",
+        "name": "bounded exact step completes",
+        "passed": true
+      },
+      {
+        "detail": "[X: (-0.988532, 0.151013, 0.0), Y: (-0.151013, -0.988532, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]",
+        "name": "wrap failure retained transient torque for explicit cancellation",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 3, \"command\": \"step\", \"success\": false, \"error\": \"Native Hinge drive post-step state rejected\", \"time\": 0.01, \"paused\": true }",
+        "name": "later substep excessive external turn rejected",
+        "passed": true
+      },
+      {
+        "detail": "{ \"authored_options\": true, \"options\": { \"timestep\": 0.01, \"impratio\": 1.0, \"tolerance\": 0.00000001, \"ls_tolerance\": 0.01, \"noslip_tolerance\": 0.000001, \"ccd_tolerance\": 0.000001, \"sleep_tolerance\": 0.001, \"gravity\": [0.0, 0.0, -10.0], \"wind\": [0.0, 0.0, 0.0], \"magnetic\": [0.0, -0.5, 0.0], \"density\": 0.0, \"viscosity\": 0.0, \"o_margin\": 0.0, \"o_solref\": [0.02, 1.0], \"o_solimp\": [0.9, 0.95, 0.001, 0.5, 2.0], \"o_friction\": [1.0, 1.0, 0.005, 0.0001, 0.0001], \"integrator\": 0, \"cone\": 0, \"jacobian\": 2, \"solver\": 2, \"iterations\": 100, \"ls_iterations\": 50, \"noslip_iterations\": 0, \"ccd_iterations\": 35, \"disableflags\": 0, \"enableflags\": 0, \"disableactuator\": 0, \"sdf_initpoints\": 40, \"sdf_iterations\": 10 }, \"paused\": true, \"has_checkpoint\": false, \"timestep\": 0.01, \"revision\": 3, \"last_error\": \"Native Hinge drive post-step state rejected\", \"objects\": [], \"nbody\": 2, \"ngeom\": 1, \"njnt\": 1, \"nu\": 0, \"ncon\": 0, \"time\": 0.01, \"version\": \"3.16.0\", \"warning_count\": 0, \"applied_force_norm\": 10.0, \"warmstart_norm\": 0.0, \"contacts\": [], \"contact_details\": [] }",
+        "name": "later failure rolls back earlier successful substep",
+        "passed": true
+      },
+      {
+        "detail": "0",
+        "name": "later rollback no callback or velocity consumption",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 4, \"command\": \"step\", \"success\": false, \"error\": \"Single-step requires an active physics space\", \"time\": 0.01, \"paused\": true }",
+        "name": "inactive space step returns explicit failure",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 4, \"command\": \"step\", \"success\": false, \"error\": \"Single-step requires an active physics space\", \"time\": 0.01, \"paused\": true }",
+        "name": "inactive failure never advances time",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "duplicate queued step rejected",
+        "passed": true
+      },
+      {
+        "detail": "{ \"authored_options\": true, \"options\": { \"timestep\": 0.01, \"impratio\": 1.0, \"tolerance\": 0.00000001, \"ls_tolerance\": 0.01, \"noslip_tolerance\": 0.000001, \"ccd_tolerance\": 0.000001, \"sleep_tolerance\": 0.001, \"gravity\": [0.0, 0.0, -10.0], \"wind\": [0.0, 0.0, 0.0], \"magnetic\": [0.0, -0.5, 0.0], \"density\": 0.0, \"viscosity\": 0.0, \"o_margin\": 0.0, \"o_solref\": [0.02, 1.0], \"o_solimp\": [0.9, 0.95, 0.001, 0.5, 2.0], \"o_friction\": [1.0, 1.0, 0.005, 0.0001, 0.0001], \"integrator\": 0, \"cone\": 0, \"jacobian\": 2, \"solver\": 2, \"iterations\": 100, \"ls_iterations\": 50, \"noslip_iterations\": 0, \"ccd_iterations\": 35, \"disableflags\": 0, \"enableflags\": 0, \"disableactuator\": 0, \"sdf_initpoints\": 40, \"sdf_iterations\": 10 }, \"paused\": true, \"has_checkpoint\": false, \"timestep\": 0.01, \"revision\": 3, \"last_error\": \"Native Hinge drive post-step state rejected\", \"objects\": [], \"nbody\": 2, \"ngeom\": 1, \"njnt\": 1, \"nu\": 0, \"ncon\": 0, \"time\": 0.01, \"version\": \"3.16.0\", \"warning_count\": 0, \"applied_force_norm\": 10.0, \"warmstart_norm\": 0.0, \"contacts\": [], \"contact_details\": [] }",
+        "name": "queued cancellation removes request with no execution or fictitious completion",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 6, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.02, \"paused\": true }",
+        "name": "bounded exact step completes",
+        "passed": true
+      },
+      {
+        "detail": "{ \"authored_options\": true, \"options\": { \"timestep\": 0.01, \"impratio\": 1.0, \"tolerance\": 0.00000001, \"ls_tolerance\": 0.01, \"noslip_tolerance\": 0.000001, \"ccd_tolerance\": 0.000001, \"sleep_tolerance\": 0.001, \"gravity\": [0.0, 0.0, -10.0], \"wind\": [0.0, 0.0, 0.0], \"magnetic\": [0.0, -0.5, 0.0], \"density\": 0.0, \"viscosity\": 0.0, \"o_margin\": 0.0, \"o_solref\": [0.02, 1.0], \"o_solimp\": [0.9, 0.95, 0.001, 0.5, 2.0], \"o_friction\": [1.0, 1.0, 0.005, 0.0001, 0.0001], \"integrator\": 0, \"cone\": 0, \"jacobian\": 2, \"solver\": 2, \"iterations\": 100, \"ls_iterations\": 50, \"noslip_iterations\": 0, \"ccd_iterations\": 35, \"disableflags\": 0, \"enableflags\": 0, \"disableactuator\": 0, \"sdf_initpoints\": 40, \"sdf_iterations\": 10 }, \"paused\": true, \"has_checkpoint\": false, \"timestep\": 0.01, \"revision\": 3, \"last_error\": \"Native Hinge drive post-step state rejected\", \"objects\": [], \"nbody\": 2, \"ngeom\": 1, \"njnt\": 1, \"nu\": 0, \"ncon\": 0, \"time\": 0.02, \"version\": \"3.16.0\", \"warning_count\": 0, \"applied_force_norm\": 10.0, \"warmstart_norm\": 0.0, \"contacts\": [], \"contact_details\": [] }",
+        "name": "subsequent step completes after inactive and cancelled commands",
+        "passed": true
+      }
+    ],
+    "failed": 0,
+    "passed": 18
+  },
+  "poststep_expected_errors": 2,
+  "alias": {
+    "checks": [
+      {
+        "detail": "",
+        "name": "native backend identity",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "pause isolated world",
+        "passed": true
+      },
+      {
+        "detail": "",
+        "name": "configure lightweight exact-step world",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 1, \"command\": \"step\", \"success\": false, \"error\": \"Native Hinge drive post-step state rejected\", \"time\": 0.0, \"paused\": true }",
+        "name": "external torque wrap rejected after integration",
+        "passed": true
+      },
+      {
+        "detail": "{ \"authored_options\": true, \"options\": { \"timestep\": 0.01, \"impratio\": 1.0, \"tolerance\": 0.00000001, \"ls_tolerance\": 0.01, \"noslip_tolerance\": 0.000001, \"ccd_tolerance\": 0.000001, \"sleep_tolerance\": 0.001, \"gravity\": [0.0, 0.0, -10.0], \"wind\": [0.0, 0.0, 0.0], \"magnetic\": [0.0, -0.5, 0.0], \"density\": 0.0, \"viscosity\": 0.0, \"o_margin\": 0.0, \"o_solref\": [0.02, 1.0], \"o_solimp\": [0.9, 0.95, 0.001, 0.5, 2.0], \"o_friction\": [1.0, 1.0, 0.005, 0.0001, 0.0001], \"integrator\": 0, \"cone\": 0, \"jacobian\": 2, \"solver\": 2, \"iterations\": 100, \"ls_iterations\": 50, \"noslip_iterations\": 0, \"ccd_iterations\": 35, \"disableflags\": 0, \"enableflags\": 0, \"disableactuator\": 0, \"sdf_initpoints\": 40, \"sdf_iterations\": 10 }, \"paused\": true, \"has_checkpoint\": false, \"timestep\": 0.01, \"revision\": 3, \"last_error\": \"Native Hinge drive post-step state rejected\", \"objects\": [], \"nbody\": 2, \"ngeom\": 1, \"njnt\": 1, \"nu\": 0, \"ncon\": 0, \"time\": 0.0, \"version\": \"3.16.0\", \"warning_count\": 0, \"applied_force_norm\": 0.0, \"warmstart_norm\": 0.0, \"contacts\": [], \"contact_details\": [] }",
+        "name": "wrap rollback time and completion agree",
+        "passed": true
+      },
+      {
+        "detail": "[X: (-0.988532, 0.151013, 0.0), Y: (-0.151013, -0.988532, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]",
+        "name": "wrap rollback preserves pose and pause",
+        "passed": true
+      },
+      {
+        "detail": "0",
+        "name": "wrap rollback preserves velocity and callbacks",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 2, \"command\": \"step\", \"success\": true, \"error\": \"\", \"time\": 0.01, \"paused\": true }",
+        "name": "bounded exact step completes",
+        "passed": true
+      },
+      {
+        "detail": "[X: (-0.988532, 0.151013, 0.0), Y: (-0.151013, -0.988532, 0.0), Z: (0.0, 0.0, 1.0), O: (0.0, 0.0, 0.0)]",
+        "name": "wrap failure retained transient torque for explicit cancellation",
+        "passed": true
+      },
+      {
+        "detail": "{ \"request\": 3, \"command\": \"step\", \"success\": false, \"error\": \"Native Hinge drive post-step state rejected\", \"time\": 0.01, \"paused\": true }",
+        "name": "full revolution external torque rejected",
+        "passed": true
+      },
+      {
+        "detail": "(0.0, 0.0, 0.0)",
+        "name": "full revolution rollback",
+        "passed": true
+      }
+    ],
+    "failed": 0,
+    "passed": 11
+  },
+  "alias_expected_errors": 2,
+  "extension_sha256": "c25f92e782aa348fa7aaa92291810230838d3b8311acf3b490fdc2cac51637c9"
+}

@@ -184,7 +184,7 @@ void MjPhysicsServer3D::_free_rid(const RID&source_rid){
  retire_area_pairs(r);
  if(auto*b=body(r)){detach_native_joints(r);RID terrain_shape=b->heightfield&&!b->shapes.empty()?b->shapes[0].shape:RID();dirty(b->space);if(b->direct)memdelete(b->direct);bodies.erase(r.get_id());heightfield_revisions.erase(r.get_id());if(terrain_shape.is_valid())_free_rid(terrain_shape);}
  else if(area(r)){areas.erase(r.get_id());}
- else if(space(r)){for(auto &b:bodies)if(b.second->space==r)detach_native_joints(b.second->rid);for(auto &a:areas)if(a.second->space==r)a.second->space=RID();for(auto &i:space(r)->imported)handles.free(i.second->rid);for(auto &b:bodies)if(b.second->space==r){b.second->space=RID();b.second->mj_body=-1;}spaces.erase(r.get_id());}
+ else if(space(r)){complete_world_step(*space(r),"Runtime world removed before step completed");for(auto &b:bodies)if(b.second->space==r)detach_native_joints(b.second->rid);for(auto &a:areas)if(a.second->space==r)a.second->space=RID();for(auto &i:space(r)->imported)handles.free(i.second->rid);for(auto &b:bodies)if(b.second->space==r){b.second->space=RID();b.second->mj_body=-1;}spaces.erase(r.get_id());}
  else if(shape(r)){
   std::vector<std::pair<RID,int>> affected;
   for(auto &entry:areas){auto &a=*entry.second;auto &instances=a.shapes;
@@ -412,16 +412,27 @@ void MjPhysicsServer3D::_step(float dt){
  process_heightfields();
  process_model_edits();
  process_world_commands(); // Before stepping, including paused worlds: UI only enqueues snapshots.
- if(!active||dt<=0)return;last_step=dt;
+ if(!active||dt<=0){for(auto&e:spaces){e.second->single_steps=0;complete_world_step(*e.second,"Physics integration inactive or invalid timestep");}return;}last_step=dt;
  // Each Godot fixed tick advances each active space exactly dt. Subdivide, don't
  // accumulate another autonomous clock (MjWorld owns entirely separate models).
- for(auto &entry:spaces){auto&s=*entry.second;if(s.skip_tick){s.skip_tick=false;continue;}if(!s.active||(s.paused&&s.single_steps==0)||!rebuild(s))continue;
+ for(auto &entry:spaces){auto&s=*entry.second;if(s.skip_tick){s.skip_tick=false;continue;}if(!s.active||(s.paused&&s.single_steps==0))continue;
+ if(!rebuild(s)){s.single_steps=0;complete_world_step(s,s.last_error);continue;}
+ const double saved_accumulator=s.accumulator;
  int steps;
  if(s.single_steps>0){steps=s.single_steps;s.single_steps=0;s.model->opt.timestep=s.options.timestep;}
  else if(s.authored_options){s.accumulator+=dt;steps=int((s.accumulator+1e-12)/s.options.timestep);s.accumulator-=steps*s.options.timestep;s.model->opt.timestep=s.options.timestep;}
  else{steps=std::max(1,int(std::ceil(double(dt)/0.002)));s.model->opt.timestep=double(dt)/steps;}
  if(steps<=0)continue;
  const double span=steps*s.model->opt.timestep;
+ bool driven=false;for(auto&je:native_joints)if(native_joint_active(je.second,s.rid)&&je.second.hinge&&(je.second.motor||je.second.use_limit))driven=true;
+ // A rejected drive step must not consume damping, forces, substeps or callbacks.
+ std::unique_ptr<mjData,decltype(&mj_deleteData)> backup(nullptr,mj_deleteData);
+ struct IntegrationBackup {MjBody*b;bool callback,sync,valid;double step;MjEnvironment env;};
+ std::vector<IntegrationBackup> saved_bodies;
+ if(driven){backup.reset(mj_makeData(s.model));if(!backup){s.accumulator=saved_accumulator;s.paused=true;s.last_error="Native Hinge step backup allocation failed";complete_world_step(s,s.last_error);ERR_PRINT(s.last_error);continue;}mj_copyData(backup.get(),s.model,s.data);
+  for(auto&be:bodies){auto&b=*be.second;if(b.space==s.rid)saved_bodies.push_back({&b,b.callback_pending,b.sync_pending,b.environment_valid,b.integration_step,b.integration_environment});}
+ }
+ bool drive_failed=false;
  // Godot damping is applied once per server integration interval, not once
  // per MuJoCo solver subdivision (which changes its numerical meaning).
  for(auto &be:bodies){auto&b=*be.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID||b.mj_body<1)continue;
@@ -445,7 +456,16 @@ void MjPhysicsServer3D::_step(float dt){
   s.data->xfrc_applied[6*b.mj_body+3+k]=b.omit_integration?0:double(torque[k])+constant_torque[k];
  }
  }
- mj_step(s.model,s.data);if(n==steps-1)collect_contacts(s);}
+ if(!apply_native_hinge_drives(s,span)){s.paused=true;s.last_error="Native Hinge drive numerical state rejected";drive_failed=true;ERR_PRINT(s.last_error);break;}
+ mj_step(s.model,s.data);if(n==steps-1)collect_contacts(s);
+ if(driven){bool valid=validate_native_hinge_step(s);for(int w=0;w<mjNWARNING;++w)if(s.data->warning[w].number>backup->warning[w].number)valid=false;
+  if(!valid){s.paused=true;s.last_error="Native Hinge drive post-step state rejected";drive_failed=true;ERR_PRINT(s.last_error);break;}}
+ }
+ if(drive_failed){mj_deleteData(s.data);s.data=backup.release();s.accumulator=saved_accumulator;
+  for(auto&old:saved_bodies){old.b->contacts.clear();old.b->callback_pending=old.callback;old.b->sync_pending=old.sync;old.b->environment_valid=old.valid;old.b->integration_step=old.step;old.b->integration_environment=old.env;}
+  complete_world_step(s,s.last_error);continue;
+ }
+ complete_world_step(s);
  mj_forward(s.model,s.data);
  for(auto &be:bodies){auto&b=*be.second;if(b.space==s.rid){read_body(b);b.force=Vector3();b.torque=Vector3();}}
  }
