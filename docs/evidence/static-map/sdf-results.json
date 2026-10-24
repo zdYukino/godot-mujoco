@@ -1,0 +1,41 @@
+{
+  "room_sdf": {
+    "version": "3.16.0",
+    "compile_ms": "145.062",
+    "step_ms": "455.340",
+    "compile_cpu_ms": "145.019",
+    "step_cpu_ms": "454.744",
+    "steps": "750",
+    "compile_peak_rss_kib": "67172",
+    "peak_rss_kib": "67428",
+    "octree_cells": "82553",
+    "plugins": "0",
+    "peak_contacts": "40"
+  },
+  "room_convex": {
+    "version": "3.16.0",
+    "compile_ms": "1.548",
+    "step_ms": "2.111",
+    "compile_cpu_ms": "1.555",
+    "step_cpu_ms": "2.111",
+    "steps": "750",
+    "compile_peak_rss_kib": "5248",
+    "peak_rss_kib": "5376",
+    "octree_cells": "0",
+    "plugins": "0",
+    "peak_contacts": "2"
+  },
+  "cow": {
+    "version": "3.16.0",
+    "compile_ms": "372.621",
+    "step_ms": "135.707",
+    "compile_cpu_ms": "682.363",
+    "step_cpu_ms": "129.485",
+    "steps": "100",
+    "compile_peak_rss_kib": "144108",
+    "peak_rss_kib": "144364",
+    "octree_cells": "49001",
+    "plugins": "1",
+    "peak_contacts": "9"
+  }
+}

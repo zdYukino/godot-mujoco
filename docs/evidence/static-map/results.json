@@ -1,0 +1,22 @@
+{
+  "positive": {
+    "doorway_z": -1.03199994564056,
+    "failed": 0,
+    "high_friction_distance": 0.143445730209351,
+    "low_friction_distance": 0.722988486289978,
+    "passed": 65,
+    "wall_z": -3.53438997268677
+  },
+  "reopen": {
+    "failed": 0,
+    "passed": 8
+  },
+  "relocated": {
+    "failed": 0,
+    "passed": 8
+  },
+  "dependency_diagnostics": {
+    "passed": 3,
+    "failed": 0
+  }
+}

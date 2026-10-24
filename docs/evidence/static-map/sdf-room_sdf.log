@@ -1,0 +1,4 @@
+SDF_PROBE version=3.16.0 compile_ms=145.062 step_ms=455.340 compile_cpu_ms=145.019 step_cpu_ms=454.744 steps=750 compile_peak_rss_kib=67172 peak_rss_kib=67428 octree_cells=82553 plugins=0 peak_contacts=40
+SDF_GEOM name=room plugin=-1 mesh=0
+BODY through pos=0.000000 1.004000 1.000000
+BODY blocked pos=2.003706 3.458472 1.003738

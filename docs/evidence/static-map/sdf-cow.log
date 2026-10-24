@@ -1,0 +1,4 @@
+SDF_PROBE version=3.16.0 compile_ms=372.621 step_ms=135.707 compile_cpu_ms=682.363 step_cpu_ms=129.485 steps=100 compile_peak_rss_kib=144108 peak_rss_kib=144364 octree_cells=49001 plugins=1 peak_contacts=9
+SDF_GEOM name=(null) plugin=0 mesh=1
+SDF_GEOM name=cow1 plugin=-1 mesh=0
+SDF_GEOM name=cow2 plugin=-1 mesh=0

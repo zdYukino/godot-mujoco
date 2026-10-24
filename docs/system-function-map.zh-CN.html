@@ -4,7 +4,7 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
 </style></head><body><header><small>SYSTEM ARCHITECTURE / 系统功能架构</small><div class="tag">可编辑 · 私人工作底稿</div><h1>Godot × MuJoCo <span>系统功能架构图</span></h1><p>系统 → 功能模块 → 子功能。完成状态仅作节点标签；点选查看能力边界、已验收范围与尚缺功能。</p></header><main><section class="summary" aria-label="叶子任务统计"><div class="stat"><strong id="completed">0</strong><span>已完成 / 全部叶子</span></div><div class="stat"><strong id="unfinished">0</strong><span>未完成 · 进行中 / 待验收 / 受阻</span></div><div class="stat"><strong id="planned">0</strong><span>待完成 · 待启动 / 暂缓</span></div><div class="stat"><strong id="chosen">0</strong><span>本轮拟推进 · 节点数</span></div></section><div class="toolbar"><input id="search" type="search" placeholder="搜索任务、备注或提交号…" aria-label="搜索任务"><select id="filter" aria-label="筛选状态"><option value="all">全部状态</option><option value="done">已完成</option><option value="unfinished">未完成</option><option value="planned">待完成</option><option value="selected">本轮拟推进</option></select><button id="expand">展开全部</button><button id="collapse">折叠全部</button><button id="addroot" class="primary">＋ 添加功能模块</button></div><div class="toolbar"><button id="exportHtml">下载当前 HTML</button><button id="exportJson">导出 JSON</button><button id="exportSeed">下载页面工程快照</button><button id="importJson">导入 JSON</button><button id="exportRound">导出本轮清单</button><button id="restoreBackup">恢复导入前备份</button><button id="undo" disabled>撤销修改</button><button id="reset" class="danger">恢复初始版本</button></div><div class="guide">主分支按功能架构组织，状态仅为属性。旧版浏览器缓存保留在原存储区，不会覆盖此架构版；如有旧版个人修改，请先从旧 HTML 导出再对照。<br>完成勾选是你的可编辑记录；侧栏“工程记录”保留内嵌证据，不随勾选改变。完成勾选只更改单个节点，不会自动勾选子任务。进度按叶子统计，父节点状态独立维护。<br>“本轮拟推进”仅为需求草案，不等于执行或合并授权。保存仅在当前浏览器，不会跨设备同步，也不会自动发送给助手；请下载最新 HTML 或 JSON 后发回对齐。</div><details class="guide"><summary><strong>下一目标：静态地图导入 / 查看器 · 推进顺序与验收门（点击展开）</strong></summary><p>P0 输入/同步契约 → P1 静态导入与查看 MVP → P2 碰撞分流与预览 → P3 地图资源包/摩擦/迁移验收 → P4 UE 通用导出接入。</p><p>先可查看，再证明可仿真；不直接读 UE 原生地图，不把复杂网格自动当正确碰撞。MJCF 当前是派生快照，源文件监视/冲突处理属于计划。详见各功能模块下 P0–P4 节点。</p><p>本次只制定计划，不启动开发或自动合并 PR #17。已完成能力与既有节点不改写；“本轮拟推进”仅表示建议 MVP 需求。</p></details><div class="savebar"><span id="saveStatus" role="status" aria-live="polite"></span><span id="baseline"></span></div><div class="map-controls"><button id="zoomOut" aria-label="缩小">−</button><span id="zoomValue">100%</span><button id="zoomIn" aria-label="放大">＋</button><button id="fit">适合全图</button><button id="focus">聚焦选中</button><button id="autoLayout">自动分层布局</button><span>拖动空白平移 · 滚轮缩放 · 拖动节点仅改布局</span></div><div class="workspace"><section id="viewport" aria-label="可拖动思维导图画布"><div id="world"><svg id="edges" aria-hidden="true"></svg><section id="tree" aria-label="系统功能架构图节点"></section></div></section><aside id="detail" aria-label="选中任务详情"></aside></div><footer id="revision"></footer></main><dialog id="editor"><form id="editform"><h2 id="dialogtitle">编辑任务</h2><label>任务名称<input id="editTitle" type="text" maxlength="300" required></label><label>状态<select id="editStatus"><option value="done">已完成</option><option value="in_progress">未完成 · 进行中</option><option value="awaiting_acceptance">待 dot 验收</option><option value="blocked">未完成 · 受阻</option><option value="planned">待完成 · 待启动</option><option value="deferred">待完成 · 暂缓</option></select></label><label>备注 / 验收标准<textarea id="editNote" maxlength="10000"></textarea></label><label>补充来源 / 提交（可编辑，不改写工程记录）<input id="editSource" type="text" maxlength="2000"></label><label><input id="editSelected" type="checkbox"> 本轮拟推进（仅草案）</label><div class="dialogactions"><button type="button" id="cancelEdit">取消</button><button class="primary" type="submit">保存任务</button></div></form></dialog><div id="toast" role="status" hidden></div><input type="file" id="fileInput" accept="application/json,.json"><script id="seed" type="application/json">{
   "schemaVersion": 1,
   "project": "Godot × MuJoCo",
-  "revision": 12,
+  "revision": 13,
   "updatedAt": "2026-10-24T18:12:00Z",
   "baseline": "功能架构视图 · main bf528ff（文档更新） · 地形 PR #17 / 310d2a4 已验收待合并 · 下一目标：静态地图导入 / 查看器（仅规划）",
   "nodes": [
@@ -362,7 +362,7 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
           "id": "map-import",
           "title": "静态地图资源导入与规范化（下一目标）",
           "status": "planned",
-          "note": "建议分层：输入适配 → 统一环境资源 → 视觉场景 / 碰撞描述 → 验证与打包。MVP 先完成 P0/P1 可查看闭环；P2/P3 才进入可仿真闭环，不能把导入成功当物理正确。",
+          "note": "建议分层：输入适配 → 统一环境资源 → 视觉场景 / 碰撞描述 → 验证与打包。MVP 先完成 P0/P1 可查看闭环；P2/P3 才进入可仿真闭环，不能把导入成功当物理正确。\n\n【开发阶段 · 本地候选】P0–P3 已实现声明子集，开发自测见 docs/static-map.zh-CN.md 与 docs/evidence/static-map；仍待实际 dot 重新构建和 GUI 验收，不标记完成。SDF 仅原生探针通过，全面碰撞选择在本轮之后推进；P4 暂缓。",
           "source": "下一阶段规划 · 2026-10-25 北京时间 · 未实现 / 未启动；执行范围须另行确认",
           "selected": true,
           "children": [
@@ -562,7 +562,7 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
           "id": "map-viewer",
           "title": "静态地图查看器（P1 视觉 MVP）",
           "status": "planned",
-          "note": "只说明“可查看”，不能自动标记“可仿真”。复用现有模型树与编辑器交互；初版以静态场景为边界。",
+          "note": "只说明“可查看”，不能自动标记“可仿真”。复用现有模型树与编辑器交互；初版以静态场景为边界。\n\n【开发阶段 · 本地候选】P0–P3 已实现声明子集，开发自测见 docs/static-map.zh-CN.md 与 docs/evidence/static-map；仍待实际 dot 重新构建和 GUI 验收，不标记完成。SDF 仅原生探针通过，全面碰撞选择在本轮之后推进；P4 暂缓。",
           "source": "下一阶段规划 · 2026-10-25 北京时间 · 未实现 / 未启动；执行范围须另行确认",
           "selected": true,
           "children": [
@@ -774,7 +774,7 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
           "id": "map-collision-routing",
           "title": "地图碰撞表达与地形分流（P2）",
           "status": "planned",
-          "note": "依赖：P1 视觉导入闭环及明确物理支持契约。当前原生凸/凹网格 Shape 仍不支持；不能把此规划当现成功能。",
+          "note": "依赖：P1 视觉导入闭环及明确物理支持契约。当前原生凸/凹网格 Shape 仍不支持；不能把此规划当现成功能。\n\n【开发阶段 · 本地候选】P0–P3 已实现声明子集，开发自测见 docs/static-map.zh-CN.md 与 docs/evidence/static-map；仍待实际 dot 重新构建和 GUI 验收，不标记完成。SDF 仅原生探针通过，全面碰撞选择在本轮之后推进；P4 暂缓。",
           "source": "下一阶段规划 · 2026-10-25 北京时间 · 未实现 / 未启动；执行范围须另行确认",
           "selected": false,
           "children": [
@@ -829,6 +829,15 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
                 "status": "planned",
                 "source": "下一阶段规划 · 2026-10-25 北京时间 · 未实现 / 未启动；执行范围须另行确认"
               }
+            },
+            {
+              "id": "map-native-collision-options-followup",
+              "title": "后续 · MuJoCo 原生碰撞属性选择与 SDF 候选",
+              "status": "planned",
+              "note": "用户最新顺序：当前 P0–P3 收口后再推进。逐项列出 MuJoCo 原生几何/碰撞路线（plane、hfield、sphere、capsule、ellipsoid、cylinder、box、凸 mesh、网格/插件 SDF），区分原生支持、Godot 接入、预览/包/运行验收三个状态。SDF 作为默认候选评估，不静默退回凸包；简单形状和 HeightField 保留选择。需补每项参数、精度/预处理/CPU与内存成本、实际非凸接触、失败定位、显式 Apply、迁移与 GUI 验收。MuJoCo 3.16.0 原生 SDF 门洞/官方 cow 探针已通过，不等于 Godot 接入完成，也不套用 PhysX GPU cooking 配置。",
+              "source": "docs/static-map.zh-CN.md · tests/static_map/run_sdf_probe.sh",
+              "selected": false,
+              "children": []
             }
           ],
           "evidence": {

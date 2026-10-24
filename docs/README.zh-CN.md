@@ -32,3 +32,5 @@
 原始日志、数字结果和截图不翻译或修饰：[当前证据目录](evidence/freebase-clock/)、[原始日志 ZIP](evidence/freebase-clock/raw-logs.zip)、[哈希清单](evidence/freebase-clock/raw-log-manifest.json)。任何普通运行日志出现 ERROR/泄漏，即使退出 0 也失败。只有事先定义的独立负向子进程允许精确匹配的预期错误。
 
 - [普通 HeightMapShape3D 与 Inspector 摩擦](native-heightmap.zh-CN.md)：静态原生地形、资源更新/保存重开及轻量验收。
+
+- [静态地图 P0–P3 开发候选与 dot 验收](static-map.zh-CN.md)：输入适配、来源冲突、显式碰撞、可搬迁包；后续 SDF 原生探针，不代表已接入。
