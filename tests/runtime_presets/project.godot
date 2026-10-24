@@ -1,0 +1,12 @@
+config_version=5
+[application]
+config/name="Runtime preset acceptance"
+[physics]
+3d/physics_engine="MuJoCo"
+[dotnet]
+project/assembly_name="TypedControl"
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+[editor_plugins]
+enabled=PackedStringArray("res://addons/mujoco_editor/plugin.cfg")

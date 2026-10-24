@@ -32,6 +32,7 @@ RID MjPhysicsServer3D::scene_load_model(const RID&r,const Dictionary&snapshot,co
  return scene_insert(*s,doc->copy_spec(),label,pose,true,initial_state(m,doc->native_data()));
 }
 bool MjPhysicsServer3D::scene_set_actuator(const RID&r,const RID&id,const String&name,double value){
+ {std::lock_guard<std::mutex> lock(edits_mutex);for(const auto &pending:model_edits)if(pending.object==id)return false;}
  auto*s=space(r);if(!s||!s->model||!std::isfinite(value))return false;auto it=s->imported.find(id.get_id());if(it==s->imported.end())return false;
  int a=mj_name2id(s->model,mjOBJ_ACTUATOR,(it->second->prefix+name.utf8().get_data()).c_str());if(a<0)return false;
  if(s->model->actuator_ctrllimited[a]&&(value<s->model->actuator_ctrlrange[2*a]||value>s->model->actuator_ctrlrange[2*a+1]))return false;
@@ -45,6 +46,20 @@ int64_t MjPhysicsServer3D::scene_request_model_edit(const RID&r,const RID&id,con
  int64_t request=next_edit_request++;
  model_edits.push_back({request,expected_revision,r,id,snapshot.duplicate(true),directory});
  return request;
+}
+int64_t MjPhysicsServer3D::scene_request_preset(const RID&r,const RID&id,const Dictionary&p,int64_t revision){
+ std::lock_guard<std::mutex> lock(edits_mutex);
+ if(model_edits.size()>=64||edit_results.size()>=256||revision<0)return 0;
+ for(const auto &pending:model_edits)if(pending.object==id)return 0;
+ int64_t request=next_edit_request++;model_edits.push_back({request,revision,r,id,p.duplicate(true),String(),true});return request;
+}
+bool MjPhysicsServer3D::scene_cancel_preset(int64_t request){
+ std::lock_guard<std::mutex> lock(edits_mutex);
+ for(auto it=model_edits.begin();it!=model_edits.end();++it)if(it->request==request&&it->preset){
+  Dictionary result;result["request"]=request;result["success"]=false;result["revision"]=it->expected_revision;result["error"]="Preset cancelled before commit";result["cancelled"]=true;
+  model_edits.erase(it);edit_results[request]=result;return true;
+ }
+ return false; // Already executing/committed: never pretend to undo a commit.
 }
 void MjPhysicsServer3D::scene_cancel_model_edit(int64_t request){
  std::lock_guard<std::mutex> lock(edits_mutex);
@@ -71,7 +86,12 @@ void MjPhysicsServer3D::process_model_edits(){
    bool paused=s->paused;double accumulator=s->accumulator;s->paused=true;
    struct Resume {MjSpace*s;bool paused;double accumulator;~Resume(){s->paused=paused;s->accumulator=accumulator;}} resume{s,paused,accumulator};
    Ref<MjEditorDocument> doc;doc.instantiate();
-   if(!doc->restore_at(request.snapshot,request.directory))return doc->get_error();
+   if(request.preset){
+    if(!doc->restore_spec(object.spec))return doc->get_error();
+    Dictionary prepared=doc->preset_candidate(request.snapshot);
+    if(!String(prepared["error"]).is_empty())return prepared["error"];
+    if(!doc->restore(prepared["snapshot"]))return doc->get_error();
+   }else if(!doc->restore_at(request.snapshot,request.directory))return doc->get_error();
    auto*m=doc->native_model();String conflict=gmj_option_conflict(s->options,m->opt);
    if(!conflict.is_empty())return "World/model option conflict: "+conflict;
    if(m->nuserdata||m->nmocap||m->nkey)return "Runtime composition does not support global userdata, mocap bodies or keyframes";
@@ -80,12 +100,16 @@ void MjPhysicsServer3D::process_model_edits(){
    for(int a=0;a<m->nu;++a){const char*n=mj_id2name(m,mjOBJ_ACTUATOR,a);int old=mj_name2id(s->model,mjOBJ_ACTUATOR,(object.prefix+n).c_str());if(old>=0&&(m->actuator_dyntype[a]!=s->model->actuator_dyntype[old]||m->actuator_actnum[a]!=s->model->actuator_actnum[old]))return "Incompatible actuator state: "+String(n);}
    mjSpec*previous=object.spec;Dictionary initial=object.initial;bool dirty=s->dirty;
    object.spec=doc->copy_spec();object.initial=initial_state(m,doc->native_data());s->dirty=true;
-   if(!rebuild(*s)){
+   Dictionary controls;
+   if(request.preset)for(int a=0;a<m->nu;++a)controls[String((object.prefix+mj_id2name(m,mjOBJ_ACTUATOR,a)).c_str())]=doc->native_data()->ctrl[a];
+   if(!rebuild(*s,controls,request.preset)){
     String error=s->last_error;mj_deleteSpec(object.spec);object.spec=previous;object.initial=initial;s->dirty=dirty;
     return error;
    }
+   // Rebuild validated migrated state and the entire control set before swap.
    mj_deleteSpec(previous);++object.property_revision;
    result["revision"]=int64_t(object.property_revision);result["success"]=true;
+   if(request.preset)result["state"]=scene_state(request.space,request.object);
    return {};
   };
   result["error"]=apply();

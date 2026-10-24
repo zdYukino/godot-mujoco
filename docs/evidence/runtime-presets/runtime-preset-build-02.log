@@ -1,0 +1,9 @@
+[  0%] Built target gmj_core_smoke
+[  0%] Built target generate_bindings
+[ 98%] Built target godot-cpp
+[ 99%] Building CXX object CMakeFiles/godot_mujoco.dir/src/mj_editor_document.cpp.o
+[100%] Linking CXX shared library libgodot_mujoco.linux.template_debug.x86_64.so
+Staging godot_mujoco extension into /workspace/godot-mujoco/demo/addons/godot_mujoco/bin
+Bundling MuJoCo runtime: /workspace/shared/builds/godot-mujoco-3.16/_deps/mujoco-src/lib/libmujoco.so
+Bundling MuJoCo runtime: /workspace/shared/builds/godot-mujoco-3.16/_deps/mujoco-src/lib/libmujoco.so.3.16.0
+[100%] Built target godot_mujoco

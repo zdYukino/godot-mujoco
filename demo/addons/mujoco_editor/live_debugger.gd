@@ -48,7 +48,7 @@ func _capture(message: String, data: Array, session_id: int) -> bool:
 func send(key: String, operation: String, payload: Dictionary) -> bool:
 	if not instances.has(key): return false
 	var info: Dictionary = instances[key]
-	if info.pending: return false
+	if info.pending and operation!="cancel_preset": return false
 	var session := get_session(info.session)
 	if not session.is_active(): return false
 	payload = payload.duplicate(true)
