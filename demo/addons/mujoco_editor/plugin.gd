@@ -119,8 +119,40 @@ func create_preview_root(title: String) -> Node3D:
 	preview_roots.append(root)
 	return root
 
-func frame_preview(_center: Vector3, _distance: float) -> void:
+func frame_preview(center: Vector3, distance: float) -> bool:
 	EditorInterface.set_main_screen_editor("3D")
+	var viewport := EditorInterface.get_editor_viewport_3d(0)
+	var surface: Control
+	# Godot 4.7's native viewport receives its navigation shortcuts on this
+	# sibling input surface. Use its public signal, never mutate Camera3D.
+	for child in viewport.get_parent().get_parent().get_children():
+		if child.get_class()=="Control" and child.focus_mode==Control.FOCUS_ALL and not child.get_signal_connection_list("gui_input").is_empty():
+			surface=child; break
+	if not surface:
+		push_warning("原生 3D 取景输入界面不可用"); return false
+	var event := InputEventKey.new(); event.keycode=KEY_F; event.pressed=true
+	var shortcuts: Variant=EditorInterface.get_editor_settings().get("shortcuts")
+	if shortcuts is Array:
+		for entry in shortcuts:
+			if entry is Dictionary and entry.get("name")=="spatial_editor/focus_aabb":
+				var shortcut: Shortcut=entry.get("shortcut")
+				if shortcut and not shortcut.events.is_empty() and shortcut.events[0] is InputEventKey:
+					event=shortcut.events[0].duplicate(); event.pressed=true
+	var proxy := MeshInstance3D.new(); proxy.name="MuJoCoFrameBounds"
+	var mesh := BoxMesh.new(); mesh.size=Vector3.ONE*maxf(distance/(1.5*sqrt(3.0)),.01)
+	proxy.mesh=mesh; proxy.visible=false; viewport.add_child(proxy); proxy.global_position=center
+	var selection := EditorInterface.get_selection()
+	var previous := selection.get_selected_nodes()
+	var blocked := selection.is_blocking_signals()
+	selection.set_block_signals(true); selection.clear(); selection.add_node(proxy)
+	# Native focus computes bounds synchronously, including the lazy selection
+	# list update. No frame is yielded with the temporary selection installed.
+	surface.gui_input.emit(event)
+	selection.clear()
+	for node in previous:
+		if is_instance_valid(node) and node.is_inside_tree(): selection.add_node(node)
+	selection.set_block_signals(blocked); proxy.free()
+	return true
 
 func reveal_scope(index: int) -> void:
 	show_scope(index)
@@ -144,11 +176,15 @@ func selection_changed() -> void:
 		show_scope(0)
 	var map_root: Node = node
 	while map_root and not map_root.has_meta("map_specs"): map_root=map_root.get_parent()
-	if map_root and map_panel.scene_map_id==map_root.get_instance_id():
+	if map_root and not map_panel.scene_map_path.is_empty() and EditorInterface.get_edited_scene_root().get_node_or_null(map_panel.scene_map_path)==map_root:
 		var visual:=map_root.get_node_or_null("Visual")
 		if visual and (node==visual or visual.is_ancestor_of(node)):
 			var path:=str(visual.get_path_to(node))
 			if map_panel.items.has(path): map_panel.items[path].select(0); map_panel.select_tree(); show_scope(1)
+		var terrain_node: Node=node
+		while terrain_node and terrain_node.get_parent()!=map_root: terrain_node=terrain_node.get_parent()
+		if terrain_node is Terrain and map_panel.items.has(str(terrain_node.name)):
+			map_panel.items[str(terrain_node.name)].select(0); map_panel.select_tree(); show_scope(1)
 	# Scene-owned values remain in Godot's native Inspector, including world options.
 
 func scene_switched(_root: Node) -> void:
@@ -157,7 +193,7 @@ func scene_switched(_root: Node) -> void:
 		for mesh in panel.meshes.values(): mesh.free()
 		panel.meshes.clear()
 	if map_panel:
-		map_panel.clear_preview(); map_panel.scene_map_id=0; map_panel.world.transform=Transform3D.IDENTITY
+		map_panel.clear_preview(); map_panel.reset_independent_preview()
 	if heightfield_panel: heightfield_panel._clear_preview()
 	call_deferred("refresh_previews")
 

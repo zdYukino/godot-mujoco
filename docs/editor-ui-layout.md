@@ -25,6 +25,10 @@
 
 这些是 headless 编辑器集成与测量，不是图形验收。实际 dot 的鼠标操作、可见叠加层、窗口布局、关闭编辑器后重开独立包，以及主视图视觉效果仍由父任务验收。没有运行重负载 G1。
 
-原生相机由 Godot 管理；原来的插件自动取景/轨道镜头不再接管相机。“主视图 / 范围”只切到主 3D 并计算范围信息，导航使用 Godot 原生操作。用户自行选择的 Godot 多视图布局不由插件改写；插件本身不增加任何第二预览。复杂 world/contact/relations 参数仍保留高级 JSON 入口。
+原生相机由 Godot 管理。聚焦模型/全图/选中使用目标 Godot 4.7 的原生 Focus and Frame Selection 输入路径：同步选择一个无 owner 的临时包围盒节点，调用原生取景，然后恢复真实选择并销毁临时节点；不修改 Camera3D，不增加视口。支持偏离原点的地图以及父级旋转/平移。该桥依赖原生 viewport 的输入 surface，升级 Godot 时需回归验证，找不到输入路径会明确诊断。
+
+Apply 的场景显示抑制独立于用户视觉/碰撞显隐偏好；新导入和打开包退出场景抑制。载入场景地图保留目标路径、父节点和局部/全局变换，父节点或地图变换发生外部修改时拒绝覆盖并保留草稿。支持嵌套及重命名地图；Undo/Redo 保留被替换节点的身份、变换和 owner。编辑场景根本身不能被 Apply 替换，须在 Node3D 宿主下操作。
+
+地图包与场景地图共享高度场草稿网格恢复逻辑；普通高度场的正式节点位于地图直接子级，选择可映射回地图草稿的摩擦与高级原生接触参数。用户自行选择的 Godot 多视图布局不由插件改写；插件本身不增加第二预览。复杂 world/contact/relations 参数仍保留高级 JSON 入口。
 
 设计参考：[Omniverse Property Panel](https://docs.omniverse.nvidia.com/extensions/latest/ext_core/ext_property-panel.html) 的选择作用域与分组；实现使用 [Godot EditorInterface](https://docs.godotengine.org/en/stable/classes/class_editorinterface.html) 原生视图、选择与 Inspector API。

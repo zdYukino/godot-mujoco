@@ -63,6 +63,8 @@ func run(plugin) -> void:
 	var history=plugin.get_undo_redo().get_history_undo_redo(plugin.get_undo_redo().get_object_history_id(scene))
 	history.undo(); check(not scene.has_node("StaticMap"),"scene undo removes Apply")
 	history.redo(); check(scene.get_child_count()==1,"scene redo creates only authored map")
+	await preload("res://map_roundtrip.gd").new().run(plugin,self,package.path)
+	plugin.heightfield_panel.width.value=2; plugin.heightfield_panel.depth.value=2
 	plugin.heightfield_panel.create_terrain(); await settle()
 	check(plugin.scope.selected==2 and is_instance_valid(plugin.heightfield_panel.target),"terrain scene selection opens corresponding scope")
 	plugin.heightfield_panel.heights.text="1 0\n0 0"; plugin.heightfield_panel.heights.text_changed.emit()

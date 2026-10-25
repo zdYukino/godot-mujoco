@@ -66,7 +66,7 @@ func _ready() -> void:
 	button(toolbar, "Create simulation playground", func(): create_runtime_scene_dialog(true))
 	button(toolbar, "Recover", func(): open_document(recovery_path))
 	button(toolbar, "Run / Pause", toggle_run)
-	button(toolbar, "显示主 3D 视图", frame_all)
+	button(toolbar, "聚焦模型", frame_all)
 	for shape in ["box", "sphere", "cylinder"]:
 		button(toolbar, "+ " + shape, add_primitive.bind(shape))
 	source_status = Label.new(); source_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; add_child(source_status)

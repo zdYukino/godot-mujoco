@@ -32,6 +32,10 @@ var relations: LineEdit
 var world_options: LineEdit
 var parts: LineEdit
 var scene_map_id := 0
+var scene_map_path := NodePath()
+var scene_parent_id := 0
+var scene_parent_pose := Transform3D.IDENTITY
+var scene_local_pose := Transform3D.IDENTITY
 var selected := ""
 var items := {}
 var center := Vector3.ZERO
@@ -40,6 +44,7 @@ var yaw := .6
 var pitch := .35
 var orbit := false
 var pan := false
+var scene_preview_suppressed := false
 var show_visual := true
 var show_collision := true
 var poll := 0.0
@@ -80,10 +85,10 @@ func _ready() -> void:
 	button(row,"Apply 到编辑场景",apply_scene)
 	button(row,"导入高度契约",browse_height)
 	row = VBoxContainer.new(); Layout.group(layout_content,"主视图显示 / 草稿历史",false).add_child(row)
-	button(row,"主视图 / 全图范围",func(): focus(""))
-	button(row,"主视图 / 选中范围",func(): focus(selected))
+	button(row,"聚焦全图",func(): focus(""))
+	button(row,"聚焦选中",func(): focus(selected))
 	button(row,"选中显隐",toggle_selected)
-	button(row,"视觉显隐",func(): show_visual = not show_visual; if preview: preview.visible = show_visual)
+	button(row,"草稿视觉显隐",toggle_visual_preview)
 	button(row,"碰撞线框",toggle_collision_preview)
 	slice_level = number(row,"SDF 切片高度比例",0,1,.01); slice_level.value=.33
 	button(row,"更新距离切片",func(): session.view.sdf_slice=slice_level.value; session.dirty=true; rebuild())
@@ -135,6 +140,11 @@ func _ready() -> void:
 	update_camera(); refresh_status(); rebuild()
 	if base.has_meta(FIELDS_META):
 		var saved: Dictionary = base.get_meta(FIELDS_META)
+		var binding: Dictionary=saved.get("binding",{})
+		for key in binding:
+			if key!="preview_pose": set(key,binding[key])
+		world.transform=binding.get("preview_pose",Transform3D.IDENTITY)
+		rebuild()
 		selected=saved.get("selected","")
 		if items.has(selected): items[selected].select(0); select_tree()
 		for key in ["path_field","advanced","parts","relations","world_options"]: get(key).text=saved.get(key,"")
@@ -154,7 +164,7 @@ func browse() -> void:
 
 func import_source(discard: bool) -> bool:
 	if not session.import_file(path_field.text,unit.get_item_text(unit.selected),axes.get_item_text(axes.selected),discard): refresh_status(); return false
-	scene_map_id=0; world.transform=Transform3D.IDENTITY
+	reset_independent_preview()
 	selected = ""; rebuild(); focus(""); return true
 
 func confirm_reload() -> void:
@@ -170,7 +180,7 @@ func rebuild() -> void:
 	clear_preview()
 	tree.clear(); items.clear()
 	if not session.visual: refresh_status(); return
-	preview = session.visual.duplicate(); world.add_child(preview); preview.visible = show_visual
+	preview = session.visual.duplicate(); world.add_child(preview); preview.visible = show_visual and not scene_preview_suppressed
 	build_tree(session.visual,null)
 	collision_preview = Node3D.new(); world.add_child(collision_preview); collision_preview.visible = show_collision
 	for mesh in session.meshes():
@@ -274,7 +284,7 @@ func focus(path: String) -> void:
 	if not session.visual: return
 	var bounds: AABB = session.bounds(session.visual.get_node(NodePath(path)) if not path.is_empty() and session.visual.has_node(NodePath(path)) else session.visual)
 	center = bounds.get_center(); distance = maxf(.01,bounds.size.length()*1.5); update_camera()
-	if plugin: plugin.frame_preview(center,distance)
+	if plugin: plugin.frame_preview(world.global_transform*center,distance)
 
 func update_camera() -> void:
 	# Keep package view metadata, but never mutate the editor-owned camera.
@@ -283,7 +293,7 @@ func update_camera() -> void:
 func pick(point: Vector2) -> bool:
 	if not is_instance_valid(camera): camera = EditorInterface.get_editor_viewport_3d(0).get_camera_3d()
 	if not camera: return false
-	if not preview or not show_visual: return false
+	if not preview or not preview.visible: return false
 	var origin := camera.project_ray_origin(point); var direction := camera.project_ray_normal(point); var nearest := INF; var path := ""
 	for mesh in session.meshes(preview):
 		if not mesh.is_visible_in_tree(): continue
@@ -370,14 +380,12 @@ func open_package(path: String) -> bool:
 	node.remove_child(visual)
 	session.contact_relations=node.get_meta("map_contact_relations",{}); session.world_settings = node.get_meta("map_world_settings",{}); session.close(); session.history = UndoRedo.new(); session.terrains = node.get_meta("map_terrains",[]); session.visual = visual; session.specs = node.get_meta("map_specs",{}); session.view = node.get_meta("map_view",{}); session.watch.hashes = node.get_meta("source_hashes",{}); session.diagnostics = node.get_meta("diagnostics",[])
 	var contract: Dictionary = node.get_meta("contract",{}); session.unit = contract.get("unit", ""); session.axes = contract.get("axes", ""); session.source = contract.get("source", ""); session.watch.source = session.source
-	for design in session.terrains:
-		if session.visual.has_node(NodePath(design.name)): continue
-		var mesh := MeshInstance3D.new(); mesh.name = design.name; mesh.mesh = design.grid.mesh(); mesh.transform = design.pose; session.visual.add_child(mesh); mesh.owner = session.visual
+	restore_terrain_meshes()
 	node.free(); selected = ""; session.dirty = false; session.error = "已打开独立包；原来源缺失只影响重导入"
 	var saved: Dictionary = session.view.get("camera",{})
 	center = saved.get("center",Vector3.ZERO); distance = saved.get("distance",4.0); yaw = saved.get("yaw",.6); pitch = saved.get("pitch",.35)
 	slice_level.value=session.view.get("sdf_slice",.33); relations.text=JSON.stringify(session.contact_relations); world_options.text=JSON.stringify(session.world_settings)
-	scene_map_id=0; world.transform=Transform3D.IDENTITY
+	reset_independent_preview()
 	rebuild(); update_camera(); return true
 
 func apply_scene() -> bool:
@@ -385,18 +393,34 @@ func apply_scene() -> bool:
 	if not root or not root is Node3D: session.error = "先打开一个 Node3D 编辑场景"; refresh_status(); return false
 	if not root.global_transform.is_finite() or not root.global_basis.is_equal_approx(root.global_basis.orthonormalized()) or root.global_basis.determinant() < 0:
 		session.error = "地图父场景必须为无缩放/镜像/剪切的刚性变换"; refresh_status(); return false
+	var old: Node = root.get_node_or_null(scene_map_path if not scene_map_path.is_empty() else NodePath("StaticMap"))
+	if not scene_map_path.is_empty() and not old:
+		session.error="原场景地图已移除；请重新载入地图，当前草稿保留"; refresh_status(); return false
+	if old and (not old is Node3D or not old.has_meta("map_specs")):
+		session.error = "场景目标已有非地图同名对象"; refresh_status(); return false
+	if old==root:
+		session.error="不能替换编辑场景根；请把地图放在 Node3D 宿主下再 Apply"; refresh_status(); return false
+	var parent: Node3D = old.get_parent() if old else root
+	var pose: Transform3D = old.transform if old else Transform3D.IDENTITY
+	if not scene_map_path.is_empty() and (parent.get_instance_id()!=scene_parent_id or not parent.global_transform.is_equal_approx(scene_parent_pose) or not old.transform.is_equal_approx(scene_local_pose)):
+		session.error="地图或父节点的变换已在场景中变化；请保存草稿并重新载入目标后 Apply"; refresh_status(); return false
+	if not parent.global_transform.is_finite() or not parent.global_basis.is_equal_approx(parent.global_basis.orthonormalized()) or parent.global_basis.determinant()<0 or not pose.is_finite() or not pose.basis.is_equal_approx(pose.basis.orthonormalized()) or pose.basis.determinant()<0:
+		session.error="地图与父节点必须为无缩放/镜像/剪切的刚性变换"; refresh_status(); return false
 	var built: Dictionary = session.build_scene()
 	if not built.error.is_empty(): session.error = built.error; refresh_status(); return false
 	var map: Node3D = built.scene
-	var old: Node = root.get_node_or_null("StaticMap")
-	if old and not old.has_meta("map_specs"):
-		map.free(); session.error = "场景已有非地图 StaticMap 同名对象"; refresh_status(); return false
+	map.transform=pose
+	if old: map.name=old.name
 	var undo := plugin.get_undo_redo(); undo.create_action("Apply 静态地图设计",UndoRedo.MERGE_DISABLE,root)
-	if old: undo.add_do_method(root,"remove_child",old); undo.add_undo_reference(old)
-	undo.add_do_method(root,"add_child",map,true); undo.add_do_method(self,"own_scene",map,root); undo.add_do_reference(map); undo.add_undo_method(root,"remove_child",map)
-	if old: undo.add_undo_method(root,"add_child",old)
+	if old: undo.add_do_method(parent,"remove_child",old); undo.add_undo_reference(old)
+	undo.add_do_method(parent,"add_child",map,true); undo.add_do_method(self,"own_scene",map,root); undo.add_do_reference(map); undo.add_undo_method(parent,"remove_child",map)
+	if old:
+		undo.add_undo_method(parent,"add_child",old)
+		undo.add_undo_method(self,"own_scene",old,root)
 	undo.commit_action()
-	clear_preview(); show_visual=false; show_collision=false; scene_map_id=map.get_instance_id()
+	clear_preview(); scene_preview_suppressed=true; scene_map_id=map.get_instance_id()
+	scene_map_path=root.get_path_to(map); world.global_transform=map.global_transform
+	scene_parent_id=parent.get_instance_id(); scene_parent_pose=parent.global_transform; scene_local_pose=map.transform
 	session.error = "地图设计已 Apply；场景 Undo/Redo 可用，运行实例需显式重启。地形运行修改可用地形面板事务 Apply。"; refresh_status(); return true
 
 func own_scene(node: Node, root: Node) -> void:
@@ -417,7 +441,9 @@ func _process(delta: float) -> void:
 	if poll >= 2: poll = 0; refresh_status()
 
 func shutdown() -> void:
-	var saved := {"selected":selected,"native_contact":native_contact.button_pressed}
+	var saved := {"selected":selected,"native_contact":native_contact.button_pressed,"binding":{}}
+	for key in ["scene_map_id","scene_map_path","scene_parent_id","scene_parent_pose","scene_local_pose","scene_preview_suppressed","show_visual","show_collision"]: saved.binding[key]=get(key)
+	saved.binding["preview_pose"]=world.transform
 	for key in ["path_field","advanced","parts","relations","world_options"]: saved[key]=get(key).text
 	for key in ["unit","axes","strategy"]: saved[key]=get(key).selected
 	for key in ["friction","layer","mask","slice_level"]: saved[key]=get(key).value
@@ -463,10 +489,17 @@ func open_scene_map(node: Node3D) -> bool:
 			session.error="场景地图元数据无效: "+key; refresh_status(); return false
 	if not node.get_meta("map_terrains",[]) is Array or not node.get_meta("diagnostics",[]) is Array:
 		session.error="场景地图地形 / 诊断元数据无效"; refresh_status(); return false
+	var edited := EditorInterface.get_edited_scene_root()
+	if not edited or (node!=edited and not edited.is_ancestor_of(node)):
+		session.error="地图必须属于当前编辑场景"; refresh_status(); return false
+	for design in node.get_meta("map_terrains",[]):
+		if not design is Dictionary or not design.get("name") is String or not design.get("grid") is MjHeightFieldData or not design.get("pose") is Transform3D or not design.get("material") is PhysicsMaterial:
+			session.error="场景地图地形元数据不完整"; refresh_status(); return false
 	var copy := visual.duplicate() as Node3D
 	session.close(); session.history=UndoRedo.new(); session.visual=copy
 	session.specs=node.get_meta("map_specs").duplicate(true)
 	session.terrains=node.get_meta("map_terrains",[]).duplicate(true)
+	restore_terrain_meshes()
 	session.world_settings=node.get_meta("map_world_settings",{}).duplicate(true)
 	session.contact_relations=node.get_meta("map_contact_relations",{}).duplicate(true)
 	session.view=node.get_meta("map_view",{}).duplicate(true)
@@ -476,12 +509,31 @@ func open_scene_map(node: Node3D) -> bool:
 	session.unit=contract.get("unit","m"); session.axes=contract.get("axes","Y_UP")
 	session.diagnostics=node.get_meta("diagnostics",[]).duplicate()
 	session.dirty=false; session.error="已载入场景地图为独立草稿；保存包 / Apply 均需明确操作"
-	scene_map_id=node.get_instance_id(); world.global_transform=node.global_transform
-	show_visual=false # The scene already draws the authored visual in this same viewport.
+	scene_map_id=node.get_instance_id(); scene_map_path=EditorInterface.get_edited_scene_root().get_path_to(node); world.global_transform=node.global_transform
+	scene_parent_id=node.get_parent().get_instance_id(); scene_parent_pose=node.get_parent().global_transform if node.get_parent() is Node3D else Transform3D.IDENTITY; scene_local_pose=node.transform
+	scene_preview_suppressed=true # The scene already draws the authored visual in this same viewport.
 	selected=""; world_options.text=JSON.stringify(session.world_settings); relations.text=JSON.stringify(session.contact_relations)
 	rebuild(); return true
 
+func toggle_visual_preview() -> void:
+	if scene_preview_suppressed or not preview:
+		scene_preview_suppressed=false; show_visual=true; rebuild()
+	else:
+		show_visual=not show_visual; preview.visible=show_visual
+
 func toggle_collision_preview() -> void:
-	show_collision=not show_collision
-	if not collision_preview: rebuild()
+	if not collision_preview:
+		show_collision=true; rebuild()
+	else: show_collision=not show_collision
 	if collision_preview: collision_preview.visible=show_collision
+
+func reset_independent_preview() -> void:
+	# Apply hides the draft while the authored scene supplies the visual. That
+	# display mode belongs to that scene target, not the next imported document.
+	scene_map_id=0; scene_map_path=NodePath(); scene_parent_id=0; world.transform=Transform3D.IDENTITY
+	scene_preview_suppressed=false
+
+func restore_terrain_meshes() -> void:
+	for design in session.terrains:
+		if session.visual.has_node(NodePath(design.name)): continue
+		var mesh := MeshInstance3D.new(); mesh.name = design.name; mesh.mesh = design.grid.mesh(); mesh.transform = design.pose; session.visual.add_child(mesh); mesh.owner = session.visual
