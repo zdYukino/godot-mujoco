@@ -60,3 +60,13 @@ REBUILD=1 OUT=/tmp/gmj-g1-rebuilt-check bash tests/g1_passive/run.sh
 当前候选输出 `G1_TEST_STAGE`、`G1_ADD_STAGE`、`MJ_MODEL_LOAD_STAGE`，包含单调毫秒时间/帧号，并在热加层记录暂停状态、原生时间和对象数。可区分两次等待帧、资源校验、暂停、原生 `scene_load_model`、恢复暂停、视觉几何读取/节点构建、状态读取及碰撞覆盖创建。普通实例默认不开启详细加载日志，仅示例新添加节点设置诊断 metadata。没有延长超时或重试加载来掩盖失败。
 
 碰撞覆盖只读取已缓存的真实线框和实时 geom 姿态，避免为了覆盖层再次导出完整 STL 顶点；这是消除冗余读取，不是已证实的 dot 超时根因。
+
+原生细分诊断需先重编当前候选扩展，然后显式设置：
+
+```bash
+GMJ_TRACE_SCENE_LOAD=1 OUT=/tmp/gmj-g1-native-trace bash tests/g1_passive/run.sh
+```
+
+`MJ_NATIVE_LOAD_STAGE` 直接输出并刷新 stderr，使用独立操作 ID、从入口起算的单调毫秒、阶段及线程 ID。覆盖文档构造/资产路径、`mj_compile`、`mj_makeData`、`mj_forward`、`mj_copySpec`、初态读取、每个模型 attach、重建编译、状态迁移、旧数据删除和文档析构；`a/b` 字段在 compile_begin 记录 compiler.usethread，在 compile_end 记录 ngeom/nv，在 make_data_begin 记录 narena/nbuffer 字节，在 forward_options 记录 integrator/solver，在 forward_begin 记录是否绑定 mjData threadpool。`G1_ENGINE_CONFIG` 记录引擎版本、显示后端、逻辑 CPU 数和项目线程设置，供两个环境对照。这些设置不被修改。
+
+原生日志默认关闭，仅在同步 `scene_load_model` 调用栈内启用；未改暂停条件、锁、迁移或事务提交逻辑。4d 实际 dot 已确认停在 `native_scene_load_begin` 内，编译报告后仍未返回、152 秒有界结束；等待帧和覆盖构建已排除，但具体原生子阶段及根因尚未确认，不将资源阈值未触发等同于所有资源因素已排除。

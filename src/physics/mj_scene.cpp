@@ -1,3 +1,4 @@
+#include "mj_load_trace.h"
 #include "mj_g1_import.h"
 #include "mj_options.h"
 #include "mj_physics_server.h"
@@ -43,6 +44,7 @@ void MjPhysicsServer3D::_bind_methods(){
 }
 bool MjPhysicsServer3D::scene_pause(const RID &r,bool value){auto*s=space(r);if(!s||flushing)return false;if(!rebuild(*s))return false;if(s->paused!=value)s->accumulator=0;s->paused=value;return true;}
 RID MjPhysicsServer3D::scene_insert(MjSpace &s,mjSpec *spec,const String &label,const Transform3D &pose,bool whole_model,const Dictionary &initial){
+ gmj_load_trace::mark("insert.enter",s.imported.size());
  std::unique_ptr<MjImported> object=std::make_unique<MjImported>();object->spec=spec;object->whole_model=whole_model;object->initial=initial;
  if(s.authored_options&&!whole_model){s.last_error="Configured worlds require portable model instances; use ordinary Godot bodies for obstacles";return {};}
  if(!s.paused||flushing){s.last_error="Pause the space outside physics callbacks before editing";return {};}
@@ -51,8 +53,9 @@ RID MjPhysicsServer3D::scene_insert(MjSpace &s,mjSpec *spec,const String &label,
  int serial=0;if(!whole_model)for(auto*e=mjs_firstElement(spec,mjOBJ_GEOM);e;e=mjs_nextElement(spec,e))mjs_setName(e,("geom_"+std::to_string(serial++)).c_str());
  RID id=handles.make_rid(0);object->rid=id;object->label=label;object->pose=pose;object->prefix="import_"+std::to_string(id.get_id())+"_";
  bool was_dirty=s.dirty;s.imported[id.get_id()]=std::move(object);s.dirty=true;
+ gmj_load_trace::mark("insert.rebuild_begin",s.imported.size());
  if(!rebuild(s)){s.imported.erase(id.get_id());handles.free(id);s.dirty=was_dirty;return {};}
- return id;
+ gmj_load_trace::mark("insert.rebuild_end");return id;
 }
 RID MjPhysicsServer3D::scene_import_g1(const RID &r,const String &path,const String &label,const Transform3D &pose){
  auto*s=space(r);if(!s)return {};s->last_error="";

@@ -27,6 +27,7 @@ func check_frame(camera: Camera3D,robot: Node3D,min_pixels: float,label: String)
 func _initialize() -> void: call_deferred("run")
 func run() -> void:
 	print("G1_TEST_STAGE begin ",Time.get_ticks_msec())
+	print("G1_ENGINE_CONFIG ",JSON.stringify({"version":Engine.get_version_info().string,"display":DisplayServer.get_name(),"processor_count":OS.get_processor_count(),"physics_separate_thread_setting":ProjectSettings.get_setting("physics/3d/run_on_separate_thread",false),"render_thread_model_setting":ProjectSettings.get_setting("rendering/driver/threads/thread_model",-1),"native_trace":OS.get_environment("GMJ_TRACE_SCENE_LOAD")}))
 	var world=load("res://G1.tscn").instantiate(); world.start_paused=true; root.add_child(world)
 	await ticks(3)
 	var controls=world.get_node("DisplayControls")

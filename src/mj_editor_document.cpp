@@ -1,3 +1,4 @@
+#include "physics/mj_load_trace.h"
 #include "mj_editor_document.h"
 #include "physics/mj_assets.h"
 #include "physics/mj_g1_import.h"
@@ -50,29 +51,29 @@ void MjEditorDocument::_bind_methods(){
  ClassDB::bind_method(D_METHOD("get_error"),&MjEditorDocument::get_error);
 }
 MjEditorDocument::MjEditorDocument(){char e[1024]={};commit(mj_parseXMLString("<mujoco><compiler angle='radian'/><option timestep='0.002'/><worldbody><geom name='floor' type='plane' size='5 5 .1'/></worldbody></mujoco>",nullptr,e,sizeof(e)));}
-MjEditorDocument::~MjEditorDocument(){if(data)mj_deleteData(data);if(model)mj_deleteModel(model);if(spec)mj_deleteSpec(spec);}
+MjEditorDocument::~MjEditorDocument(){gmj_load_trace::mark("document.destroy_begin");if(data)mj_deleteData(data);if(model)mj_deleteModel(model);if(spec)mj_deleteSpec(spec);gmj_load_trace::mark("document.destroy_end");}
 bool MjEditorDocument::commit(mjSpec*c,const Dictionary &state,bool migrate){
  if(!c){error="Invalid MJCF specification";return false;}
  // Reject plugin instances before compilation can invoke registered callbacks.
  if(mjs_firstElement(c,mjOBJ_PLUGIN)){error="Plugin execution is disabled in editor/map documents";mj_deleteSpec(c);return false;}
  for(auto* e=mjs_firstElement(c,mjOBJ_HFIELD);e;e=mjs_nextElement(c,e)){auto*h=mjs_asHField(e);if(*mjs_getString(h->file)||h->nrow<2||h->nrow>256||h->ncol<2||h->ncol>256){error="Document heightfields require inline elevation data and 2..256 rows/columns";mj_deleteSpec(c);return false;}}
  assign_names(c);
- mjModel*m=mj_compile(c,nullptr);
+ gmj_load_trace::mark("document.compile_begin",c->compiler.usethread);mjModel*m=mj_compile(c,nullptr);gmj_load_trace::mark("document.compile_end",m?m->ngeom:-1,m?m->nv:-1);
  if(!m){error=String::utf8(mjs_getError(c));mj_deleteSpec(c);return false;}
  auto fail=[&](const String &e,mjData*d=nullptr){error=e;if(d)mj_deleteData(d);mj_deleteModel(m);mj_deleteSpec(c);return false;};
  if(m->nplugin||m->nflex||m->nskin)return fail("Preview does not support plugins, flex or skins; import was rolled back.");
  for(int g=0;g<m->ngeom;++g)if(m->geom_type[g]==mjGEOM_SDF && (mj_version()!=3016000 || m->geom_plugin[g]>=0 || m->geom_dataid[g]<0))return fail("SDF requires MuJoCo 3.16.0 and a native mesh, without plugins.");
  if(!std::isfinite(m->opt.timestep)||m->opt.timestep<1e-6||m->opt.timestep>.1)return fail("Preview timestep must be between 1e-6 and 0.1 seconds.");
- mjData*d=mj_makeData(m);if(!d)return fail("Could not allocate preview data");
+ gmj_load_trace::mark("document.make_data_begin",m->narena,m->nbuffer);mjData*d=mj_makeData(m);gmj_load_trace::mark("document.make_data_end");if(!d)return fail("Could not allocate preview data");
  if(migrate)gmj_transfer_state(model,data,m,d);
  if(!state.is_empty()){
   for(auto key:{"qpos","qvel","ctrl","act"}){int n=!strcmp(key,"qpos")?m->nq:!strcmp(key,"qvel")?m->nv:!strcmp(key,"ctrl")?m->nu:m->na;double*p=!strcmp(key,"qpos")?d->qpos:!strcmp(key,"qvel")?d->qvel:!strcmp(key,"ctrl")?d->ctrl:d->act;if(!state.has(key)||!read_values(state[key],p,n))return fail("Saved state has invalid dimensions or nonfinite values",d);}
   double time=0;if(!scalar(state.get("time",0.),time)||time<0)return fail("Invalid saved time",d);d->time=time;
   if(state.has("integration")){std::vector<double> v(mj_stateSize(m,mjSTATE_INTEGRATION));if(!read_values(state["integration"],v.data(),v.size()))return fail("Invalid integration snapshot",d);mj_setState(m,d,v.data(),mjSTATE_INTEGRATION);}
  }
- mj_normalizeQuat(m,d->qpos);mj_forward(m,d);
+ gmj_load_trace::mark("document.forward_options",m->opt.integrator,m->opt.solver);gmj_load_trace::mark("document.forward_begin",d->threadpool!=0);mj_normalizeQuat(m,d->qpos);mj_forward(m,d);gmj_load_trace::mark("document.forward_end",d->ncon);
  for(int i=0;i<m->nv;++i)if(!std::isfinite(d->qacc[i]))return fail("Nonfinite candidate dynamics",d);
- if(data)mj_deleteData(data);if(model)mj_deleteModel(model);if(spec)mj_deleteSpec(spec);
+ gmj_load_trace::mark("document.old_destroy_begin");if(data)mj_deleteData(data);if(model)mj_deleteModel(model);if(spec)mj_deleteSpec(spec);gmj_load_trace::mark("document.old_destroy_end");
  spec=c;model=m;data=d;accumulator=0;error="";++revision;return true;
 }
 String MjEditorDocument::xml() const {if(!spec)return {};char error[1024]={};int n=mj_saveXMLString(spec,nullptr,0,error,sizeof(error));if(n<=0)return {};std::vector<char>b(n+1);if(mj_saveXMLString(spec,b.data(),b.size(),error,sizeof(error)))return {};return String::utf8(b.data());}
@@ -152,10 +153,11 @@ Dictionary MjEditorDocument::portable_snapshot(const Dictionary &mapping) const 
  if(!valid||portable.is_empty())return {};result["xml"]=portable;return result;
 }
 bool MjEditorDocument::restore_at(const Dictionary &r,const String &directory){
+ gmj_load_trace::mark("document.asset_paths_begin");
  if(int(r.get("format",0))!=1||!r.has("xml")||!r.has("state")){error="Invalid portable model snapshot";return false;}
  String base=ProjectSettings::get_singleton()->globalize_path(directory);bool valid=true;
  String resolved=gmj_asset_xml(r["xml"],[&](const String&rel){if(rel.is_absolute_path()||rel.contains("..")||!rel.begins_with("assets/")){valid=false;error="Portable model contains an absolute or escaping asset path: "+rel;return rel;}String absolute=base.path_join(rel);if(!FileAccess::file_exists(absolute)){valid=false;error="Missing packaged dependency: "+rel;}return absolute;});
- if(!valid||resolved.is_empty())return false;Dictionary snapshot=r.duplicate(true);snapshot["xml"]=resolved;return restore(snapshot);
+ if(!valid||resolved.is_empty())return false;gmj_load_trace::mark("document.asset_paths_end");Dictionary snapshot=r.duplicate(true);snapshot["xml"]=resolved;return restore(snapshot);
 }
 void MjEditorDocument::set_paused(bool v){paused=v;accumulator=0;}
 void MjEditorDocument::advance(double dt){if(paused||!model||!std::isfinite(dt)||dt<=0)return;accumulator=std::min(.1,accumulator+dt);int count=std::min(100,int(accumulator/model->opt.timestep));for(int i=0;i<count;++i)mj_step(model,data);accumulator-=count*model->opt.timestep;mj_forward(model,data);for(int i=0;i<model->nv;++i)if(!std::isfinite(data->qvel[i])){paused=true;error="Nonfinite preview state; preview paused";break;}}
