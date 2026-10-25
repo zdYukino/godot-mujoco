@@ -4,7 +4,6 @@ namespace godot {
 RID MjPhysicsServer3D::_separation_ray_shape_create() { mj_unsupported("_separation_ray_shape_create"); return {}; }
 RID MjPhysicsServer3D::_convex_polygon_shape_create() { mj_unsupported("_convex_polygon_shape_create"); return {}; }
 RID MjPhysicsServer3D::_concave_polygon_shape_create() { mj_unsupported("_concave_polygon_shape_create"); return {}; }
-RID MjPhysicsServer3D::_heightmap_shape_create() { mj_unsupported("_heightmap_shape_create"); return {}; }
 RID MjPhysicsServer3D::_custom_shape_create() { mj_unsupported("_custom_shape_create"); return {}; }
 void MjPhysicsServer3D::_space_set_param(const RID &p_space, PhysicsServer3D::SpaceParameter p_param, float p_value) { mj_unsupported("_space_set_param"); }
 float MjPhysicsServer3D::_space_get_param(const RID &p_space, PhysicsServer3D::SpaceParameter p_param) const { mj_unsupported("_space_get_param"); return {}; }

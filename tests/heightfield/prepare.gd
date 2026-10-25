@@ -5,7 +5,7 @@ const Instance=preload("res://addons/godot_mujoco/model/model_instance.gd")
 func _initialize(): call_deferred("run")
 func run():
  var f=FileAccess.open("res://fixture.xml",FileAccess.WRITE)
- f.store_string('<mujoco><option timestep=".002"/><worldbody><body name="arm" pos="0 0 1"><joint name="hinge" type="slide" axis="0 0 1" damping="0" range="-2 2"/><geom name="arm_geom" type="sphere" size=".1" mass="1"/></body></worldbody><actuator><motor name="drive" joint="hinge"/></actuator></mujoco>');f.close()
+ f.store_string('<mujoco><option timestep=".002"/><worldbody><body name="arm" pos="0 0 1"><joint name="hinge" type="slide" axis="0 0 1" damping="0" range="-2 2"/><geom name="arm_geom" type="sphere" size=".1" mass="1" friction=".15 .005 .0001"/></body></worldbody><actuator><motor name="drive" joint="hinge"/></actuator></mujoco>');f.close()
  var doc:RefCounted=ClassDB.instantiate("MjEditorDocument")
  assert(doc.import_file("res://fixture.xml"))
  var package=Builder.pack(doc,"res://models","typed");assert(package.error.is_empty())

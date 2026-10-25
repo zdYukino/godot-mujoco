@@ -5,3 +5,5 @@ config/name="MuJoCo Editor Acceptance"
 renderer/rendering_method="gl_compatibility"
 [editor_plugins]
 enabled=PackedStringArray("res://addons/mujoco_editor/plugin.cfg")
+[physics]
+3d/physics_engine="MuJoCo"

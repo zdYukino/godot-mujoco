@@ -14,6 +14,9 @@ var width:SpinBox
 var depth:SpinBox
 var layer:SpinBox
 var mask:SpinBox
+var friction:SpinBox
+var rough:CheckBox
+var draft_material:PhysicsMaterial
 var live:OptionButton
 var dirty:=false
 var error:=""
@@ -32,6 +35,11 @@ func _ready() -> void:
 	_button(row,"创建地形",create_terrain)
 	layer=_number(row,"Layer",0,4294967295);mask=_number(row,"Mask",0,4294967295);layer.value=1;mask.value=1
 	layer.value_changed.connect(_parameters_changed);mask.value_changed.connect(_parameters_changed)
+	row=HFlowContainer.new();add_child(row)
+	friction=_number(row,"Friction",0,1);friction.step=.01;friction.value=1
+	rough=CheckBox.new();rough.text="Rough";row.add_child(rough)
+	friction.value_changed.connect(_parameters_changed)
+	rough.toggled.connect(func(_value:bool): _parameters_changed(0))
 	heights=TextEdit.new();heights.custom_minimum_size=Vector2(320,100);heights.placeholder_text="按行输入高度（米），空格分隔；固定分辨率，无雕刻";add_child(heights)
 	row=HFlowContainer.new();add_child(row)
 	_button(row,"预览草稿",preview_text);_button(row,"应用到场景",apply_scene);_button(row,"Discard",discard)
@@ -46,7 +54,14 @@ func _ready() -> void:
 	refresh_live();_selection_changed()
 func _scene_state() -> Dictionary:
 	if not is_instance_valid(target) or not target.is_inside_tree(): return {}
-	return {"grid":target.design.snapshot(Transform3D(),target.collision_layer,target.collision_mask) if target.design else {}}
+	return {"grid":target.design.snapshot(Transform3D(),target.collision_layer,target.collision_mask) if target.design else {},"material":_material_state(target.physics_material_override)}
+func _material_state(material:PhysicsMaterial) -> Dictionary:
+	return {"friction":material.friction if material else 1.0,"rough":material.rough if material else false,"bounce":material.bounce if material else 0.0}
+func _draft_snapshot() -> Dictionary:
+	var snapshot:Dictionary=draft.snapshot(target.global_transform,draft_layer,draft_mask)
+	snapshot["friction"]=-draft_material.friction if draft_material.rough else draft_material.friction
+	snapshot["bounce"]=draft_material.bounce
+	return snapshot
 func _process(_delta:float) -> void:
 	if not syncing: _sync_external()
 func _sync_external() -> bool:
@@ -79,16 +94,18 @@ func select_target(node:Node3D) -> bool:
 	if dirty: error="草稿保留在当前地形；先应用或 Discard，再切换选择";_show_status();return false
 	_clear_preview();target=node;discard();return true
 func discard() -> void:
-	_clear_preview();dirty=false;external_conflict=false;error="";draft=null;baseline=null
+	_clear_preview();dirty=false;external_conflict=false;error="";draft=null;baseline=null;draft_material=null
 	if is_instance_valid(target) and not target.is_inside_tree(): target=null
 	if is_instance_valid(target) and target.design:
 		baseline=target.design.duplicate(true);draft=baseline.duplicate(true)
+		draft_material=target.physics_material_override.duplicate(true) if target.physics_material_override else PhysicsMaterial.new()
 		draft_layer=target.collision_layer;draft_mask=target.collision_mask
 	baseline_state=_scene_state()
 	_sync_fields();_show_status()
 func _sync_fields() -> void:
 	syncing=true
 	if draft:
+		friction.value=draft_material.friction;rough.button_pressed=draft_material.rough
 		width.value=draft.width;depth.value=draft.depth;layer.value=draft_layer;mask.value=draft_mask
 		var rows:=PackedStringArray()
 		var stride:=maxi(1,draft.width)
@@ -110,10 +127,13 @@ func preview_text() -> bool:
 		if not token.is_valid_float() or not is_finite(token.to_float()) or absf(token.to_float())>10000:
 			error="高度必须是有限数值，范围 ±10000 米";_show_status();return false
 		values.append(token.to_float())
+	draft_material.friction=friction.value;draft_material.rough=rough.button_pressed
+	if draft_material.bounce!=0:
+		error="地形材质 Bounce 必须为 0；请在 Inspector 修正后 Discard";_show_status();return false
 	draft.heights=values;draft_layer=int(layer.value);draft_mask=int(mask.value)
 	error=draft.validate()
 	if not error.is_empty(): _show_status();return false
-	dirty=draft.heights!=baseline.heights or draft_layer!=target.collision_layer or draft_mask!=target.collision_mask
+	dirty=draft.heights!=baseline.heights or draft_layer!=target.collision_layer or draft_mask!=target.collision_mask or _material_state(draft_material)!=baseline_state.material
 	error="";_clear_preview();preview=MeshInstance3D.new();preview.mesh=draft.mesh();target.add_child(preview)
 	var original=target.get_node_or_null("HeightfieldVisual")
 	if original: original.visible=false
@@ -125,6 +145,12 @@ func apply_scene() -> bool:
 	undo.add_do_property(target,"design",draft.duplicate(true));undo.add_undo_property(target,"design",target.design)
 	for item in [["collision_layer",draft_layer],["collision_mask",draft_mask]]:
 		undo.add_do_property(target,item[0],item[1]);undo.add_undo_property(target,item[0],target.get(item[0]))
+	# Material drafts are local to this terrain. Keep sharing for grid-only edits;
+	# material edits create an independent resource, while Undo restores the exact
+	# original reference so earlier Inspector history still targets that resource.
+	if _material_state(draft_material)!=_material_state(target.physics_material_override):
+		undo.add_do_property(target,"physics_material_override",draft_material.duplicate(true))
+		undo.add_undo_property(target,"physics_material_override",target.physics_material_override)
 	undo.commit_action();EditorInterface.mark_scene_as_unsaved();discard();return true
 func undo_scene() -> void:
 	if dirty: error="先应用或 Discard 草稿";_show_status();return
@@ -170,7 +196,7 @@ func _live_selected(index:int) -> void:
 func apply_live() -> bool:
 	if not preview_text(): return false
 	if not debugger.instances.has(selected_key): runtime_notices[selected_key]="请选择可用运行实例";_show_status();return false
-	var ok:bool=debugger.send(selected_key,"apply",{"snapshot":draft.snapshot(target.global_transform,draft_layer,draft_mask)})
+	var ok:bool=debugger.send(selected_key,"apply",{"snapshot":_draft_snapshot()})
 	runtime_notices[selected_key]="accepted，等待物理边界完成" if ok else "请求未接受：实例 pending 或已停止"
 	_show_status();return ok
 func remove_live() -> bool:
