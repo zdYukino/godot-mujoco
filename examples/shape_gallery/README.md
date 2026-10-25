@@ -49,6 +49,6 @@ python3 "$GALLERY_DIR/generate_source.py"
 GODOT_BIN="$GODOT_BIN" OUT=/tmp/gmj-gallery-check bash tests/shape_gallery/run.sh
 ```
 
-脚本分别运行仓库保存场景、重新构建后的场景、移走原始 MJCF 后的场景。每轮实际推进 600 个物理帧，并检查实际 mjModel 类型、7 个 freejoint、六个主体对共同地板的正接触力、盒与小球的正接触力、有限位置、最后半秒平移稳定、无 MuJoCo 警告，以及保存重开后的初态。也验证四种显隐组合不改物理状态或原始材质。日志和 JSON 留在 OUT。这些物理/headless 检查不等于真实 dot GUI 最终验收；天空、线框深度与细节、窄屏操作由父任务另验。
+脚本分别运行仓库保存场景、重新构建后的场景、移走原始 MJCF 后的场景。每轮实际推进 600 个物理帧，并检查实际 mjModel 类型、7 个 freejoint、六个主体对共同地板的正接触力、盒与小球的正接触力、有限位置、最后半秒平移稳定、无 MuJoCo 警告，以及保存重开后的初态。也验证运行时 `scene_geometry` 与视觉材质中的真实 RGB/alpha 值（含非 1 alpha 探针），以及四种显隐组合不改物理状态、原始材质或颜色值。日志和 JSON 留在 OUT。这些物理/headless 检查不等于真实 dot GUI 最终验收；天空、线框深度与细节、窄屏操作由父任务另验。
 
 素材来源、校验与许可见 [assets/SOURCES.md](assets/SOURCES.md)。暂未集成最终地板外观，不将此临时外观作为用户要求全部完成。
