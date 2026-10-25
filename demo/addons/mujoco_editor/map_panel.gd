@@ -94,7 +94,7 @@ func _ready() -> void:
 	button(row,"更新距离切片",func(): session.view.sdf_slice=slice_level.value; session.dirty=true; rebuild())
 	button(row,"撤销草稿",func(): session.history.undo(); rebuild())
 	button(row,"重做草稿",func(): session.history.redo(); rebuild())
-	layout_note = Label.new(); layout_note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART; layout_note.size_flags_horizontal=Control.SIZE_EXPAND_FILL; layout_note.text = "碰撞：真实凸包/基础体/高度场；SDF 65×65 原生距离切片（红内/蓝外/黄零轮廓，采样近似） | 原生 3D 导航 · 左键选草稿网格 · 独立草稿仅右侧数值编辑，无拖拽变换轴 | 视觉就绪 ≠ 物理验证通过 | 运行地图需显式重新运行；地形运行 Apply 使用地形面板"; layout_content.add_child(layout_note)
+	layout_note = Label.new(); layout_note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART; layout_note.size_flags_horizontal=Control.SIZE_EXPAND_FILL; layout_note.text = "碰撞：真实凸包/基础体/高度场；SDF 65×65 原生距离切片（红内/蓝外/黄零轮廓，采样近似） | 原生 3D 导航 · 左键选草稿网格 · 场景地图变换轴操作整张地图；子项仅右侧参数编辑 · 独立草稿无拖拽变换轴 | 视觉就绪 ≠ 物理验证通过 | 运行地图需显式重新运行；地形运行 Apply 使用地形面板"; layout_content.add_child(layout_note)
 	tree = Tree.new(); tree.custom_minimum_size = Vector2(0,160); layout_content.add_child(tree); tree.item_selected.connect(select_tree)
 	world = plugin.create_preview_root("MapDraft") if plugin else Node3D.new()
 	# Logic harnesses reuse their SceneTree viewport; they never create a preview viewport.

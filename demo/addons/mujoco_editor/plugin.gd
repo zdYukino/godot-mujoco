@@ -175,7 +175,21 @@ func selection_changed() -> void:
 	if syncing_draft_selection: return
 	var selected_nodes := EditorInterface.get_selection().get_selected_nodes()
 	selection_label.text = "场景选择：" + (str(selected_nodes[0].name) if selected_nodes.size() == 1 else "无 / 多选") + " · 对象属性见右侧 Inspector"
-	if selected_nodes.size() != 1: return
+	if selected_nodes.size() != 1:
+		var targets: Array[Node]=[]
+		var redirect:=false
+		for selected in selected_nodes:
+			var ancestor: Node=selected
+			while ancestor and not ancestor.has_meta("map_specs"): ancestor=ancestor.get_parent()
+			var target: Node=ancestor if ancestor else selected
+			redirect=redirect or target!=selected
+			if not targets.has(target): targets.append(target)
+		if redirect:
+			syncing_draft_selection=true
+			EditorInterface.get_selection().clear()
+			for target in targets: EditorInterface.get_selection().add_node(target)
+			syncing_draft_selection=false
+		return
 	var node: Node = selected_nodes[0]
 	if node is Terrain:
 		show_scope(2)
@@ -192,6 +206,9 @@ func selection_changed() -> void:
 		while terrain_node and terrain_node.get_parent()!=map_root: terrain_node=terrain_node.get_parent()
 		if terrain_node is Terrain and map_panel.items.has(str(terrain_node.name)):
 			map_panel.items[str(terrain_node.name)].select(0); map_panel.select_tree(); show_scope(1)
+	# Map children split render and collision data. Only their common root may
+	# receive a native transform gizmo, including direct scene-tree selections.
+	if map_root and node!=map_root: select_scene_target(map_root)
 	# Scene-owned values remain in Godot's native Inspector, including world options.
 
 func scene_switched(_root: Node) -> void:
@@ -250,9 +267,11 @@ func select_preview_target(map_path := "") -> void:
 	var root:=EditorInterface.get_edited_scene_root()
 	if not map_path.is_empty() and root and not map_panel.scene_map_path.is_empty():
 		var map:=root.get_node_or_null(map_panel.scene_map_path)
-		if map:
-			target=map.get_node_or_null(NodePath("Visual/"+map_path))
-			if not target: target=map.get_node_or_null(NodePath(map_path))
+		if map: target=map
+	select_scene_target(target)
+
+func select_scene_target(target: Node) -> void:
+	if syncing_draft_selection: return
 	var selection:=EditorInterface.get_selection()
 	var previous:=selection.get_selected_nodes()
 	if (target and previous.size()==1 and previous[0]==target) or (not target and previous.is_empty()): return

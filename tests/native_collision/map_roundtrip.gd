@@ -111,6 +111,7 @@ func run(plugin, runner, original_package: String) -> void:
 	runner.check(packed.error.is_empty() and map.open_scene_map(authored) and map.items.has(name),"native heightfield scene reopen preserves tree item")
 	map.items[name].select(0); map.select_tree()
 	runner.check(map.native_contact.button_pressed and JSON.parse_string(map.advanced.text).condim==4,"native heightfield parameters survive scene roundtrip")
+	await preload("res://map_gizmo.gd").new().run(plugin,runner,authored)
 	# Restore the shared fixture for the lifecycle and narrow-dock tests.
 	map.open_package(original_package); map.apply_scene()
 	root.transform=original_root_pose
