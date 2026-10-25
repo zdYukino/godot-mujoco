@@ -28,6 +28,10 @@ if os.environ.get('GMJ_TRACE_SCENE_LOAD')=='1':
  last=max(int(x[0]) for x in native);finished={x[2] for x in native if int(x[0])==last}
  assert {'document.compile_end','document.make_data_end','document.forward_end','load.take_spec_end','rebuild.compile_end','rebuild.transfer_end','rebuild.forward_end','rebuild.old_delete_end','document.destroy_end','load.exit'} <= finished,finished
  r['native_last_load']=[x for x in native if int(x[0])==last]
+ if os.environ.get('GMJ_DIAGNOSTIC_SERIAL_COMPILE')=='1':
+  assert 'rebuild.diagnostic_serial_compile' in finished
+  assert re.search(rf'id={last} .*stage=rebuild.compile_begin a=0 ',s), 'serial compiler flag not applied'
+
 r['hot_add']=[json.loads(x.split(' ',1)[1]) for x in s.splitlines() if x.startswith('G1_HOT_ADD ')][0]
 r['memory']=[x for x in s.splitlines() if x.startswith('G1_MEMORY ')]
 (p/'results.json').write_text(json.dumps(r,indent=2)+'\n');print('G1 PASSIVE PASS',{k:v for k,v in r.items() if k not in ['diagnostic_stages','native_last_load']},p)

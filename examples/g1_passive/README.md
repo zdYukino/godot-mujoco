@@ -81,3 +81,22 @@ GMJ_TRACE_SCENE_LOAD=1 OUT=/tmp/gmj-g1-native-trace bash tests/g1_passive/run.sh
 [user_model.cc](https://github.com/google-deepmind/mujoco/blob/3.16.0/src/user/user_model.cc)
 和 [user_mesh.cc](https://github.com/google-deepmind/mujoco/blob/3.16.0/src/user/user_mesh.cc)，
 spec 复制涉及树、资产和编译网格缓存；该复制路径本身不启动编译线程池。
+
+后续 ebfc 实际 dot 已通过所有权转移及三对象 attach，但停在组合模型
+`rebuild.compile_begin`（usethread=1），151.61 秒超时；热加仍未通过。
+为单独检验组合编译的 worker pool，可重编后显式运行一次：
+
+```bash
+GMJ_TRACE_SCENE_LOAD=1 GMJ_DIAGNOSTIC_SERIAL_COMPILE=1 OUT=/tmp/gmj-g1-serial-diagnostic bash tests/g1_passive/run.sh
+```
+
+仅两个开关同时为 `1` 且处于已跟踪的加载事务时，把临时组合 spec 的
+`compiler.usethread` 置为 false；不更改包、资产、碰撞、solver、物理步进或系统线程设置。
+`rebuild.diagnostic_serial_compile` 的 a 字段记录 C++ hardware_concurrency，
+其后的 compile_begin 必须为 a=0。单独关闭 trace 即恢复默认编译路径。
+此开关是隔离变量的诊断，不是已确认修复；即使通过也需区别诊断配置与默认配置。
+官方选项说明：[compiler usethread](https://mujoco.readthedocs.io/en/stable/XMLreference.html#compiler-usethread)。
+开发环境使用官方预编译 3.16.0，`GMJ_BUILD_MUJOCO_FROM_SOURCE=OFF`；
+libmujoco.so.3.16.0 SHA256 为
+`d89b5532a1ec9c4ca8744449d648233a2f7ae5d9e7b2ccddd692e11955f6cb04`。
+需先与实际 dot 的 MuJoCo 库核对，不能以扩展自身 SHA 代替依赖库核验。

@@ -331,6 +331,13 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
   gmj_load_trace::mark("rebuild.attach_end",entry.first);
  }
  // Compile entirely off to the side. Never mutate the active model on failure.
+ // Diagnostic only: isolate the compiler's mesh worker pool for a traced
+ // load transaction. Never alter authored specs, solver options or stepping.
+ const char *serial_compile=std::getenv("GMJ_DIAGNOSTIC_SERIAL_COMPILE");
+ if(gmj_load_trace::enabled&&serial_compile&&std::strcmp(serial_compile,"1")==0){
+  spec->compiler.usethread=0;
+  gmj_load_trace::mark("rebuild.diagnostic_serial_compile",std::thread::hardware_concurrency());
+ }
  gmj_load_trace::mark("rebuild.compile_begin",spec->compiler.usethread);mjModel *model=mj_compile(spec,nullptr);gmj_load_trace::mark("rebuild.compile_end",model?model->ngeom:-1,model?model->nv:-1);
  if(!model){s.last_error=String::utf8(mjs_getError(spec));mj_deleteSpec(spec);return false;}
  // Attachment must retain every named physical element; never silently drop
