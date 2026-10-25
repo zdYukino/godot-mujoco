@@ -1,0 +1,53 @@
+# 第二示例：无控 G1 与运行时热添加
+
+真实 Unitree G1 在同一个 `MjRuntimeWorld` 中自由落下、接触地板。此示例复用第一示例的原始 CC0 HDR、非 VRAM 导入配置、相机、灯光、原创建模的地板和 1 m 网格，以及默认收起的帮助和紧凑运行控件。没有额外中央预览、动画倒地或平衡控制器。
+
+## 启动保存的示例
+
+先按仓库说明构建 Godot 4.7.2 .NET / MuJoCo 3.16 扩展并放到 `demo/addons`。从仓库根目录执行：
+
+```bash
+export GODOT_BIN=/absolute/path/to/Godot_v4.7.2-stable_mono_linux.x86_64
+export OUT=$(mktemp -d /tmp/gmj-g1-demo.XXXXXX)
+bash examples/g1_passive/prepare.sh
+"$GODOT_BIN" --path "$OUT/project"
+```
+
+脚本在独立目录组装已保存的 `G1.tscn`、独立模型包、共用地板 shader 和 HDR，并进行导入。默认直接使用已保存模型，无需重新编译 URDF。仓库不重复存储 HDR，组装时从第一示例复制。`--editor --path "$OUT/project" res://G1.tscn` 可在原生编辑器打开；运行界面右上方有“添加 G1”，帮助默认收起。
+
+需要从原始 URDF 重新构建时：
+
+```bash
+REBUILD=1 OUT=/tmp/gmj-g1-rebuild bash examples/g1_passive/prepare.sh
+```
+
+重新构建会校验原始 manifest，调用 `MjEditorDocument.import_g1(source, true, true)`，打包资源并重新保存 G1 场景。请使用新的独立 OUT，避免覆盖手工修改。`prepare_g1.gd` 明确采用 free-base + relaxed 路径：添加 `floating_base`，不创建合成 position/PD actuator，所有 body 的 gravcomp=0，保留来源被动关节参数。为保持第一示例环境，重力使用 -9.81 m/s²（导入器原默认为 -9.8）；积分器 implicitfast、步长 .002，地板尺寸、摩擦及颜色不变。
+
+初始机器人位于 x=-1.8 m、骨盆 y=.82 m，向侧面倾斜 5°；第二台位于 x=1.8 m、y=.82 m，倾斜 -5°。这是载入姿态的小扰动，用于避免完全对称的理想平衡，并非动画或运行中施力。无控制情况下倒地由真实重力、关节与地面接触产生。
+
+## 热添加边界
+
+- 先观察第一台自然倒地，再点击“添加 G1”。最多两台，按钮显示忙态并拒绝重复点击；第二台在远离第一台初始位置的另一侧载入。
+- 使用现有 `MjModelInstance.load_model` 事务，同步暂停编译并恢复之前的运行状态。不是后台异步加载，不承诺无停顿。没有重开场景、环境 rebuild 或 reset。
+- 添加前后检查第一台 RID、完整 qpos/qvel、世界时间不变；失败保留原世界。两台共享不可变资源，拥有独立原生模型 RID/命名空间。
+- 保留导入器 `contype=2 / conaffinity=1`：机器人与地板碰撞，**机器人间互碰和同机自碰撞被排除**。本示例不宣称验证机器人互碰。
+- “重置”使用已有原生 checkpoint/born-state 逻辑，保留两台模型，恢复各自载入姿态；它不是热添加实现的一部分。
+- 碰撞线框由构建时实际编译凸包/原生几何导出，保存为压缩的 `g1_collision_previews.res`。运行时两台共享线框 Mesh 和材质，逐帧只更新姿态，不重复编译来源或生成完整网格。
+
+## 来源与许可
+
+复用仓库 `demo/assets/robots/unitree_g1/g1_29dof_mode_18`，原始来源为 https://github.com/unitreerobotics/unitree_ros ，固定提交 `5994d4faef0a9cadd3287f8de0199a67eeb2a259`，目录 `robots/g1_description`。保留全部 34 个原始 STL 资产，不换简化人偶。完整原始文件哈希见 [upstream-manifest.json](upstream-manifest.json)，BSD-3-Clause 许可见 [UPSTREAM_LICENSE](UPSTREAM_LICENSE)。模型包内网格按原始内容 SHA256 命名，原 URDF 另存于 sources，路径转换不修改网格字节。
+
+天空作者 Greg Zaal / Poly Haven，CC0；详细下载、SHA256 和导入设置沿用 [第一示例素材说明](../shape_gallery/assets/SOURCES.md)（组装后的独立项目中为 `assets/SOURCES.md`）。网格是项目原创，不包含 NVIDIA 地板 USD 或 MuJoCo 原纹理。
+
+## 有界验收与资源
+
+```bash
+OUT=/tmp/gmj-g1-check bash tests/g1_passive/run.sh
+# 可选：重建来源后再测，并移走原始 URDF 证明独立包可运行
+REBUILD=1 OUT=/tmp/gmj-g1-rebuilt-check bash tests/g1_passive/run.sh
+```
+
+只测试一台自然倒地，再热添加一台；检查无 actuator/gravcomp、自由基座、69 个 geom（57 个 mesh geom 复用 34 个源 mesh）、实际接触、倒地姿态、失败回滚、时间/状态连续性、双机继续运行、四显隐与重置。输出原生模型 ID/数量、编译用时和 Linux 进程 VmHWM。没有无限规模压力测试。
+
+当前开发环境双机 headless 测试峰值约 1.7 GB；真实渲染及编辑器需要额外内存，**不能据此保证仅剩 2 GB 的 dot 宿主能够同时开编辑器和双机**。建议串行运行独立游戏进程，关闭本任务自有验证进程后再做下一轮；不关闭用户窗口。实际 GUI、截图和最终资源可行性由父任务独立验收。

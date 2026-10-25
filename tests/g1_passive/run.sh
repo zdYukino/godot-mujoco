@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+ROOT=$(cd "$(dirname "$0")/../.." && pwd)
+: "${GODOT_BIN:=godot}"
+: "${OUT:=$(mktemp -d /tmp/gmj-passive-g1-test.XXXXXX)}"
+export OUT GODOT_BIN
+bash "$ROOT/examples/g1_passive/prepare.sh"
+cp "$ROOT/tests/g1_passive/acceptance.gd" "$OUT/project/"
+if [[ -d "$OUT/project/assets/robots" ]]; then mv "$OUT/project/assets/robots" "$OUT/unavailable-original-robots"; fi
+timeout --kill-after=5 150 "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 --script res://acceptance.gd > "$OUT/runtime.log" 2>&1
+python3 - "$OUT" <<'PY'
+import json,pathlib,sys
+p=pathlib.Path(sys.argv[1]);s=(p/'runtime.log').read_text()
+rows=[x.split(' ',1)[1] for x in s.splitlines() if x.startswith('G1_PASSIVE_RESULT ')];assert len(rows)==1,s
+r=json.loads(rows[0]);assert r['failed']==0,r
+for f in p.glob('*.log'):
+ t=f.read_text();assert 'SCRIPT ERROR:' not in t and '\nERROR:' not in t and 'leaked' not in t,str(f)
+r['hot_add']=[json.loads(x.split(' ',1)[1]) for x in s.splitlines() if x.startswith('G1_HOT_ADD ')][0]
+r['memory']=[x for x in s.splitlines() if x.startswith('G1_MEMORY ')]
+(p/'results.json').write_text(json.dumps(r,indent=2)+'\n');print('G1 PASSIVE PASS',r,p)
+PY

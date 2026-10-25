@@ -47,20 +47,26 @@ func _ready() -> void:
 	var padding:=MarginContainer.new(); help_panel.add_child(padding)
 	for side in ["left","right","top","bottom"]: padding.add_theme_constant_override("margin_"+side,12)
 	var box:=VBoxContainer.new(); box.add_theme_constant_override("separation",10); padding.add_child(box)
-	var title:=Label.new(); title.text="动态形状示例"; title.add_theme_font_size_override("font_size",18); box.add_child(title)
+	var title:=Label.new(); title.text=help_title(); title.add_theme_font_size_override("font_size",18); box.add_child(title)
 	var explanation:=Label.new(); explanation.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
-	explanation.text="""所有物体在同一 MuJoCo 世界中下落和接触。
+	explanation.text=help_description()
+	box.add_child(explanation)
+	var close:=Button.new(); close.text="收起说明"; close.pressed.connect(func(): set_help_visible(false)); box.add_child(close)
+	set_help_visible(false)
+	get_viewport().size_changed.connect(layout_chrome); layout_chrome()
+	apply_display()
+
+func help_title() -> String:
+	return "动态形状示例"
+
+func help_description() -> String:
+	return """所有物体在同一 MuJoCo 世界中下落和接触。
 
 实体与碰撞可独立显示；橙色线框表示碰撞边界。暂停可检查接触，重置恢复初始位置。
 
 球、盒、圆柱、胶囊、椭球使用原生几何；圆锥使用凸网格。地板网格默认间距 1 m。
 
 构建步骤、物理说明和素材来源见项目 README。"""
-	box.add_child(explanation)
-	var close:=Button.new(); close.text="收起说明"; close.pressed.connect(func(): set_help_visible(false)); box.add_child(close)
-	set_help_visible(false)
-	get_viewport().size_changed.connect(layout_chrome); layout_chrome()
-	apply_display()
 
 func layout_chrome() -> void:
 	var width:=minf(440.0,maxf(220.0,get_viewport().get_visible_rect().size.x-24.0))

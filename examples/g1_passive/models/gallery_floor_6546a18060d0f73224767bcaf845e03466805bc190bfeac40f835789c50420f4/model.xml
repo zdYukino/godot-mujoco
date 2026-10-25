@@ -1,0 +1,8 @@
+<mujoco model="MuJoCo Model">
+  <compiler angle="radian"/>
+
+  <option integrator="implicitfast"/>
+
+  <worldbody>
+    <geom name="floor_geom" size="6 4 0.1" pos="0 0 -0.1" type="box" friction="0.9" rgba="0.25 0.28 0.32 1"/>
+  </worldbody></mujoco>
