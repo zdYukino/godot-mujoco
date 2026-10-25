@@ -2,6 +2,11 @@
 extends VBoxContainer
 const PackageBuilder = preload("res://addons/godot_mujoco/model/package_builder.gd")
 const SceneBuilder = preload("res://addons/godot_mujoco/model/scene_builder.gd")
+var source_watch: RefCounted:
+	get: return state.source_watch
+	set(value): state.source_watch = value
+var source_status: Label
+var source_poll := 0.0
 var runtime_targets: OptionButton
 var runtime_status: Label
 var runtime_apply: Button
@@ -44,6 +49,9 @@ func _ready() -> void:
 	var toolbar := HFlowContainer.new()
 	add_child(toolbar)
 	button(toolbar, "Import MJCF", func(): file_dialog(false, true))
+	button(toolbar, "检查来源", check_sources)
+	button(toolbar, "重导入来源（明确丢弃本地）", confirm_reimport)
+	button(toolbar, "保留本地 / 另存副本", func(): file_dialog(true, false))
 	button(toolbar, "Import fixed G1", import_g1_dialog)
 	button(toolbar, "Import free G1 (relaxed)", func(): import_g1_dialog(true))
 	button(toolbar, "Open document", func(): file_dialog(false, false))
@@ -59,6 +67,7 @@ func _ready() -> void:
 	button(toolbar, "Frame all", frame_all)
 	for shape in ["box", "sphere", "cylinder"]:
 		button(toolbar, "+ " + shape, add_primitive.bind(shape))
+	source_status = Label.new(); source_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; add_child(source_status)
 	var runtime_bar := HFlowContainer.new()
 	add_child(runtime_bar)
 	runtime_targets = OptionButton.new()
@@ -182,7 +191,7 @@ func can_leave_fields() -> bool:
 	return true
 
 func execute(command: Dictionary) -> bool:
-	var before: Dictionary = state.document.snapshot()
+	var before: Dictionary = state.snapshot()
 	if not state.document.edit(command):
 		show_error(state.document.get_error())
 		return false
@@ -190,7 +199,7 @@ func execute(command: Dictionary) -> bool:
 	return true
 
 func record_change(before: Dictionary, title: String) -> void:
-	var after: Dictionary = state.document.snapshot()
+	var after: Dictionary = state.snapshot()
 	var history := plugin.get_undo_redo()
 	history.create_action(title, UndoRedo.MERGE_DISABLE, state)
 	history.add_do_method(state, "restore_snapshot", after)
@@ -203,18 +212,24 @@ func record_change(before: Dictionary, title: String) -> void:
 	save_recovery()
 	refresh_runtime_targets()
 
-func import_mjcf(path: String) -> bool:
-	if not can_leave_fields():
+func can_replace_document(discard_local := false) -> bool:
+	if (state.dirty or pending) and not discard_local:
+		show_error("文档有未保存编辑或字段草稿：先保存/Discard，或明确确认丢弃后重新导入")
 		return false
-	var before: Dictionary = state.document.snapshot()
-	if not state.document.import_file(path):
-		show_error(state.document.get_error())
-		return false
-	project_model_path = ""
-	model_provenance = {}
-	record_change(before, "MuJoCo import")
-	frame_all()
 	return true
+
+func import_mjcf(path: String, discard_local := false) -> bool:
+	if not can_replace_document(discard_local): return false
+	var result: Dictionary = preload("res://addons/godot_mujoco/map/source_watch.gd").import_verified(path)
+	if not result.error.is_empty():
+		show_error(result.error); return false
+	var before: Dictionary = state.snapshot()
+	if not state.document.restore(result.document.snapshot()): show_error(state.document.get_error()); return false
+	source_watch = result.watch
+	project_model_path = ""; model_provenance = {}
+	record_change(before, "MuJoCo import / reimport")
+	state.dirty = false
+	check_sources(); frame_all(); return true
 
 func file_dialog(save: bool, importing: bool) -> void:
 	if not can_leave_fields():
@@ -245,6 +260,7 @@ func write_document(path: String) -> bool:
 		show_error("Cannot write document " + path)
 		return false
 	var payload: Dictionary = state.document.snapshot()
+	payload["source_tracking"] = source_watch.snapshot()
 	if pending:
 		var draft := {}
 		for key in inputs:
@@ -266,17 +282,20 @@ func save_document(path: String) -> bool:
 	status.text = "Saved " + path + " • source assets remain external and unchanged"
 	return true
 
-func open_document(path: String) -> bool:
-	if not can_leave_fields():
+func open_document(path: String, discard_local := false) -> bool:
+	if not can_replace_document(discard_local):
 		return false
 	var json := JSON.new()
 	if json.parse(FileAccess.get_file_as_string(path)) != OK or not json.data is Dictionary:
 		show_error("Invalid document JSON")
 		return false
-	var before: Dictionary = state.document.snapshot()
+	var before: Dictionary = state.snapshot()
 	if not state.document.restore(json.data):
 		show_error(state.document.get_error())
 		return false
+	source_watch = preload("res://addons/godot_mujoco/map/source_watch.gd").new()
+	var tracking: Dictionary = json.data.get("source_tracking",{})
+	source_watch.source = tracking.get("source",""); source_watch.hashes = tracking.get("hashes",{}); source_watch.exported_hash = tracking.get("exported_hash","")
 	project_model_path = ""
 	model_provenance = {}
 	record_change(before, "MuJoCo open document")
@@ -292,14 +311,16 @@ func open_document(path: String) -> bool:
 	return true
 
 func import_g1_dialog(free_base: bool = false) -> void:
-	if not can_leave_fields(): return
+	if not can_replace_document(): return
 	var dialog := FileDialog.new()
 	dialog.access = FileDialog.ACCESS_FILESYSTEM
 	dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE
 	dialog.filters = PackedStringArray(["*.urdf ; Original fixed-base Unitree G1 URDF"])
 	dialog.file_selected.connect(func(path: String):
-		var before: Dictionary = state.document.snapshot()
+		if not can_replace_document(): dialog.queue_free(); return
+		var before: Dictionary = state.snapshot()
 		if state.document.import_g1(path, free_base, free_base):
+			source_watch = preload("res://addons/godot_mujoco/map/source_watch.gd").new()
 			project_model_path = ""
 			model_provenance = {}
 			record_change(before,"MuJoCo import free-base relaxed G1" if free_base else "MuJoCo import fixed-base G1")
@@ -335,12 +356,14 @@ func create_runtime_scene_dialog(playground: bool = false) -> void:
 func save_project_model() -> void:
 	if not can_leave_fields():
 		return
+	model_provenance["imported_source_hashes"] = source_watch.hashes.duplicate()
 	var result: Dictionary = PackageBuilder.pack(state.document, "res://mujoco_models", "model", model_provenance, project_model_path.get_base_dir() if not project_model_path.is_empty() else "")
 	if not result.error.is_empty():
 		show_error(result.error)
 		return
 	state.dirty = false
 	project_model_path = result.path
+	source_watch.exported_hash = FileAccess.get_sha256(result.path.get_base_dir().path_join("model.xml"))
 	project_model_snapshot = state.document.snapshot().duplicate(true)
 	model_provenance = ResourceLoader.load(project_model_path).provenance.duplicate(true)
 	refresh_project_files()
@@ -359,8 +382,8 @@ func open_project_model_dialog() -> void:
 	add_child(dialog)
 	dialog.popup_centered_ratio(.7)
 
-func open_project_model(path: String) -> bool:
-	if not can_leave_fields():
+func open_project_model(path: String, discard_local := false) -> bool:
+	if not can_replace_document(discard_local):
 		return false
 	var resource = ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_IGNORE)
 	if not resource or not resource is PackageBuilder.ModelResource:
@@ -370,12 +393,16 @@ func open_project_model(path: String) -> bool:
 	if not result.error.is_empty():
 		show_error(result.error)
 		return false
-	var before: Dictionary = state.document.snapshot()
+	var before: Dictionary = state.snapshot()
 	if not state.document.restore(result.document.snapshot()):
 		show_error(state.document.get_error())
 		return false
 	project_model_path = path
 	model_provenance = resource.provenance.duplicate(true)
+	source_watch = preload("res://addons/godot_mujoco/map/source_watch.gd").new()
+	source_watch.source = model_provenance.get("source","")
+	source_watch.hashes = model_provenance.get("sources",{}).duplicate()
+	source_watch.hashes.merge(model_provenance.get("assets",{}),true)
 	record_change(before, "MuJoCo open project model")
 	frame_all()
 	return true
@@ -432,6 +459,7 @@ func refresh() -> void:
 	status.text = "Paused" if info.paused else "Running"
 	status.text += " • Apply commits pending fields transactionally; Ctrl+Z / Ctrl+Shift+Z use editor history • " + ("Unsaved" if state.dirty else "Saved")
 	refresh_runtime_targets()
+	check_sources()
 
 func select_entity(kind: String, entity_name: String) -> void:
 	selected = {"kind":kind, "name":entity_name}
@@ -622,6 +650,9 @@ func rebuild_meshes() -> void:
 	highlight_selection()
 
 func _process(delta: float) -> void:
+	source_poll += delta
+	if source_poll >= 2.0:
+		source_poll = 0.0; check_sources()
 	if not state.document or not visible:
 		return
 	if visible:
@@ -823,7 +854,7 @@ func load_control_preset(path:String)->bool:
 	if not input.error.is_empty():show_error(input.error);return false
 	var result=presets.candidate(state.document,input.value)
 	if not result.error.is_empty():show_error(result.error);return false
-	var before:Dictionary=state.document.snapshot()
+	var before:Dictionary=state.snapshot()
 	if not state.document.restore(result.snapshot):show_error(state.document.get_error());return false
 	record_change(before,"Load control preset")
 	status.text="预设已加载到编辑文档，可 Undo；运行实例尚未改变。PD需保存模型后显式应用，目标值需选择对应控制并发送。";return true
@@ -845,3 +876,21 @@ func runtime_preset_dialog()->void:
 		elif not plugin.live_debugger.send(key,"preset",{"preset":input.value}):show_error("Runtime target unavailable or pending")
 		dialog.queue_free())
 	dialog.canceled.connect(dialog.queue_free);dialog.popup_centered_ratio(.65)
+
+func check_sources() -> void:
+	if source_watch.source.is_empty(): source_status.text = "来源未跟踪（打开旧文档请先导入来源）"; return
+	var result: Dictionary = source_watch.inspect(state.dirty or pending)
+	source_status.text = "来源：" + result.state + "  " + ", ".join(result.changes) + "  " + result.error
+
+func confirm_reimport() -> void:
+	if source_watch.source.is_empty(): show_error("没有已跟踪的来源"); return
+	var dialog := ConfirmationDialog.new()
+	dialog.dialog_text = "显式从原来源重新导入。未保存编辑与字段草稿会被替换；可先保留本地并另存副本。解析失败保持旧文档。运行实例不自动 Apply。"
+	add_child(dialog)
+	dialog.confirmed.connect(func(): reimport_source(true); dialog.queue_free())
+	dialog.canceled.connect(dialog.queue_free)
+	dialog.popup_centered()
+
+func reimport_source(discard_local := false) -> bool:
+	if source_watch.source.is_empty(): show_error("没有已跟踪的来源"); return false
+	return import_mjcf(source_watch.source,discard_local)

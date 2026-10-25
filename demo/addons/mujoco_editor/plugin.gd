@@ -2,6 +2,7 @@
 extends EditorPlugin
 const State = preload("editor_state.gd")
 const EditorPanel = preload("panel.gd")
+var map_panel:Control
 var object_panel:Control
 var heightfield_debugger:EditorDebuggerPlugin
 var heightfield_panel:Control
@@ -14,6 +15,8 @@ func _enter_tree() -> void:
 	if not ClassDB.class_exists("MjEditorDocument"):
 		push_error("MuJoCo editor requires the rebuilt Linux godot_mujoco GDExtension. Build and restart the editor.")
 		return
+	map_panel=preload("map_panel.gd").new(); map_panel.plugin=self
+	add_control_to_bottom_panel(map_panel,"静态地图")
 	object_panel=preload("object_panel.gd").new();object_panel.plugin=self
 	add_control_to_bottom_panel(object_panel,"MuJoCo 对象")
 	live_debugger = preload("live_debugger.gd").new()
@@ -35,11 +38,14 @@ func _enter_tree() -> void:
 	EditorInterface.get_editor_main_screen().add_child(panel)
 	panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	panel.hide()
+	if "--static-map-test" in OS.get_cmdline_user_args(): call_deferred("_run_static_map_test")
 	if "--mj-editor-test" in OS.get_cmdline_user_args() and not base.has_meta("mj_test_started"):
 		base.set_meta("mj_test_started", true)
 		call_deferred("_run_acceptance")
 
 func _exit_tree() -> void:
+	if map_panel:
+		map_panel.shutdown(); remove_control_from_bottom_panel(map_panel); map_panel.free(); map_panel=null
 	if object_panel:
 		remove_control_from_bottom_panel(object_panel);object_panel.free();object_panel=null
 	if heightfield_panel:
@@ -83,3 +89,8 @@ func _run_acceptance() -> void:
 		var runner = script.new()
 		EditorInterface.get_base_control().set_meta("mj_test_runner", runner)
 		runner.run(self)
+
+func _run_static_map_test() -> void:
+	var runner = load("res://map_editor_test.gd").new()
+	EditorInterface.get_base_control().set_meta("map_test_runner",runner)
+	runner.run(self)

@@ -1,0 +1,24 @@
+PASS P0 MJCF panel import tracked
+PASS P0 main/include captured in UI
+PASS P0 UI bad source atomic rollback
+PASS P0 source transaction baseline
+PASS P0 applied unsaved edit fixture
+PASS P0 ordinary Import protects dirty applied edits
+PASS P0 dedicated reload protects dirty edits without confirmation
+PASS P0 pending draft protected at import
+PASS P0 pending draft protected at reload
+PASS P0 reset clean source
+PASS P0 clean explicit reload changed include
+PASS P0 reload Undo restores model and old source hash together
+PASS P0 undone old document cannot display aligned with new source
+PASS P0 saving undone model does not falsely align new source
+PASS P0 reload Redo restores model and new source hash together
+PASS P0 clean ordinary Import changes source identity
+PASS P0 ordinary Import Undo restores source identity and hashes
+PASS P0 ordinary Import Redo restores source identity and hashes
+PASS P0 confirmed reload explicitly discards dirty/pending
+PASS P0 mutation between dependency hash and parse rejected
+PASS P0 confirmed invalid reload retains dirty/pending and provenance
+PASS P0 height contract file tracked
+PASS P0 height contract-only unit change detected
+SOURCE_TRANSACTION_RESULT {"failed":0,"passed":20}
