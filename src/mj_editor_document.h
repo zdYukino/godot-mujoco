@@ -37,6 +37,7 @@ public:
  Dictionary preset_candidate(const Dictionary &preset) const;
  Dictionary inspect() const;
  Array geometry() const;
+ Array collision_preview(double slice_fraction=.33,int resolution=65) const;
  void set_paused(bool value);
  bool is_paused() const { return paused; }
  void advance(double seconds);

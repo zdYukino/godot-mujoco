@@ -1,6 +1,10 @@
 @tool
 extends RefCounted
 ## No convex/concave Shape resources: explicitly authored supported primitives only.
+# JSON numbers are floats. Validate before casting so fractions/overflow never truncate.
+static func integer_in_range(value: Variant, minimum: int, maximum: int) -> bool:
+	return typeof(value) in [TYPE_INT,TYPE_FLOAT] and is_finite(value) and value>=minimum and value<=maximum and value==floor(value)
+
 static func pose_of(node: Node3D, root: Node3D) -> Transform3D:
 	var pose := node.transform
 	var parent := node.get_parent()
@@ -19,7 +23,7 @@ static func build(mesh: MeshInstance3D, root: Node3D, spec: Dictionary) -> Dicti
 	if kind not in ["box", "sphere", "capsule", "cylinder", "compound_boxes"]: return {"error":"原生凸/凹网格未支持；请显式提供多基础体，不生成整栋单凸包"}
 	for field in ["layer","mask"]:
 		var value: Variant = spec.get(field, 1)
-		if not value is int or value < 0 or value > 4294967295: return {"error":"碰撞层/掩码必须为 uint32"}
+		if not integer_in_range(value,0,4294967295): return {"error":"碰撞层/掩码必须为 uint32"}
 	var friction: Variant = spec.get("friction", 1.0)
 	if typeof(friction) not in [TYPE_FLOAT,TYPE_INT] or not is_finite(friction) or friction < 0 or friction > 1: return {"error":"摩擦必须为 [0,1] 有限值"}
 	var bounds := mesh.mesh.get_aabb()

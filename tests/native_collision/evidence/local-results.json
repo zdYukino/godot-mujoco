@@ -1,0 +1,112 @@
+{
+  "environment": "development self-test; NOT final dot acceptance",
+  "engine": "MuJoCo 3.16.0",
+  "godot": "4.7.2 stable mono",
+  "platform": "Linux x86_64",
+  "cpu": "AMD EPYC 7763; 5 visible CPUs",
+  "baseline": "63c8841b7c4169f4a607eeb084a29553ea04100a",
+  "product": {
+    "failed": 0,
+    "passed": 51,
+    "extended": {
+      "failed": 0,
+      "passed": 69
+    },
+    "attributes": {
+      "failed": 0,
+      "passed": 53
+    },
+    "relation_transactions": {
+      "failed": 0,
+      "passed": 67
+    },
+    "layout": {
+      "failed": 0,
+      "passed": 31,
+      "scope": "headless measured bounds and scroll reachability; no mouse GUI acceptance claimed"
+    }
+  },
+  "relocated": "Source removed: SDF target wall normal/force/material; runtime options; native hfield friction/contact; explicit pair table/contact and persisted relations",
+  "static_map_regression": {
+    "positive": {
+      "doorway_z": -1.03199994564056,
+      "failed": 0,
+      "high_friction_distance": 0.143445730209351,
+      "low_friction_distance": 0.722988486289978,
+      "passed": 78,
+      "wall_z": -3.53438997268677
+    },
+    "reopen": {
+      "failed": 0,
+      "passed": 8
+    },
+    "relocated": {
+      "failed": 0,
+      "passed": 8
+    },
+    "dependency_diagnostics": {
+      "passed": 6,
+      "failed": 0
+    }
+  },
+  "editor_headless": {
+    "failed": 0,
+    "passed": 46
+  },
+  "standalone_probe": {
+    "room_sdf": {
+      "version": "3.16.0",
+      "compile_ms": "142.307",
+      "step_ms": "495.338",
+      "compile_cpu_ms": "141.844",
+      "step_cpu_ms": "495.319",
+      "steps": "750",
+      "compile_peak_rss_kib": "67172",
+      "peak_rss_kib": "67428",
+      "octree_cells": "82553",
+      "plugins": "0",
+      "peak_contacts": "40"
+    },
+    "room_convex": {
+      "version": "3.16.0",
+      "compile_ms": "1.363",
+      "step_ms": "2.068",
+      "compile_cpu_ms": "1.369",
+      "step_cpu_ms": "2.069",
+      "steps": "750",
+      "compile_peak_rss_kib": "5248",
+      "peak_rss_kib": "5376",
+      "octree_cells": "0",
+      "plugins": "0",
+      "peak_contacts": "2"
+    },
+    "cow": {
+      "version": "3.16.0",
+      "compile_ms": "364.513",
+      "step_ms": "128.641",
+      "compile_cpu_ms": "682.344",
+      "step_cpu_ms": "128.456",
+      "steps": "100",
+      "compile_peak_rss_kib": "144108",
+      "peak_rss_kib": "144364",
+      "octree_cells": "49001",
+      "plugins": "1",
+      "peak_contacts": "9"
+    }
+  },
+  "caveat": "cow example loads a plugin; room_sdf is plugin-free. Cost is one process sample, not a scalability claim.",
+  "previous_candidate": "f5124066d55854168de4f45424cab5c7e7541397",
+  "runtime_options_evidence": "All new option assertions use scene_info.runtime_options reading final mjModel.opt; legacy options is authored cache and NOT used.",
+  "runtime_geom_evidence": "scene_geometry reads final mjModel geom arrays; contact_details reads actual mjContact and mj_contactForce.",
+  "model_document_editor_headless": {
+    "passed": 160,
+    "failed": 0,
+    "extension_sha256": "8dbe4cfd39155d558af36bc0524597e47253db59028b1ed42abdc87999fde2f8"
+  },
+  "preserved_main_html": "b70f20daf786edaf431e7f657ba58cf562df6921",
+  "relation_transaction_fix": {
+    "reproduced": "f512406 accepts visual/native-contact cancellation for an existing pair/exclude endpoint, then fails build; terrain cancellation has same issue",
+    "verified": "67 checks: rejected edits preserve original containers/resources, relation configuration, Undo version, dirty state and export marker; prior bundle intact and map resaves; valid edits/Undo still work; three unsupported pair combinations explicitly rejected; compound native UI/API/build reject rather than ignore",
+    "native_binary_and_cost_probe": "unchanged from f512406; fixed-version dispatch/cost evidence retained"
+  }
+}
