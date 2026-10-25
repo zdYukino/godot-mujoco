@@ -1,6 +1,6 @@
 config_version=5
 [application]
-config/name="MuJoCo 动态形状示例 · 地板外观待确认"
+config/name="MuJoCo 动态形状示例"
 run/main_scene="res://Main.tscn"
 config/features=PackedStringArray("4.7")
 [display]

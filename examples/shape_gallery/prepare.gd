@@ -24,5 +24,5 @@ func run() -> void:
 	var error:=scene.pack(world)
 	if error==OK: error=ResourceSaver.save(scene,"res://Main.tscn")
 	world.free()
-	print("SHAPE_GALLERY_BUILD ",JSON.stringify({"error":error,"model":packed.path,"floor":"temporary original plain floor; final appearance pending"}))
+	print("SHAPE_GALLERY_BUILD ",JSON.stringify({"error":error,"model":packed.path,"floor":"original world-space grid on existing floor; 1 m spacing"}))
 	quit(0 if error==OK else 1)

@@ -21,6 +21,21 @@ timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/project" --scrip
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/project" --script res://acceptance.gd > "$OUT/runtime.log" 2>&1
 mv "$OUT/project/assets/gallery.xml" "$OUT/source-unavailable.xml"
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/project" --script res://acceptance.gd > "$OUT/missing-source.log" 2>&1
+mkdir -p "$OUT/project/addons/gallery_test"
+cp "$ROOT/tests/shape_gallery/editor_plugin.gd" "$OUT/project/addons/gallery_test/"
+cat > "$OUT/project/addons/gallery_test/plugin.cfg" <<'CFG'
+[plugin]
+name="Gallery test"
+description="Isolated editor regression"
+author="godot-mujoco"
+version="1"
+script="editor_plugin.gd"
+CFG
+python3 - "$OUT/project/project.godot" <<'PYPLUGIN'
+import pathlib,sys
+p=pathlib.Path(sys.argv[1]);p.write_text(p.read_text().replace('"res://addons/mujoco_editor/plugin.cfg")','"res://addons/mujoco_editor/plugin.cfg", "res://addons/gallery_test/plugin.cfg")'))
+PYPLUGIN
+timeout --kill-after=5 120 "$GODOT_BIN" --headless --editor --path "$OUT/project" -- --grid-editor-test > "$OUT/editor.log" 2>&1
 python3 - "$OUT" <<'PY'
 import json,pathlib,sys
 p=pathlib.Path(sys.argv[1]);settings=(p/'project/assets/kloofendal_43d_clear_puresky_4k.hdr.import').read_text()
@@ -31,6 +46,8 @@ for name in ['shipped.log','missing-source.log']:
  rows=[x.split(' ',1)[1] for x in (p/name).read_text().splitlines() if x.startswith('SHAPE_GALLERY_RESULT ')];assert len(rows)==1,name
  result=json.loads(rows[0]);assert result['failed']==0,result
  r[name]=result
+rows=[x.split(' ',1)[1] for x in (p/'editor.log').read_text().splitlines() if x.startswith('GALLERY_EDITOR_RESULT ')];assert len(rows)==1
+r['editor']=json.loads(rows[0]);assert r['editor']['failed']==0
 for f in p.glob('*.log'):
  s=f.read_text();assert 'SCRIPT ERROR:' not in s and '\nERROR:' not in s and 'leaked' not in s,str(f)
 (p/'results.json').write_text(json.dumps(r,indent=2)+'\n');print('SHAPE GALLERY PASS',r,p)
