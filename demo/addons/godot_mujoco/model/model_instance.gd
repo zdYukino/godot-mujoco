@@ -44,7 +44,12 @@ func find_world() -> MjRuntimeWorld:
 		parent = parent.get_parent()
 	return null
 
+func trace_model_load(stage: String) -> void:
+	if get_meta("mujoco_load_trace",false):
+		print("MJ_MODEL_LOAD_STAGE ",JSON.stringify({"stage":stage,"node":str(name),"instance_id":get_instance_id(),"ticks_ms":Time.get_ticks_msec(),"frame":Engine.get_process_frames()}))
+
 func load_model() -> bool:
+	trace_model_load("enter")
 	if model_rid.is_valid():
 		last_error = "Already loaded; unload at a safe boundary before replacing the model"
 		return false
@@ -52,18 +57,25 @@ func load_model() -> bool:
 	if not world or not world.ready_for_models or not model:
 		last_error = "Model instance needs a configured MjRuntimeWorld ancestor and model resource"
 		return false
+	trace_model_load("validate_package_begin")
 	last_error = model.validate_package()
+	trace_model_load("validate_package_end")
 	if not last_error.is_empty(): return false
 	space = world.space
 	var was_paused: bool = world.info().paused
+	trace_model_load("pause_begin")
 	if not world.set_paused(true):
 		last_error = "Loading must occur outside physics callbacks"
 		return false
+	trace_model_load("pause_end")
 	spawn_transform = global_transform
 	physical_root_synced = false
 	var label := str(get_path()) + "#" + str(get_instance_id())
+	trace_model_load("native_scene_load_begin")
 	model_rid = PhysicsServer3D.call("scene_load_model",space,model.snapshot,model.resource_path.get_base_dir(),label,global_transform)
+	trace_model_load("native_scene_load_end")
 	world.set_paused(was_paused)
+	trace_model_load("restore_pause_end")
 	if not model_rid.is_valid():
 		last_error = world.info().last_error
 		return false
@@ -71,7 +83,11 @@ func load_model() -> bool:
 	last_error = ""
 	live_id = str(get_path()) + "#" + str(get_instance_id()) + ":" + str(model_rid.get_id())
 	LiveBridge.attach(self)
-	build_visuals(PhysicsServer3D.call("scene_geometry",space,model_rid),true)
+	trace_model_load("visual_geometry_begin")
+	var geometry: Array=PhysicsServer3D.call("scene_geometry",space,model_rid)
+	trace_model_load("visual_geometry_end")
+	build_visuals(geometry,true)
+	trace_model_load("visual_nodes_end")
 	return true
 
 func restore_spawn_transform() -> void:

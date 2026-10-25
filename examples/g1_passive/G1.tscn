@@ -8,6 +8,8 @@
 [ext_resource type="Script" path="res://g1_controls.gd" id="6_axh8q"]
 [ext_resource type="Resource" path="res://g1_collision_previews.res" id="7_6kll8"]
 
+[ext_resource type="Script" path="res://g1_camera.gd" id="8_camera"]
+
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_wkp8b"]
 panorama = ExtResource("5_c4kqx")
 
@@ -34,7 +36,10 @@ script = ExtResource("3_oufwx")
 model = ExtResource("4_52wb0")
 
 [node name="Camera" type="Camera3D" parent="." unique_id=1939554655]
-transform = Transform3D(0.8, -0.22283442, 0.55708605, 0, 0.9284767, 0.3713907, -0.6, -0.29711255, 0.74278134, 8, 6, 10)
+transform = Transform3D(1, 0, 0, 0, 0.7960837985490559, -0.6051864057360395, 0, 0.6051864057360395, 0.7960837985490559, -1.8, 2.3865964983553267, 2.547468155356979)
+fov = 50.0
+near = 0.05
+script = ExtResource("8_camera")
 
 [node name="PolyHavenSky" type="WorldEnvironment" parent="." unique_id=1725586761]
 environment = SubResource("Environment_5vvyt")

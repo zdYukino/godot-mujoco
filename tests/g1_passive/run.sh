@@ -18,7 +18,12 @@ bad=[x.split(' ',1)[1] for x in (p/'initial_failure.log').read_text().splitlines
 r['initial_failure']=json.loads(bad[0]);assert r['initial_failure']['failed']==0
 for f in p.glob('*.log'):
  t=f.read_text();assert 'SCRIPT ERROR:' not in t and '\nERROR:' not in t and 'leaked' not in t,str(f)
+stages=[json.loads(x.split(' ',1)[1]) for x in s.splitlines() if x.startswith('G1_ADD_STAGE ')]
+loads=[json.loads(x.split(' ',1)[1]) for x in s.splitlines() if x.startswith('MJ_MODEL_LOAD_STAGE ')]
+assert {'await_frame_1','await_frame_2','frames_ready','add_child_begin','add_child_end','capture_after_end','overlay_begin','overlay_end','add_returned'} <= {x['stage'] for x in stages}
+assert {'validate_package_begin','validate_package_end','native_scene_load_begin','native_scene_load_end','visual_geometry_begin','visual_geometry_end','visual_nodes_end'} <= {x['stage'] for x in loads}
+r['diagnostic_stages']={'add':stages,'load':loads}
 r['hot_add']=[json.loads(x.split(' ',1)[1]) for x in s.splitlines() if x.startswith('G1_HOT_ADD ')][0]
 r['memory']=[x for x in s.splitlines() if x.startswith('G1_MEMORY ')]
-(p/'results.json').write_text(json.dumps(r,indent=2)+'\n');print('G1 PASSIVE PASS',r,p)
+(p/'results.json').write_text(json.dumps(r,indent=2)+'\n');print('G1 PASSIVE PASS',{k:v for k,v in r.items() if k!='diagnostic_stages'},p)
 PY

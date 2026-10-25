@@ -44,11 +44,12 @@ func run() -> void:
 	if not floor_package.error.is_empty(): printerr(floor_package.error); quit(1); return
 	var world:=Builder.create(load(floor_package.path)); world.name="PassiveG1Gallery"
 	var robot:=Instance.new(); robot.name="G1_1"; robot.model=robot_model; robot.position=Vector3(-1.8,.82,0); robot.rotation_degrees.z=5; world.add_child(robot); robot.owner=world
-	# Reuse exact camera, sky and light from the saved first gallery.
+	# Preserve sky/light; this second example uses a closer camera only.
 	var original: Node=load("res://Main.tscn").instantiate()
-	for name in ["Camera","PolyHavenSky","Sun"]:
+	for name in ["PolyHavenSky","Sun"]:
 		var node: Node=original.get_node(name).duplicate(); world.add_child(node); node.owner=world
 	original.free()
+	var camera=preload("res://g1_camera.gd").new(); camera.name="Camera"; camera.fov=50; camera.near=.05; camera.frame_for_count(1); world.add_child(camera); camera.owner=world
 	var controls:=Node.new(); controls.name="DisplayControls"; controls.set_script(preload("res://g1_controls.gd")); controls.robot_model=robot_model; controls.collision_definitions=definitions; world.add_child(controls); controls.owner=world
 	var scene:=PackedScene.new(); var error:=scene.pack(world)
 	if error==OK: error=ResourceSaver.save(scene,"res://G1.tscn")
