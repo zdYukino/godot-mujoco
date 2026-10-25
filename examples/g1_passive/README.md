@@ -84,7 +84,7 @@ spec 复制涉及树、资产和编译网格缓存；该复制路径本身不启
 
 后续 ebfc 实际 dot 已通过所有权转移及三对象 attach，但停在组合模型
 `rebuild.compile_begin`（usethread=1），151.61 秒超时；热加仍未通过。
-为单独检验组合编译的 worker pool，可重编后显式运行一次：
+以下为本轮已执行的组合编译 worker pool 串行对照命令，仅保留作诊断记录；本轮不再重跑：
 
 ```bash
 GMJ_TRACE_SCENE_LOAD=1 GMJ_DIAGNOSTIC_SERIAL_COMPILE=1 OUT=/tmp/gmj-g1-serial-diagnostic bash tests/g1_passive/run.sh
@@ -99,4 +99,24 @@ GMJ_TRACE_SCENE_LOAD=1 GMJ_DIAGNOSTIC_SERIAL_COMPILE=1 OUT=/tmp/gmj-g1-serial-di
 开发环境使用官方预编译 3.16.0，`GMJ_BUILD_MUJOCO_FROM_SOURCE=OFF`；
 libmujoco.so.3.16.0 SHA256 为
 `d89b5532a1ec9c4ca8744449d648233a2f7ae5d9e7b2ccddd692e11955f6cb04`。
-需先与实际 dot 的 MuJoCo 库核对，不能以扩展自身 SHA 代替依赖库核验。
+实际 dot 已核对 MuJoCo 库 SHA 完全相同，且同为 `GMJ_BUILD_MUJOCO_FROM_SOURCE=OFF`。
+
+本轮最终实际 dot 结果（父任务独立执行并回传）：
+
+- 单台真实 G1 无控制倒地通过：无 actuator、无重力补偿、自由基座及 29 个铰链，
+  骨盆从约 0.82 m 降至 0.102 m，有地板正法向接触力，无 MuJoCo warnings。
+  已验证失败添加回滚时第一台 qpos/qvel、RID 和仿真时间保持。
+- 默认组合编译配置（ebfc，usethread=1）热加仍在 `rebuild.compile_begin`
+  后停滞，151.61 秒超时退出（exit -2）。
+- 最后串行对照候选 `d9f929723d281f65eecb928258c5c1593cd03463` 的日志确认
+  `rebuild.diagnostic_serial_compile a=9`、`rebuild.compile_begin a=0`，
+  开关确已生效；150.393 秒内仍无 compile_end，超时退出（exit -2）。
+  峰 RSS 1,212,032 KiB，最低 MemAvailable 1,091,676 KiB，未触发 400 MiB
+  资源阈值；这些数据不足以认定 OOM，也不证明所有资源因素均已排除。
+  该次实际 dot 原生扩展 SHA256：
+  `194661c5dfbd29e064e95d011c7cb8aefb0316b38c98ae9951ec714ade4748ee`。
+
+因此实际 dot 的热加功能未通过验收，默认与串行配置均超时，根因未定；不能归因于
+CPU 数差异、MuJoCo 库版本不一致或仅编译 worker pool。开发环境通过记录仅适用于
+开发环境，不能作为全部完成或实际 dot 热加通过的声明。本轮停止进一步诊断补丁和
+重跑，保留原失败证据及物理模型不变；单机通过与热加阻碍分别记录。
