@@ -7,6 +7,10 @@ namespace godot {
 // Owns a separate preview; never steps or changes the editor PhysicsServer.
 class MjEditorDocument : public RefCounted {
  GDCLASS(MjEditorDocument, RefCounted)
+ friend class MjPhysicsServer3D;
+ // Only the runtime loader consumes its temporary document. The recipient owns
+ // the spec even if insertion fails; model/data remain owned by this document.
+ mjSpec *take_spec() { auto *result=spec; spec=nullptr; return result; }
  mjSpec *spec=nullptr;
  mjModel *model=nullptr;
  mjData *data=nullptr;

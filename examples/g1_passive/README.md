@@ -67,6 +67,17 @@ REBUILD=1 OUT=/tmp/gmj-g1-rebuilt-check bash tests/g1_passive/run.sh
 GMJ_TRACE_SCENE_LOAD=1 OUT=/tmp/gmj-g1-native-trace bash tests/g1_passive/run.sh
 ```
 
-`MJ_NATIVE_LOAD_STAGE` 直接输出并刷新 stderr，使用独立操作 ID、从入口起算的单调毫秒、阶段及线程 ID。覆盖文档构造/资产路径、`mj_compile`、`mj_makeData`、`mj_forward`、`mj_copySpec`、初态读取、每个模型 attach、重建编译、状态迁移、旧数据删除和文档析构；`a/b` 字段在 compile_begin 记录 compiler.usethread，在 compile_end 记录 ngeom/nv，在 make_data_begin 记录 narena/nbuffer 字节，在 forward_options 记录 integrator/solver，在 forward_begin 记录是否绑定 mjData threadpool。`G1_ENGINE_CONFIG` 记录引擎版本、显示后端、逻辑 CPU 数和项目线程设置，供两个环境对照。这些设置不被修改。
+`MJ_NATIVE_LOAD_STAGE` 直接输出并刷新 stderr，使用独立操作 ID、从入口起算的单调毫秒、阶段及线程 ID。覆盖文档构造/资产路径、`mj_compile`、`mj_makeData`、`mj_forward`、spec 所有权转移、初态读取、每个模型 attach、重建编译、状态迁移、旧数据删除和文档析构；`a/b` 字段在 compile_begin 记录 compiler.usethread，在 compile_end 记录 ngeom/nv，在 make_data_begin 记录 narena/nbuffer 字节，在 forward_options 记录 integrator/solver，在 forward_begin 记录是否绑定 mjData threadpool。`G1_ENGINE_CONFIG` 记录引擎版本、显示后端、逻辑 CPU 数和项目线程设置，供两个环境对照。这些设置不被修改。
 
-原生日志默认关闭，仅在同步 `scene_load_model` 调用栈内启用；未改暂停条件、锁、迁移或事务提交逻辑。4d 实际 dot 已确认停在 `native_scene_load_begin` 内，编译报告后仍未返回、152 秒有界结束；等待帧和覆盖构建已排除，但具体原生子阶段及根因尚未确认，不将资源阈值未触发等同于所有资源因素已排除。
+原生日志默认关闭，仅在同步 `scene_load_model` 调用栈内启用；未改暂停条件、锁、迁移或事务提交逻辑。4d 实际 dot 已确认停在 `native_scene_load_begin` 内，编译报告后仍未返回、152 秒有界结束；等待帧和覆盖构建已排除，随后 c768 的实际 dot 日志进一步定位到 `load.copy_spec_begin` 后未返回，151.39 秒有界结束（峰 RSS 1,199,000 KiB，最低 MemAvailable 1,111,564 KiB）；底层复制为何停住仍未确认。
+
+当前运行加载将临时验证文档的 spec 所有权交给插入事务，避免 `mj_copySpec`
+深拷贝编译后的网格缓存。事务在拒绝、正常移除时负责释放 spec，文档仍负责释放
+自身 model/data。诊断边界改为 `load.take_spec_begin/end`；测试额外覆盖转移后
+非法变换被拒绝且原世界状态/时间不变。
+
+这移除了实际 dot 已确认停住的调用，但不是 MuJoCo 内部根因结论，仍待独立 dot
+复验。CPU 数量是已记录的环境差异，并非已证实原因。依据官方 3.16.0
+[user_model.cc](https://github.com/google-deepmind/mujoco/blob/3.16.0/src/user/user_model.cc)
+和 [user_mesh.cc](https://github.com/google-deepmind/mujoco/blob/3.16.0/src/user/user_mesh.cc)，
+spec 复制涉及树、资产和编译网格缓存；该复制路径本身不启动编译线程池。

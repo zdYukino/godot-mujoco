@@ -5,7 +5,6 @@
 #include <cmath>
 namespace godot {
 namespace {
-mjSpec* traced_copy_spec(MjEditorDocument*doc){gmj_load_trace::mark("load.copy_spec_begin");auto*spec=doc->copy_spec();gmj_load_trace::mark("load.copy_spec_end");return spec;}
 Array values(const mjtNum*p,int count){Array result;for(int i=0;i<count;++i)result.push_back(p[i]);return result;}
 Dictionary initial_state(const mjModel*m,const mjData*d){gmj_load_trace::mark("load.initial_state_begin");Dictionary result,joints,controls,activation,counts;counts["geom"]=m->ngeom;counts["joint"]=m->njnt;counts["actuator"]=m->nu;counts["equality"]=m->neq;counts["tendon"]=m->ntendon;counts["sensor"]=m->nsensor;result["counts"]=counts;
  for(int j=0;j<m->njnt;++j){Dictionary state;int type=m->jnt_type[j];state["qpos"]=values(d->qpos+m->jnt_qposadr[j],type==mjJNT_FREE?7:type==mjJNT_BALL?4:1);state["qvel"]=values(d->qvel+m->jnt_dofadr[j],type==mjJNT_FREE?6:type==mjJNT_BALL?3:1);joints[String(mj_id2name(m,mjOBJ_JOINT,j))]=state;}
@@ -33,7 +32,13 @@ RID MjPhysicsServer3D::scene_load_model(const RID&r,const Dictionary&snapshot,co
  // Reject rather than silently dropping or sharing those mutable global arrays.
  if(m->nuserdata||m->nmocap||m->nkey){s->last_error="Runtime composition does not support global userdata, mocap bodies or keyframes";return {};}
  gmj_load_trace::mark("load.insert_arguments_begin");
- RID result=scene_insert(*s,traced_copy_spec(doc.ptr()),label,pose,true,initial_state(m,doc->native_data()));
+ // Capture state before consuming the temporary document. scene_insert owns
+ // the spec on every success/failure path, so no compiled mesh copy is needed.
+ Dictionary initial=initial_state(m,doc->native_data());
+ gmj_load_trace::mark("load.take_spec_begin");
+ auto*spec=doc->take_spec();
+ gmj_load_trace::mark("load.take_spec_end");
+ RID result=scene_insert(*s,spec,label,pose,true,initial);
  gmj_load_trace::mark("load.insert_returned",result.is_valid());return result;
 }
 bool MjPhysicsServer3D::scene_set_actuator(const RID&r,const RID&id,const String&name,double value){

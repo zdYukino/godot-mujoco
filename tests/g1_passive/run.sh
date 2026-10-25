@@ -26,7 +26,7 @@ r['diagnostic_stages']={'add':stages,'load':loads}
 if os.environ.get('GMJ_TRACE_SCENE_LOAD')=='1':
  native=re.findall(r'MJ_NATIVE_LOAD_STAGE id=(\d+) elapsed_ms=(\d+) stage=(\S+)',s);assert native,'native diagnostics missing'
  last=max(int(x[0]) for x in native);finished={x[2] for x in native if int(x[0])==last}
- assert {'document.compile_end','document.make_data_end','document.forward_end','load.copy_spec_end','rebuild.compile_end','rebuild.transfer_end','rebuild.forward_end','rebuild.old_delete_end','document.destroy_end','load.exit'} <= finished,finished
+ assert {'document.compile_end','document.make_data_end','document.forward_end','load.take_spec_end','rebuild.compile_end','rebuild.transfer_end','rebuild.forward_end','rebuild.old_delete_end','document.destroy_end','load.exit'} <= finished,finished
  r['native_last_load']=[x for x in native if int(x[0])==last]
 r['hot_add']=[json.loads(x.split(' ',1)[1]) for x in s.splitlines() if x.startswith('G1_HOT_ADD ')][0]
 r['memory']=[x for x in s.splitlines() if x.startswith('G1_MEMORY ')]

@@ -70,6 +70,16 @@ func run() -> void:
 		check(false,"failure probe must not add a model"); world.free(); quit(1); return
 	check(str(failure.error).contains("conflict"),"failure probe reaches native world option conflict gate")
 	check(not failure.success and failure.state_preserved and failure.first_rid_preserved and failure.objects_before==failure.objects_after and failure.time_before==failure.time_after and failure.pause_preserved,"failed hot addition preserves original native world, time and full qpos/qvel")
+	# Reject after spec ownership has transferred, not only at option validation.
+	world.set_paused(true)
+	var rejected_before: Dictionary=first.state().joints.duplicate(true)
+	var rejected_time: float=world.info().time
+	var invalid_pose:=Transform3D(Basis.IDENTITY.scaled(Vector3(2,1,1)),Vector3.ZERO)
+	var floor_resource=controls.model.model
+	var rejected: RID=PhysicsServer3D.call("scene_load_model",world.space,floor_resource.snapshot,floor_resource.resource_path.get_base_dir(),"invalid_pose_after_transfer",invalid_pose)
+	check(not rejected.is_valid() and world.info().last_error.contains("rigid pose"),"post-transfer insertion rejection releases consumed spec safely")
+	check(world.info().objects.size()==2 and first.state().joints==rejected_before and world.info().time==rejected_time,"post-transfer rejection preserves original world state and time")
+	world.set_paused(false)
 	print("G1_TEST_STAGE before_hot_add ",Time.get_ticks_msec())
 	controls.add_button.pressed.emit()
 	check(controls.busy and controls.add_button.disabled,"hot-add button enters visible busy state")
