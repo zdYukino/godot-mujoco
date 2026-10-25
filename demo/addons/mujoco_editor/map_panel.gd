@@ -31,6 +31,8 @@ var advanced: LineEdit
 var relations: LineEdit
 var world_options: LineEdit
 var parts: LineEdit
+const TargetGuard = preload("map_target_guard.gd")
+var scene_baselines := {}
 var scene_map_id := 0
 var scene_map_path := NodePath()
 var scene_parent_id := 0
@@ -400,6 +402,8 @@ func apply_scene() -> bool:
 		session.error = "场景目标已有非地图同名对象"; refresh_status(); return false
 	if old==root:
 		session.error="不能替换编辑场景根；请把地图放在 Node3D 宿主下再 Apply"; refresh_status(); return false
+	if not scene_map_path.is_empty() and (not scene_baselines.has(old.get_instance_id()) or scene_baselines[old.get_instance_id()]!=TargetGuard.fingerprint(old)):
+		session.error="场景地图身份或配置已被外部修改；当前草稿保留，请保存后重新载入目标"; refresh_status(); return false
 	var parent: Node3D = old.get_parent() if old else root
 	var pose: Transform3D = old.transform if old else Transform3D.IDENTITY
 	if not scene_map_path.is_empty() and (parent.get_instance_id()!=scene_parent_id or not parent.global_transform.is_equal_approx(scene_parent_pose) or not old.transform.is_equal_approx(scene_local_pose)):
@@ -411,21 +415,22 @@ func apply_scene() -> bool:
 	var map: Node3D = built.scene
 	map.transform=pose
 	if old: map.name=old.name
+	if old: scene_baselines[old.get_instance_id()]=TargetGuard.fingerprint(old)
 	var undo := plugin.get_undo_redo(); undo.create_action("Apply 静态地图设计",UndoRedo.MERGE_DISABLE,root)
 	if old: undo.add_do_method(parent,"remove_child",old); undo.add_undo_reference(old)
-	undo.add_do_method(parent,"add_child",map,true); undo.add_do_method(self,"own_scene",map,root); undo.add_do_reference(map); undo.add_undo_method(parent,"remove_child",map)
+	undo.add_do_method(parent,"add_child",map,true); undo.add_do_method(session,"own_scene",map,root); undo.add_do_reference(map); undo.add_undo_method(parent,"remove_child",map)
 	if old:
 		undo.add_undo_method(parent,"add_child",old)
-		undo.add_undo_method(self,"own_scene",old,root)
+		undo.add_undo_method(session,"own_scene",old,root)
 	undo.commit_action()
+	scene_baselines[map.get_instance_id()]=TargetGuard.fingerprint(map)
 	clear_preview(); scene_preview_suppressed=true; scene_map_id=map.get_instance_id()
 	scene_map_path=root.get_path_to(map); world.global_transform=map.global_transform
 	scene_parent_id=parent.get_instance_id(); scene_parent_pose=parent.global_transform; scene_local_pose=map.transform
 	session.error = "地图设计已 Apply；场景 Undo/Redo 可用，运行实例需显式重启。地形运行修改可用地形面板事务 Apply。"; refresh_status(); return true
 
 func own_scene(node: Node, root: Node) -> void:
-	node.owner = root
-	for child in node.get_children(): own_scene(child,root)
+	session.own_scene(node,root)
 
 func browse_height() -> void:
 	var dialog := FileDialog.new(); dialog.access = FileDialog.ACCESS_FILESYSTEM; dialog.file_mode = FileDialog.FILE_MODE_OPEN_FILE; dialog.filters = PackedStringArray(["*.json ; 高度契约 JSON（含 file）"]); add_child(dialog)
@@ -442,7 +447,7 @@ func _process(delta: float) -> void:
 
 func shutdown() -> void:
 	var saved := {"selected":selected,"native_contact":native_contact.button_pressed,"binding":{}}
-	for key in ["scene_map_id","scene_map_path","scene_parent_id","scene_parent_pose","scene_local_pose","scene_preview_suppressed","show_visual","show_collision"]: saved.binding[key]=get(key)
+	for key in ["scene_baselines","scene_map_id","scene_map_path","scene_parent_id","scene_parent_pose","scene_local_pose","scene_preview_suppressed","show_visual","show_collision"]: saved.binding[key]=get(key)
 	saved.binding["preview_pose"]=world.transform
 	for key in ["path_field","advanced","parts","relations","world_options"]: saved[key]=get(key).text
 	for key in ["unit","axes","strategy"]: saved[key]=get(key).selected
@@ -509,6 +514,7 @@ func open_scene_map(node: Node3D) -> bool:
 	session.unit=contract.get("unit","m"); session.axes=contract.get("axes","Y_UP")
 	session.diagnostics=node.get_meta("diagnostics",[]).duplicate()
 	session.dirty=false; session.error="已载入场景地图为独立草稿；保存包 / Apply 均需明确操作"
+	scene_baselines={node.get_instance_id():TargetGuard.fingerprint(node)}
 	scene_map_id=node.get_instance_id(); scene_map_path=EditorInterface.get_edited_scene_root().get_path_to(node); world.global_transform=node.global_transform
 	scene_parent_id=node.get_parent().get_instance_id(); scene_parent_pose=node.get_parent().global_transform if node.get_parent() is Node3D else Transform3D.IDENTITY; scene_local_pose=node.transform
 	scene_preview_suppressed=true # The scene already draws the authored visual in this same viewport.
@@ -530,6 +536,7 @@ func toggle_collision_preview() -> void:
 func reset_independent_preview() -> void:
 	# Apply hides the draft while the authored scene supplies the visual. That
 	# display mode belongs to that scene target, not the next imported document.
+	scene_baselines.clear()
 	scene_map_id=0; scene_map_path=NodePath(); scene_parent_id=0; world.transform=Transform3D.IDENTITY
 	scene_preview_suppressed=false
 

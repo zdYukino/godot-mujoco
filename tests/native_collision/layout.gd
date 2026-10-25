@@ -101,6 +101,10 @@ func run(plugin) -> void:
 						ancestor=ancestor.get_parent()
 				check(reachable,"all visible controls reachable in scroll bounds")
 	plugin.dock.reparent(parent); parent.move_child(plugin.dock,position); measure.queue_free()
+	check(map.open_scene_map(scene.get_node("StaticMap")),"refresh current target baseline before plugin reload")
+	var before_reload_apply: Node=scene.get_node("StaticMap")
+	check(map.apply_scene(),"create map history action before plugin reload")
+	var after_reload_apply: Node=scene.get_node("StaticMap")
 	var old_world=map.world
 	var session=map.session
 	EditorInterface.set_plugin_enabled("mujoco_editor",false); await settle()
@@ -111,6 +115,11 @@ func run(plugin) -> void:
 	check(plugin.panel.pending,"reopen preserves MJCF pending fields")
 	check(plugin.heightfield_panel.dirty and plugin.heightfield_panel.heights.text=="1 0\n0 0" and is_equal_approx(plugin.heightfield_panel.friction.value,.7),"reopen preserves terrain raw pending fields")
 	plugin.heightfield_panel.discard()
+	history.undo()
+	check(scene.get_node("StaticMap")==before_reload_apply and before_reload_apply.owner==scene,"map Undo after reload restores identity and owner")
+	history.redo()
+	check(scene.get_node("StaticMap")==after_reload_apply,"map Redo after reload restores replacement identity")
+	check(plugin.map_panel.apply_scene(),"continued Apply after plugin reload and own Undo Redo remains legal")
 	check(count_viewports(plugin.dock)==0 and plugin.preview_roots.size()==2,"reopen does not duplicate viewports or preview roots")
 	plugin.panel.pending=false; plugin.state.dirty=false; session.dirty=false
 	print("NATIVE_LAYOUT_RESULT ",JSON.stringify({"passed":passed,"failed":failed,"scope":"headless editor logic and measured layout; actual dot GUI acceptance pending"}))

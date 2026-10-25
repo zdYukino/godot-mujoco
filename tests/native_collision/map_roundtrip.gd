@@ -11,6 +11,22 @@ func run(plugin, runner, original_package: String) -> void:
 	var global_pose: Transform3D=old.global_transform
 	runner.check(map.open_scene_map(old),"roundtrip loads translated rotated scene map")
 	runner.check(map.world.global_transform.is_equal_approx(global_pose),"preview uses map global pose")
+	var draft_before: PackedByteArray=var_to_bytes(map.session.specs)
+	var foreign: Node3D=old.duplicate()
+	root.remove_child(old); root.add_child(foreign); map.session.own_scene(foreign,root)
+	runner.check(not map.apply_scene() and root.get_node("StaticMap")==foreign and var_to_bytes(map.session.specs)==draft_before,"same-path same-pose foreign replacement rejects without touching target or draft")
+	root.remove_child(foreign); foreign.free(); root.add_child(old); map.session.own_scene(old,root)
+	var original_settings: Dictionary=old.get_meta("map_world_settings").duplicate(true)
+	old.set_meta("map_world_settings",{"iterations":73})
+	runner.check(not map.apply_scene() and root.get_node("StaticMap")==old and old.get_meta("map_world_settings").iterations==73,"same-node external metadata change rejects without overwrite")
+	old.set_meta("map_world_settings",original_settings)
+	var collision_body: StaticBody3D=old.get_node("Physics").get_child(0)
+	var material: PhysicsMaterial=collision_body.physics_material_override
+	var friction_before: float=material.friction
+	material.friction=.83
+	runner.check(not map.apply_scene() and is_equal_approx(material.friction,.83),"in-place shared resource edit is detected by detached baseline")
+	material.friction=friction_before
+
 	var selection_before:=EditorInterface.get_selection().get_selected_nodes()
 	var camera:=EditorInterface.get_editor_viewport_3d(0).get_camera_3d()
 	var camera_before: Transform3D=camera.global_transform
@@ -35,6 +51,15 @@ func run(plugin, runner, original_package: String) -> void:
 	runner.check(root.get_node("StaticMap")==old and old.global_transform.is_equal_approx(global_pose) and old.owner==root and old.get_node("Visual").owner==root,"Undo restores original identity pose and owners")
 	history.redo()
 	runner.check(root.get_node("StaticMap")==replacement and replacement.global_transform.is_equal_approx(global_pose),"Redo restores replacement identity and pose")
+	runner.check(map.apply_scene(),"own Apply can be followed by another Apply")
+	replacement=root.get_node("StaticMap")
+	history.undo()
+	runner.check(map.apply_scene(),"own Undo permits continued draft Apply")
+	replacement=root.get_node("StaticMap")
+	history.undo(); history.redo()
+	runner.check(map.apply_scene(),"own Redo permits continued draft Apply")
+	replacement=root.get_node("StaticMap")
+
 	# Reopen also replaces a nested renamed map in its actual parent.
 	var parent:=Node3D.new(); parent.name="MapParent"; root.add_child(parent); parent.owner=root
 	parent.transform=Transform3D(Basis(Vector3.UP,.2),Vector3(-2,0,5))

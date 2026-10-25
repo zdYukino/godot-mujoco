@@ -244,3 +244,11 @@ func validate_relation_candidate(candidate_specs: Dictionary, candidate_terrains
 	if not candidate.error.is_empty(): return candidate.error
 	candidate.scene.free()
 	return ""
+
+# Scene history outlives the dock Control during plugin reloads.
+func own_scene(node: Node, root: Node) -> void:
+	node.owner=root
+	for child in node.get_children():
+		if node is MjStaticHeightField and child==node._visual:
+			child.owner=null
+		else: own_scene(child,root)
