@@ -75,6 +75,9 @@ func run():
 	session.specs=prior_specs
 	session.close()
 	var panel:=preload("res://addons/mujoco_editor/map_panel.gd").new(); root.add_child(panel)
+	check(panel.configure_action.disabled and not panel.friction.editable,"no selection explicitly disables object properties")
+	panel.path_field.text="res://fixtures/box.obj"; panel.unit.select(1); panel.import_source(false)
+	panel.selected=str(panel.session.visual.get_path_to(panel.session.meshes()[0]))
 	panel.strategy.select(5); panel.strategy.item_selected.emit(5)
 	check(panel.native_contact.disabled and not panel.native_contact.button_pressed and not panel.advanced.editable and "尚未接入" in panel.native_contact.tooltip_text,"compound UI disables unsupported native controls")
 	panel.strategy.select(2); panel.strategy.item_selected.emit(2); panel.native_contact.button_pressed=true

@@ -17,11 +17,19 @@ var model_provenance: Dictionary = {}
 var plugin: EditorPlugin
 var state: RefCounted
 var tree: Tree
+const Layout = preload("property_layout.gd")
+var field_target: VBoxContainer
 var fields: VBoxContainer
 var status: Label
 var live: Label
-var viewport: SubViewport
+var preview_root: Node3D
 var camera: Camera3D
+const Overlay = preload("res://addons/godot_mujoco/model/collision_overlay.gd")
+const CollisionPreview = preload("res://addons/godot_mujoco/map/collision_preview.gd")
+var collision_notice: Label
+var collision_overlays := {}
+var show_visuals := true
+var show_collisions := false
 var meshes := {}
 var selected := {}
 var inputs := {}
@@ -36,6 +44,7 @@ var orbiting := false
 var edit_axis := 0
 var move_step := 0.1
 var rotate_step := 5.0
+var draft_preview: CheckBox
 var recovery_path := "user://mujoco_editor_recovery.json"
 
 func button(parent: Node, text: String, callback: Callable) -> Button:
@@ -46,8 +55,10 @@ func button(parent: Node, text: String, callback: Callable) -> Button:
 	return b
 
 func _ready() -> void:
-	var toolbar := HFlowContainer.new()
-	add_child(toolbar)
+	var toolbar := VBoxContainer.new()
+	Layout.group(self,"文档 / 导入 / 发布",false).add_child(toolbar)
+	draft_preview=CheckBox.new(); draft_preview.text="显示 MJCF 草稿（独立于正式场景）"; draft_preview.button_pressed=state.preview_enabled; toolbar.add_child(draft_preview)
+	draft_preview.toggled.connect(set_draft_preview)
 	button(toolbar, "Import MJCF", func(): file_dialog(false, true))
 	button(toolbar, "检查来源", check_sources)
 	button(toolbar, "重导入来源（明确丢弃本地）", confirm_reimport)
@@ -64,12 +75,12 @@ func _ready() -> void:
 	button(toolbar, "Create simulation playground", func(): create_runtime_scene_dialog(true))
 	button(toolbar, "Recover", func(): open_document(recovery_path))
 	button(toolbar, "Run / Pause", toggle_run)
-	button(toolbar, "Frame all", frame_all)
+	button(toolbar, "聚焦模型", frame_all)
 	for shape in ["box", "sphere", "cylinder"]:
 		button(toolbar, "+ " + shape, add_primitive.bind(shape))
 	source_status = Label.new(); source_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; add_child(source_status)
-	var runtime_bar := HFlowContainer.new()
-	add_child(runtime_bar)
+	var runtime_bar := VBoxContainer.new()
+	Layout.group(self,"运行实例 · 显式 Apply",false).add_child(runtime_bar)
 	runtime_targets = OptionButton.new()
 	runtime_targets.custom_minimum_size.x = 280
 	runtime_bar.add_child(runtime_targets)
@@ -86,8 +97,11 @@ func _ready() -> void:
 	add_child(runtime_status)
 	plugin.live_debugger.changed.connect(refresh_runtime_targets)
 	refresh_runtime_targets()
-	var operations := HFlowContainer.new()
-	add_child(operations)
+	var display := Layout.group(self,"主视图 · 独立叠加显示")
+	var legend := Label.new(); legend.text="橙色：编译碰撞边界；青色：选中包围框。边界不代表过滤规则已允许接触。SDF 切片在地图高级视图中叠加。"; legend.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART; display.add_child(legend)
+	collision_notice=Label.new(); collision_notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART; display.add_child(collision_notice)
+	var operations := VBoxContainer.new()
+	Layout.group(self,"选中实体 · 变换",false).add_child(operations)
 	var axis := OptionButton.new()
 	for label in ["Local MJCF X", "Local MJCF Y", "Local MJCF Z"]: axis.add_item(label)
 	axis.item_selected.connect(func(index): edit_axis = index)
@@ -100,53 +114,20 @@ func _ready() -> void:
 	button(operations, "Size ×1.1", transform_selection.bind("size", 1.0))
 	var note := Label.new()
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	note.text = "MuJoCo 3.16 • metres / kg / seconds / radians • local properties use MJCF Z-up axes; preview uses Godot Y-up • Left click selects visible geometry; operations use local MJCF axes"
+	note.text = "MuJoCo 3.16 • metres / kg / seconds / radians • local properties use MJCF Z-up axes; preview uses Godot Y-up • 独立草稿仅右侧数值编辑，无拖拽变换轴；操作使用 local MJCF axes"
 	add_child(note)
-	var split := HSplitContainer.new()
-	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	add_child(split)
 	var left := VBoxContainer.new()
-	left.custom_minimum_size.x = 270
-	split.add_child(left)
+	add_child(left)
 	tree = Tree.new()
-	tree.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	tree.custom_minimum_size.y = 150
+	tree.custom_minimum_size.y = 160
 	tree.item_selected.connect(on_select)
 	left.add_child(tree)
 	button(left, "Delete selected body / geom", delete_selected)
-	var view_box := SubViewportContainer.new()
-	view_box.stretch = true
-	view_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	view_box.custom_minimum_size = Vector2(320, 300)
-	view_box.gui_input.connect(camera_input)
-	split.add_child(view_box)
-	viewport = SubViewport.new()
-	viewport.own_world_3d = true
-	viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	view_box.add_child(viewport)
-	camera = Camera3D.new()
-	camera.fov = 45
-	camera.near = 0.01
-	viewport.add_child(camera)
-	viewport.size_changed.connect(frame_all)
-	var light := DirectionalLight3D.new()
-	light.rotation_degrees = Vector3(-50, -30, 0)
-	light.light_energy = 0.8
-	viewport.add_child(light)
-	var env := WorldEnvironment.new()
-	env.environment = Environment.new()
-	env.environment.background_mode = Environment.BG_COLOR
-	env.environment.background_color = Color("25313e")
-	env.environment.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
-	env.environment.ambient_light_color = Color.WHITE
-	env.environment.ambient_light_energy = 0.4
-	viewport.add_child(env)
-	var scroll := ScrollContainer.new()
-	scroll.custom_minimum_size.x = 300
-	split.add_child(scroll)
+	preview_root = plugin.create_preview_root("MJCFDraft")
+	camera = EditorInterface.get_editor_viewport_3d(0).get_camera_3d()
 	fields = VBoxContainer.new()
 	fields.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	scroll.add_child(fields)
+	add_child(fields)
 	live = Label.new()
 	add_child(live)
 	status = Label.new()
@@ -176,6 +157,7 @@ func shutdown() -> void:
 	if state.changed.is_connected(refresh):
 		state.changed.disconnect(refresh)
 	meshes.clear()
+	if is_instance_valid(preview_root): preview_root.free()
 
 func save_recovery() -> void:
 	if state.document and (state.dirty or pending):
@@ -199,6 +181,7 @@ func execute(command: Dictionary) -> bool:
 	return true
 
 func record_change(before: Dictionary, title: String) -> void:
+	state.preview_enabled=true
 	var after: Dictionary = state.snapshot()
 	var history := plugin.get_undo_redo()
 	history.create_action(title, UndoRedo.MERGE_DISABLE, state)
@@ -462,6 +445,7 @@ func refresh() -> void:
 	check_sources()
 
 func select_entity(kind: String, entity_name: String) -> void:
+	if not can_leave_fields(): return
 	selected = {"kind":kind, "name":entity_name}
 	refresh()
 
@@ -478,6 +462,7 @@ func on_select() -> void:
 	selected = item.get_metadata(0) if item and item.get_metadata(0) is Dictionary else {}
 	build_fields()
 	highlight_selection()
+	plugin.select_preview_target()
 
 func restore_pending_tree_selection() -> void:
 	if pending and is_instance_valid(tree) and not selected.is_empty():
@@ -501,18 +486,18 @@ func field(key: String, value: Variant, editable: bool, hint: String) -> void:
 	var label := Label.new()
 	label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	label.text = key + " — " + hint + ("" if editable else " [read-only]")
-	fields.add_child(label)
+	field_target.add_child(label)
 	if editable:
 		var input := LineEdit.new()
 		input.text = JSON.stringify(value)
 		input.text_changed.connect(func(_text): pending = true; status.text = "Pending changes — Apply or Discard; not yet written to physics"; refresh_runtime_targets())
-		fields.add_child(input)
+		field_target.add_child(input)
 		inputs[key] = input
 	else:
 		var label_value := Label.new()
 		label_value.text = str(value)
 		label_value.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-		fields.add_child(label_value)
+		field_target.add_child(label_value)
 
 func build_fields() -> void:
 	# Apply/Discard can rebuild their own form from inside pressed. A signal
@@ -527,13 +512,17 @@ func build_fields() -> void:
 		fields.remove_child(child)
 		child.queue_free()
 	inputs.clear()
+	field_target = fields
 	if selected.is_empty():
 		field("Selection", "Select a body, geom, joint or actuator", false, "")
 		return
 	var p: Dictionary = selected.properties
 	var kind: String = selected.kind
 	field("name", selected.name, false, kind)
+	var basic := Layout.group(fields,"选中实体 · 基本参数")
+	var advanced_group := Layout.group(fields,"选中实体 · 高级 / 编译结果",false)
 	for key in p:
+		field_target = basic if key in ["pos","quat","size","mass","friction","contype","conaffinity","control","kp","kv","limited","range","damping"] else advanced_group
 		var editable := false
 		var hint := "actual compiled value"
 		if kind == "body":
@@ -589,10 +578,20 @@ func apply_fields() -> bool:
 		return execute({"op":"qpos", "name":selected.name, "value":values.set_qpos})
 	return execute({"op":"set", "kind":selected.kind, "name":selected.name, "values":values})
 
+func set_draft_preview(enabled: bool) -> void:
+	state.preview_enabled=enabled
+	rebuild_meshes()
+
 func rebuild_meshes() -> void:
+	for overlay in collision_overlays.values(): overlay.free()
+	collision_overlays.clear()
 	for mesh in meshes.values():
 		mesh.free()
 	meshes.clear()
+	draft_preview.set_pressed_no_signal(state.preview_enabled)
+	if not state.preview_enabled:
+		collision_notice.text="尚未启用 MJCF 草稿预览；正式场景仍正常显示。导入、创建或勾选后启用。"
+		return
 	for geom in state.document.geometry():
 		var instance := MeshInstance3D.new()
 		var size: Vector3 = geom.size
@@ -641,27 +640,38 @@ func rebuild_meshes() -> void:
 		material.albedo_color = geom.color
 		material.roughness = 0.85
 		instance.material_override = material
-		viewport.add_child(instance)
+		preview_root.add_child(instance)
 		instance.transform = geom.transform
 		if geom.type == 4:
 			instance.scale = Vector3(size.x, size.z, size.y)
 		instance.set_meta("pick_mesh", instance.mesh.generate_triangle_mesh())
 		meshes[geom.name] = instance
-	highlight_selection()
+		var outline := Overlay.bounds(instance.mesh.get_aabb()); outline.name="SelectionBounds"; instance.add_child(outline)
+	var unavailable := PackedStringArray()
+	for geom in state.document.collision_preview(.33,65):
+		if geom.preview_kind not in ["analytic_boundary","compiled_convex_hull"]:
+			unavailable.append(str(geom.name)+" ("+str(geom.preview_kind)+")"); continue
+		var overlay := CollisionPreview.create([geom],Transform3D.IDENTITY)
+		preview_root.add_child(overlay); collision_overlays[geom.name]=overlay
+	collision_notice.text="此文档开关未显示："+", ".join(unavailable)+"；SDF 请使用地图的静态切片入口。" if not unavailable.is_empty() else ""
+	highlight_selection(); update_overlay_visibility()
 
 func _process(delta: float) -> void:
 	source_poll += delta
 	if source_poll >= 2.0:
 		source_poll = 0.0; check_sources()
-	if not state.document or not visible:
+	if not state.document:
 		return
-	if visible:
-		state.document.advance(delta)
+	state.document.advance(delta)
 	for geom in state.document.geometry():
 		if meshes.has(geom.name):
 			meshes[geom.name].transform = geom.transform
 			if geom.type == 4:
 				meshes[geom.name].scale = Vector3(geom.size.x, geom.size.z, geom.size.y)
+		if collision_overlays.has(geom.name):
+			for wire in collision_overlays[geom.name].get_children():
+				wire.transform=geom.transform
+				if geom.type==4: wire.scale=Vector3(geom.size.x,geom.size.z,geom.size.y)
 	var info: Dictionary = state.document.inspect()
 	var detail := ""
 	for entity in info.entities:
@@ -684,27 +694,10 @@ func frame_all() -> void:
 		first = false
 	if not first:
 		center = bounds.get_center()
-		var aspect := float(viewport.size.x) / maxf(viewport.size.y, 1)
-		var angle := atan(tan(deg_to_rad(camera.fov) * .5) * minf(aspect, 1.0))
-		distance = maxf(bounds.size.length() * .575 / sin(angle), 1.2)
-	update_camera()
+		distance = maxf(bounds.size.length() * 1.5, 1.2)
+		# Draft bounds remain available; native navigation owns the camera.
+		plugin.frame_preview(center, distance)
 
-func update_camera() -> void:
-	camera.position = center + Vector3(sin(yaw) * cos(pitch), sin(pitch), cos(yaw) * cos(pitch)) * distance
-	camera.look_at(center)
-
-func camera_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			pick_geometry(event.position)
-		if event.button_index == MOUSE_BUTTON_RIGHT:
-			orbiting = event.pressed
-		if event.pressed and event.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
-			distance = clampf(distance * (0.85 if event.button_index == MOUSE_BUTTON_WHEEL_UP else 1.18), .1, 1000)
-	elif event is InputEventMouseMotion and orbiting:
-		yaw -= event.relative.x * .01
-		pitch = clampf(pitch + event.relative.y * .01, -1.4, 1.4)
-	update_camera()
 
 func refresh_project_files() -> void:
 	# File publication can happen during editor deferred work or an ongoing scan.
@@ -715,19 +708,25 @@ func refresh_project_files() -> void:
 		await get_tree().process_frame
 	filesystem.scan()
 
+func update_overlay_visibility() -> void:
+	for mesh in meshes.values(): mesh.visible=show_visuals
+	for overlay in collision_overlays.values(): overlay.visible=show_collisions
+
 func highlight_selection() -> void:
 	for name in meshes:
-		var material: StandardMaterial3D = meshes[name].material_override
-		material.emission_enabled = selected.get("kind") == "geom" and selected.get("name") == name
-		material.emission = Color(.25, .18, .02)
+		var outline: Node = meshes[name].get_node_or_null("SelectionBounds")
+		if outline: outline.visible=selected.get("kind")=="geom" and selected.get("name")==name
 
 func pick_geometry(point: Vector2) -> String:
+	if not is_instance_valid(camera): camera = EditorInterface.get_editor_viewport_3d(0).get_camera_3d()
+	if not camera: return ""
 	if not can_leave_fields(): return ""
 	var origin := camera.project_ray_origin(point)
 	var direction := camera.project_ray_normal(point)
 	var nearest := INF
 	var picked := ""
 	for name in meshes:
+		if not show_visuals: continue
 		var mesh: MeshInstance3D = meshes[name]
 		var inverse := mesh.global_transform.affine_inverse()
 		var triangle: TriangleMesh = mesh.get_meta("pick_mesh")
@@ -737,7 +736,7 @@ func pick_geometry(point: Vector2) -> String:
 			if distance_to_hit < nearest:
 				nearest = distance_to_hit
 				picked = name
-	if not picked.is_empty(): select_entity("geom", picked)
+	if not picked.is_empty(): select_entity("geom", picked); plugin.select_preview_target()
 	return picked
 
 func transform_selection(operation: String, direction: float) -> bool:

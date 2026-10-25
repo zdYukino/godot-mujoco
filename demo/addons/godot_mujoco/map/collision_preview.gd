@@ -11,6 +11,7 @@ static func material(color: Color, vertex_colors := false) -> StandardMaterial3D
 
 static func create(geometries: Array, pose: Transform3D) -> Node3D:
 	var root := Node3D.new(); root.transform = pose
+	root.set_meta("unsupported_preview",[])
 	for geom in geometries:
 		if geom.preview_kind == "native_sdf_distance_slice":
 			var surface := SurfaceTool.new(); surface.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -19,7 +20,7 @@ static func create(geometries: Array, pose: Transform3D) -> Node3D:
 				for x in n-1:
 					var a := z*n+x
 					for i in [a,a+n+1,a+1,a,a+n,a+n+1]:
-						surface.set_color(Color(1,.15,.1,.45) if geom.slice_distances[i]<0 else Color(.1,.35,1,.25))
+						surface.set_color(Color(1,.15,.1,.18) if geom.slice_distances[i]<0 else Color(.1,.35,1,.10))
 						surface.add_vertex(geom.slice_points[i])
 			var field := MeshInstance3D.new(); field.mesh=surface.commit(); field.material_override=material(Color.WHITE,true); root.add_child(field)
 			if not geom.slice_contour.is_empty():
@@ -29,5 +30,7 @@ static func create(geometries: Array, pose: Transform3D) -> Node3D:
 		elif geom.preview_kind in ["compiled_convex_hull","analytic_boundary"]:
 			var instance := preload("../model/model_visual.gd").create(geom)
 			if instance:
-				instance.material_override=material(Color(1,.65,.05,.4)); root.add_child(instance)
+				var wire := preload("../model/collision_overlay.gd").wireframe(instance.mesh)
+				wire.transform=instance.transform; root.add_child(wire); instance.free()
+		else: root.get_meta("unsupported_preview").append(str(geom.get("name","geometry"))+": "+str(geom.preview_kind))
 	return root

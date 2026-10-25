@@ -30,7 +30,7 @@ func capture(plugin: EditorPlugin, filename: String) -> void:
 		if arg.begins_with("--capture-dir="):
 			var folder := arg.trim_prefix("--capture-dir=")
 			DirAccess.make_dir_recursive_absolute(folder)
-			EditorInterface.set_main_screen_editor("MuJoCo")
+			EditorInterface.set_main_screen_editor("3D")
 			for i in range(5):
 				await plugin.get_tree().process_frame
 			await RenderingServer.frame_post_draw
@@ -323,7 +323,7 @@ func primitive_ui_regression(panel: Control, doc: RefCounted) -> void:
 		click.button_index=MOUSE_BUTTON_LEFT
 		click.pressed=true
 		click.position=point
-		panel.camera_input(click)
+		panel.plugin._forward_3d_gui_input(panel.camera,click)
 		check(panel.selected.kind=="geom" and panel.selected.name==geom,"new " + shape + " selected through viewport click")
 		var expected: Array = [.25,0.0,0.0] if shape=="sphere" else [.25,.25,0.0]
 		check(JSON.parse_string(panel.inputs.size.text)==expected,"new " + shape + " form shows canonical dimensions")
