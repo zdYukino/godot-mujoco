@@ -90,13 +90,11 @@ func _ready() -> void:
 	button(row,"聚焦全图",func(): focus(""))
 	button(row,"聚焦选中",func(): focus(selected))
 	button(row,"选中显隐",toggle_selected)
-	button(row,"草稿视觉显隐",toggle_visual_preview)
-	button(row,"碰撞线框",toggle_collision_preview)
 	slice_level = number(row,"SDF 切片高度比例",0,1,.01); slice_level.value=.33
 	button(row,"更新距离切片",func(): session.view.sdf_slice=slice_level.value; session.dirty=true; rebuild())
 	button(row,"撤销草稿",func(): session.history.undo(); rebuild())
 	button(row,"重做草稿",func(): session.history.redo(); rebuild())
-	layout_note = Label.new(); layout_note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART; layout_note.size_flags_horizontal=Control.SIZE_EXPAND_FILL; layout_note.text = "碰撞：真实凸包/基础体/高度场；SDF 65×65 原生距离切片（红内/蓝外/黄零轮廓，采样近似） | 原生 3D 导航 · 左键选草稿网格 | 视觉就绪 ≠ 物理验证通过 | 运行地图需显式重新运行；地形运行 Apply 使用地形面板"; layout_content.add_child(layout_note)
+	layout_note = Label.new(); layout_note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART; layout_note.size_flags_horizontal=Control.SIZE_EXPAND_FILL; layout_note.text = "碰撞：真实凸包/基础体/高度场；SDF 65×65 原生距离切片（红内/蓝外/黄零轮廓，采样近似） | 原生 3D 导航 · 左键选草稿网格 · 独立草稿仅右侧数值编辑，无拖拽变换轴 | 视觉就绪 ≠ 物理验证通过 | 运行地图需显式重新运行；地形运行 Apply 使用地形面板"; layout_content.add_child(layout_note)
 	tree = Tree.new(); tree.custom_minimum_size = Vector2(0,160); layout_content.add_child(tree); tree.item_selected.connect(select_tree)
 	world = plugin.create_preview_root("MapDraft") if plugin else Node3D.new()
 	# Logic harnesses reuse their SceneTree viewport; they never create a preview viewport.
@@ -236,6 +234,7 @@ func select_tree() -> void:
 	for part in spec.get("parts",[]): values.append({"center":[part.center.x,part.center.y,part.center.z],"size":[part.size.x,part.size.y,part.size.z]})
 	parts.text = JSON.stringify(values)
 	refresh_contact_controls(); show_bounds(); refresh_status()
+	if plugin and tree.has_focus(): plugin.select_preview_target(selected)
 
 func show_bounds() -> void:
 	if highlights: highlights.free(); highlights = null
@@ -245,9 +244,6 @@ func show_bounds() -> void:
 	for i in 8:
 		for bit in [1,2,4]:
 			if (i & bit) == 0: surface.add_vertex(bounds.get_endpoint(i)); surface.add_vertex(bounds.get_endpoint(i | bit))
-	var origin := bounds.get_center(); var length := maxf(.01,bounds.size.length()*.25)
-	for axis in [Vector3.RIGHT,Vector3.UP,Vector3.BACK]:
-		surface.add_vertex(origin); surface.add_vertex(origin+axis*length)
 	highlights = MeshInstance3D.new(); highlights.mesh = surface.commit(); var material := StandardMaterial3D.new(); material.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED; material.albedo_color = Color(.2,1,.6); material.no_depth_test = true; highlights.material_override = material; world.add_child(highlights)
 
 func configure() -> bool:
@@ -307,7 +303,10 @@ func pick(point: Vector2) -> bool:
 			if hit != null:
 				var length: float = origin.distance_to(pose*hit)
 				if length < nearest: nearest = length; path = str(preview.get_path_to(mesh))
-	if items.has(path): items[path].select(0); tree.scroll_to_item(items[path]); select_tree(); return true
+	if items.has(path):
+		items[path].select(0); tree.scroll_to_item(items[path]); select_tree()
+		if plugin: plugin.select_preview_target(selected)
+		return true
 	return false
 
 func refresh_status() -> void:

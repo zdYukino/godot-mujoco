@@ -25,6 +25,7 @@ func run(plugin) -> void:
 	check(plugin.dock.get_parent()!=EditorInterface.get_editor_main_screen(),"property UI is docked outside central main screen")
 	for root in plugin.preview_roots:
 		check(root.owner==null and root.get_parent()==EditorInterface.get_editor_viewport_3d(0),"draft root is outside the edited scene in the native viewport")
+	plugin.view_controls.set_modes(true,true)
 	plugin.map_panel.path_field.text="res://fixtures/box.glb"; plugin.map_panel.unit.select(1)
 	check(plugin.map_panel.import_source(false),"map fixture imports into native view")
 	var map=plugin.map_panel
@@ -73,6 +74,7 @@ func run(plugin) -> void:
 	plugin.heightfield_panel.friction.value=.7
 	EditorInterface.get_selection().clear(); EditorInterface.get_selection().add_node(scene); await settle()
 	check(plugin.heightfield_panel.dirty and plugin.heightfield_panel.target==scene.get_node("Heightfield"),"dirty terrain selection switch retains draft and target")
+	await preload("res://display_modes.gd").new().run(plugin,self)
 	# Measure right-dock content at real requested widths, independent of the editor's persisted splitter.
 	var parent=plugin.dock.get_parent(); var position=plugin.dock.get_index()
 	var measure:=Control.new(); EditorInterface.get_base_control().add_child(measure)
@@ -113,6 +115,7 @@ func run(plugin) -> void:
 	plugin=EditorInterface.get_base_control().get_meta("mujoco_active_plugin")
 	check(plugin.map_panel.session==session and session.specs[path].friction==.4,"reopen preserves map session and history")
 	check(plugin.panel.pending,"reopen preserves MJCF pending fields")
+	check(plugin.view_controls.entities and plugin.view_controls.collisions,"render toolbar modes persist across plugin reload")
 	check(plugin.heightfield_panel.dirty and plugin.heightfield_panel.heights.text=="1 0\n0 0" and is_equal_approx(plugin.heightfield_panel.friction.value,.7),"reopen preserves terrain raw pending fields")
 	plugin.heightfield_panel.discard()
 	history.undo()
@@ -120,7 +123,7 @@ func run(plugin) -> void:
 	history.redo()
 	check(scene.get_node("StaticMap")==after_reload_apply,"map Redo after reload restores replacement identity")
 	check(plugin.map_panel.apply_scene(),"continued Apply after plugin reload and own Undo Redo remains legal")
-	check(count_viewports(plugin.dock)==0 and plugin.preview_roots.size()==2,"reopen does not duplicate viewports or preview roots")
+	check(count_viewports(plugin.dock)==0 and plugin.preview_roots.size()==3,"reopen does not duplicate viewports or preview roots")
 	plugin.panel.pending=false; plugin.state.dirty=false; session.dirty=false
 	print("NATIVE_LAYOUT_RESULT ",JSON.stringify({"passed":passed,"failed":failed,"scope":"headless editor logic and measured layout; actual dot GUI acceptance pending"}))
 	tree.quit(0 if failed==0 else 1)

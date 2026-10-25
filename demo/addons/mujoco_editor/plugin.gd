@@ -11,6 +11,8 @@ var heightfield_panel:Control
 var live_debugger: EditorDebuggerPlugin
 var panel: Control
 var state: RefCounted
+var syncing_draft_selection := false
+var view_controls: Control
 var scene_inspector: EditorInspectorPlugin
 var dock: VBoxContainer
 var pages: Array[Control] = []
@@ -67,6 +69,8 @@ func _enter_tree() -> void:
 	scene_changed.connect(scene_switched)
 	set_input_event_forwarding_always_enabled()
 	scene_inspector=preload("scene_inspector.gd").new(); scene_inspector.plugin=self; add_inspector_plugin(scene_inspector)
+	view_controls=preload("view_controls.gd").new(); view_controls.plugin=self
+	add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU,view_controls)
 	show_scope(0); selection_changed()
 	if "--ui-layout-test" in OS.get_cmdline_user_args() and not base.has_meta("mj_layout_started"):
 		base.set_meta("mj_layout_started",true)
@@ -77,6 +81,8 @@ func _enter_tree() -> void:
 		call_deferred("_run_acceptance")
 
 func _exit_tree() -> void:
+	if view_controls:
+		view_controls.shutdown(); remove_control_from_container(CONTAINER_SPATIAL_EDITOR_MENU,view_controls); view_controls.free(); view_controls=null
 	if scene_inspector: remove_inspector_plugin(scene_inspector); scene_inspector=null
 	if scene_changed.is_connected(scene_switched): scene_changed.disconnect(scene_switched)
 	if EditorInterface.get_selection().selection_changed.is_connected(selection_changed):
@@ -166,6 +172,7 @@ func show_scope(index: int) -> void:
 	if map_panel and is_instance_valid(map_panel.world): map_panel.world.visible = index == 1
 
 func selection_changed() -> void:
+	if syncing_draft_selection: return
 	var selected_nodes := EditorInterface.get_selection().get_selected_nodes()
 	selection_label.text = "场景选择：" + (str(selected_nodes[0].name) if selected_nodes.size() == 1 else "无 / 多选") + " · 对象属性见右侧 Inspector"
 	if selected_nodes.size() != 1: return
@@ -236,3 +243,20 @@ func _run_layout_test() -> void:
 	var runner = load("res://layout.gd").new()
 	EditorInterface.get_base_control().set_meta("mj_layout_runner",runner)
 	runner.run(self)
+
+func select_preview_target(map_path := "") -> void:
+	if syncing_draft_selection: return
+	var target: Node
+	var root:=EditorInterface.get_edited_scene_root()
+	if not map_path.is_empty() and root and not map_panel.scene_map_path.is_empty():
+		var map:=root.get_node_or_null(map_panel.scene_map_path)
+		if map:
+			target=map.get_node_or_null(NodePath("Visual/"+map_path))
+			if not target: target=map.get_node_or_null(NodePath(map_path))
+	var selection:=EditorInterface.get_selection()
+	var previous:=selection.get_selected_nodes()
+	if (target and previous.size()==1 and previous[0]==target) or (not target and previous.is_empty()): return
+	syncing_draft_selection=true
+	selection.clear()
+	if target: selection.add_node(target)
+	syncing_draft_selection=false

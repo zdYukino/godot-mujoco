@@ -32,3 +32,11 @@ Apply 的场景显示抑制独立于用户视觉/碰撞显隐偏好；新导入�
 地图包与场景地图共享高度场草稿网格恢复逻辑；普通高度场的正式节点位于地图直接子级，选择可映射回地图草稿的摩擦与高级原生接触参数。用户自行选择的 Godot 多视图布局不由插件改写；插件本身不增加第二预览。复杂 world/contact/relations 参数仍保留高级 JSON 入口。
 
 设计参考：[Omniverse Property Panel](https://docs.omniverse.nvidia.com/extensions/latest/ext_core/ext_property-panel.html) 的选择作用域与分组；实现使用 [Godot EditorInterface](https://docs.godotengine.org/en/stable/classes/class_editorinterface.html) 原生视图、选择与 Inspector API。
+
+## 碰撞叠加与变换轴
+
+原生 3D 工具栏的 **MuJoCo 显示** 菜单提供独立勾选的“显示实体”“显示碰撞网格”，支持实体单独、叠加、仅碰撞、全隐藏。用紧凑菜单避免窄窗口中工具栏挤压主视图。地图和 MJCF 草稿、已加载模型实例、受支持的普通场景碰撞体共用这两个显示模式；普通场景节点通过 RenderingServer 实例显隐隐藏，不修改保存用的 Node3D.visible 或碰撞参数，退出插件恢复。
+
+编译凸包和基础几何使用独立橙色线框节点，不用半透明实心壳覆盖原视觉材质。SDF 是低透明度距离切片和零等值线叠加，不表示动态 SDF 支持。MJCF 选中高亮改为独立青色包围框，不再修改视觉材质发光。静态地图多余的三根同色轴线已移除。真实场景对象同步 EditorSelection 并使用 Godot 原生 Gizmo；独立草稿选择清除无关对象的原生轴，明确只支持右侧数值编辑，不绘制假的可拖拽轴。
+
+已支持模型的编译几何/凸包、地图原生碰撞与距离切片、Box/Sphere/Cylinder/Capsule 场景形状及专用高度场边界。无法加载或未支持的场景形状在显示菜单中报告数量；不以视觉网格冒充未知碰撞。边界线框不表示过滤规则已经允许接触，接触有效性仍需运行验证。

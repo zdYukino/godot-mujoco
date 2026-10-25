@@ -24,6 +24,12 @@ var status: Label
 var live: Label
 var preview_root: Node3D
 var camera: Camera3D
+const Overlay = preload("res://addons/godot_mujoco/model/collision_overlay.gd")
+const CollisionPreview = preload("res://addons/godot_mujoco/map/collision_preview.gd")
+var collision_notice: Label
+var collision_overlays := {}
+var show_visuals := true
+var show_collisions := false
 var meshes := {}
 var selected := {}
 var inputs := {}
@@ -88,6 +94,9 @@ func _ready() -> void:
 	add_child(runtime_status)
 	plugin.live_debugger.changed.connect(refresh_runtime_targets)
 	refresh_runtime_targets()
+	var display := Layout.group(self,"主视图 · 独立叠加显示")
+	var legend := Label.new(); legend.text="橙色：编译碰撞边界；青色：选中包围框。边界不代表过滤规则已允许接触。SDF 切片在地图高级视图中叠加。"; legend.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART; display.add_child(legend)
+	collision_notice=Label.new(); collision_notice.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART; display.add_child(collision_notice)
 	var operations := VBoxContainer.new()
 	Layout.group(self,"选中实体 · 变换",false).add_child(operations)
 	var axis := OptionButton.new()
@@ -102,7 +111,7 @@ func _ready() -> void:
 	button(operations, "Size ×1.1", transform_selection.bind("size", 1.0))
 	var note := Label.new()
 	note.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	note.text = "MuJoCo 3.16 • metres / kg / seconds / radians • local properties use MJCF Z-up axes; preview uses Godot Y-up • Left click selects visible geometry; operations use local MJCF axes"
+	note.text = "MuJoCo 3.16 • metres / kg / seconds / radians • local properties use MJCF Z-up axes; preview uses Godot Y-up • 独立草稿仅右侧数值编辑，无拖拽变换轴；操作使用 local MJCF axes"
 	add_child(note)
 	var left := VBoxContainer.new()
 	add_child(left)
@@ -449,6 +458,7 @@ func on_select() -> void:
 	selected = item.get_metadata(0) if item and item.get_metadata(0) is Dictionary else {}
 	build_fields()
 	highlight_selection()
+	plugin.select_preview_target()
 
 func restore_pending_tree_selection() -> void:
 	if pending and is_instance_valid(tree) and not selected.is_empty():
@@ -565,6 +575,8 @@ func apply_fields() -> bool:
 	return execute({"op":"set", "kind":selected.kind, "name":selected.name, "values":values})
 
 func rebuild_meshes() -> void:
+	for overlay in collision_overlays.values(): overlay.free()
+	collision_overlays.clear()
 	for mesh in meshes.values():
 		mesh.free()
 	meshes.clear()
@@ -622,7 +634,15 @@ func rebuild_meshes() -> void:
 			instance.scale = Vector3(size.x, size.z, size.y)
 		instance.set_meta("pick_mesh", instance.mesh.generate_triangle_mesh())
 		meshes[geom.name] = instance
-	highlight_selection()
+		var outline := Overlay.bounds(instance.mesh.get_aabb()); outline.name="SelectionBounds"; instance.add_child(outline)
+	var unavailable := PackedStringArray()
+	for geom in state.document.collision_preview(.33,65):
+		if geom.preview_kind not in ["analytic_boundary","compiled_convex_hull"]:
+			unavailable.append(str(geom.name)+" ("+str(geom.preview_kind)+")"); continue
+		var overlay := CollisionPreview.create([geom],Transform3D.IDENTITY)
+		preview_root.add_child(overlay); collision_overlays[geom.name]=overlay
+	collision_notice.text="此文档开关未显示："+", ".join(unavailable)+"；SDF 请使用地图的静态切片入口。" if not unavailable.is_empty() else ""
+	highlight_selection(); update_overlay_visibility()
 
 func _process(delta: float) -> void:
 	source_poll += delta
@@ -636,6 +656,10 @@ func _process(delta: float) -> void:
 			meshes[geom.name].transform = geom.transform
 			if geom.type == 4:
 				meshes[geom.name].scale = Vector3(geom.size.x, geom.size.z, geom.size.y)
+		if collision_overlays.has(geom.name):
+			for wire in collision_overlays[geom.name].get_children():
+				wire.transform=geom.transform
+				if geom.type==4: wire.scale=Vector3(geom.size.x,geom.size.z,geom.size.y)
 	var info: Dictionary = state.document.inspect()
 	var detail := ""
 	for entity in info.entities:
@@ -672,11 +696,14 @@ func refresh_project_files() -> void:
 		await get_tree().process_frame
 	filesystem.scan()
 
+func update_overlay_visibility() -> void:
+	for mesh in meshes.values(): mesh.visible=show_visuals
+	for overlay in collision_overlays.values(): overlay.visible=show_collisions
+
 func highlight_selection() -> void:
 	for name in meshes:
-		var material: StandardMaterial3D = meshes[name].material_override
-		material.emission_enabled = selected.get("kind") == "geom" and selected.get("name") == name
-		material.emission = Color(.25, .18, .02)
+		var outline: Node = meshes[name].get_node_or_null("SelectionBounds")
+		if outline: outline.visible=selected.get("kind")=="geom" and selected.get("name")==name
 
 func pick_geometry(point: Vector2) -> String:
 	if not is_instance_valid(camera): camera = EditorInterface.get_editor_viewport_3d(0).get_camera_3d()
@@ -687,6 +714,7 @@ func pick_geometry(point: Vector2) -> String:
 	var nearest := INF
 	var picked := ""
 	for name in meshes:
+		if not show_visuals: continue
 		var mesh: MeshInstance3D = meshes[name]
 		var inverse := mesh.global_transform.affine_inverse()
 		var triangle: TriangleMesh = mesh.get_meta("pick_mesh")
@@ -696,7 +724,7 @@ func pick_geometry(point: Vector2) -> String:
 			if distance_to_hit < nearest:
 				nearest = distance_to_hit
 				picked = name
-	if not picked.is_empty(): select_entity("geom", picked)
+	if not picked.is_empty(): select_entity("geom", picked); plugin.select_preview_target()
 	return picked
 
 func transform_selection(operation: String, direction: float) -> bool:
