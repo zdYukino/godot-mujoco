@@ -1,12 +1,12 @@
 <!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Godot × MuJoCo · 系统功能架构图</title><style>
 :root{color-scheme:light;--ink:#213a39;--muted:#647873;--line:#dce5df;--paper:#f4f6ef;--green:#207466;--accent:#d8ec69}*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.6 system-ui,-apple-system,'Segoe UI',sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer;border:1px solid #cbd9d0;border-radius:8px;background:white;color:var(--ink);padding:8px 12px}button:hover{background:#edf5e8}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{outline:3px solid #487ef0;outline-offset:2px}button:disabled{opacity:.4;cursor:default}.primary{background:var(--green);color:white;border-color:var(--green)}.primary:hover{background:#145c50}header{background:#163e36;color:white;padding:34px max(24px,calc((100vw - 1240px)/2));position:relative}header small{color:#b3ccbd;letter-spacing:.16em}h1{font-size:clamp(28px,4vw,44px);line-height:1.15;letter-spacing:-.04em;margin:13px 0}header p{color:#c9d8ce;max-width:820px;margin:14px 0}header .tag{position:absolute;right:max(24px,calc((100vw - 1240px)/2));top:38px;background:var(--accent);color:#29442c;border-radius:20px;padding:4px 14px;font-size:12px}main{max-width:1290px;margin:0 auto;padding:24px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}.stat{background:white;border:1px solid var(--line);border-radius:12px;padding:16px 20px}.stat strong{font-size:29px;display:block;line-height:1.25}.stat span{color:var(--muted);font-size:13px}.toolbar{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.toolbar input{flex:1;min-width:210px}.toolbar input,select,textarea,input[type=text]{padding:9px 12px;border:1px solid #c6d5ca;border-radius:8px;background:white;color:var(--ink)}.guide{border-left:3px solid #a9bb55;padding:6px 14px;color:var(--muted);font-size:13px;margin:18px 0}.savebar{display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-bottom:14px}.tree{display:grid;gap:14px}.node{background:white;border:1px solid var(--line);border-radius:11px;overflow:hidden}.node .node{border-radius:8px;margin:8px 0}.head{display:flex;align-items:flex-start;gap:10px;padding:15px}.toggle{border:none;padding:1px 4px;min-width:24px;font-size:18px;background:transparent}.donebox{width:19px;height:19px;accent-color:var(--green);margin-top:4px;flex-shrink:0}.titlearea{flex:1;min-width:0}.title{font-weight:650;font-size:16px;overflow-wrap:anywhere}.evidence{font-size:12px;color:#35635a;background:#f0f6f2;border-left:2px solid #88b3a0;padding:5px 8px;margin-top:7px;overflow-wrap:anywhere}.meta{font-size:12px;color:var(--muted);margin-top:3px}.pill{display:inline-block;border-radius:20px;background:#eaf2e6;padding:2px 9px;font-size:11px;margin-right:7px;font-weight:600}.status-awaiting_acceptance{background:#fff2cb;color:#78601d}.status-in_progress{background:#fff2cb;color:#78601d}.status-blocked{background:#ffe6df;color:#963f2c}.status-deferred{background:#edeaf4;color:#6b5d84}.status-planned{background:#e9eef3;color:#50687c}.note{font-size:13px;color:#65766e;white-space:pre-wrap;margin-top:5px;overflow-wrap:anywhere}.actions{display:flex;align-items:center;gap:5px;flex-wrap:wrap}.actions button{font-size:12px;padding:5px 8px}.selectround{font-size:11px;white-space:nowrap;padding:4px 7px;border:1px solid #dce5df;border-radius:6px}.selectround:has(input:checked){background:#f1f6cb;border-color:#c1ce6e}.children{margin:0 14px 14px 35px;border-left:2px solid #dce5df;padding-left:15px}.root>.head{background:#fbfcf7}.empty{padding:40px;text-align:center;color:var(--muted)}footer{font-size:12px;color:var(--muted);margin:25px 0}.danger{color:#ad412a}dialog{border:1px solid #b9ccc0;border-radius:14px;width:min(560px,95vw);padding:24px;box-shadow:0 20px 80px #163e3633}dialog::backdrop{background:#173e3670}dialog h2{margin:0 0 16px}dialog label{display:block;margin:13px 0}dialog input[type=text],dialog textarea,dialog select{width:100%}dialog textarea{min-height:100px;resize:vertical}.dialogactions{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}.progress{height:5px;width:110px;background:#e7ece3;border-radius:5px;display:inline-block;vertical-align:middle;overflow:hidden;margin-right:8px}.progress i{height:100%;display:block;background:#6f9f6e}#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);max-width:90vw;background:#173e36;color:white;border-radius:10px;padding:12px 18px;box-shadow:0 4px 30px #0002;z-index:5}body>input[type=file]{display:none}@media(max-width:760px){header .tag{position:static;display:inline-block;margin-top:10px}header{padding:25px 18px}main{padding:16px 10px}.summary{grid-template-columns:repeat(2,1fr);gap:8px}.stat{padding:12px}.head{flex-wrap:wrap;padding:12px}.actions{margin-left:35px;width:100%}.children{margin-left:14px;padding-left:8px}.title{font-size:14px}.toolbar button{flex-grow:1}.guide{margin:15px 4px}}
 body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}header h1{font-size:26px;margin:5px 0}header h1 span{font-size:16px;font-weight:400;margin-left:12px;color:#d4e5dd}header p{font-size:12px;margin:6px 0;max-width:100%}header .tag{top:25px;right:24px}main{max-width:none;padding:12px 18px}.summary{display:flex;gap:12px;margin:0 0 8px}.stat{padding:5px 12px;display:flex;gap:10px;align-items:center;flex:1}.stat strong{font-size:20px}.stat span{font-size:11px}.toolbar{margin:7px 0;gap:6px}.toolbar button{font-size:12px;padding:5px 9px}.toolbar input,.toolbar select{font-size:12px;padding:6px 10px}.guide{font-size:11px;line-height:1.55;margin:8px 0;padding:3px 10px}.savebar{margin:6px 0;font-size:11px}.map-controls{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px 0}.map-controls button{padding:5px 10px;font-size:12px}.map-controls span{font-size:11px;color:#667f74}.workspace{display:grid;grid-template-columns:minmax(0,1fr) 300px;min-height:520px;height:calc(100vh - 365px);gap:12px}#viewport{position:relative;overflow:hidden;background:#eef3ee;background-image:radial-gradient(#c5d3c7 .8px,transparent .8px);background-size:18px 18px;border:1px solid #cbd8ce;border-radius:12px;touch-action:none;cursor:grab}#viewport:active{cursor:grabbing}#world{position:absolute;left:0;top:0;transform-origin:0 0;width:0;height:0}#edges{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none}.edge{fill:none;stroke:#89a99b;stroke-width:2}.edge.depth-1{stroke:#347d69;stroke-width:3}#tree{position:absolute;left:0;top:0;display:block}.map-node{position:absolute;width:270px;height:112px;background:white;border:1px solid #ccd9d0;border-left:5px solid #8aab9b;border-radius:10px;box-shadow:0 3px 10px #2449390b;padding:10px 12px;touch-action:none;cursor:grab;user-select:none}.map-node.depth-1{border-left-color:#236b54;background:#f9fcf8}.map-node.depth-2{border-left-color:#5d8d78}.map-node.selected{outline:3px solid #e0bb42;outline-offset:2px}.map-node.project-node{background:#173f34;color:white;border:0;display:flex;flex-direction:column;justify-content:center;gap:3px}.project-node small{color:#b3d0c1;font-size:11px}.project-node strong{font-size:22px}.project-node span{font-size:11px;color:#bdd4c6}.node-row{display:flex;gap:7px;align-items:flex-start}.map-title{font-size:14px;line-height:1.45;max-height:62px;text-align:left;border:0;background:transparent!important;padding:0;flex:1;overflow:hidden;font-weight:650;cursor:grab}.donebox{width:17px;height:17px;margin-top:3px}.node-meta{position:absolute;bottom:9px;left:12px;right:12px;display:flex;align-items:center;gap:4px;font-size:10px;color:#678074}.node-meta .pill{font-size:10px;padding:2px 7px}.node-meta button{margin-left:auto;font-size:11px;padding:1px 7px;min-width:36px}#detail{overflow:auto;background:#fff;border:1px solid #d5e0d8;border-radius:12px;padding:17px;min-width:0}#detail h2{font-size:18px;margin:10px 0;overflow-wrap:anywhere}#detail p{font-size:13px}.breadcrumb{font-size:11px;color:#688477;line-height:1.6}.detail-actions{display:flex;flex-wrap:wrap;gap:6px;margin:15px 0}.detail-actions button{font-size:12px;padding:6px 10px}.roundfield{font-size:12px;display:block;margin-top:15px}footer{font-size:10px;margin:8px 0}@media(max-width:800px){header{padding:14px}header .tag{display:none}header h1{font-size:22px}header h1 span{font-size:13px}main{padding:9px}.summary{flex-wrap:wrap;gap:5px}.stat{flex-basis:45%;padding:5px 8px}.workspace{grid-template-columns:1fr;height:auto;min-height:0}#viewport{height:65vh;min-height:400px}#detail{max-height:380px}.toolbar button{flex-grow:0}.guide{font-size:10px}.map-controls span:last-child{width:100%}}
-</style></head><body><header><small>SYSTEM ARCHITECTURE / 系统功能架构</small><div class="tag">可编辑 · 私人工作底稿</div><h1>Godot × MuJoCo <span>系统功能架构图</span></h1><p>系统 → 功能模块 → 子功能。完成状态仅作节点标签；点选查看能力边界、已验收范围与尚缺功能。</p></header><main><section class="summary" aria-label="叶子任务统计"><div class="stat"><strong id="completed">0</strong><span>已完成 / 全部叶子</span></div><div class="stat"><strong id="unfinished">0</strong><span>未完成 · 进行中 / 待验收 / 受阻</span></div><div class="stat"><strong id="planned">0</strong><span>待完成 · 待启动 / 暂缓</span></div><div class="stat"><strong id="chosen">0</strong><span>本轮拟推进 · 节点数</span></div></section><div class="toolbar"><input id="search" type="search" placeholder="搜索任务、备注或提交号…" aria-label="搜索任务"><select id="filter" aria-label="筛选状态"><option value="all">全部状态</option><option value="done">已完成</option><option value="unfinished">未完成</option><option value="planned">待完成</option><option value="selected">本轮拟推进</option></select><button id="expand">展开全部</button><button id="collapse">折叠全部</button><button id="addroot" class="primary">＋ 添加功能模块</button></div><div class="toolbar"><button id="exportHtml">下载当前 HTML</button><button id="exportJson">导出 JSON</button><button id="exportSeed">下载页面工程快照</button><button id="importJson">导入 JSON</button><button id="exportRound">导出本轮清单</button><button id="restoreBackup">恢复导入前备份</button><button id="undo" disabled>撤销修改</button><button id="reset" class="danger">恢复初始版本</button></div><div class="guide">主分支按功能架构组织，状态仅为属性。旧版浏览器缓存保留在原存储区，不会覆盖此架构版；如有旧版个人修改，请先从旧 HTML 导出再对照。<br>完成勾选是你的可编辑记录；侧栏“工程记录”保留内嵌证据，不随勾选改变。完成勾选只更改单个节点，不会自动勾选子任务。进度按叶子统计，父节点状态独立维护。<br>“本轮拟推进”仅为需求草案，不等于执行或合并授权。保存仅在当前浏览器，不会跨设备同步，也不会自动发送给助手；请下载最新 HTML 或 JSON 后发回对齐。</div><details class="guide"><summary><strong>新增：原生3D显示 / 根变换 / 多形状同世界示例 · 已合并，限定范围通过（点击展开）</strong></summary><p>候选ec63ed8已通过实际dot验收，经PR20合并至main 9202c1b4；完整tree与验收候选一致，未另重跑合并commit。单原生3D与右侧属性、实体/碰撞四组合独立叠加、共同根数值平移/旋转与Undo/Redo保存跟随已交付；不宣称鼠标拖轴已通过。</p><p>shape_gallery包含球、盒、柱、凸mesh圆锥、胶囊、椭球及探针球，同一MuJoCo世界真实运行；显式RGBA、CC0 HDR及源缺失独立包运行通过。native51/69/53/68、布局163、map runtime6、gallery三轮各56、保存场景独立probe5与真实GUI接触16均有证据。</p><p>最终地板仍临时原创基础体，Isaac FlatGrid许可/替代待定；MJCF草稿SDF切片、鼠标拖轴及旧F6启动路径未闭环。缩放/剪切、自动凸分解、完整material/texture或透明混合未新增承诺；P4暂缓，不G1。</p></details><div class="savebar"><span id="saveStatus" role="status" aria-live="polite"></span><span id="baseline"></span></div><div class="map-controls"><button id="zoomOut" aria-label="缩小">−</button><span id="zoomValue">100%</span><button id="zoomIn" aria-label="放大">＋</button><button id="fit">适合全图</button><button id="focus">聚焦选中</button><button id="autoLayout">自动分层布局</button><span>拖动空白平移 · 滚轮缩放 · 拖动节点仅改布局</span></div><div class="workspace"><section id="viewport" aria-label="可拖动思维导图画布"><div id="world"><svg id="edges" aria-hidden="true"></svg><section id="tree" aria-label="系统功能架构图节点"></section></div></section><aside id="detail" aria-label="选中任务详情"></aside></div><footer id="revision"></footer></main><dialog id="editor"><form id="editform"><h2 id="dialogtitle">编辑任务</h2><label>任务名称<input id="editTitle" type="text" maxlength="300" required></label><label>状态<select id="editStatus"><option value="done">已完成</option><option value="in_progress">未完成 · 进行中</option><option value="awaiting_acceptance">待 dot 验收</option><option value="blocked">未完成 · 受阻</option><option value="planned">待完成 · 待启动</option><option value="deferred">待完成 · 暂缓</option></select></label><label>备注 / 验收标准<textarea id="editNote" maxlength="10000"></textarea></label><label>补充来源 / 提交（可编辑，不改写工程记录）<input id="editSource" type="text" maxlength="2000"></label><label><input id="editSelected" type="checkbox"> 本轮拟推进（仅草案）</label><div class="dialogactions"><button type="button" id="cancelEdit">取消</button><button class="primary" type="submit">保存任务</button></div></form></dialog><div id="toast" role="status" hidden></div><input type="file" id="fileInput" accept="application/json,.json"><script id="seed" type="application/json">{
+</style></head><body><header><small>SYSTEM ARCHITECTURE / 系统功能架构</small><div class="tag">可编辑 · 私人工作底稿</div><h1>Godot × MuJoCo <span>系统功能架构图</span></h1><p>系统 → 功能模块 → 子功能。完成状态仅作节点标签；点选查看能力边界、已验收范围与尚缺功能。</p></header><main><section class="summary" aria-label="叶子任务统计"><div class="stat"><strong id="completed">0</strong><span>已完成 / 全部叶子</span></div><div class="stat"><strong id="unfinished">0</strong><span>未完成 · 进行中 / 待验收 / 受阻</span></div><div class="stat"><strong id="planned">0</strong><span>待完成 · 待启动 / 暂缓</span></div><div class="stat"><strong id="chosen">0</strong><span>本轮拟推进 · 节点数</span></div></section><div class="toolbar"><input id="search" type="search" placeholder="搜索任务、备注或提交号…" aria-label="搜索任务"><select id="filter" aria-label="筛选状态"><option value="all">全部状态</option><option value="done">已完成</option><option value="unfinished">未完成</option><option value="planned">待完成</option><option value="selected">本轮拟推进</option></select><button id="expand">展开全部</button><button id="collapse">折叠全部</button><button id="addroot" class="primary">＋ 添加功能模块</button></div><div class="toolbar"><button id="exportHtml">下载当前 HTML</button><button id="exportJson">导出 JSON</button><button id="exportSeed">下载页面工程快照</button><button id="importJson">导入 JSON</button><button id="exportRound">导出本轮清单</button><button id="restoreBackup">恢复导入前备份</button><button id="undo" disabled>撤销修改</button><button id="reset" class="danger">恢复初始版本</button></div><div class="guide">主分支按功能架构组织，状态仅为属性。旧版浏览器缓存保留在原存储区，不会覆盖此架构版；如有旧版个人修改，请先从旧 HTML 导出再对照。<br>完成勾选是你的可编辑记录；侧栏“工程记录”保留内嵌证据，不随勾选改变。完成勾选只更改单个节点，不会自动勾选子任务。进度按叶子统计，父节点状态独立维护。<br>“本轮拟推进”仅为需求草案，不等于执行或合并授权。保存仅在当前浏览器，不会跨设备同步，也不会自动发送给助手；请下载最新 HTML 或 JSON 后发回对齐。</div><details class="guide"><summary><strong>分支进度：网格地板 / 折叠帮助已验证 · 单机G1倒地通过，双机热加受阻（点击展开）</strong></summary><p>codex/gallery-grid-help 最终文档HEAD 101b588b（仅README收尾，非新增验收）；功能诊断仍d9f9297，尚无PR、未合并；main aaa3d5a不含本轮改动。原创纯色1m网格地板与默认隐藏帮助通过actualdot gallery81三轮/editor4及真实图；地板方案已解决，不再等待素材选择。</p><p>独立单机G1：自由基座、29 hinge、无actuator、gravcomp0，自然倒地近景已交付，初态±5度披露。不是第二台热加成功。双机热加默认/串行编译在实际dot约150秒未返回，明确blocked；开发机通过不替代actualdot。</p><p>官方MuJoCo库一致、未触发400MiB护栏、没有OOM或根治证据。最多2台/同步编译/自碰和G1互碰排除边界保持；GUI第二台未尝试，用户原4窗不自动关闭。P4暂缓，原已合并功能与本轮分支状态分开。</p></details><div class="savebar"><span id="saveStatus" role="status" aria-live="polite"></span><span id="baseline"></span></div><div class="map-controls"><button id="zoomOut" aria-label="缩小">−</button><span id="zoomValue">100%</span><button id="zoomIn" aria-label="放大">＋</button><button id="fit">适合全图</button><button id="focus">聚焦选中</button><button id="autoLayout">自动分层布局</button><span>拖动空白平移 · 滚轮缩放 · 拖动节点仅改布局</span></div><div class="workspace"><section id="viewport" aria-label="可拖动思维导图画布"><div id="world"><svg id="edges" aria-hidden="true"></svg><section id="tree" aria-label="系统功能架构图节点"></section></div></section><aside id="detail" aria-label="选中任务详情"></aside></div><footer id="revision"></footer></main><dialog id="editor"><form id="editform"><h2 id="dialogtitle">编辑任务</h2><label>任务名称<input id="editTitle" type="text" maxlength="300" required></label><label>状态<select id="editStatus"><option value="done">已完成</option><option value="in_progress">未完成 · 进行中</option><option value="awaiting_acceptance">待 dot 验收</option><option value="blocked">未完成 · 受阻</option><option value="planned">待完成 · 待启动</option><option value="deferred">待完成 · 暂缓</option></select></label><label>备注 / 验收标准<textarea id="editNote" maxlength="10000"></textarea></label><label>补充来源 / 提交（可编辑，不改写工程记录）<input id="editSource" type="text" maxlength="2000"></label><label><input id="editSelected" type="checkbox"> 本轮拟推进（仅草案）</label><div class="dialogactions"><button type="button" id="cancelEdit">取消</button><button class="primary" type="submit">保存任务</button></div></form></dialog><div id="toast" role="status" hidden></div><input type="file" id="fileInput" accept="application/json,.json"><script id="seed" type="application/json">{
   "schemaVersion": 1,
   "project": "Godot × MuJoCo",
-  "revision": 19,
-  "updatedAt": "2026-10-25T17:45:00Z",
-  "baseline": "功能架构视图 · 原生3D/碰撞叠加/多形状示例已合并 9202c1b4 · ec63ed8实际dot限定验收 · 拖轴/最终地板待处理 · P4暂缓",
+  "revision": 20,
+  "updatedAt": "2026-10-25T19:12:00Z",
+  "baseline": "功能架构视图 · main aaa3d5a · gallery-grid-help@101b588b（仅文档收尾，诊断d9f）未合并：网格/折叠帮助及单机倒地已验证，双G1热加blocked · P4暂缓",
   "nodes": [
     {
       "id": "task-005",
@@ -705,7 +705,7 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
         {
           "id": "shape-gallery",
           "title": "多形状同世界示例 / shape_gallery",
-          "note": "examples/shape_gallery：红球、蓝盒、绿柱、黄凸mesh圆锥、紫胶囊、青椭球及额外探针球在同一runtime space。圆锥是编译凸mesh，不存在原生cone，也不是动态SDF。独立保存模型包，原MJCF缺失仍可运行；7刚体示例不等于任意多机器人支持。",
+          "note": "【本轮分支状态】原创1m网格地板与默认隐藏帮助已实际dot验证，但codex/gallery-grid-help尚无PR/未合并；单机G1倒地通过与双机热加blocked分开记录。此前PR20已合并的多形状能力保持原结论。\nexamples/shape_gallery：红球、蓝盒、绿柱、黄凸mesh圆锥、紫胶囊、青椭球及额外探针球在同一runtime space。圆锥是编译凸mesh，不存在原生cone，也不是动态SDF。独立保存模型包，原MJCF缺失仍可运行；7刚体示例不等于任意多机器人支持。",
           "status": "done",
           "source": "2026-10-25 · 候选ec63ed89ee314635446b85f44531253420eef84c / tree a4f7cdaa377c24e677fc64f61d9b9f62d18192fe实际dot限定验收；PR20已合并，完整tree与候选逐字节一致，未另重跑合并commit；main 9202c1b472618b3bae270dfa5b92d8675717519d；证据 shape-gallery-ec63ed8/ACCEPTANCE.md",
           "selected": false,
@@ -738,15 +738,15 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
             },
             {
               "id": "shape-gallery-floor",
-              "title": "最终地板素材 / 许可或替代：待定",
-              "note": "当前地板仍本项目原创临时基础盒体，不是NVIDIA Flat Grid。最终Isaac FlatGrid许可确认或合规替代方案尚未确定，保持待处理，不能标完整素材交付。",
-              "status": "planned",
-              "source": "2026-10-25 · 候选ec63ed89ee314635446b85f44531253420eef84c / tree a4f7cdaa377c24e677fc64f61d9b9f62d18192fe实际dot限定验收；PR20已合并，完整tree与候选逐字节一致，未另重跑合并commit；main 9202c1b472618b3bae270dfa5b92d8675717519d；证据 shape-gallery-ec63ed8/ACCEPTANCE.md",
+              "title": "原创纯色1m网格地板（分支已验证）",
+              "note": "【当前】地板选择已解决：采用本项目原创纯色1m网格，不再等待用户选择Isaac地板素材，不声称NVIDIA Flat Grid。已开发并在实际dot gallery81三轮、editor4及真实图验证；仅在功能分支，尚未合并。\n\n【历史选择过程】\n当前地板仍本项目原创临时基础盒体，不是NVIDIA Flat Grid。最终Isaac FlatGrid许可确认或合规替代方案尚未确定，保持待处理，不能标完整素材交付。",
+              "status": "done",
+              "source": "2026-10-25 · codex/gallery-grid-help 分支，诊断d9f929723d281f65eecb928258c5c1593cd03463；尚无PR/未合并；main aaa3d5a不含本轮功能",
               "selected": false,
               "children": [],
               "evidence": {
-                "status": "planned",
-                "source": "2026-10-25 · 候选ec63ed89ee314635446b85f44531253420eef84c / tree a4f7cdaa377c24e677fc64f61d9b9f62d18192fe实际dot限定验收；PR20已合并，完整tree与候选逐字节一致，未另重跑合并commit；main 9202c1b472618b3bae270dfa5b92d8675717519d；证据 shape-gallery-ec63ed8/ACCEPTANCE.md"
+                "status": "done",
+                "source": "2026-10-25 · codex/gallery-grid-help 分支，诊断d9f929723d281f65eecb928258c5c1593cd03463；尚无PR/未合并；main aaa3d5a不含本轮功能；actualdot gallery81三轮、editor4及真实图通过"
               }
             }
           ],
@@ -967,6 +967,19 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
             "status": "done",
             "source": "2026-10-25 · 候选ec63ed89ee314635446b85f44531253420eef84c / tree a4f7cdaa377c24e677fc64f61d9b9f62d18192fe实际dot限定验收；PR20已合并，完整tree与候选逐字节一致，未另重跑合并commit；main 9202c1b472618b3bae270dfa5b92d8675717519d；证据 shape-gallery-ec63ed8/ACCEPTANCE.md"
           }
+        },
+        {
+          "id": "gallery-folded-help",
+          "title": "运行说明默认隐藏 / 折叠帮助（分支已验证）",
+          "note": "运行说明默认隐藏、按需展开，降低示例界面遮挡。actualdot gallery81三轮、editor4与真实图通过；分支能力已验证，不是main已交付。",
+          "status": "done",
+          "source": "2026-10-25 · codex/gallery-grid-help 分支，诊断d9f929723d281f65eecb928258c5c1593cd03463；尚无PR/未合并；main aaa3d5a不含本轮功能",
+          "selected": false,
+          "children": [],
+          "evidence": {
+            "status": "done",
+            "source": "2026-10-25 · codex/gallery-grid-help 分支，诊断d9f929723d281f65eecb928258c5c1593cd03463；尚无PR/未合并；main aaa3d5a不含本轮功能"
+          }
         }
       ],
       "evidence": {
@@ -1032,6 +1045,46 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
           "evidence": {
             "status": "done",
             "source": "main e6ecd1a2f6e962f1cab731b12946c6f963edf789 · 对应成果已验收并合并（历史提交见备注）"
+          }
+        },
+        {
+          "id": "gallery-g1-runtime",
+          "title": "G1自由落体与双机热加边界",
+          "note": "单机无驱动自然倒地已实际验证；双G1热加未通过，当前停止猜测性迭代。以下两条证据不可混用；开发环境通过不等于actualdot通过。",
+          "status": "in_progress",
+          "source": "2026-10-25 · codex/gallery-grid-help 分支，诊断d9f929723d281f65eecb928258c5c1593cd03463；尚无PR/未合并；main aaa3d5a不含本轮功能",
+          "selected": false,
+          "children": [
+            {
+              "id": "gallery-g1-freefall",
+              "title": "单机G1 · 无驱动自由基座倒地",
+              "note": "作为第二G1模型的独立单机试验：free base、29 hinge、无actuator、gravcomp=0，真实自然倒地近景图已交付；初态关节扰动±5度已披露。不是第二台在同世界热加成功，不代表站立控制/行走/双机器人能力通过。该单机图属于4d版本证据，不能替代d9f热加结果。",
+              "status": "done",
+              "source": "2026-10-25 · codex/gallery-grid-help 分支，诊断d9f929723d281f65eecb928258c5c1593cd03463；尚无PR/未合并；main aaa3d5a不含本轮功能",
+              "selected": false,
+              "children": [],
+              "evidence": {
+                "status": "done",
+                "source": "2026-10-25 · codex/gallery-grid-help 分支，诊断d9f929723d281f65eecb928258c5c1593cd03463；尚无PR/未合并；main aaa3d5a不含本轮功能"
+              }
+            },
+            {
+              "id": "gallery-g1-hotadd",
+              "title": "双G1热加 · 实际dot受阻",
+              "note": "明确未通过：bf/4d/c768停mj_copySpec约151秒；ebfc去冗余copy后停三对象mj_compile；d9f默认与诊断串行对照均约150秒未返回。串行compiler.usethread=false确实生效仍未闭合。官方MuJoCo SHA256与开发环境相同；未触及400MiB可用内存护栏，没有证明OOM，不能称根因已解决。当前边界最多2台、同步编译、自碰与G1互碰排除；GUI第二台未尝试（资源压力），不把supervisor exit0当产品通过。原用户4窗保持，关闭许可待答，不自动关闭。证据：gallery-g1-d9f9297/ACCEPTANCE.md；后续需有依据的决定/新证据，不新增猜测补丁或无界重跑。",
+              "status": "blocked",
+              "source": "2026-10-25 · codex/gallery-grid-help 分支，诊断d9f929723d281f65eecb928258c5c1593cd03463；尚无PR/未合并；main aaa3d5a不含本轮功能",
+              "selected": false,
+              "children": [],
+              "evidence": {
+                "status": "blocked",
+                "source": "2026-10-25 · codex/gallery-grid-help 分支，诊断d9f929723d281f65eecb928258c5c1593cd03463；尚无PR/未合并；main aaa3d5a不含本轮功能"
+              }
+            }
+          ],
+          "evidence": {
+            "status": "in_progress",
+            "source": "2026-10-25 · codex/gallery-grid-help 分支，诊断d9f929723d281f65eecb928258c5c1593cd03463；尚无PR/未合并；main aaa3d5a不含本轮功能"
           }
         }
       ],
@@ -1303,7 +1356,7 @@ body{background:#f3f6f4}header{padding:17px 24px}header small{font-size:10px}hea
           "id": "task-021",
           "title": "G1 / 多 G1 重负载与站立行走验证",
           "status": "planned",
-          "note": "由用户进行重模型测试，结果待提供；实现 free-base/contact 不等于站立行走验收通过。",
+          "note": "【2026-10-25更新】分支单机G1无驱动自由落体已验证，双机热加在实际dot同步mj_compile受阻；不改变本节点G1站立/行走/重负载未完成边界。详见仿真运行模块新增G1节点。\n由用户进行重模型测试，结果待提供；实现 free-base/contact 不等于站立行走验收通过。",
           "source": "",
           "selected": false,
           "children": [],
