@@ -1,0 +1,15 @@
+config_version=5
+[application]
+config/name="MuJoCo 动态形状示例 · 地板外观待确认"
+run/main_scene="res://Main.tscn"
+config/features=PackedStringArray("4.7")
+[display]
+window/size/viewport_width=1280
+window/size/viewport_height=800
+[physics]
+3d/physics_engine="MuJoCo"
+common/physics_ticks_per_second=60
+[rendering]
+renderer/rendering_method="gl_compatibility"
+[editor_plugins]
+enabled=PackedStringArray("res://addons/mujoco_editor/plugin.cfg")
