@@ -29,6 +29,7 @@ REBUILD=1 OUT=/tmp/gmj-g1-rebuild bash examples/g1_passive/prepare.sh
 
 - 先观察第一台自然倒地，再点击“添加 G1”。最多两台，按钮显示忙态并拒绝重复点击；第二台在远离第一台初始位置的另一侧载入。
 - 使用现有 `MjModelInstance.load_model` 事务，同步暂停编译并恢复之前的运行状态。不是后台异步加载，不承诺无停顿。没有重开场景、环境 rebuild 或 reset。
+- 初始 G1 资源缺失或加载失败时显示 `last_error`，禁用添加；无效实例不进入更新列表，地板世界保持可用。
 - 添加前后检查第一台 RID、完整 qpos/qvel、世界时间不变；失败保留原世界。两台共享不可变资源，拥有独立原生模型 RID/命名空间。
 - 保留导入器 `contype=2 / conaffinity=1`：机器人与地板碰撞，**机器人间互碰和同机自碰撞被排除**。本示例不宣称验证机器人互碰。
 - “重置”使用已有原生 checkpoint/born-state 逻辑，保留两台模型，恢复各自载入姿态；它不是热添加实现的一部分。
@@ -48,6 +49,6 @@ OUT=/tmp/gmj-g1-check bash tests/g1_passive/run.sh
 REBUILD=1 OUT=/tmp/gmj-g1-rebuilt-check bash tests/g1_passive/run.sh
 ```
 
-只测试一台自然倒地，再热添加一台；检查无 actuator/gravcomp、自由基座、69 个 geom（57 个 mesh geom 复用 34 个源 mesh）、实际接触、倒地姿态、失败回滚、时间/状态连续性、双机继续运行、四显隐与重置。输出原生模型 ID/数量、编译用时和 Linux 进程 VmHWM。没有无限规模压力测试。
+只测试一台自然倒地，再热添加一台；检查无 actuator/gravcomp、自由基座、69 个 geom（57 个 mesh geom 复用 34 个源 mesh）、两台各自对地板的正法向接触力、倒地姿态、初始资源失败处理与热加失败回滚、时间/状态连续性、双机继续运行、四显隐与重置。输出原生模型 ID/数量、编译用时和 Linux 进程 VmHWM。没有无限规模压力测试。
 
 当前开发环境双机 headless 测试峰值约 1.7 GB；真实渲染及编辑器需要额外内存，**不能据此保证仅剩 2 GB 的 dot 宿主能够同时开编辑器和双机**。建议串行运行独立游戏进程，关闭本任务自有验证进程后再做下一轮；不关闭用户窗口。实际 GUI、截图和最终资源可行性由父任务独立验收。

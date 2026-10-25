@@ -5,14 +5,17 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 : "${OUT:=$(mktemp -d /tmp/gmj-passive-g1-test.XXXXXX)}"
 export OUT GODOT_BIN
 bash "$ROOT/examples/g1_passive/prepare.sh"
-cp "$ROOT/tests/g1_passive/acceptance.gd" "$OUT/project/"
+cp "$ROOT/tests/g1_passive/acceptance.gd" "$ROOT/tests/g1_passive/initial_failure.gd" "$OUT/project/"
 if [[ -d "$OUT/project/assets/robots" ]]; then mv "$OUT/project/assets/robots" "$OUT/unavailable-original-robots"; fi
+timeout --kill-after=5 90 "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 --script res://initial_failure.gd > "$OUT/initial_failure.log" 2>&1
 timeout --kill-after=5 150 "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 --script res://acceptance.gd > "$OUT/runtime.log" 2>&1
 python3 - "$OUT" <<'PY'
 import json,pathlib,sys
 p=pathlib.Path(sys.argv[1]);s=(p/'runtime.log').read_text()
 rows=[x.split(' ',1)[1] for x in s.splitlines() if x.startswith('G1_PASSIVE_RESULT ')];assert len(rows)==1,s
 r=json.loads(rows[0]);assert r['failed']==0,r
+bad=[x.split(' ',1)[1] for x in (p/'initial_failure.log').read_text().splitlines() if x.startswith('G1_INITIAL_FAILURE_RESULT ')];assert len(bad)==1
+r['initial_failure']=json.loads(bad[0]);assert r['initial_failure']['failed']==0
 for f in p.glob('*.log'):
  t=f.read_text();assert 'SCRIPT ERROR:' not in t and '\nERROR:' not in t and 'leaked' not in t,str(f)
 r['hot_add']=[json.loads(x.split(' ',1)[1]) for x in s.splitlines() if x.startswith('G1_HOT_ADD ')][0]

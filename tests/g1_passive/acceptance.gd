@@ -65,9 +65,11 @@ func run() -> void:
 	var second_positive:=false
 	for i in 360:
 		await ticks(1)
-		for pair in world.info().contacts:
-			if pair.has(second.model_rid) and pair.has(controls.model.model_rid): second_positive=true
-	check(second.state().bodies.pelvis.transform.origin.y<second_start-.3 and second_positive,"hot-added second G1 naturally falls and contacts same floor")
+		var info: Dictionary=world.info()
+		for index in info.contacts.size():
+			var pair: Array=info.contacts[index]
+			if pair.has(second.model_rid) and pair.has(controls.model.model_rid) and info.contact_details[index].force_contact_frame[0]>0: second_positive=true
+	check(second.state().bodies.pelvis.transform.origin.y<second_start-.3 and second_positive,"hot-added second G1 naturally falls and has positive normal contact force against same floor")
 	check(world.info().nu==0 and world.info().warning_count==0 and world.info().time>added.time_after+4,"two passive robots continue native time with no actuators or warnings")
 	world.set_paused(true)
 	var state_before: Dictionary=first.state().joints.duplicate(true)
