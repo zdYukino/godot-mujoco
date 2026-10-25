@@ -14,7 +14,8 @@ timeout 150 "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 --scrip
 timeout 150 "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 --script res://extended.gd > "$OUT/extended.log" 2>&1
 timeout 150 "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 --script res://attributes.gd > "$OUT/attributes.log" 2>&1
 timeout 120 "$GODOT_BIN" --headless --path "$OUT/project" --script res://relations_transaction.gd > "$OUT/relations_transaction.log" 2>&1
-timeout 120 "$GODOT_BIN" --headless --path "$OUT/project" --script res://layout.gd > "$OUT/layout.log" 2>&1
+printf '\n[editor_plugins]\nenabled=PackedStringArray("res://addons/mujoco_editor/plugin.cfg")\n' >> "$OUT/project/project.godot"
+timeout 120 "$GODOT_BIN" --headless --editor --path "$OUT/project" -- --ui-layout-test > "$OUT/layout.log" 2>&1
 python3 - "$OUT/project" <<'PY'
 import pathlib,shutil,sys
 p=pathlib.Path(sys.argv[1]);shutil.rmtree(p/'fixtures');old=(p/'saved_path.txt').read_text();(p/old.removeprefix('res://')).rename(p/'relocated');(p/'saved_path.txt').write_text('res://relocated')

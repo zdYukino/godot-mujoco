@@ -1,5 +1,7 @@
 @tool
 extends VBoxContainer
+const Layout = preload("property_layout.gd")
+const DRAFT_META := "mujoco_terrain_editor_draft"
 const Terrain=preload("res://addons/godot_mujoco/model/static_heightfield.gd")
 const Grid=preload("res://addons/godot_mujoco/model/heightfield_data.gd")
 var plugin:EditorPlugin
@@ -30,18 +32,18 @@ var external_conflict:=false
 var runtime_notices:Dictionary={}
 func _ready() -> void:
 	var title:=Label.new();title.text="静态高度场 / 场景设计与运行实例";add_child(title)
-	var row:=HFlowContainer.new();add_child(row)
+	var row:=VBoxContainer.new();add_child(row)
 	width=_number(row,"宽",2,256);depth=_number(row,"深",2,256)
 	_button(row,"创建地形",create_terrain)
 	layer=_number(row,"Layer",0,4294967295);mask=_number(row,"Mask",0,4294967295);layer.value=1;mask.value=1
 	layer.value_changed.connect(_parameters_changed);mask.value_changed.connect(_parameters_changed)
-	row=HFlowContainer.new();add_child(row)
+	row=VBoxContainer.new();add_child(row)
 	friction=_number(row,"Friction",0,1);friction.step=.01;friction.value=1
 	rough=CheckBox.new();rough.text="Rough";row.add_child(rough)
 	friction.value_changed.connect(_parameters_changed)
 	rough.toggled.connect(func(_value:bool): _parameters_changed(0))
-	heights=TextEdit.new();heights.custom_minimum_size=Vector2(320,100);heights.placeholder_text="按行输入高度（米），空格分隔；固定分辨率，无雕刻";add_child(heights)
-	row=HFlowContainer.new();add_child(row)
+	heights=TextEdit.new();heights.custom_minimum_size=Vector2(320,100);heights.placeholder_text="按行输入高度（米），空格分隔；固定分辨率，无雕刻";Layout.group(self,"高度数据 · 高级",false).add_child(heights)
+	row=VBoxContainer.new();add_child(row)
 	_button(row,"预览草稿",preview_text);_button(row,"应用到场景",apply_scene);_button(row,"Discard",discard)
 	_button(row,"保留草稿并采用当前基线",rebase_draft);_button(row,"撤销场景编辑",undo_scene);_button(row,"保存场景",save_scene)
 	live=OptionButton.new();live.fit_to_longest_item=false;live.clip_text=true;live.custom_minimum_size.x=280;row.add_child(live);live.item_selected.connect(_live_selected)
@@ -52,6 +54,15 @@ func _ready() -> void:
 	debugger.changed.connect(refresh_live)
 	EditorInterface.get_selection().selection_changed.connect(_selection_changed)
 	refresh_live();_selection_changed()
+	var saved: Dictionary=EditorInterface.get_base_control().get_meta(DRAFT_META,{})
+	var retained: Node=saved.target.get_ref() if saved.has("target") else null
+	if is_instance_valid(retained) and retained.is_inside_tree():
+		target=retained
+		for key in ["draft","baseline","draft_material","baseline_state","draft_layer","draft_mask","external_conflict","error"]: set(key,saved[key])
+		dirty=true; _sync_fields(); syncing=true; heights.text=saved.text
+		for key in saved.get("controls",{}): get(key).value=saved.controls[key]
+		rough.button_pressed=saved.get("rough",false); syncing=false; _show_status()
+
 func _scene_state() -> Dictionary:
 	if not is_instance_valid(target) or not target.is_inside_tree(): return {}
 	return {"grid":target.design.snapshot(Transform3D(),target.collision_layer,target.collision_mask) if target.design else {},"material":_material_state(target.physics_material_override)}
@@ -134,7 +145,7 @@ func preview_text() -> bool:
 	error=draft.validate()
 	if not error.is_empty(): _show_status();return false
 	dirty=draft.heights!=baseline.heights or draft_layer!=target.collision_layer or draft_mask!=target.collision_mask or _material_state(draft_material)!=baseline_state.material
-	error="";_clear_preview();preview=MeshInstance3D.new();preview.mesh=draft.mesh();target.add_child(preview)
+	error="";_clear_preview();preview=MeshInstance3D.new();preview.mesh=draft.mesh();plugin.create_preview_root("TerrainDraft").add_child(preview);preview.global_transform=target.global_transform
 	var original=target.get_node_or_null("HeightfieldVisual")
 	if original: original.visible=false
 	_show_status();return true
@@ -215,12 +226,18 @@ func _show_status() -> void:
 	var info:Dictionary=debugger.instances.get(selected_key,{})
 	status.text="设计: %s | dirty=%s conflict=%s | 运行目标: %s revision=%s %s | %s" % [target.name if is_instance_valid(target) else "未选择",dirty,external_conflict,selected_key,info.get("revision","-"),_runtime_status(),error]
 func _clear_preview() -> void:
-	if is_instance_valid(preview): preview.free()
+	if is_instance_valid(preview): preview.get_parent().free()
 	preview=null
 	if is_instance_valid(target):
 		var original=target.get_node_or_null("HeightfieldVisual")
 		if original: original.visible=true
 func shutdown() -> void:
+	var saved := {}
+	if dirty and is_instance_valid(target):
+		saved={"target":weakref(target),"text":heights.text,"rough":rough.button_pressed,"controls":{}}
+		for key in ["width","depth","friction","layer","mask"]: saved.controls[key]=get(key).value
+		for key in ["draft","baseline","draft_material","baseline_state","draft_layer","draft_mask","external_conflict","error"]: saved[key]=get(key)
+	EditorInterface.get_base_control().set_meta(DRAFT_META,saved)
 	_clear_preview()
 	if debugger.changed.is_connected(refresh_live): debugger.changed.disconnect(refresh_live)
 	var selection:=EditorInterface.get_selection()

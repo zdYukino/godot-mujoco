@@ -27,7 +27,9 @@ def key(name,ctrl=False,shift=False):
 def move(x,y):xtest.fake_input(s,X.MotionNotify,x=int(x),y=int(y));s.sync()
 def click(rect):
  x,y,w,h=rect;move(x+min(w/2,120),y+h/2);xtest.fake_input(s,X.ButtonPress,1);s.sync();time.sleep(.08);xtest.fake_input(s,X.ButtonRelease,1);s.sync();time.sleep(.4)
-def item(name,kind=None):return next(i for i in state()['items'] if (i['name']==name or name=='sphere' and i['name'].startswith('sphere_')) and (not kind or i['kind']==kind))
+def item(name,kind=None):
+ request(scroll='__entities__')
+ return next(i for i in state()['items'] if (i['name']==name or name=='sphere' and i['name'].startswith('sphere_')) and (not kind or i['kind']==kind))
 def field(name,text):
  request(scroll=name);click(state()['fields'][name]['rect']);key('a',ctrl=True)
  for c in text:key(c if c not in {'.','-','[',']',',','/','_'} else {'/':'slash','_':'underscore','.':'period','-':'minus','[':'bracketleft',']':'bracketright',',':'comma'}[c])

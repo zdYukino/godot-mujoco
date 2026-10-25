@@ -11,7 +11,7 @@ var mask:LineEdit
 var status:Label
 func _ready():
  var title=Label.new();title.text="创建普通 Godot 场景对象（设计状态，不自动应用到已运行世界）";add_child(title)
- var row=HFlowContainer.new();add_child(row)
+ var row=VBoxContainer.new();add_child(row)
  object_name=_text(row,"名称","Body")
  shape_kind=OptionButton.new();for item in ["box","sphere","cylinder"]:shape_kind.add_item(item)
  row.add_child(shape_kind)
