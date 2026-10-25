@@ -16,6 +16,15 @@ func run(plugin,runner,map: Node3D) -> void:
 	EditorInterface.get_selection().clear(); EditorInterface.get_selection().add_node(visual); EditorInterface.get_selection().add_node(physics)
 	await runner.settle()
 	runner.check(EditorInterface.get_selection().get_selected_nodes()==[map],"multi-selected map children collapse to one safe transform root")
+	var panel=plugin.map_panel
+	panel.show_collision=true; panel.rebuild(); await runner.settle()
+	var wires: Array=panel.session.meshes(panel.collision_preview)
+	runner.check(not wires.is_empty(),"bound draft has concrete collision overlay geometry")
+	var wire_before: Dictionary={}
+	for wire in wires: wire_before[wire]=wire.global_transform
+	var baseline_pose: Transform3D=panel.scene_local_pose
+	var baseline_parent: Transform3D=panel.scene_parent_pose
+	var baseline_content: Dictionary=panel.scene_baselines.duplicate(true)
 	var before:=map.transform
 	var visual_before:=visual.global_transform
 	var physics_before:=physics.global_transform
@@ -26,10 +35,15 @@ func run(plugin,runner,map: Node3D) -> void:
 	undo.create_action("Map native transform regression",UndoRedo.MERGE_DISABLE,map)
 	undo.add_do_property(map,"transform",after); undo.add_undo_property(map,"transform",before); undo.commit_action()
 	runner.check(visual.global_transform.is_equal_approx(delta*visual_before) and physics.global_transform.is_equal_approx(delta*physics_before),"native root transform moves authored visual and ordinary physics together")
+	await runner.settle()
+	runner.check(panel.world.global_transform.is_equal_approx(map.global_transform) and wires.all(func(wire): return wire.global_transform.is_equal_approx(delta*wire_before[wire])),"bound collision overlay follows actual root translation and rotation in world coordinates")
+	runner.check(panel.scene_local_pose==baseline_pose and panel.scene_parent_pose==baseline_parent and panel.scene_baselines==baseline_content and not panel.apply_scene(),"render pose sync preserves baseline and still rejects stale draft Apply")
 	var history=undo.get_history_undo_redo(undo.get_object_history_id(scene))
-	history.undo()
+	history.undo(); await runner.settle()
+	runner.check(wires.all(func(wire): return wire.global_transform.is_equal_approx(wire_before[wire])),"bound collision overlay follows native transform Undo")
 	runner.check(map.transform.is_equal_approx(before) and visual.global_transform.is_equal_approx(visual_before) and physics.global_transform.is_equal_approx(physics_before),"root transform Undo restores visual and collision positions")
-	history.redo()
+	history.redo(); await runner.settle()
+	runner.check(wires.all(func(wire): return wire.global_transform.is_equal_approx(delta*wire_before[wire])),"bound collision overlay follows native transform Redo")
 	runner.check(map.transform.is_equal_approx(after) and physics.global_transform.is_equal_approx(delta*physics_before),"root transform Redo keeps visual and collision aligned")
 	var host:=Node3D.new(); host.name="MovedMapHost"
 	var copy: Node3D=map.duplicate(); copy.transform=map.global_transform; host.add_child(copy)

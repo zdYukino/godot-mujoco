@@ -440,7 +440,18 @@ func browse_height() -> void:
 		rebuild(); dialog.queue_free())
 	dialog.canceled.connect(dialog.queue_free); dialog.popup_centered_ratio(.7)
 
+func sync_bound_preview_pose() -> void:
+	if not plugin or scene_map_path.is_empty() or not is_instance_valid(world): return
+	var root:=EditorInterface.get_edited_scene_root()
+	var target: Node=root.get_node_or_null(scene_map_path) if root else null
+	# Follow only this draft's known authored identities (including own Undo/Redo).
+	# This is a render pose, not acceptance of external edits: keep the captured
+	# parent/local poses and content baselines unchanged for Apply conflict checks.
+	if target is Node3D and scene_baselines.has(target.get_instance_id()):
+		world.global_transform=target.global_transform
+
 func _process(delta: float) -> void:
+	sync_bound_preview_pose()
 	poll += delta
 	if poll >= 2: poll = 0; refresh_status()
 
