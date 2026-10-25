@@ -7,6 +7,8 @@ var document: RefCounted
 var content: Dictionary = {}
 var file_path := ""
 var dirty := false
+# Session-only UI state; never part of MJCF or saved scene physics.
+var preview_enabled := false
 var draft: Dictionary = {}
 
 func activate() -> void:

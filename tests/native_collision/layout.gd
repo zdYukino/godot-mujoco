@@ -25,6 +25,9 @@ func run(plugin) -> void:
 	check(plugin.dock.get_parent()!=EditorInterface.get_editor_main_screen(),"property UI is docked outside central main screen")
 	for root in plugin.preview_roots:
 		check(root.owner==null and root.get_parent()==EditorInterface.get_editor_viewport_3d(0),"draft root is outside the edited scene in the native viewport")
+	check(not plugin.state.preview_enabled and plugin.panel.meshes.is_empty() and plugin.panel.collision_overlays.is_empty(),"fresh editor never renders implicit MJCF default floor")
+	plugin.scene_switched(EditorInterface.get_edited_scene_root()); await settle()
+	check(plugin.panel.meshes.is_empty() and plugin.panel.preview_root.get_child_count()==0,"new scene refresh keeps unopened MJCF draft empty")
 	plugin.view_controls.set_modes(true,true)
 	plugin.map_panel.path_field.text="res://fixtures/box.glb"; plugin.map_panel.unit.select(1)
 	check(plugin.map_panel.import_source(false),"map fixture imports into native view")
@@ -35,6 +38,11 @@ func run(plugin) -> void:
 	map.session.history.undo(); map.rebuild(); check(map.session.specs.is_empty(),"map draft undo")
 	map.session.history.redo(); map.rebuild(); check(map.session.specs[path].friction==.4,"map draft redo")
 	plugin.panel.add_primitive("box")
+	check(plugin.state.preview_enabled and not plugin.panel.meshes.is_empty(),"explicit primitive creation activates document preview")
+	var document_before: Dictionary=plugin.state.document.snapshot()
+	plugin.panel.set_draft_preview(false)
+	check(plugin.panel.meshes.is_empty() and plugin.panel.collision_overlays.is_empty() and plugin.state.document.snapshot()==document_before,"explicit draft hide removes overlays without changing physics document")
+	plugin.panel.set_draft_preview(true)
 	plugin.panel.select_entity("geom",str(plugin.state.document.geometry()[0].name))
 	if plugin.panel.inputs.has("friction"):
 		plugin.panel.inputs.friction.text="[0.4,0.005,0.0001]";plugin.panel.pending=true

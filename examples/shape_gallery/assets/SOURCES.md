@@ -20,3 +20,7 @@
 `gallery.xml`、圆锥顶点/三角形及基础盒形地板由本项目 `generate_source.py` 原创生成，沿用仓库代码许可。圆锥没有来自外部模型库。当前地板无 NVIDIA 纹理、网格或 USD 数据。
 
 NVIDIA Isaac Sim Flat Grid / default_environment.usd 未打包、未转换、未上传；其公开分发许可尚未确认。当前地板只是用于物理测试的临时基础外观，最终地板方案仍待用户选择。
+
+## Godot 导入设置
+
+随示例跟踪 `.hdr.import`：`compress/mode=0`、`compress/hdr_compression=0`、`detect_3d/compress_to=0`。禁用检测为 3D 后自动转 VRAM/BPTC 压缩，避免首次真实渲染触发昂贵的重压缩。原 HDR 字节、4K 分辨率和动态范围不变；代价是导入纹理缓存和显存占用高于块压缩版本（实际取决于渲染后端格式），并非零内存成本。`.godot` 生成缓存不随仓库提交。需要更小显存的用户可自行选择压缩，但应预留压缩时间和内存。

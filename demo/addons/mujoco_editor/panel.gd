@@ -44,6 +44,7 @@ var orbiting := false
 var edit_axis := 0
 var move_step := 0.1
 var rotate_step := 5.0
+var draft_preview: CheckBox
 var recovery_path := "user://mujoco_editor_recovery.json"
 
 func button(parent: Node, text: String, callback: Callable) -> Button:
@@ -56,6 +57,8 @@ func button(parent: Node, text: String, callback: Callable) -> Button:
 func _ready() -> void:
 	var toolbar := VBoxContainer.new()
 	Layout.group(self,"文档 / 导入 / 发布",false).add_child(toolbar)
+	draft_preview=CheckBox.new(); draft_preview.text="显示 MJCF 草稿（独立于正式场景）"; draft_preview.button_pressed=state.preview_enabled; toolbar.add_child(draft_preview)
+	draft_preview.toggled.connect(set_draft_preview)
 	button(toolbar, "Import MJCF", func(): file_dialog(false, true))
 	button(toolbar, "检查来源", check_sources)
 	button(toolbar, "重导入来源（明确丢弃本地）", confirm_reimport)
@@ -178,6 +181,7 @@ func execute(command: Dictionary) -> bool:
 	return true
 
 func record_change(before: Dictionary, title: String) -> void:
+	state.preview_enabled=true
 	var after: Dictionary = state.snapshot()
 	var history := plugin.get_undo_redo()
 	history.create_action(title, UndoRedo.MERGE_DISABLE, state)
@@ -574,12 +578,20 @@ func apply_fields() -> bool:
 		return execute({"op":"qpos", "name":selected.name, "value":values.set_qpos})
 	return execute({"op":"set", "kind":selected.kind, "name":selected.name, "values":values})
 
+func set_draft_preview(enabled: bool) -> void:
+	state.preview_enabled=enabled
+	rebuild_meshes()
+
 func rebuild_meshes() -> void:
 	for overlay in collision_overlays.values(): overlay.free()
 	collision_overlays.clear()
 	for mesh in meshes.values():
 		mesh.free()
 	meshes.clear()
+	draft_preview.set_pressed_no_signal(state.preview_enabled)
+	if not state.preview_enabled:
+		collision_notice.text="尚未启用 MJCF 草稿预览；正式场景仍正常显示。导入、创建或勾选后启用。"
+		return
 	for geom in state.document.geometry():
 		var instance := MeshInstance3D.new()
 		var size: Vector3 = geom.size
