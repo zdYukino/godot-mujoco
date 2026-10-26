@@ -31,7 +31,7 @@ Model combine(const std::vector<mjSpec*>&sources,bool serial){
  s->compiler.usethread=!serial;mark("combined_"+std::to_string(sources.size())+".compile_begin");Model m(mj_compile(s.get(),nullptr),mj_deleteModel);require(bool(m),mjs_getError(s.get()));mark("combined_"+std::to_string(sources.size())+".compile_end");return m;
 }
 int main(int argc,char**argv){try{
- require(argc>=3,"native PROJECT cold|hot [serial]");std::string base=argv[1];bool hot=std::string(argv[2])=="hot",serial=argc==4&&std::string(argv[3])=="serial";
+ require((argc==3||argc==4)&&(std::string(argv[2])=="cold"||std::string(argv[2])=="hot")&&(argc!=4||std::string(argv[3])=="serial"),"native PROJECT cold|hot [serial] (unknown mode rejected)");std::string base=argv[1];bool hot=std::string(argv[2])=="hot",serial=argc==4&&std::string(argv[3])=="serial";
  require(mj_version()==3016000,"requires MuJoCo 3.16.0");
  std::fprintf(stderr,"NATIVE_REPRO_CONFIG version=%s cpu=%u hot=%d serial_combined=%d\n",mj_versionString(),std::thread::hardware_concurrency(),hot,serial);
  auto floor=donor(base+"/floor/model.xml","floor");auto first=donor(base+"/g1/model.xml","first");

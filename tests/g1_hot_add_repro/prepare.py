@@ -24,7 +24,8 @@ for name in ['project.godot','runtime.gd']: shutil.copyfile(pathlib.Path(__file_
 for name in ['UPSTREAM_LICENSE','upstream-manifest.json']: shutil.copyfile(root/'examples/g1_passive'/name,out/name)
 manifest['base_commit']=subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip()
 manifest['sdk_library_sha256']=hashlib.sha256((a.sdk/'lib/libmujoco.so.3.16.0').read_bytes()).hexdigest()
-assert manifest['sdk_library_sha256']==manifest['libmujoco.so.3.16.0'],'standalone and Godot must use the same library'
+assert manifest['sdk_library_sha256']==manifest['libmujoco.so.3.16.0'],'SDK and staged on-disk library hashes differ'
+manifest['library_identity_scope']='On-disk SDK and staged files only; actual runtime loader resolution is not verified.'
 (out/'manifest.json').write_text(json.dumps(manifest,indent=2)+'\n')
 subprocess.run(['c++','-std=c++17','-O0','-g','-I'+str(a.sdk/'include'),'-I'+str(root/'src/physics'),str(pathlib.Path(__file__).parent/'native.cpp'),'-L'+str(a.sdk/'lib'),'-Wl,-rpath,'+str(a.sdk/'lib'),'-lmujoco','-o',str(out/'native')],check=True)
 print(out)

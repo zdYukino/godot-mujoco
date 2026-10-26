@@ -9,6 +9,10 @@ func require(ok: bool, message: String) -> bool:
 	return ok
 func _initialize() -> void: call_deferred("run")
 func run() -> void:
+	var args:=OS.get_cmdline_user_args()
+	if args!=PackedStringArray(["cold"]) and args!=PackedStringArray(["hot"]) and args!=PackedStringArray(["hot","probes"]):
+		printerr("Usage: -- cold | hot | hot probes (unknown mode rejected)")
+		quit(2); return
 	var hot:=OS.get_cmdline_user_args().has("hot")
 	var probes:=OS.get_cmdline_user_args().has("probes")
 	mark("begin",{"hot":hot,"probes":probes,"godot":Engine.get_version_info().string,"cpu":OS.get_processor_count()})

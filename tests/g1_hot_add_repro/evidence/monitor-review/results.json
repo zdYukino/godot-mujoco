@@ -1,0 +1,71 @@
+[
+  {
+    "case": "normal",
+    "passed": true,
+    "reason": "completed",
+    "cleanup": {
+      "pgid": 43093,
+      "signals": [
+        "SIGTERM"
+      ],
+      "remaining": {},
+      "errors": []
+    }
+  },
+  {
+    "case": "normal_orphan",
+    "passed": true,
+    "reason": "completed",
+    "cleanup": {
+      "pgid": 43095,
+      "signals": [
+        "SIGTERM",
+        "SIGKILL"
+      ],
+      "remaining": {},
+      "errors": []
+    }
+  },
+  {
+    "case": "timeout",
+    "passed": true,
+    "reason": "timeout",
+    "cleanup": {
+      "pgid": 43098,
+      "signals": [
+        "SIGTERM",
+        "SIGKILL"
+      ],
+      "remaining": {},
+      "errors": []
+    }
+  },
+  {
+    "case": "interrupt",
+    "passed": true,
+    "reason": "monitor_interrupted",
+    "cleanup": {
+      "pgid": 43101,
+      "signals": [
+        "SIGTERM",
+        "SIGKILL"
+      ],
+      "remaining": {},
+      "errors": []
+    }
+  },
+  {
+    "case": "exception",
+    "passed": true,
+    "reason": "monitor_exception",
+    "cleanup": {
+      "pgid": 43104,
+      "signals": [
+        "SIGTERM",
+        "SIGKILL"
+      ],
+      "remaining": {},
+      "errors": []
+    }
+  }
+]
