@@ -1,0 +1,54 @@
+{
+  "command": [
+    "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+    "/tmp/gmj-monitor-test-3xo53jcu/child.py",
+    "/tmp/gmj-monitor-test-3xo53jcu/normal_orphan.pids.json",
+    "orphan"
+  ],
+  "elapsed_seconds": 3.130205706002016,
+  "exit": 0,
+  "reason": "completed",
+  "error": null,
+  "peak_sampled_rss_kib": 84,
+  "lowest_available_kib": 14836216,
+  "cpu_thread_samples": [
+    {
+      "elapsed": 0.0005672269981005229,
+      "threads": {
+        "43095": {
+          "state": "R",
+          "utime_ticks": 0,
+          "stime_ticks": 0,
+          "wchan": "0"
+        }
+      }
+    }
+  ],
+  "cgroup_before": {
+    "/sys/fs/cgroup/memory.current": "3211567104\n",
+    "/sys/fs/cgroup/memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+    "/sys/fs/cgroup/memory.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/memory.pressure'",
+    "/sys/fs/cgroup/io.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/io.pressure'",
+    "/sys/fs/cgroup/cpu.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/cpu.pressure'"
+  },
+  "cgroup_after": {
+    "/sys/fs/cgroup/memory.current": "3211730944\n",
+    "/sys/fs/cgroup/memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+    "/sys/fs/cgroup/memory.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/memory.pressure'",
+    "/sys/fs/cgroup/io.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/io.pressure'",
+    "/sys/fs/cgroup/cpu.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/cpu.pressure'"
+  },
+  "cleanup": {
+    "pgid": 43095,
+    "signals": [
+      "SIGTERM",
+      "SIGKILL"
+    ],
+    "remaining": {},
+    "errors": []
+  },
+  "loader_environment": {
+    "LD_LIBRARY_PATH": null,
+    "LD_PRELOAD": null
+  }
+}

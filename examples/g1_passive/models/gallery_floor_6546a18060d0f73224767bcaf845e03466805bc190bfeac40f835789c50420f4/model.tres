@@ -1,0 +1,31 @@
+[gd_resource type="Resource" script_class="MjModelResource" format=3]
+
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/model_resource.gd" id="1_r57xa"]
+
+[resource]
+script = ExtResource("1_r57xa")
+snapshot = {
+"format": 1,
+"source": "",
+"state": {
+"act": [],
+"ctrl": [],
+"integration": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"qpos": [],
+"qvel": [],
+"time": 0.0
+},
+"xml": "<mujoco model=\"MuJoCo Model\">
+  <compiler angle=\"radian\"/>
+
+  <option integrator=\"implicitfast\"/>
+
+  <worldbody>
+    <geom name=\"floor_geom\" size=\"6 4 0.1\" pos=\"0 0 -0.1\" type=\"box\" friction=\"0.9\" rgba=\"0.25 0.28 0.32 1\"/>
+  </worldbody></mujoco>"
+}
+provenance = {
+"assets": {},
+"source": "",
+"sources": {}
+}

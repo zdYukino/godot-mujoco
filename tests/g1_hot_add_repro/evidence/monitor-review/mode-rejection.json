@@ -1,0 +1,12 @@
+[
+  {
+    "mode": "native",
+    "exit": 1,
+    "output": "NATIVE_REPRO_RESULT FAIL native PROJECT cold|hot [serial] (unknown mode rejected)\n"
+  },
+  {
+    "mode": "godot",
+    "exit": 2,
+    "output": "Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org\n\nUsage: -- cold | hot | hot probes (unknown mode rejected)\n"
+  }
+]

@@ -1,3 +1,4 @@
+#include "mj_load_trace.h"
 #include "mj_physics_server.h"
 #include "mj_options.h"
 #include "../mj_editor_document.h"
@@ -5,10 +6,10 @@
 namespace godot {
 namespace {
 Array values(const mjtNum*p,int count){Array result;for(int i=0;i<count;++i)result.push_back(p[i]);return result;}
-Dictionary initial_state(const mjModel*m,const mjData*d){Dictionary result,joints,controls,activation,counts;counts["geom"]=m->ngeom;counts["joint"]=m->njnt;counts["actuator"]=m->nu;counts["equality"]=m->neq;counts["tendon"]=m->ntendon;counts["sensor"]=m->nsensor;result["counts"]=counts;
+Dictionary initial_state(const mjModel*m,const mjData*d){gmj_load_trace::mark("load.initial_state_begin");Dictionary result,joints,controls,activation,counts;counts["geom"]=m->ngeom;counts["joint"]=m->njnt;counts["actuator"]=m->nu;counts["equality"]=m->neq;counts["tendon"]=m->ntendon;counts["sensor"]=m->nsensor;result["counts"]=counts;
  for(int j=0;j<m->njnt;++j){Dictionary state;int type=m->jnt_type[j];state["qpos"]=values(d->qpos+m->jnt_qposadr[j],type==mjJNT_FREE?7:type==mjJNT_BALL?4:1);state["qvel"]=values(d->qvel+m->jnt_dofadr[j],type==mjJNT_FREE?6:type==mjJNT_BALL?3:1);joints[String(mj_id2name(m,mjOBJ_JOINT,j))]=state;}
  for(int a=0;a<m->nu;++a){String name(mj_id2name(m,mjOBJ_ACTUATOR,a));controls[name]=d->ctrl[a];if(m->actuator_actnum[a])activation[name]=values(d->act+m->actuator_actadr[a],m->actuator_actnum[a]);}
- result["joints"]=joints;result["controls"]=controls;result["activation"]=activation;return result;
+ result["joints"]=joints;result["controls"]=controls;result["activation"]=activation;gmj_load_trace::mark("load.initial_state_end");return result;
 }
 }
 bool MjPhysicsServer3D::scene_configure_model(const RID&r,const Dictionary&snapshot,const String&directory){
@@ -22,14 +23,23 @@ bool MjPhysicsServer3D::scene_configure_model(const RID&r,const Dictionary&snaps
  s->dirty=true;if(!rebuild(*s)){s->options=old;s->authored_options=authored;s->gravity_direction=direction;s->gravity=gravity;return false;}s->params[AREA_PARAM_GRAVITY]=s->gravity;s->params[AREA_PARAM_GRAVITY_VECTOR]=s->gravity_direction;s->accumulator=0;return true;
 }
 RID MjPhysicsServer3D::scene_load_model(const RID&r,const Dictionary&snapshot,const String&directory,const String&label,const Transform3D&pose){
+ gmj_load_trace::Scope trace;
  auto*s=space(r);if(!s)return {};if(!s->paused||flushing||!s->authored_options){s->last_error="A configured, paused runtime world is required";return {};}
- Ref<MjEditorDocument> doc;doc.instantiate();if(!doc->restore_at(snapshot,directory)){s->last_error=doc->get_error();return {};}
- auto*m=doc->native_model();String conflict=gmj_option_conflict(s->options,m->opt);
+ gmj_load_trace::mark("load.document_construct_begin");Ref<MjEditorDocument> doc;doc.instantiate();gmj_load_trace::mark("load.document_construct_end");gmj_load_trace::mark("load.restore_begin");if(!doc->restore_at(snapshot,directory)){s->last_error=doc->get_error();return {};}
+ gmj_load_trace::mark("load.restore_end");auto*m=doc->native_model();String conflict=gmj_option_conflict(s->options,m->opt);
  if(!conflict.is_empty()){s->last_error="World/model option conflict: "+conflict;return {};}
  // Global userdata and mocap target semantics do not belong to a model instance.
  // Reject rather than silently dropping or sharing those mutable global arrays.
  if(m->nuserdata||m->nmocap||m->nkey){s->last_error="Runtime composition does not support global userdata, mocap bodies or keyframes";return {};}
- return scene_insert(*s,doc->copy_spec(),label,pose,true,initial_state(m,doc->native_data()));
+ gmj_load_trace::mark("load.insert_arguments_begin");
+ // Capture state before consuming the temporary document. scene_insert owns
+ // the spec on every success/failure path, so no compiled mesh copy is needed.
+ Dictionary initial=initial_state(m,doc->native_data());
+ gmj_load_trace::mark("load.take_spec_begin");
+ auto*spec=doc->take_spec();
+ gmj_load_trace::mark("load.take_spec_end");
+ RID result=scene_insert(*s,spec,label,pose,true,initial);
+ gmj_load_trace::mark("load.insert_returned",result.is_valid());return result;
 }
 bool MjPhysicsServer3D::scene_set_actuator(const RID&r,const RID&id,const String&name,double value){
  {std::lock_guard<std::mutex> lock(edits_mutex);for(const auto &pending:model_edits)if(pending.object==id)return false;}

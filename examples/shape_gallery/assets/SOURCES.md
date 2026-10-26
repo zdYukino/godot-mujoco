@@ -15,11 +15,11 @@
 
 准确表述是“Isaac Lab 示例引用的同款原作者 HDRI”，并非将 NVIDIA 资产包的许可套用到此文件；从原作者直接获取的该资产适用 CC0。
 
-## 形状与临时地板
+## 形状与原创网格地板
 
 `gallery.xml`、圆锥顶点/三角形及基础盒形地板由本项目 `generate_source.py` 原创生成，沿用仓库代码许可。圆锥没有来自外部模型库。当前地板无 NVIDIA 纹理、网格或 USD 数据。
 
-NVIDIA Isaac Sim Flat Grid / default_environment.usd 未打包、未转换、未上传；其公开分发许可尚未确认。当前地板只是用于物理测试的临时基础外观，最终地板方案仍待用户选择。
+NVIDIA Isaac Sim Flat Grid / default_environment.usd 未打包、未转换、未上传；其公开分发许可尚未确认。本项目采用用户选定的原创“纯色 + 固定间距线条”方案，参考常见 MuJoCo 地板风格，没有复制其具体原纹理。`floor_grid.gdshader` 为项目原创，沿用仓库代码许可。
 
 ## Godot 导入设置
 

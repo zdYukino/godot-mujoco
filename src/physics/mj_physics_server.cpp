@@ -1,3 +1,4 @@
+#include "mj_load_trace.h"
 #include "mj_state_transfer.h"
 #include "mj_physics_server.h"
 #include <godot_cpp/variant/utility_functions.hpp>
@@ -237,6 +238,7 @@ static Vector3 native_com_offset(const mjModel *model,int body_id,const Transfor
  return pose.basis.xform(mj_to_godot(Vector3(p[0],p[1],p[2])));
 }
 bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,bool validate_dynamics){
+ gmj_load_trace::mark("rebuild.enter",s.imported.size(),s.paused);
  if(!s.dirty)return s.model&&s.data;
  std::ostringstream xml;xml.imbue(std::locale::classic());xml<<std::setprecision(17)<<"<mujoco model=\"GodotPhysicsSpace\"><compiler angle=\"radian\" fusestatic=\"false\"/><option timestep=\"0.002\" gravity=\"";vector_xml(xml,godot_to_mj(s.gravity_direction*s.gravity));xml<<"\"/><worldbody>";
  std::vector<std::pair<RID,int>> owners;
@@ -307,7 +309,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  mjs_setDeepCopy(spec,1);
  if(s.authored_options)spec->option=s.options;else if(!s.imported.empty())spec->option.integrator=mjINT_IMPLICITFAST;
  for(auto &entry:s.imported){
-  auto &object=*entry.second;
+  gmj_load_trace::mark("rebuild.attach_begin",entry.first);auto &object=*entry.second;
   auto *frame=mjs_addFrame(mjs_findBody(spec,"world"),nullptr);
   Vector3 pos=godot_to_mj(object.pose.origin);
   Quaternion q=godot_to_mj(object.pose.basis).get_rotation_quaternion();
@@ -326,9 +328,17 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
   if(!attached){s.last_error=String::utf8(mjs_getError(spec));mj_deleteSpec(spec);return false;}
   if(object.whole_model){auto*wrapper=mjs_asBody(attached);if(!wrapper||!mjs_bodyToFrame(&wrapper)){s.last_error="Could not flatten attached model world";mj_deleteSpec(spec);return false;}}
 
+  gmj_load_trace::mark("rebuild.attach_end",entry.first);
  }
  // Compile entirely off to the side. Never mutate the active model on failure.
- mjModel *model=mj_compile(spec,nullptr);
+ // Diagnostic only: isolate the compiler's mesh worker pool for a traced
+ // load transaction. Never alter authored specs, solver options or stepping.
+ const char *serial_compile=std::getenv("GMJ_DIAGNOSTIC_SERIAL_COMPILE");
+ if(gmj_load_trace::enabled&&serial_compile&&std::strcmp(serial_compile,"1")==0){
+  spec->compiler.usethread=0;
+  gmj_load_trace::mark("rebuild.diagnostic_serial_compile",std::thread::hardware_concurrency());
+ }
+ gmj_load_trace::mark("rebuild.compile_begin",spec->compiler.usethread);mjModel *model=mj_compile(spec,nullptr);gmj_load_trace::mark("rebuild.compile_end",model?model->ngeom:-1,model?model->nv:-1);
  if(!model){s.last_error=String::utf8(mjs_getError(spec));mj_deleteSpec(spec);return false;}
  // Attachment must retain every named physical element; never silently drop
  // constraints or actuators when removing the artificial world wrapper.
@@ -336,13 +346,13 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
   const mjtObj kinds[]={mjOBJ_GEOM,mjOBJ_JOINT,mjOBJ_ACTUATOR,mjOBJ_EQUALITY,mjOBJ_TENDON,mjOBJ_SENSOR};const char*keys[]={"geom","joint","actuator","equality","tendon","sensor"};const mjtSize sizes[]={model->ngeom,model->njnt,model->nu,model->neq,model->ntendon,model->nsensor};
   for(int k=0;k<6;++k){int found=0;for(int i=0;i<sizes[k];++i){const char*n=mj_id2name(model,kinds[k],i);if(n&&std::string(n).rfind(o.prefix,0)==0)++found;}if(found!=int(counts[keys[k]])){s.last_error="Composition changed model element count: "+String(keys[k]);mj_deleteModel(model);mj_deleteSpec(spec);return false;}}
  }
- mj_deleteSpec(spec);mjData *data=mj_makeData(model);
+ gmj_load_trace::mark("rebuild.spec_delete_begin");mj_deleteSpec(spec);gmj_load_trace::mark("rebuild.make_data_begin",model->narena,model->nbuffer);mjData *data=mj_makeData(model);gmj_load_trace::mark("rebuild.make_data_end");
  if(!data){mj_deleteModel(model);s.last_error="Could not allocate candidate data";return false;}
  // Initialize new bounded joints inside their URDF limits, with matching targets.
  for(int j=0;j<model->njnt;++j)if(model->jnt_type[j]==mjJNT_HINGE && model->jnt_limited[j])
   data->qpos[model->jnt_qposadr[j]]=std::clamp(0.0,model->jnt_range[2*j]+0.001,model->jnt_range[2*j+1]-0.001);
  for(int a=0;a<model->nu;++a)if(model->actuator_trntype[a]==mjTRN_JOINT){int j=model->actuator_trnid[2*a];data->ctrl[a]=data->qpos[model->jnt_qposadr[j]];}
- gmj_transfer_state(s.model,s.data,model,data);
+ gmj_load_trace::mark("rebuild.transfer_begin");gmj_transfer_state(s.model,s.data,model,data);gmj_load_trace::mark("rebuild.transfer_end");
  // Initialize only newly inserted names. Existing instances retain live state.
  for(auto &entry:s.imported){auto&o=*entry.second;if(!o.whole_model)continue;Dictionary joints=o.initial["joints"],controls=o.initial["controls"],activation=o.initial["activation"];Basis rotation=godot_to_mj(o.pose.basis);Vector3 translation=godot_to_mj(o.pose.origin);
   Array names=joints.keys();for(int i=0;i<names.size();++i){String short_name=names[i];std::string full=o.prefix+short_name.utf8().get_data();int j=mj_name2id(model,mjOBJ_JOINT,full.c_str());if(j<0||(s.model&&mj_name2id(s.model,mjOBJ_JOINT,full.c_str())>=0))continue;Dictionary state=joints[short_name];Array q=state["qpos"],v=state["qvel"];int qa=model->jnt_qposadr[j],va=model->jnt_dofadr[j];for(int k=0;k<q.size();++k)data->qpos[qa+k]=double(q[k]);for(int k=0;k<v.size();++k)data->qvel[va+k]=double(v[k]);
@@ -377,7 +387,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  }
  mj_normalizeQuat(model,data->qpos);
  int warnings_before[mjNWARNING];for(int i=0;i<mjNWARNING;++i)warnings_before[i]=data->warning[i].number;
- mj_forward(model,data);
+ gmj_load_trace::mark("rebuild.forward_options",model->opt.integrator,model->opt.solver);gmj_load_trace::mark("rebuild.forward_begin",data->threadpool!=0);mj_forward(model,data);gmj_load_trace::mark("rebuild.forward_end",data->ncon);
  if(validate_dynamics){
   auto valid=[](const mjtNum*values,int count,bool bounded){for(int i=0;i<count;++i)if(!std::isfinite(values[i])||(bounded&&mju_isBad(values[i])))return false;return true;};
   if(!valid(data->mocap_pos,3*model->nmocap,true)||!valid(data->mocap_quat,4*model->nmocap,true)||!valid(data->qpos,model->nq,true)||!valid(data->qvel,model->nv,true)||!valid(data->qacc,model->nv,true)||!valid(data->qacc_smooth,model->nv,true)||
@@ -390,12 +400,12 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  for(int i=0;i<model->nq;++i)if(!std::isfinite(data->qpos[i])){mj_deleteData(data);mj_deleteModel(model);s.last_error="Nonfinite candidate state";return false;}
  std::vector<std::pair<RID,int>> mapped(model->ngeom);
  for(size_t i=0;i<owners.size();++i){int g=mj_name2id(model,mjOBJ_GEOM,("g"+std::to_string(i)).c_str());if(g>=0)mapped[g]=owners[i];}
- if(s.data)mj_deleteData(s.data);if(s.model)mj_deleteModel(s.model);
+ gmj_load_trace::mark("rebuild.old_delete_begin");if(s.data)mj_deleteData(s.data);if(s.model)mj_deleteModel(s.model);gmj_load_trace::mark("rebuild.old_delete_end");
  s.model=model;s.data=data;s.geom_owners=std::move(mapped);s.dirty=false;s.last_error="";++s.revision;
  for(auto &entry:bodies)if(entry.second->space==s.rid)entry.second->contacts.clear();
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;std::string name="b"+std::to_string(b.rid.get_id());b.mj_body=mj_name2id(model,mjOBJ_BODY,name.c_str());if(!validate_dynamics)write_body(b);}
  // Validated transactions commit exactly the data already checked above.
- if(!validate_dynamics)mj_forward(model,data);remember_initial_state(s);return true;
+ gmj_load_trace::mark("rebuild.commit_forward_begin");if(!validate_dynamics)mj_forward(model,data);gmj_load_trace::mark("rebuild.commit_forward_end");remember_initial_state(s);gmj_load_trace::mark("rebuild.exit");return true;
 }
 void MjPhysicsServer3D::write_body(MjBody&b){
  if(b.mode==BODY_MODE_KINEMATIC) {
