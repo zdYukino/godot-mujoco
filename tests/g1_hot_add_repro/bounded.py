@@ -37,7 +37,7 @@ with a.log.open('x') as log:
      except OSError: pass
    except FileNotFoundError:pass
    samples.append(row);last_sample=elapsed
-  if elapsed>=a.seconds:reason='timeout' 
+  if elapsed>=a.seconds:reason='timeout'
   elif low<a.min_available_mib*1024:reason='low_available_memory'
   elif peak>a.max_rss_mib*1024:reason='rss_limit'
   if reason!='completed':
