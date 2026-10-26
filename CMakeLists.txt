@@ -195,6 +195,18 @@ add_library(godot_mujoco SHARED
     src/physics/query_ccd/vec3.c
     src/physics/mj_unsupported.cpp)
 
+# Interval searches need optimized scalar arithmetic even in template_debug.
+# Keep ordinary IEEE operations: reassociation/fast-math breaks enclosures.
+option(GMJ_OPTIMIZE_SPATIAL_QUERIES "Optimize bounded spatial-query certificates" ON)
+if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    set_property(SOURCE src/physics/mj_direct_space_state.cpp APPEND PROPERTY
+        COMPILE_OPTIONS -fno-fast-math -ffp-contract=off)
+    if(GMJ_OPTIMIZE_SPATIAL_QUERIES)
+        set_property(SOURCE src/physics/mj_direct_space_state.cpp APPEND PROPERTY
+            COMPILE_OPTIONS -O2)
+    endif()
+endif()
+
 target_link_libraries(godot_mujoco PRIVATE godot-cpp "${MUJOCO_LINK_LIB}")
 target_include_directories(godot_mujoco PRIVATE "${MUJOCO_INCLUDE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/src/physics/query_ccd")
 

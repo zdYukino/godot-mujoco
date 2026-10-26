@@ -30,6 +30,7 @@ void MjPhysicsServer3D::_bind_methods(){
  ClassDB::bind_method(D_METHOD("scene_cancel_preset","request"),&MjPhysicsServer3D::scene_cancel_preset);
  ClassDB::bind_method(D_METHOD("scene_edit_result","request"),&MjPhysicsServer3D::scene_edit_result);
  ClassDB::bind_method(D_METHOD("scene_configure_model","space","snapshot","directory"),&MjPhysicsServer3D::scene_configure_model);
+ ClassDB::bind_method(D_METHOD("scene_set_query_owner","space","object","object_id","ray_pickable"),&MjPhysicsServer3D::scene_set_query_owner);
  ClassDB::bind_method(D_METHOD("scene_load_model","space","snapshot","directory","label","pose"),&MjPhysicsServer3D::scene_load_model);
  ClassDB::bind_method(D_METHOD("scene_set_actuator","space","object","name","value"),&MjPhysicsServer3D::scene_set_actuator);
  ClassDB::bind_method(D_METHOD("scene_release_model","space","object"),&MjPhysicsServer3D::scene_release_model);

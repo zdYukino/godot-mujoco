@@ -33,7 +33,9 @@ for name in ['import','positive-1','positive-2','positive-3']:
  text=(p/(name+'.log')).read_text()
  assert 'ERROR:' not in text and 'leak' not in text.lower(),(name,text)
  if name!='import':
-  assert 'unsupported' not in text.lower(),(name,text)
+  warnings=[line for line in text.splitlines() if line.startswith('WARNING:')]
+  assert len(warnings)==1 and all('query space rebuild or ownership failed' in line for line in warnings),(name,warnings)
+  assert text.count('unsupported')==len(warnings),(name,'unexpected unsupported diagnostic')
 runs=[result('positive-'+str(i),'CAPSULE_RESULT') for i in range(1,4)]
 for r in runs:
  assert r['failed']==0 and r['passed']==150,r

@@ -1,0 +1,41 @@
+{
+  "seed": 20261026,
+  "units": "m",
+  "axes": "Y_UP",
+  "grid_cells": 12,
+  "octree_maxdepth": 6,
+  "stairs": {
+    "steps": 6,
+    "depth_m": 0.5,
+    "rise_m": 0.18
+  },
+  "depression": {
+    "floor_y_m": -0.35,
+    "rim_y_m": 0.3,
+    "floor_halfwidth_m": 0.45
+  },
+  "chunks": [
+    {
+      "name": "stairs",
+      "offset_x_m": -3.0,
+      "vertices": 28,
+      "triangles": 52,
+      "volume_m3": 4.199999999999999
+    },
+    {
+      "name": "depression",
+      "offset_x_m": 0.0,
+      "vertices": 338,
+      "triangles": 672,
+      "volume_m3": 2.557076719576715
+    },
+    {
+      "name": "rough",
+      "offset_x_m": 3.0,
+      "vertices": 338,
+      "triangles": 672,
+      "volume_m3": 3.053179999010688
+    }
+  ],
+  "obj_sha256": "0349bd5a2f375312a3c297f06a13f303956733fb696507f56514d876ccaa7af3"
+}

@@ -49,5 +49,6 @@ func load_collisions() -> void:
 			for old in native_rids: PhysicsServer3D.free_rid(old)
 			native_rids.clear(); break
 		native_rids.append(id)
+		PhysicsServer3D.call("scene_set_query_owner",space,id,get_instance_id(),true)
 	PhysicsServer3D.call("scene_pause",space,paused)
 	if not last_error.is_empty(): push_error(last_error)

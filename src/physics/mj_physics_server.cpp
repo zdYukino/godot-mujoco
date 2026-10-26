@@ -400,8 +400,17 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  for(int i=0;i<model->nq;++i)if(!std::isfinite(data->qpos[i])){mj_deleteData(data);mj_deleteModel(model);s.last_error="Nonfinite candidate state";return false;}
  std::vector<std::pair<RID,int>> mapped(model->ngeom);
  for(size_t i=0;i<owners.size();++i){int g=mj_name2id(model,mjOBJ_GEOM,("g"+std::to_string(i)).c_str());if(g>=0)mapped[g]=owners[i];}
+ std::map<int,std::unique_ptr<MjBody>> imported_query_owners;
+ for(const auto &entry:s.imported){const auto&o=*entry.second;int local_shape=0;
+  for(int g=0;g<model->ngeom;++g){const char*name=mj_id2name(model,mjOBJ_GEOM,g);if(!name||std::string(name).rfind(o.prefix,0)!=0)continue;
+   auto owner=std::make_unique<MjBody>();owner->rid=o.rid;owner->space=s.rid;owner->object_id=o.query_object_id;owner->ray_pickable=o.query_ray_pickable;
+   owner->layer=uint32_t(model->geom_contype[g]);owner->mj_body=model->geom_bodyid[g];owner->mode=BODY_MODE_RIGID;
+   mapped[g]={o.rid,local_shape++};imported_query_owners[g]=std::move(owner);
+  }
+ }
+ s.query_sdf_fields.clear();
  gmj_load_trace::mark("rebuild.old_delete_begin");if(s.data)mj_deleteData(s.data);if(s.model)mj_deleteModel(s.model);gmj_load_trace::mark("rebuild.old_delete_end");
- s.model=model;s.data=data;s.geom_owners=std::move(mapped);s.dirty=false;s.last_error="";++s.revision;
+ s.model=model;s.data=data;s.geom_owners=std::move(mapped);s.imported_query_owners=std::move(imported_query_owners);s.dirty=false;s.last_error="";++s.revision;
  for(auto &entry:bodies)if(entry.second->space==s.rid)entry.second->contacts.clear();
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;std::string name="b"+std::to_string(b.rid.get_id());b.mj_body=mj_name2id(model,mjOBJ_BODY,name.c_str());if(!validate_dynamics)write_body(b);}
  // Validated transactions commit exactly the data already checked above.

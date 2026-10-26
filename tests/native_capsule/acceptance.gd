@@ -285,7 +285,7 @@ func run() -> void:
  PhysicsServer3D.body_set_mode(first_body,PhysicsServer3D.BODY_MODE_RIGID)
  state.intersect_shape(q)
  PhysicsServer3D.body_set_param(first_body,PhysicsServer3D.BODY_PARAM_MASS,1e-20)
- check(state.intersect_shape(q).is_empty() and point(Vector3.ZERO).is_empty() and state.collide_shape(q).is_empty() and state.get_rest_info(q).is_empty(),
+ check(state.intersect_shape(q).is_empty() and point(Vector3.ZERO).is_empty() and state.collide_shape(q).is_empty() and state.get_rest_info(q).is_empty() and not state.call("get_query_status").ok and str(state.call("get_query_status").error).contains("rebuild"),
   "failed capsule rebuild does not expose old query geometry")
  PhysicsServer3D.body_set_param(first_body,PhysicsServer3D.BODY_PARAM_MASS,1.0)
  check(state.intersect_shape(q).size()==3,"capsule overlap recovers after rejected rebuild")

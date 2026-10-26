@@ -73,6 +73,7 @@ func load_model() -> bool:
 	var label := str(get_path()) + "#" + str(get_instance_id())
 	trace_model_load("native_scene_load_begin")
 	model_rid = PhysicsServer3D.call("scene_load_model",space,model.snapshot,model.resource_path.get_base_dir(),label,global_transform)
+	if model_rid.is_valid(): PhysicsServer3D.call("scene_set_query_owner",space,model_rid,get_instance_id(),true)
 	trace_model_load("native_scene_load_end")
 	world.set_paused(was_paused)
 	trace_model_load("restore_pause_end")

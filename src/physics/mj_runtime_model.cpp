@@ -3,6 +3,7 @@
 #include "mj_options.h"
 #include "../mj_editor_document.h"
 #include <cmath>
+#include <godot_cpp/core/object.hpp>
 namespace godot {
 namespace {
 Array values(const mjtNum*p,int count){Array result;for(int i=0;i<count;++i)result.push_back(p[i]);return result;}
@@ -47,6 +48,14 @@ bool MjPhysicsServer3D::scene_set_actuator(const RID&r,const RID&id,const String
  int a=mj_name2id(s->model,mjOBJ_ACTUATOR,(it->second->prefix+name.utf8().get_data()).c_str());if(a<0)return false;
  if(s->model->actuator_ctrllimited[a]&&(value<s->model->actuator_ctrlrange[2*a]||value>s->model->actuator_ctrlrange[2*a+1]))return false;
  s->data->ctrl[a]=value;return true;
+}
+bool MjPhysicsServer3D::scene_set_query_owner(const RID&r,const RID&id,uint64_t object_id,bool pickable){
+ auto*s=space(r);if(!s||pending_free.count(id.get_id()))return false;
+ auto it=s->imported.find(id.get_id());if(it==s->imported.end())return false;
+ if(object_id&&!ObjectDB::get_instance(object_id))return false;
+ it->second->query_object_id=object_id;it->second->query_ray_pickable=pickable;
+ for(auto&e:s->imported_query_owners)if(e.second->rid==id){e.second->object_id=object_id;e.second->ray_pickable=pickable;}
+ return true;
 }
 bool MjPhysicsServer3D::scene_release_model(const RID&r,const RID&id){auto*s=space(r);if(!s||!s->imported.count(id.get_id()))return false;if(flushing){pending_free.insert(id.get_id());return true;}bool paused=s->paused;s->paused=true;bool ok=scene_remove(r,id);s->paused=paused;return ok;}
 int64_t MjPhysicsServer3D::scene_request_model_edit(const RID&r,const RID&id,const Dictionary&snapshot,const String&directory,int64_t expected_revision){

@@ -15,6 +15,7 @@ class MjEditorDocument : public RefCounted {
  mjModel *model=nullptr;
  mjData *data=nullptr;
  String error, source;
+ Dictionary explicit_mesh_options;
  int64_t revision=0;
  bool paused=true;
  double accumulator=0;
