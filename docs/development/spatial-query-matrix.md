@@ -181,7 +181,9 @@ See the derivation and remaining boundary below.
 python3 tests/spatial_queries/run.py --out /absolute/new/output --godot "$GODOT_BIN" --sdk "$MUJOCO_SDK_DIR"
 ~~~
 
-Add --extended for the unchanged seeded random numerical probes, multi-depth convergence and reproducible A/B/C cold/warm comparison. Core runs retain deterministic ULP/root/native-branch/joint-cell counterexamples and all essential end-to-end checks. See [test retention rationale](spatial-test-retention.md).\n\nEvery group has independent .log, .resources.json and monitor log.
+Add --extended for the unchanged seeded random numerical probes, multi-depth convergence and reproducible A/B/C cold/warm comparison. Core runs retain deterministic ULP/root/native-branch/joint-cell counterexamples and all essential end-to-end checks. See [test retention rationale](spatial-test-retention.md).
+
+Every group has independent .log, .resources.json and monitor log.
 results.json records results/return codes; provenance.json includes host,
 base commit/branch, individual source hashes and tested native binary hash (including unstaged continuation changes).
 Failed output directories are retained and never reused. RSS samples cover

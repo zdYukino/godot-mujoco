@@ -18,7 +18,12 @@ No acceptance logs, screenshots, failed attempts or counterexamples were deleted
   probes, analytic joint-domain counterexample, independent SAT oracle,
   primitive/Area/imported ray/overlap/cast, status failure/reset, lifetime,
   fast thin crossing, physical pit-vs-hull control, saved/reopened editor data.
-- Five older sweep/capsule/overlap/motion runners previously launched the exact\n  same deterministic positive matrix three times in fresh processes. They now run\n  once; all per-case predicates, negative suites and reset/lifetime checks remain.\n  Independent RID and CharacterBody tests both remain. Repeated-count-only\n  consistency assertions were removed with those duplicate launches.\n- Strict old SDF cast/thin precision remains explicitly tested at precision=0,
+- Five older sweep/capsule/overlap/motion runners previously launched the exact
+  same deterministic positive matrix three times in fresh processes. They now run
+  once; all per-case predicates, negative suites and reset/lifetime checks remain.
+  Independent RID and CharacterBody tests both remain. Repeated-count-only
+  consistency assertions were removed with those duplicate launches.
+- Strict old SDF cast/thin precision remains explicitly tested at precision=0,
   refinement=false. New finite-budget tests independently check the complete
   <=0.5/1mm bound, both actual poses, owners/normals, unchanged simulation,
   large-coordinate rejection and observable 0.1mm/initial-touch Unknown.

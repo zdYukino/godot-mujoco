@@ -5,7 +5,7 @@ func probe(state: PhysicsDirectSpaceState3D,q: PhysicsShapeQueryParameters3D,lab
 	var result: PackedFloat32Array=state.cast_motion(q)
 	var seconds:=(Time.get_ticks_usec()-start)/1000000.
 	var status: Dictionary=state.call("get_query_status")
-	var outcome: String="Unknown" if not status.ok else "Clear" if result.size()==2 and result[1]==1 else "Hit" if result.size()==2 else "Invalid"
+	var outcome: String="Unknown" if not status.ok else "Clear" if result==PackedFloat32Array([1,1]) else "Hit" if result.size()==2 else "Invalid"
 	var row: Dictionary={"name":label,"seconds":seconds,"result":Array(result),"status":status,"outcome":outcome}
 	check(outcome==expected or (expected=="HitOrUnknown" and outcome in ["Hit","Unknown"]),label+" outcome")
 	if outcome=="Hit":
@@ -56,6 +56,10 @@ func run():
 		for margin in [0.,.03]:
 			q.shape=shape;q.margin=margin;q.transform=Transform3D(Basis.from_euler(Vector3(.2,.3,.1)),Vector3(0,2,0));q.motion=Vector3(0,-4,0)
 			probe(state,q,shape.get_class()+" rotated margin="+str(margin),"Hit",map.native_rids)
+	# A real SDF hit in the last Float32 fraction must not be classified Clear.
+	q.shape=sphere;q.margin=0;q.transform=Transform3D(Basis.IDENTITY,Vector3(0,2,0));q.motion=Vector3(0,-2.15,0)
+	var endpoint: Dictionary=probe(state,q,"actual endpoint SDF hit","Hit",map.native_rids)
+	check(endpoint.result.size()==2 and endpoint.result[0]<1 and endpoint.result[1]==1,"actual endpoint bracket [safe<1,1] exercises budget and both pose checks")
 	q.shape=sphere;q.margin=0;q.transform=Transform3D(Basis.IDENTITY,Vector3(0,2,0));q.motion=Vector3.ZERO
 	probe(state,q,"zero motion clear","Clear",map.native_rids)
 	q.transform.origin=Vector3(0,-.25,0);q.motion=Vector3(0,-4,0)
