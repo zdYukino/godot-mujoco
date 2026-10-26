@@ -92,7 +92,10 @@ static func build(mesh: MeshInstance3D, root: Node3D, spec: Dictionary, settings
 				if edge.x < 2 or edge.x % 2 != 0 or edge.y != 0: return {"error":"SDF 要求闭合且一致绕序的三角面集合；可显式选择凸包或基础体"}
 			var quality: String=preload("sdf_quality.gd").validate(points,triangles)
 			if not quality.is_empty(): return {"error":quality}
-		asset = "<asset><mesh name='collision_mesh' vertex='%s' face='%s'/></asset>" % [" ".join(vertices)," ".join(indices)]
+		var depth: Variant=spec.get("octree_maxdepth",0)
+		if kind=="sdf" and spec.has("octree_maxdepth") and not Collision.integer_in_range(depth,3,8): return {"error":"SDF octree_maxdepth 需整值 3..8；拒绝无界分辨率"}
+		var octree: String="" # mjsMesh field: not an XML attribute in 3.16.0.
+		asset = "<asset><mesh name='collision_mesh' vertex='%s' face='%s'%s/></asset>" % [" ".join(vertices)," ".join(indices),octree]
 		geom = "<geom name='collision' type='%s' mesh='collision_mesh'%s/>" % [kind,material]
 	else:
 		var half := bounds.size*scale_value/2
@@ -110,9 +113,10 @@ static func build(mesh: MeshInstance3D, root: Node3D, spec: Dictionary, settings
 	var doc := MjEditorDocument.new()
 	if doc.inspect().version!=VERSION: return {"error":"需要精确 MuJoCo " + VERSION}
 	var snapshot := {"format":1,"xml":xml,"state":{},"source":""}
+	if kind=="sdf" and spec.has("octree_maxdepth"): snapshot["mesh_options"]={"collision_mesh":{"octree_maxdepth":int(spec.octree_maxdepth)}}; snapshot.format=2
 	if not doc.restore(snapshot): return {"error":doc.get_error()}
 	if kind=="sdf" and (doc.inspect().octree_cells>500000 or doc.inspect().model_buffer_bytes>67108864): return {"error":"SDF 编译结果超过产品预算：500000 八叉树单元/64 MiB 模型 buffer；请分块或显式选择替代"}
-	return {"error":"","snapshot":snapshot,"pose":Transform3D(rotation,pose.origin),"geometry":doc.geometry(),"document":doc,"contract":record(kind,kind,"","map_mjcf"),"source_hash":xml.sha256_text()}
+	return {"error":"","snapshot":snapshot,"pose":Transform3D(rotation,pose.origin),"geometry":doc.geometry(),"document":doc,"contract":record(kind,kind,"","map_mjcf"),"source_hash":JSON.stringify(snapshot,"",true,true).sha256_text() if snapshot.has("mesh_options") else xml.sha256_text()}
 
 static func contact_attributes(spec: Dictionary) -> Dictionary:
 	var material := ""
@@ -168,10 +172,11 @@ static func build_height(design: Dictionary, settings: Dictionary) -> Dictionary
 	return {"error":"","snapshot":snapshot,"pose":pose,"document":doc,"contract":record("hfield","hfield","","map_mjcf"),"source_hash":xml.sha256_text()}
 
 static func combine(entries: Array[Dictionary], relations: Dictionary, settings: Dictionary) -> Dictionary:
-	var names := {}; var modes := {}; var assets := ""; var bodies := ""; var contacts := ""
+	var names := {}; var modes := {}; var assets := ""; var bodies := ""; var contacts := ""; var mesh_options := {}
 	for i in entries.size():
 		var entry: Dictionary=entries[i]; var text: String=entry.snapshot.xml
 		var stem := "_"+str(i); names[entry.source_node]=stem; modes[entry.source_node]=entry.contract.actual_mode
+		for mesh_name in entry.snapshot.get("mesh_options",{}): mesh_options[str(mesh_name)+stem]=entry.snapshot.mesh_options[mesh_name].duplicate(true)
 		text=text.replace("collision_mesh","collision_mesh"+stem).replace("name='collision'","name='collision"+stem+"'")
 		assets += text.get_slice("<asset>",1).get_slice("</asset>",0) if text.contains("<asset>") else ""
 		var pose: Transform3D=entry.pose; var q:=pose.basis.get_rotation_quaternion()
@@ -210,5 +215,6 @@ static func combine(entries: Array[Dictionary], relations: Dictionary, settings:
 	if not opt.error.is_empty(): return opt
 	var xml:="<mujoco><compiler angle='radian'/>%s<asset>%s</asset><worldbody>%s</worldbody><contact>%s</contact></mujoco>" % [opt.xml,assets,bodies,contacts]
 	var snapshot:={"format":1,"xml":xml,"state":{},"source":""}; var doc:=MjEditorDocument.new()
+	if not mesh_options.is_empty(): snapshot["mesh_options"]=mesh_options; snapshot.format=2
 	if not doc.restore(snapshot): return {"error":doc.get_error()}
-	return {"error":"","entry":{"snapshot":snapshot,"pose":Transform3D.IDENTITY,"contract":{"schema":1,"actual_mode":"native_collection","status":"configured_unverified"},"source_hash":xml.sha256_text(),"source_node":"collection"}}
+	return {"error":"","entry":{"snapshot":snapshot,"pose":Transform3D.IDENTITY,"contract":{"schema":1,"actual_mode":"native_collection","status":"configured_unverified"},"source_hash":JSON.stringify(snapshot,"",true,true).sha256_text() if snapshot.has("mesh_options") else xml.sha256_text(),"source_node":"collection"}}

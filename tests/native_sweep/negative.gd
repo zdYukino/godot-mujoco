@@ -8,16 +8,18 @@ func run():
  var b=PhysicsServer3D.body_create();PhysicsServer3D.body_set_mode(b,PhysicsServer3D.BODY_MODE_STATIC)
  PhysicsServer3D.body_add_shape(b,ball);PhysicsServer3D.body_set_space(b,space)
  var q=PhysicsShapeQueryParameters3D.new();q.shape_rid=box;q.transform.origin=Vector3(-5,0,0);q.motion=Vector3(10,0,0)
- var ok=ds.cast_motion(q).is_empty()
+ var expanded: PackedFloat32Array=ds.cast_motion(q)
+ var ok=expanded.size()==2 and expanded[0]<=.3 and expanded[1]>=.3 and ds.call("get_query_status").ok
+ print("SWEEP_EXPANDED_BOX ",expanded)
  q.exclude=[b]
  ok=ok and ds.cast_motion(q)==PackedFloat32Array([1,1])
  q.shape_rid=ball;q.collide_with_areas=true
- ok=ok and ds.cast_motion(q).is_empty()
+ ok=ok and ds.cast_motion(q)==PackedFloat32Array([1,1]) and ds.call("get_query_status").ok
  q.collide_with_areas=false;q.exclude=[];q.transform.origin=Vector3(-3,2,0)
- ok=ok and ds.cast_motion(q).is_empty()
+ ok=ok and ds.cast_motion(q).is_empty() and not ds.call("get_query_status").ok
  PhysicsServer3D.shape_set_data(box,Vector3(1e-10,1,1));PhysicsServer3D.body_set_shape(b,0,box)
  PhysicsServer3D.shape_set_data(ball,1e-10);q.transform.origin=Vector3(-3,0,0)
- ok=ok and ds.cast_motion(q).is_empty()
+ ok=ok and ds.cast_motion(q).is_empty() and not ds.call("get_query_status").ok
  PhysicsServer3D.shape_set_data(ball,1.0);PhysicsServer3D.body_set_shape(b,0,ball)
  PhysicsServer3D.body_set_state(b,PhysicsServer3D.BODY_STATE_TRANSFORM,Transform3D(Basis.IDENTITY,Vector3(100000008,0,0)))
  q.transform.origin=Vector3(100000000,0,0)

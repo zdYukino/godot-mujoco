@@ -23,6 +23,7 @@ var axes: OptionButton
 var slice_level: SpinBox
 var configure_action: Button
 var strategy: OptionButton
+var sdf_depth: SpinBox
 var friction: SpinBox
 var layer: SpinBox
 var mask: SpinBox
@@ -108,6 +109,8 @@ func _ready() -> void:
 	strategy.select(9) # preferred SDF candidate, never auto-applied
 	row.add_child(strategy)
 	strategy.item_selected.connect(func(_index): refresh_contact_controls())
+	sdf_depth=number(row,"SDF 八叉树深度（0=引擎默认）",0,8,1); sdf_depth.value=0
+	sdf_depth.tooltip_text="仅 SDF：显式深度 3..8；按地图块编译，超出单元或内存预算将拒绝保存。0 保留原有引擎默认。"
 	friction = number(row,"摩擦",0,1,.01); friction.value = 1
 	layer = number(row,"Layer",0,4294967295,1); layer.value = 1
 	mask = number(row,"Mask",0,4294967295,1); mask.value = 1
@@ -149,7 +152,7 @@ func _ready() -> void:
 		if items.has(selected): items[selected].select(0); select_tree()
 		for key in ["path_field","advanced","parts","relations","world_options"]: get(key).text=saved.get(key,"")
 		for key in ["unit","axes","strategy"]: get(key).select(saved.get(key,0))
-		for key in ["friction","layer","mask","slice_level"]: get(key).value=saved.get(key,1)
+		for key in ["friction","layer","mask","slice_level","sdf_depth"]: get(key).value=saved.get(key,0 if key=="sdf_depth" else 1)
 		native_contact.set_pressed_no_signal(saved.get("native_contact",false)); refresh_contact_controls()
 
 
@@ -223,6 +226,7 @@ func select_tree() -> void:
 	for i in strategy.item_count:
 		if strategy.get_item_text(i) == spec.get("kind","sdf"): strategy.select(i)
 	advanced.text = JSON.stringify(spec.get("contact",{})); world_options.text = JSON.stringify(session.world_settings)
+	sdf_depth.value=spec.get("octree_maxdepth",0)
 	friction.value = spec.get("friction",1); layer.value = spec.get("layer",1); mask.value = spec.get("mask",1)
 	strategy.disabled=not session.visual.get_node_or_null(NodePath(selected)) is MeshInstance3D
 	for terrain in session.terrains:
@@ -254,6 +258,7 @@ func configure() -> bool:
 			var ok: bool=session.configure_terrain_native(terrain.name,contact if native_contact.button_pressed else null,{"friction":friction.value,"layer":int(layer.value),"mask":int(mask.value)})
 			rebuild(); return ok
 	var spec := {"kind":strategy.get_item_text(strategy.selected),"friction":friction.value,"layer":int(layer.value),"mask":int(mask.value)}
+	if spec.kind=="sdf" and sdf_depth.value!=0: spec.octree_maxdepth=int(sdf_depth.value)
 	spec.native_contact=native_contact.button_pressed
 	if Session.Native.uses_native(spec):
 		var contact: Variant = JSON.parse_string(advanced.text if not advanced.text.is_empty() else "{}")
@@ -461,7 +466,7 @@ func shutdown() -> void:
 	saved.binding["preview_pose"]=world.transform
 	for key in ["path_field","advanced","parts","relations","world_options"]: saved[key]=get(key).text
 	for key in ["unit","axes","strategy"]: saved[key]=get(key).selected
-	for key in ["friction","layer","mask","slice_level"]: saved[key]=get(key).value
+	for key in ["friction","layer","mask","slice_level","sdf_depth"]: saved[key]=get(key).value
 	if plugin: EditorInterface.get_base_control().set_meta(FIELDS_META,saved)
 	else: session.close()
 	if is_instance_valid(world): world.free()

@@ -15,6 +15,7 @@
 #include <deque>
 #include <functional>
 #include <tuple>
+namespace gmj_sdf {class Field;}
 namespace godot {
 class MjPhysicsServer3D;
 class MjDirectBodyState;
@@ -30,6 +31,7 @@ struct MjShape { RID rid; PhysicsServer3D::ShapeType type; Variant data; float m
 struct MjShapeInstance { RID shape; Transform3D transform; bool disabled=false; };
 struct MjImported {
  RID rid; String label; Transform3D pose; mjSpec *spec=nullptr;
+ uint64_t query_object_id=0; bool query_ray_pickable=true;
  bool whole_model=false; Dictionary initial; uint64_t property_revision=0;
  std::string prefix;
  ~MjImported() { if(spec) mj_deleteSpec(spec); }
@@ -74,6 +76,9 @@ struct MjSpace {
  MjDirectSpaceState *direct=nullptr; Vector3 gravity_direction=Vector3(0,-1,0); double gravity=9.8;
  double linear_damp=0.1, angular_damp=0.1, accumulator=0; std::map<int,Variant> params;
  std::vector<std::pair<RID,int>> geom_owners;
+ // Query metadata for real imported RIDs, not registered Godot physics bodies.
+ std::map<int,std::unique_ptr<MjBody>> imported_query_owners;
+ std::map<int,std::shared_ptr<gmj_sdf::Field>> query_sdf_fields;
  ~MjSpace();
 };
 // One right-handed convention shared by poses, velocities, forces and queries.
@@ -101,6 +106,7 @@ public:
  RID scene_load_model(const RID &space, const Dictionary &snapshot, const String &directory, const String &label, const Transform3D &pose);
  bool scene_set_actuator(const RID &space, const RID &object, const String &name, double value);
  bool scene_release_model(const RID &space, const RID &object);
+ bool scene_set_query_owner(const RID &space,const RID &object,uint64_t object_id,bool ray_pickable=true);
  int64_t scene_request_model_edit(const RID &space, const RID &object, const Dictionary &snapshot, const String &directory, int64_t expected_revision);
  int64_t scene_request_preset(const RID &space,const RID &object,const Dictionary &preset,int64_t revision);
  bool scene_cancel_preset(int64_t request);
@@ -420,9 +426,21 @@ public:
 class MjDirectSpaceState : public PhysicsDirectSpaceState3DExtension {
  GDCLASS(MjDirectSpaceState, PhysicsDirectSpaceState3DExtension)
 protected:
- static void _bind_methods() {}
+ static void _bind_methods() { ClassDB::bind_method(D_METHOD("get_query_status"), &MjDirectSpaceState::get_query_status);
+  ClassDB::bind_method(D_METHOD("get_closest_point_to_object_volume","object","point"), &MjDirectSpaceState::_get_closest_point_to_object_volume);
+  ClassDB::bind_method(D_METHOD("set_sdf_query_precision_m","precision_m"), &MjDirectSpaceState::set_sdf_query_precision_m);
+  ClassDB::bind_method(D_METHOD("get_sdf_query_precision_m"), &MjDirectSpaceState::get_sdf_query_precision_m);
+  ClassDB::bind_method(D_METHOD("set_sdf_upper_refinement","enabled"), &MjDirectSpaceState::set_sdf_upper_refinement);
+  ClassDB::bind_method(D_METHOD("get_sdf_upper_refinement"), &MjDirectSpaceState::get_sdf_upper_refinement); }
 public:
  MjPhysicsServer3D *server=nullptr; RID rid;
+ double sdf_query_precision_m=.0005;bool sdf_upper_refinement=true;
+ bool set_sdf_query_precision_m(double value);
+ double get_sdf_query_precision_m() const{return sdf_query_precision_m;}
+ void set_sdf_upper_refinement(bool value){sdf_upper_refinement=value;}
+ bool get_sdf_upper_refinement() const{return sdf_upper_refinement;}
+ mutable String query_error,query_kind; mutable uint64_t query_sequence=0; mutable Dictionary query_details;
+ Dictionary get_query_status() const {Dictionary d;d["ok"]=query_error.is_empty();d["error"]=query_error;d["kind"]=query_kind;d["sequence"]=query_sequence;d["details"]=query_details.duplicate(true);return d;}
  bool _intersect_ray(const Vector3 &p_from, const Vector3 &p_to, uint32_t p_collision_mask, bool p_collide_with_bodies, bool p_collide_with_areas, bool p_hit_from_inside, bool p_hit_back_faces, bool p_pick_ray, PhysicsServer3DExtensionRayResult *p_result) override;
  int32_t _intersect_point(const Vector3 &p_position, uint32_t p_collision_mask, bool p_collide_with_bodies, bool p_collide_with_areas, PhysicsServer3DExtensionShapeResult *p_results, int32_t p_max_results) override;
  int32_t _intersect_shape(const RID &p_shape_rid, const Transform3D &p_transform, const Vector3 &p_motion, float p_margin, uint32_t p_collision_mask, bool p_collide_with_bodies, bool p_collide_with_areas, PhysicsServer3DExtensionShapeResult *p_result_count, int32_t p_max_results) override;
