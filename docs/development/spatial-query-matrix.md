@@ -47,7 +47,7 @@ Queries do not run mj_step/mj_forward on live simulation data.
 | Continuous sphere/capsule to primitive | original analytic convex-distance path | Original sweep, capsule, sweep_precision; independent float safe/unsafe pose checks. |
 | Continuous box/cylinder, Areas, imported convex mesh/ellipsoid | support-plane conservative advancement + GJK bounds and MPR penetration certificates | convex_cast.gd, convex_numerics.cpp, independent continuous SAT oracle convex_sat.cpp. Fixed orientation during translation, not angular interpolation. |
 | Continuous hfield | exact union of engine triangular vertical prisms down to the base | hfield_cast.gd: four shapes, transforms/margin, fast crossing, zero motion, initial overlap/exclude/disabled. 2048-cell budget; larger fields reject. Internal prism tangency after a union hit is handled by certifying the preceding path. |
-| Continuous SDF | **bounded actual-octree interval certification**, finite sphere/box/cylinder/capsule, fixed orientation | sdf_cast.gd 50 checks; native-field and ULP probes. Thin high-speed crossing succeeds. Extended stair-edge now passes including the actual SDF contact/normal; rough-oblique still fails certification; exact initial-touch/graze cases remain unknown. The full requested boundary scope is **not complete**. No source-triangle substitute or temporal sampling miss proof. |
+| Continuous SDF | **bounded actual-octree interval certification**, finite sphere/box/cylinder/capsule, fixed orientation | sdf_cast.gd 50 checks; native-field and ULP probes. Thin high-speed crossing succeeds. Extended stair-edge now passes including the actual SDF contact/normal; rough-oblique now has a certified <=0.5mm total bracket in the combined mode; its legacy/0.1mm modes remain unresolved. Exact initial-touch/graze cases remain unknown. The full requested boundary scope is **not complete**. No source-triangle substitute or temporal sampling miss proof. |
 | Unbounded plane/asset combinations | limited; plane/hfield and plane/SDF sweeps reject | No invented finite manifold. |
 | ConvexPolygon/ConcavePolygon, arbitrary mesh/hfield as query shapes | **not implemented as query shapes** | Native shape creation contract remains separate. No silent boxes/hulls. |
 | Character/body_test_motion and dynamic rigid-body CCD | original sphere/capsule path only | Not expanded by public convex cast. A shape cast is not dynamic CCD. |
@@ -120,9 +120,41 @@ Search and final pose certification share a **2-second checkpoint deadline**, 16
 spatial boxes, 8000000 visited field nodes and 160 time intervals (depth 48).
 Deadline checks occur at bounded-loop checkpoints; GJK/contact calls are not interrupted internally, so this is not a strict wall-clock or real-time upper bound. Cache preprocessing is outside that deadline and reported separately.
 Per-target counts, cold cache time, cache hits and exhausted status are visible.
-A nominal 4um path bracket (or eight float-fraction ULPs) is refined; actual
-Float32 world-pose quantization can require a wider verified bracket and the
-returned path length is reported. The (512,256,-128)m offset probe returns a ~38.9um bracket. An explicit 1e6m origin/full-motion cancellation probe returns a ~1.49m verified bracket because of fraction quantization; this does not meet micrometre accuracy and should not be used at such scales. This is not an exact symbolic TOI.
+The default combined mode requests a **0.5mm total spatial budget**:
+path length of the returned fraction bracket + each endpoint's Float32 pose
+error + the propagated arithmetic/transform envelope at both endpoints.
+The final combined budget is checked again after all float endpoint adjustments.
+A successful hit requires a certified collision-free prefix and an actual
+negative-field interior witness at the upper pose, including the independently
+rounded Godot pose. A narrow unresolved candidate is never reported as a hit.
+
+Per-space APIs:
+- set_sdf_query_precision_m(value) returns false without changing the setting
+  for nonfinite/out-of-range values. Valid finite budgets are [1e-6,1e-3]m.
+- get_sdf_query_precision_m(); default 0.0005m.
+- set_sdf_upper_refinement(bool); get_sdf_upper_refinement(); default true.
+- value 0 explicitly selects the old nominal 4um/eight-fraction-ULP mode.
+  It is a diagnostic compatibility mode, without the finite total-error cap.
+
+Status details expose sdf_total_uncertainty_m, its path/coordinate/arithmetic
+components, sdf_precision_met, per-geom counts and candidate statistics.
+The scope is the **actual compiled native SDF**, not distance to the source
+triangle mesh. No certified source-mesh approximation error is available.
+The old (512,256,-128)m probe had a ~38.9um path bracket; the explicit 1e6m
+start/full-motion cancellation case had a ~1.49m legacy bracket. The finite
+mode rejects the latter with a visible precision error.
+
+Rough-oblique A/B/C comparison and precision findings are reproduced by
+sdf_precision.gd --compare. A old mode and B 1mm without candidate refinement
+remain Unknown. With real-field local candidate refinement, C returned:
+- 0.1mm: Unknown, not a miss;
+- 0.5mm: total ~0.471173mm, cold ~0.178s / warm ~0.0298s, 12945 field nodes;
+- 1mm: total ~0.656234mm, cold ~0.160s / warm ~0.0155s, 8875 field nodes.
+These initial measurements used binary 2638918e; final-build logs supersede
+timings. C only improves true-hit candidates; its clear samples never change
+the certified safe prefix. The final implementation also refines thin-wall
+uppers before accepting the finite bracket, retaining first-entry-side normal
+checks in the high-speed regression.
 
 Observed margin-box timing on GTR:
 - unoptimized c2bdaec2: cold 0.837s (cache 0.445s), warm 0.387..0.390s, 366169 nodes;
@@ -131,11 +163,9 @@ Observed margin-box timing on GTR:
 
 CMake optimizes only mj_direct_space_state.cpp and explicitly uses
 -fno-fast-math -ffp-contract=off. The interval header rejects fast-math builds.
-Budgets and test assertions were not loosened. These are measurements,
+Resource budgets and geometric witness assertions were retained. The user explicitly changed the spatial precision contract to <=1mm; strict legacy regressions are separately retained. These are measurements,
 **not high-frequency real-time performance acceptance**: cold construction and
-worst-case search still matter. The extended suite has 21 passed checks and
-one unresolved rough_oblique path; exact touch_inward/touch_away/graze are
-three separately reported unknown contract cases.
+worst-case search still matter. The default finite mode closes rough_oblique; its strict legacy/0.1mm paths remain unresolved. Exact touch_inward/touch_away/graze are three separately reported unknown contract cases, including in finite mode.
 
 The final improvement clips each possible nonpositive leaf region by an
 outward-bounded affine halfspace and proves joint separation from the query.
@@ -151,7 +181,7 @@ See the derivation and remaining boundary below.
 python3 tests/spatial_queries/run.py --out /absolute/new/output --godot "$GODOT_BIN" --sdk "$MUJOCO_SDK_DIR"
 ~~~
 
-Every group has independent .log, .resources.json and monitor log.
+Add --extended for the unchanged seeded random numerical probes, multi-depth convergence and reproducible A/B/C cold/warm comparison. Core runs retain deterministic ULP/root/native-branch/joint-cell counterexamples and all essential end-to-end checks. See [test retention rationale](spatial-test-retention.md).\n\nEvery group has independent .log, .resources.json and monitor log.
 results.json records results/return codes; provenance.json includes host,
 base commit/branch, individual source hashes and tested native binary hash (including unstaged continuation changes).
 Failed output directories are retained and never reused. RSS samples cover

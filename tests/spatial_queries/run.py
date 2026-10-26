@@ -2,7 +2,7 @@
 """GTR/Linux bounded, isolated acceptance; no existing project is modified."""
 import argparse,hashlib,json,os,pathlib,platform,shutil,subprocess,sys,time
 root=pathlib.Path(__file__).resolve().parents[2]
-ap=argparse.ArgumentParser();ap.add_argument('--out',required=True);ap.add_argument('--godot',default=os.environ.get('GODOT_BIN'));ap.add_argument('--sdk',default=os.environ.get('MUJOCO_SDK_DIR'));ap.add_argument('--build-dir');a=ap.parse_args()
+ap=argparse.ArgumentParser();ap.add_argument('--out',required=True);ap.add_argument('--godot',default=os.environ.get('GODOT_BIN'));ap.add_argument('--sdk',default=os.environ.get('MUJOCO_SDK_DIR'));ap.add_argument('--build-dir');ap.add_argument('--extended',action='store_true',help='retain unchanged seeded fuzz and multi-depth convergence as an optional extended run');a=ap.parse_args()
 if not a.godot:ap.error('set GODOT_BIN or --godot')
 if not a.sdk:ap.error('set MUJOCO_SDK_DIR or --sdk for the fixed 3.16 native-field test')
 out=pathlib.Path(a.out).resolve()
@@ -39,10 +39,11 @@ for name in ['convex_numerics','convex_sat']:
     run(name,[executable],seconds=30)
 sdk=pathlib.Path(a.sdk).resolve();native=out/'sdf_interval'
 if run('sdf-interval-compile',['g++','-O2','-std=c++17','-I'+str(sdk/'include'),root/'tests/spatial_queries/sdf_interval.cpp','-L'+str(sdk/'lib'),'-Wl,-rpath,'+str(sdk/'lib'),'-lmujoco','-o',native]):
-    run('sdf-interval',[native],'SDF_INTERVAL_NATIVE_RESULT',45)
+    run('sdf-interval',[native,*(['--extended'] if a.extended else [])],'SDF_INTERVAL_NATIVE_RESULT',45)
 query=out/'query-project';query.mkdir()
 shutil.copy(root/'tests/static_map/project.godot',query)
 shutil.copytree(root/'demo/addons',query/'addons')
+shutil.copy(root/'tests/spatial_queries/query_test_base.gd',query)
 for name in ['area','convex_cast','hfield_cast','status','asset_pair_matrix','sdf_thin']:shutil.copy(root/'tests/spatial_queries'/f'{name}.gd',query)
 run('query-import',['bash',root/'scripts/import_headless.sh',query])
 for name,marker in [('area','AREA_QUERY_RESULT'),('convex_cast','CONVEX_CAST_RESULT'),('hfield_cast','HFIELD_CAST_RESULT'),('status','QUERY_STATUS_RESULT'),('asset_pair_matrix','ASSET_PAIR_MATRIX_RESULT'),('sdf_thin','SDF_THIN_RESULT')]:
@@ -50,9 +51,14 @@ for name,marker in [('area','AREA_QUERY_RESULT'),('convex_cast','CONVEX_CAST_RES
 terrain=out/'terrain';terrain.mkdir()
 run('terrain-prepare',['env','OUT='+str(terrain),'GODOT_BIN='+a.godot,'bash',root/'examples/sdf_terrain/prepare.sh'],seconds=120)
 project=terrain/'project'
-for name,source,marker in [('terrain',root/'tests/sdf_terrain/acceptance.gd','SDF_TERRAIN_RESULT'),('asset_overlap',root/'tests/spatial_queries/asset_overlap.gd','ASSET_OVERLAP_RESULT'),('convergence',root/'tests/sdf_terrain/convergence.gd','SDF_CONVERGENCE_RESULT'),('sdf_cast',root/'tests/spatial_queries/sdf_cast.gd','SDF_CAST_RESULT'),('sdf_terrain_edges',root/'tests/spatial_queries/sdf_terrain_edges.gd','SDF_TERRAIN_EDGES_RESULT'),('sdf_performance',root/'tests/spatial_queries/sdf_performance.gd','SDF_PERFORMANCE_RESULT')]:
+shutil.copy(root/'tests/spatial_queries/query_test_base.gd',project)
+for name,source,marker in [('terrain',root/'tests/sdf_terrain/acceptance.gd','SDF_TERRAIN_RESULT'),('asset_overlap',root/'tests/spatial_queries/asset_overlap.gd','ASSET_OVERLAP_RESULT'),('sdf_cast',root/'tests/spatial_queries/sdf_cast.gd','SDF_CAST_RESULT'),('sdf_terrain_edges',root/'tests/spatial_queries/sdf_terrain_edges.gd','SDF_TERRAIN_EDGES_RESULT'),('sdf_precision',root/'tests/spatial_queries/sdf_precision.gd','SDF_PRECISION_RESULT')]:
     shutil.copy(source,project/(name+'.gd'))
     run(name,[a.godot,'--headless','--path',project,'--fixed-fps','60','--script',f'res://{name}.gd'],marker,60)
+if a.extended:
+    run('sdf-precision-comparison',[a.godot,'--headless','--path',project,'--fixed-fps','60','--script','res://sdf_precision.gd','--','--compare'],'SDF_PRECISION_COMPARISON_RESULT',60)
+    shutil.copy(root/'tests/sdf_terrain/convergence.gd',project/'convergence.gd')
+    run('convergence',[a.godot,'--headless','--path',project,'--fixed-fps','60','--script','res://convergence.gd'],'SDF_CONVERGENCE_RESULT',60)
 shutil.copy(root/'tests/sdf_terrain/editor.gd',project/'map_editor_test.gd')
 shutil.copy(root/'tests/sdf_terrain/editor_reopen.gd',project)
 if 'res://addons/mujoco_editor/plugin.cfg' not in (project/'project.godot').read_text():

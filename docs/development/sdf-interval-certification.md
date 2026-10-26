@@ -121,39 +121,67 @@ minimal penetration vectors. Unknown witness/zero-boundary cases fail the
 whole request with observable status.
 
 The search plus endpoint checks uses a 2-second checkpoint deadline; bounded GJK/contact calls are not preempted, so this is not a strict wall-clock upper bound. Cache build is
-separate. A coarse-enclosure experiment retained the safe prefix and actual
+separate. A historical, pre-finite-precision coarse-enclosure experiment retained the safe prefix and actual
 upper but failed final endpoint certification / width bounds on the two
 remaining cases. It was withdrawn, not promoted to supported behavior.
 
-## Remaining exact cases and next necessary design
+## Native branch domains
 
-The final sdf_terrain_edges.gd suite has 21 passed checks and one unresolved
-path. The earlier stair_edge countercase now passes, including original-surface
-rest information and normal validation. The remaining case is:
-- rough_oblique: sphere radius .04 at (2.3,1,-.6), motion (1.2,-2,1.2).
+findOct selects children from the rounded coordinate
+(p - rounded_vmin) / rounded_width < .5. EPS=1e-8 validates a node box;
+it does not make overlapping child boxes interchangeable. Each traversal task
+retains its ancestor-selected domain. Outward forward coordinate intervals
+determine possible children, and a guarded split preimage clips each child's
+domain. The 64-epsilon coordinate-scale guard covers subtraction/division
+rounding; it is separate from the 16-epsilon node-box guard. A 120-probe native
+branch suite includes ULP/EPS overlap and a near-split cell-range width check.
+The earlier broad union was conservative but unnecessarily loose.
 
-The path reaches an unresolved temporal refinement interval around
-t=0.40095715684853 at depth 48, with time/node budget not exhausted. This is
-not a proven miss, and neither an exact tangent nor a field discontinuity has
-been established as its cause. A local contact optimizer and interior-point
-bridge did not close it and were withdrawn; their source/logs remain outside
-the working tree under the GTR evidence experiments directories.
+## Finite precision and candidate refinement
 
-This is an unresolved certification limitation, not proof that the engine
-makes the path impossible. Enlarging budgets does not address this final
-interval's sign/endpoint uncertainty.
+The user explicitly permits <=1mm spatial uncertainty. Default is 0.5mm,
+configurable up to 1mm, relative to the compiled SDF path event:
+|motion|*(tU-tL) + ePoseL + ePoseU <= requested_budget.
+Each endpoint error includes separately bounded Float32 pose rounding and
+the propagated arithmetic/transform envelope. All arithmetic forming the
+reported budget is rounded outward. Large-coordinate quantization that
+exceeds the requested budget causes an explicit failure.
 
-sdf_thin.gd additionally reports exact touch_inward, touch_away and graze
-as unresolved. Its eight functional thin/high-speed checks are separate from
-the three observable-error contract checks. They must not be counted as eleven
-successful geometric queries.
+The interval search alone advances a proven safe prefix. An actual interior
+negative-field witness supplies a hit upper. Optional bounded upper probes and
+sphere tangent-space surface refinement produce candidates only; every
+candidate must pass the ordinary native-field, primitive-interior, original
+surface and Float32-pose checks. A clear candidate never advances the prefix.
+Refinement precedes finite-bracket acceptance so a thin obstacle does not
+unnecessarily use a later opposite-face contact. No global minimum is claimed.
 
-Closing these boundaries needs a certified primitive-constrained polynomial
-root/interval-Newton or equivalent optimization solver with robust feature,
-leaf and root-branch handling, integrated with witness extraction. A separate
-product decision is required on requested TOI bracket accuracy, exact-touch
-semantics and whether a bounded "unknown" is acceptable to callers. A finite
-budget cannot by itself guarantee strict sign separation at exact tangency.
-Neither extra wall time, source-triangle replacement nor unverified midpoint
-bisection closes that requirement. Dynamic CCD and angular interpolation are
-separate features and remain outside this public translation query.
+This combines interval inclusion's explicit tolerance tradeoff with local
+positive-witness generation, rather than replacing proof with sparse samples.
+Relevant primary sources:
+[Wang et al. 2021 inclusion CCD](https://cims.nyu.edu/gcl/papers/2021-CCD.pdf),
+[Nielsen/Erleben 2026 spatial-temporal SDF optimization](https://onlinelibrary.wiley.com/doi/10.1111/cgf.70570).
+We do not claim to implement either complete paper. The latter's local
+optimization can miss contacts; here it cannot produce a no-hit certificate.
+A Lipschitz advancement alternative would need a certified whole-primitive
+lower field bound and a regional derivative bound across all relevant leaves
+and native branch seams; f/L at one sampled point is not sufficient.
+[Hart 1996](https://3dvar.com/Hart1996Sphere.pdf),
+[Segment Tracing](https://aparis69.github.io/public_html/projects/galin2020_Segment.html).
+
+## Remaining boundaries and preserved diagnosis
+
+Legacy rough_oblique: sphere radius .04 at (2.3,1,-.6), motion (1.2,-2,1.2).
+Depth-48 uncertainty begins near t=0.400957161898347, without budget exhaustion.
+Static probes found the old contact constructor unresolved through .40135 and
+a real surface witness at .4014. That ~1.16mm gap explains why a simple 1mm
+early stop did not close this case. It does not prove exact tangency or a
+field discontinuity. The improved candidate constructor plus 0.5mm/1mm
+brackets closes it, with independent endpoint checks; 0.1mm remains Unknown.
+
+Exact initial touch_inward, touch_away and graze still fail the initial
+strict-separation certificate. They return explicit Unknown, not clear and
+not a claimed true hit. A finite budget alone cannot guarantee strict sign
+separation at exact tangency. They remain reproducible contract cases.
+Source-mesh error, plugin SDFs, rotating sweeps and dynamic rigid-body CCD
+remain separate capabilities. No source triangle substitute or hidden
+precision relaxation is used.

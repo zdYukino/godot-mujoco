@@ -16,7 +16,7 @@ using Vec=gmj_sweep::Vec;
 struct Box {Vec lo{},hi{};};
 struct Range {bool valid=false;double lo=0,hi=0;bool shape_positive=false;};
 struct Stats {
- int boxes=0,field_nodes=0,gjk=0,intervals=0;bool exhausted=false;
+ int boxes=0,field_nodes=0,gjk=0,intervals=0,upper_candidate_tests=0;bool exhausted=false,precision_candidate=false;double proven_safe=0,best_upper=2;
  std::chrono::steady_clock::time_point deadline=std::chrono::steady_clock::now()+std::chrono::seconds(2);
  bool expired(){if(std::chrono::steady_clock::now()>deadline){exhausted=true;return true;}return false;}
 };
@@ -261,7 +261,10 @@ public:
 // certificate discards a time interval; pose evaluations only certify uppers.
 using ContactAt=std::function<gmj_convex::Distance(double)>;
 using GeometryError=std::function<double(double,double)>;
-inline gmj_sweep::Result cast(const Field&field,const gmj_convex::Support&base,Vec motion,const ContactAt&contact,Stats&stats,const GeometryError&geometry_error={}){
+// Return candidate API-representable endpoints within the requested complete
+// world-space budget. Final nominal/Float32 pose proofs remain mandatory.
+using PrecisionBracket=std::function<bool(double,double,double&,double&)>;
+inline gmj_sweep::Result cast(const Field&field,const gmj_convex::Support&base,Vec motion,const ContactAt&contact,Stats&stats,const GeometryError&geometry_error={},double precision_m=0,const PrecisionBracket&bracket={},bool refine_upper=false){
  gmj_sweep::Result result;if(!field.valid){result.valid=false;return result;}
  if(motion.length()==0)return result;
  auto initial=contact(0);
@@ -269,7 +272,18 @@ inline gmj_sweep::Result cast(const Field&field,const gmj_convex::Support&base,V
  auto swept=[&](double lo,double hi){return gmj_convex::Support([&,lo,hi](Vec n){return base(n)+motion*(n.dot(motion)>0?hi:lo);});};
  if(!field.separated(swept(0,0),stats,geometry_error?geometry_error(0,0):0)){result.valid=false;return result;}
  if(motion.length()==0)return result;
- struct Interval{double lo,hi;int depth;};std::vector<Interval> pending{{0,1,0}};double safe=0;
+ struct Interval{double lo,hi;int depth;};std::vector<Interval> pending{{0,1,0}};double safe=0,best_upper=2;gmj_convex::Distance best_contact;int refinements=0;
+ auto remember_upper=[&](double t,const gmj_convex::Distance&at){
+  if(!bracket||!at.valid||!at.inside)return;
+  float upper=float(t);if(double(upper)<t)upper=std::nextafter(upper,1.f);double time=upper;
+  if(time<0||time>1||time>=best_upper)return;
+  auto proof=at;if(time!=t){++stats.upper_candidate_tests;proof=contact(time);}
+  if(proof.valid&&proof.inside){best_upper=time;best_contact=proof;stats.best_upper=time;}
+ };
+ auto finish_precision=[&](){if(!bracket||best_upper>1)return false;double lower=0,upper=0;
+  if(!bracket(safe,best_upper,lower,upper)||lower<0||lower>safe||upper<best_upper||upper>1)return false;
+  result.hit=true;result.safe=lower;result.unsafe=upper;result.minimum=best_upper;result.point=best_contact.point;result.normal=best_contact.normal;stats.precision_candidate=true;return true;
+ };
  while(!pending.empty()){
   if(stats.expired()){result.valid=false;return result;}
   if(++stats.intervals>160){stats.exhausted=true;result.valid=false;return result;}
@@ -285,6 +299,24 @@ inline gmj_sweep::Result cast(const Field&field,const gmj_convex::Support&base,V
     if(upper.valid&&upper.inside){interval.hi=candidate;at=upper;pending.clear();}
    }
   }
+  if(bracket){
+   remember_upper(interval.hi,at);
+   if(!refine_upper&&finish_precision())return result;
+   // Candidate probes may improve a true hit upper. They NEVER change the
+   // certified safe prefix, including nonmonotone/multiple-entry fields.
+   if(refine_upper&&interval.depth>=8&&best_upper<=1&&refinements<2){
+    ++refinements;double probe_lower=safe;
+    for(int attempt=0;attempt<20&&!stats.expired();++attempt){
+     float next=float(probe_lower+(best_upper-probe_lower)*.5);
+     double t=next;if(t<=probe_lower||t>=best_upper)break;
+     ++stats.upper_candidate_tests;auto witness=contact(t);
+     if(witness.valid&&witness.inside)remember_upper(t,witness);else probe_lower=t;
+    }
+    if(!stats.expired()&&finish_precision())return result;
+   }
+   if(stats.expired()){result.valid=false;return result;}
+   if(finish_precision())return result;
+  }
   // Match the public float-fraction representation instead of demanding
   // a narrower bracket than adjacent representable contact upper bounds.
   double ulp=double(std::nextafter(float(interval.hi),std::numeric_limits<float>::infinity()))-double(float(interval.hi));
@@ -292,7 +324,7 @@ inline gmj_sweep::Result cast(const Field&field,const gmj_convex::Support&base,V
   // endpoints still require independent separation/contact certificates.
   double fraction_precision=std::max(8*ulp,4e-6/std::max(1.0,motion.length()));
   if(at.valid&&at.inside&&interval.hi-interval.lo<=fraction_precision){result.hit=true;result.safe=safe;result.unsafe=interval.hi;result.minimum=interval.hi;result.point=at.point;result.normal=at.normal;return result;}
-  if(!(at.valid&&at.inside)&&field.separated(swept(interval.lo,interval.hi),stats,geometry_error?geometry_error(interval.lo,interval.hi):0)){safe=interval.hi;continue;}
+  if(!(at.valid&&at.inside)&&field.separated(swept(interval.lo,interval.hi),stats,geometry_error?geometry_error(interval.lo,interval.hi):0)){safe=interval.hi;stats.proven_safe=safe;if(finish_precision())return result;continue;}
   if(stats.exhausted){if(std::getenv("GMJ_SDF_TRACE"))std::fprintf(stderr,"SDF_BUDGET safe=%.17g lo=%.17g hi=%.17g upper_inside=%d\n",safe,interval.lo,interval.hi,int(at.inside));result.valid=false;return result;}
   double mid=interval.lo+(interval.hi-interval.lo)*.5;
   if(interval.depth>=48||mid<=interval.lo||mid>=interval.hi){

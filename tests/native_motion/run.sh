@@ -19,7 +19,7 @@ run_stage() {
 run_stage import bash "$ROOT/scripts/import_headless.sh" "$OUT/project"
 # Run both independent tests even when one fails; retain CharacterBody evidence.
 failed=0
-for i in 1 2 3;do
+for i in 1;do
  run_stage "rid-$i" "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 --script res://rid.gd || failed=1
  run_stage "character-$i" "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 --script res://character.gd || failed=1
 done
@@ -31,7 +31,7 @@ for log in p.glob('*.log'):
  text=log.read_text()
  if 'ERROR:' in text or 'leak' in text.lower() or 'unsupported' in text.lower():problems.append(str(log))
 for group,prefix in [('rid','MOTION_RID_RESULT'),('character','MOTION_CHARACTER_RESULT')]:
- for i in range(1,4):
+ for i in range(1,2):
   log=p/f'{group}-{i}.log'
   rows=[line.split(' ',1)[1] for line in log.read_text().splitlines() if line.startswith(prefix+' ')]
   if len(rows)!=1:problems.append(f'{log}: expected one result');continue

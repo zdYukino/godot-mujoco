@@ -198,7 +198,16 @@ OUT="$HOME/workspace/typed-example-$(date -u +%Y%m%dT%H%M%SZ)" \
 
 ## 使用边界与进一步文档
 
-普通形状、导入资源及空间查询有明确支持范围。复杂 SDF 连续扫掠仍有未完成边界，部分精确切触会返回可感知的未知状态；每次查询后读取 get_query_status，失败不能当作无碰撞。SDF 查询可能耗时较长，不适合高频实时调用；公共 sweep 也不等于动态刚体 CCD。
+普通形状、导入资源及空间查询有明确支持范围。SDF 连续扫掠默认使用 **0.5mm 总空间误差预算**，可在每个空间查询状态上设置至 1mm：
+~~~gdscript
+var state = get_world_3d().direct_space_state
+state.call("set_sdf_query_precision_m", 0.001) # 米；默认 0.0005
+var fractions = state.cast_motion(parameters)
+var status: Dictionary = state.call("get_query_status")
+if not status.ok:
+    push_error(status.error) # 未认证不能当作无碰撞
+~~~
+预算针对**编译后的 SDF**，不保证原始网格与 SDF 的偏差也在 1mm 内。精确初始切触、擦边或过严预算仍可能返回未知；调用者必须检查状态。查询有耗时较长的情况，不适合默认按高频实时使用；公共 sweep 也不等于动态刚体 CCD。
 
 [查询能力和性能限制](docs/development/spatial-query-matrix.md) · [静态高度场](docs/static-heightfield.md) · [模型包搬迁](docs/portable-models.zh-CN.md) · [运行时安全编辑](docs/runtime-safe-editing.zh-CN.md)
 

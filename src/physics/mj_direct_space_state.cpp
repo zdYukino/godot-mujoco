@@ -14,6 +14,10 @@
 #include <limits>
 
 namespace godot {
+bool MjDirectSpaceState::set_sdf_query_precision_m(double value){
+ if(!std::isfinite(value)||value<0||value>.001||(value>0&&value<1e-6))return false;
+ sdf_query_precision_m=value;return true;
+}
 namespace {
 thread_local const MjDirectSpaceState *active_query=nullptr;
 struct QueryScope {
@@ -350,7 +354,8 @@ bool hfield_contained_contact(const ConvexQueryObject&query,const mjModel*m,cons
 // Returns only a certified original-surface pair and an actual negative-field
 // point inside the (once margin-inflated) query. Local projection cannot certify
 // separation or global minimum penetration; interval bounds provide separation.
-bool sdf_contact(const ConvexQueryObject&query,const mjModel*m,const mjData*d,int geom,mjPreContact&out,bool&strict,gmj_sweep::Vec*target_normal=nullptr,double geometry_error=0){
+bool sdf_contact(const ConvexQueryObject&query,const mjModel*m,const mjData*d,int geom,mjPreContact&out,bool&strict,gmj_sweep::Vec*target_normal=nullptr,double geometry_error=0,bool refine_candidate=false){
+ refine_candidate=refine_candidate||(active_query&&active_query->sdf_upper_refinement);
  using gmj_sweep::Vec;strict=false;int id=m->geom_dataid[geom];if(id<0||m->geom_plugin[geom]>=0||query.type==mjGEOM_PLANE)return false;
  const mjpPlugin*plugin=nullptr;mjtGeom kind=mjGEOM_SDF;mjSDF sdf{};sdf.plugin=&plugin;sdf.id=&id;sdf.type=mjSDFTYPE_SINGLE;sdf.geomtype=&kind;
  const mjtNum*matrix=d->geom_xmat+9*geom,*position=d->geom_xpos+3*geom;
@@ -367,7 +372,33 @@ bool sdf_contact(const ConvexQueryObject&query,const mjModel*m,const mjData*d,in
    if(std::abs(value)<=tolerance){mju_scl3(gradient,gradient,1/norm);converged=true;break;}
    if(std::abs(value)/norm>4*scale)break;mju_addToScl3(p,gradient,-value/(norm*norm));
   }
-  if(!converged)continue;mjtNum target_raw[3],normal_raw[3];mju_mulMatVec3(target_raw,matrix,p);mju_addTo3(target_raw,position);mju_mulMatVec3(normal_raw,matrix,gradient);
+  if(!converged)continue;
+  // Optional nearest-surface candidate refinement. This is local optimization,
+  // never a separation/global-nearest certificate: the ordinary actual-field
+  // interior and original-surface witness checks below remain mandatory.
+  if(refine_candidate&&query.type==mjGEOM_SPHERE){
+   for(int iteration=0;iteration<12;++iteration){
+    mjtNum delta[3],tangent[3];mju_sub3(delta,center_local,p);
+    double objective=mju_dot3(delta,delta),along=mju_dot3(delta,gradient);
+    mju_addScl3(tangent,delta,gradient,-along);
+    if(mju_norm3(tangent)<=tolerance)break;bool improved=false;
+    for(double step:{1.,.5,.25}){
+     mjtNum candidate[3],candidate_gradient[3];mju_addScl3(candidate,p,tangent,step);bool root=false;
+     for(int project=0;project<12;++project){
+      double value=mjc_distance(m,d,&sdf,candidate);mjc_gradient(m,d,&sdf,candidate_gradient,candidate);
+      double norm=mju_norm3(candidate_gradient);if(!std::isfinite(value)||!std::isfinite(norm)||norm<1e-12)break;
+      if(std::abs(value)<=tolerance){mju_scl3(candidate_gradient,candidate_gradient,1/norm);root=true;break;}
+      if(std::abs(value)/norm>4*scale)break;mju_addToScl3(candidate,candidate_gradient,-value/(norm*norm));
+     }
+     mjtNum candidate_delta[3];mju_sub3(candidate_delta,center_local,candidate);
+     if(root&&mju_dot3(candidate_delta,candidate_delta)<objective-1e-15*std::max(1.,objective)){
+      mju_copy3(p,candidate);mju_copy3(gradient,candidate_gradient);improved=true;break;
+     }
+    }
+    if(!improved)break;
+   }
+  }
+  mjtNum target_raw[3],normal_raw[3];mju_mulMatVec3(target_raw,matrix,p);mju_addTo3(target_raw,position);mju_mulMatVec3(normal_raw,matrix,gradient);
   Vec target{target_raw[0],target_raw[1],target_raw[2]},normal{normal_raw[0],normal_raw[1],normal_raw[2]};
   // Seed the actual support feature in the field-gradient direction.
   // Global axes alone miss a tilted cylinder rim at first plane contact.
@@ -1048,6 +1079,21 @@ GeneralCastEvaluation general_evaluate(const ConvexQueryObject&query,const Gener
  }
  auto d=convex_distance(a,b);return {d.valid,d.inside,d.boundary,d.lower,d.point,d.normal};
 }
+struct SdfPrecisionBudget {double path=0,coordinate_lower=0,coordinate_upper=0,arithmetic=0,total=0;};
+double norm_upper(gmj_sweep::Vec p){
+ using namespace gmj_sdf;Number sum{0,0};for(double value:{p.x,p.y,p.z})sum=add(sum,mul({value,value},{value,value}));return up(std::sqrt(std::max(0.0,sum.hi)));
+}
+double pose_coordinate_error(const Transform3D&pose,const Vector3&motion,float fraction){
+ using namespace gmj_sdf;Vector3 actual=pose.origin+motion*fraction;Number sum{0,0};
+ for(int k=0;k<3;++k){double base=pose.origin[k],travel=motion[k];auto exact=add({base,base},mul({travel,travel},{double(fraction),double(fraction)}));auto error=sub({actual[k],actual[k]},exact);double bound=std::max(std::abs(error.lo),std::abs(error.hi));sum=add(sum,mul({bound,bound},{bound,bound}));}
+ return up(std::sqrt(std::max(0.0,sum.hi)));
+}
+SdfPrecisionBudget sdf_precision_budget(const Transform3D&pose,const Vector3&motion,float lo,float hi,double geometry_error){
+ using namespace gmj_sdf;SdfPrecisionBudget result;auto gap=sub({double(hi),double(hi)},{double(lo),double(lo)});
+ result.path=mul({norm_upper({motion.x,motion.y,motion.z}),norm_upper({motion.x,motion.y,motion.z})},{gap.hi,gap.hi}).hi;
+ result.coordinate_lower=pose_coordinate_error(pose,motion,lo);result.coordinate_upper=pose_coordinate_error(pose,motion,hi);result.arithmetic=norm_upper({geometry_error,geometry_error,geometry_error});
+ Number total=add({result.path,result.path},add({result.coordinate_lower,result.coordinate_lower},{result.coordinate_upper,result.coordinate_upper}));total=add(total,mul({2,2},{result.arithmetic,result.arithmetic}));result.total=total.hi;return result;
+}
 bool general_cast(MjDirectSpaceState&state,const RID&shape_rid,const Transform3D&transform,const Vector3&motion,float margin,uint32_t mask,bool bodies,bool areas,float*safe,float*unsafe,PhysicsServer3DExtensionShapeRestInfo*info){
  using gmj_sweep::Vec;if(safe)*safe=0;if(unsafe)*unsafe=0;if(info)*info={};
  auto*server=state.server;if(!server||!safe||!unsafe||!transform.is_finite()||!motion.is_finite()||!transform.basis.is_orthogonal()||!transform.basis.get_scale().is_equal_approx(Vector3(1,1,1))||transform.basis.determinant()<=0||!std::isfinite(margin)||margin<0)return false;
@@ -1100,8 +1146,8 @@ target.shape=space->geom_owners[geom].second;target.geom=geom;target.object.type
  auto record_sdf_stats=[&](){
   int intervals=0,boxes=0,nodes=0,geoms=0;bool exhausted=false;double lipschitz=0;
   for(const auto&t:targets)if(t.sdf_stats){++geoms;intervals+=t.sdf_stats->intervals;boxes+=t.sdf_stats->boxes;nodes+=t.sdf_stats->field_nodes;exhausted|=t.sdf_stats->exhausted;lipschitz=std::max(lipschitz,t.sdf_field->local_lipschitz_bound);}
-  Array per_geom;for(const auto&t:targets)if(t.sdf_stats){Dictionary row;row["geom"]=t.geom;row["mesh"]=t.object.mesh;row["field_nodes"]=t.sdf_stats->field_nodes;row["boxes"]=t.sdf_stats->boxes;row["intervals"]=t.sdf_stats->intervals;row["geometry_error_per_axis_m"]=t.sdf_geometry_envelope;row["exhausted"]=t.sdf_stats->exhausted;per_geom.push_back(row);}
-  if(geoms){state.query_details["sdf_per_geom"]=per_geom;state.query_details["sdf_geoms"]=geoms;state.query_details["sdf_interval_nodes"]=intervals;state.query_details["sdf_spatial_boxes"]=boxes;state.query_details["sdf_field_nodes"]=nodes;state.query_details["sdf_budget_exhausted"]=exhausted;state.query_details["sdf_max_leaf_lipschitz_bound"]=lipschitz;state.query_details["sdf_budget_seconds"]=2;state.query_details["sdf_requested_spatial_bracket_m"]=4e-6;state.query_details["sdf_realtime_recommended"]=false;state.query_details["sdf_stats_scope"]="all SDF path searches and final pose checks";}
+  Array per_geom;for(const auto&t:targets)if(t.sdf_stats){Dictionary row;row["geom"]=t.geom;row["mesh"]=t.object.mesh;row["field_nodes"]=t.sdf_stats->field_nodes;row["boxes"]=t.sdf_stats->boxes;row["precision_candidate"]=t.sdf_stats->precision_candidate;row["proven_safe_fraction"]=t.sdf_stats->proven_safe;row["best_hit_upper_fraction"]=t.sdf_stats->best_upper;row["upper_candidate_tests"]=t.sdf_stats->upper_candidate_tests;row["intervals"]=t.sdf_stats->intervals;row["geometry_error_per_axis_m"]=t.sdf_geometry_envelope;row["exhausted"]=t.sdf_stats->exhausted;per_geom.push_back(row);}
+  if(geoms){state.query_details["sdf_per_geom"]=per_geom;state.query_details["sdf_geoms"]=geoms;state.query_details["sdf_interval_nodes"]=intervals;state.query_details["sdf_spatial_boxes"]=boxes;state.query_details["sdf_field_nodes"]=nodes;state.query_details["sdf_budget_exhausted"]=exhausted;state.query_details["sdf_max_leaf_lipschitz_bound"]=lipschitz;state.query_details["sdf_budget_seconds"]=2;state.query_details["sdf_requested_spatial_bracket_m"]=state.sdf_query_precision_m>0?state.sdf_query_precision_m:4e-6;state.query_details["sdf_realtime_recommended"]=false;state.query_details["sdf_query_precision_m"]=state.sdf_query_precision_m;state.query_details["sdf_upper_refinement"]=state.sdf_upper_refinement;state.query_details["sdf_precision_scope"]="compiled native SDF path-event bracket; not source mesh approximation";state.query_details["sdf_stats_scope"]="all SDF path searches and final pose checks";}
  };
  std::set<std::pair<uint64_t,int>> initial_shapes;
  for(const auto&target:targets)if(!target.object.vertices.empty()){auto d=general_evaluate(query,target,{});if(!d.valid){query_problem("initial hfield overlap not certified");return false;}if(d.inside)initial_shapes.insert({target.owner->rid.get_id(),target.shape});}
@@ -1115,9 +1161,24 @@ target.shape=space->geom_owners[geom].second;target.geom=geom;target.object.type
    auto local_support=sdf_local_support(world,target.sdf_data,target.geom);
    mjtNum v[3]={velocity.x,velocity.y,velocity.z},local[3];mju_mulMatTVec3(local,target.sdf_data->geom_xmat+9*target.geom,v);
    auto contact=[&](double t){auto q=world;q.position=base+velocity*t;mjPreContact c{};bool strict=false;Vec normal{};gmj_convex::Distance d;d.valid=true;
-    if(sdf_contact(q,target.object.assets,target.sdf_data,target.geom,c,strict,&normal,target.sdf_geometry_envelope)){d.inside=strict;d.point=Vec{c.pos[0]+.5*c.dist*c.normal[0],c.pos[1]+.5*c.dist*c.normal[1],c.pos[2]+.5*c.dist*c.normal[2]}-base;d.normal=normal;}return d;
+    if(sdf_contact(q,target.object.assets,target.sdf_data,target.geom,c,strict,&normal,target.sdf_geometry_envelope)){
+     d.inside=strict;d.point=Vec{c.pos[0]+.5*c.dist*c.normal[0],c.pos[1]+.5*c.dist*c.normal[1],c.pos[2]+.5*c.dist*c.normal[2]}-base;d.normal=normal;
+     if(state.sdf_query_precision_m>0&&strict){
+      Vector3 actual_position=godot_to_mj(pose.origin+motion*float(t));auto actual=q;actual.position={actual_position.x,actual_position.y,actual_position.z};mjPreContact actual_contact{};bool actual_strict=false;
+      if(!sdf_contact(actual,target.object.assets,target.sdf_data,target.geom,actual_contact,actual_strict,nullptr,target.sdf_geometry_envelope)||!actual_strict)d.inside=false;
+     }
+    }return d;
    };
-   auto&stats=*target.sdf_stats;hit=gmj_sdf::cast(*target.sdf_field,local_support,{local[0],local[1],local[2]},contact,stats,[&](double,double){return target.sdf_geometry_envelope;});
+   gmj_sdf::PrecisionBracket finite_bracket;
+   if(state.sdf_query_precision_m>0)finite_bracket=[&](double proven_safe,double hit_upper,double&return_safe,double&return_unsafe){
+    double candidate=std::max(0.0,proven_safe-.05*state.sdf_query_precision_m/std::max(1e-30,velocity.length()));
+    float lo=float(candidate);if(double(lo)>candidate)lo=std::nextafter(lo,0.f);
+    float hi=float(hit_upper);if(double(hi)<hit_upper)hi=std::nextafter(hi,1.f);
+    auto budget=sdf_precision_budget(pose,motion,lo,hi,target.sdf_geometry_envelope);
+    if(!std::isfinite(budget.total)||budget.total>state.sdf_query_precision_m)return false;
+    return_safe=lo;return_unsafe=hi;return true;
+   };
+   auto&stats=*target.sdf_stats;hit=gmj_sdf::cast(*target.sdf_field,local_support,{local[0],local[1],local[2]},contact,stats,[&](double,double){return target.sdf_geometry_envelope;},state.sdf_query_precision_m,finite_bracket,state.sdf_upper_refinement);
    record_sdf_stats();
   }else if(query.type==mjGEOM_PLANE||target.object.type==mjGEOM_PLANE){auto initial=general_evaluate(query,target,{});
    hit=gmj_sweep::plane(initial.signed_gap,velocity.dot(initial.normal));auto at=general_evaluate(query,target,velocity*hit.unsafe);hit.point=at.point;hit.normal=at.normal;
@@ -1167,6 +1228,12 @@ target.shape=space->geom_owners[geom].second;target.geom=geom;target.object.type
  record_sdf_stats();
  state.query_details["safe_pose_verified"]=lo_ok;state.query_details["unsafe_pose_verified"]=hi_ok;
  state.query_details["safe_fraction"]=lo;state.query_details["unsafe_fraction"]=hi;state.query_details["returned_bracket_path_length_m"]=(double(hi)-double(lo))*velocity.length();
+ double maximum_geometry_error=0;bool has_sdf=false;for(const auto&t:targets)if(t.sdf_field){has_sdf=true;maximum_geometry_error=std::max(maximum_geometry_error,t.sdf_geometry_envelope);}
+ if(has_sdf&&state.sdf_query_precision_m>0){
+  auto budget=sdf_precision_budget(pose,motion,lo,hi,maximum_geometry_error);
+  state.query_details["sdf_path_bracket_m"]=budget.path;state.query_details["sdf_coordinate_error_lower_m"]=budget.coordinate_lower;state.query_details["sdf_coordinate_error_upper_m"]=budget.coordinate_upper;state.query_details["sdf_arithmetic_error_per_endpoint_m"]=budget.arithmetic;state.query_details["sdf_total_uncertainty_m"]=budget.total;state.query_details["sdf_precision_met"]=budget.total<=state.sdf_query_precision_m;
+  if(!std::isfinite(budget.total)||budget.total>state.sdf_query_precision_m){query_problem("SDF cast total spatial uncertainty exceeds requested precision");return false;}
+ }
  if(!lo_ok||!hi_ok){query_problem("continuous convex contact has no certified float safe/unsafe poses");return false;}
  if(info){auto&target=targets[nearest];Vec global=point+base;mjtNum p_mj[3]={global.x,global.y,global.z},hint[3]={normal.x,normal.y,normal.z};
   Vector3 p=mj_to_godot(Vector3(global.x,global.y,global.z)),n;

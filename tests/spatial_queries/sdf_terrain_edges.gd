@@ -1,13 +1,4 @@
-extends SceneTree
-var passed:=0
-var failed:=0
-func _initialize() -> void:call_deferred("run")
-func check(ok: bool,label: String) -> void:
-	if ok:passed+=1
-	else:failed+=1
-	print("PASS " if ok else "FAIL ",label)
-func ticks(n: int) -> void:
-	for i in n:await physics_frame;await process_frame
+extends "res://query_test_base.gd"
 func run() -> void:
 	var viewport:=SubViewport.new();viewport.own_world_3d=true;root.add_child(viewport)
 	var map=load(FileAccess.get_file_as_string("res://map_package_path.txt").path_join("map.tscn")).instantiate();viewport.add_child(map);await ticks(3)
@@ -37,10 +28,12 @@ func run() -> void:
 		var result: PackedFloat32Array=state.cast_motion(q);var expected: float=(2+.35-radius)/4
 		check(result.size()==2 and result[0]<=expected+.000002 and result[1]>=expected-.000002,"shape dimension scale %.3fm" % radius)
 	sphere.radius=.04
+	state.call("set_sdf_query_precision_m",0.) # Legacy large-coordinate diagnostic, not a finite-precision success.
 	q.transform=Transform3D(Basis.IDENTITY,Vector3(0,1000000,0));q.motion=Vector3(0,-1000000.5,0)
 	var cancel_result: PackedFloat32Array=state.cast_motion(q);var cancel_status: Dictionary=state.call("get_query_status")
 	check(cancel_result.size()==2 and cancel_status.ok,"large start/full-motion cancellation retains geometric error envelope")
 	cases.append({"name":"large_motion_cancellation","result":Array(cancel_result),"status":cancel_status})
+	state.call("set_sdf_query_precision_m",.0005)
 	q.motion=Vector3(0,-4,0)
 	q.transform=Transform3D(Basis.from_scale(Vector3(1.25,1,1)),Vector3(0,2,0))
 	check(state.cast_motion(q).is_empty() and not state.call("get_query_status").ok,"nonrigid transform rejects explicitly")

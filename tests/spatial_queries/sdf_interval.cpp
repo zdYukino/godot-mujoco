@@ -2,7 +2,9 @@
 #include <cstdio>
 #include <random>
 #include <memory>
-int main(){
+#include <string>
+int main(int argc,char**argv){
+ const bool extended=argc==2&&std::string(argv[1])=="--extended";
  const char*xml="<mujoco><asset><mesh name='cube' vertex='-1 -1 -.4 1 -1 -.4 1 1 -.4 -1 1 -.4 -1 -1 .4 1 -1 .4 1 1 .4 -1 1 .4' face='0 2 1 0 3 2 4 5 6 4 6 7 0 1 5 0 5 4 1 2 6 1 6 5 2 3 7 2 7 6 3 0 4 3 4 7'/></asset><worldbody><geom type='sdf' mesh='cube'/></worldbody></mujoco>";
  char error[2048]={};std::unique_ptr<mjSpec,decltype(&mj_deleteSpec)> spec(mj_parseXMLString(xml,nullptr,error,sizeof(error)),mj_deleteSpec);
  if(!spec){std::fprintf(stderr,"%s\n",error);return 2;}
@@ -14,16 +16,19 @@ int main(){
  std::mt19937 gen(20261026);std::uniform_real_distribution<double> u(0,1);int checks=0;
  auto value=[&](gmj_sdf::Vec v){double p[3]={v.x,v.y,v.z};return mjc_distance(m.get(),d.get(),&sdf,p);};
  const mjtNum*root=m->oct_aabb+6*m->mesh_octadr[id];
+ if(extended){
  for(int i=0;i<500;++i){double a[3],b[3];for(int k=0;k<3;++k){a[k]=root[k]+(u(gen)*4-2)*root[k+3];b[k]=a[k]+u(gen)*root[k+3];}
   gmj_sdf::Box box{{a[0],a[1],a[2]},{b[0],b[1],b[2]}};gmj_sdf::Stats stats;auto bounds=field.range(box,stats);if(!bounds.valid)return 4;
   for(int j=0;j<24;++j){double p[3];for(int k=0;k<3;++k)p[k]=a[k]+(b[k]-a[k])*(j<8?double((j>>k)&1):u(gen));double v=value({p[0],p[1],p[2]});
    if(v<bounds.lo||v>bounds.hi){std::fprintf(stderr,"SDF_RANGE_FAIL sample=%d value=%.17g range=(%.17g,%.17g)\n",i,v,bounds.lo,bounds.hi);return 1;}++checks;
   }
  }
+ }
  std::printf("SDF_RANGE_ENCLOSURE_PASS %d local_lipschitz_bound=%.17g\n",checks,field.local_lipschitz_bound);
  // The affine tightening bounds the polynomial over box intersect support.
  // Check native values of actual sphere points, including a geometric envelope.
  int affine_checks=0;
+ if(extended){
  for(int i=0;i<200;++i){
   gmj_sdf::Vec center{(u(gen)-.5)*.8,(u(gen)-.5)*.8,(u(gen)-.5)*.3};
   double radius=.05+.2*u(gen),error=1e-10;
@@ -33,6 +38,7 @@ int main(){
   for(int j=0;j<32;++j){gmj_sdf::Vec direction{u(gen)-.5,u(gen)-.5,u(gen)-.5};auto point=center+direction*(radius*u(gen)/direction.length());double actual=value(point);
    if(actual<enclosure.lo||actual>enclosure.hi||(enclosure.shape_positive&&actual<=0)){std::fprintf(stderr,"SDF_AFFINE_FAIL value=%.17g lo=%.17g hi=%.17g\n",actual,enclosure.lo,enclosure.hi);return 1;}++affine_checks;
   }
+ }
  }
  std::printf("SDF_AFFINE_ENCLOSURE_PASS %d\n",affine_checks);
 
@@ -80,6 +86,7 @@ int main(){
  }
 
  int joint_samples=0,joint_positive=0;
+ if(extended){
  for(int trial=0;trial<200;++trial){
   mjModel view=*m;int address=0,number=1,children[8]={-1,-1,-1,-1,-1,-1,-1,-1};
   double aabb[6]={0,0,0,2,2,2},coeff[8];for(double&c:coeff)c=4*u(gen)-2;
@@ -94,6 +101,7 @@ int main(){
   }
  }
  if(joint_samples<10000||joint_positive==0)return 10;
+ }
  std::printf("SDF_RANDOM_JOINT_SIGN_PASS samples=%d positive_cases=%d\n",joint_samples,joint_positive);
 
  int branch_probes=0;

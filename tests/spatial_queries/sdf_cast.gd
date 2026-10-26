@@ -1,13 +1,4 @@
-extends SceneTree
-var passed:=0
-var failed:=0
-func _initialize() -> void:call_deferred("run")
-func check(ok: bool,label: String) -> void:
-	if ok:passed+=1
-	else:failed+=1
-	print("PASS " if ok else "FAIL ",label)
-func ticks(n: int) -> void:
-	for i in n:await physics_frame;await process_frame
+extends "res://query_test_base.gd"
 func run() -> void:
 	var cases: Array=[];var fast_results: Array=[]
 	for transformed in [false,true]:
@@ -18,6 +9,7 @@ func run() -> void:
 		map.transform=target_pose;viewport.add_child(map);await ticks(3)
 		var space: RID=map.get_world_3d().space;PhysicsServer3D.call("scene_pause",space,true)
 		var state: PhysicsDirectSpaceState3D=map.get_world_3d().direct_space_state
+		state.call("set_sdf_query_precision_m",0.);state.call("set_sdf_upper_refinement",false) # Preserve strict legacy regression independently.
 		var shapes: Array[Shape3D]=[]
 		var sphere:=SphereShape3D.new();sphere.radius=.2;shapes.append(sphere)
 		var box:=BoxShape3D.new();box.size=Vector3(.4,.4,.4);shapes.append(box)

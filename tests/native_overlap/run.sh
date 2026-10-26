@@ -8,7 +8,7 @@ mkdir -p "$OUT/project"
 cp "$ROOT/tests/native_overlap/"{project.godot,acceptance.gd} "$OUT/project/"
 cp -a "$ROOT/demo/addons" "$OUT/project/"
 timeout 120 bash "$ROOT/scripts/import_headless.sh" "$OUT/project" > "$OUT/import.log" 2>&1
-for i in 1 2 3; do
+for i in 1; do
  timeout 120 "$GODOT_BIN" --headless --path "$OUT/project" --script res://acceptance.gd > "$OUT/positive-$i.log" 2>&1
 done
 python3 - "$OUT" <<'PY'

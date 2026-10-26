@@ -55,4 +55,4 @@ func run() -> void:
 	world.queue_free();viewport.queue_free()
 	for i in 3:await physics_frame;await process_frame
 	print("ASSET_PAIR_MATRIX_RESULT ",JSON.stringify({"failed":failed,"certified":certified,"unknown":unknown,"cases":rows.size()}))
-	quit(0 if failed==0 and ("audit" in OS.get_cmdline_user_args() or unknown==0) else 1)
+	quit(0 if failed==0 and unknown==0 else 1)

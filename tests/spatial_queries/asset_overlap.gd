@@ -1,11 +1,4 @@
-extends SceneTree
-var passed:=0
-var failed:=0
-func _initialize() -> void: call_deferred("run")
-func check(ok: bool,label: String) -> void:
-	if ok: passed+=1
-	else: failed+=1
-	print("PASS " if ok else "FAIL ",label)
+extends "res://query_test_base.gd"
 func run() -> void:
 	var scene=load("res://Main.tscn").instantiate(); root.add_child(scene)
 	for i in 3: await physics_frame; await process_frame

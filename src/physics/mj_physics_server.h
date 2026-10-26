@@ -427,9 +427,18 @@ class MjDirectSpaceState : public PhysicsDirectSpaceState3DExtension {
  GDCLASS(MjDirectSpaceState, PhysicsDirectSpaceState3DExtension)
 protected:
  static void _bind_methods() { ClassDB::bind_method(D_METHOD("get_query_status"), &MjDirectSpaceState::get_query_status);
-  ClassDB::bind_method(D_METHOD("get_closest_point_to_object_volume","object","point"), &MjDirectSpaceState::_get_closest_point_to_object_volume); }
+  ClassDB::bind_method(D_METHOD("get_closest_point_to_object_volume","object","point"), &MjDirectSpaceState::_get_closest_point_to_object_volume);
+  ClassDB::bind_method(D_METHOD("set_sdf_query_precision_m","precision_m"), &MjDirectSpaceState::set_sdf_query_precision_m);
+  ClassDB::bind_method(D_METHOD("get_sdf_query_precision_m"), &MjDirectSpaceState::get_sdf_query_precision_m);
+  ClassDB::bind_method(D_METHOD("set_sdf_upper_refinement","enabled"), &MjDirectSpaceState::set_sdf_upper_refinement);
+  ClassDB::bind_method(D_METHOD("get_sdf_upper_refinement"), &MjDirectSpaceState::get_sdf_upper_refinement); }
 public:
  MjPhysicsServer3D *server=nullptr; RID rid;
+ double sdf_query_precision_m=.0005;bool sdf_upper_refinement=true;
+ bool set_sdf_query_precision_m(double value);
+ double get_sdf_query_precision_m() const{return sdf_query_precision_m;}
+ void set_sdf_upper_refinement(bool value){sdf_upper_refinement=value;}
+ bool get_sdf_upper_refinement() const{return sdf_upper_refinement;}
  mutable String query_error,query_kind; mutable uint64_t query_sequence=0; mutable Dictionary query_details;
  Dictionary get_query_status() const {Dictionary d;d["ok"]=query_error.is_empty();d["error"]=query_error;d["kind"]=query_kind;d["sequence"]=query_sequence;d["details"]=query_details.duplicate(true);return d;}
  bool _intersect_ray(const Vector3 &p_from, const Vector3 &p_to, uint32_t p_collision_mask, bool p_collide_with_bodies, bool p_collide_with_areas, bool p_hit_from_inside, bool p_hit_back_faces, bool p_pick_ray, PhysicsServer3DExtensionRayResult *p_result) override;
