@@ -1,0 +1,34 @@
+NATIVE_REPRO_CONFIG version=3.16.0 cpu=5 hot=1 serial_combined=0
+NATIVE_REPRO_STAGE ms=0 stage=floor.parse_begin
+NATIVE_REPRO_STAGE ms=0 stage=floor.compile_begin
+NATIVE_REPRO_STAGE ms=1 stage=floor.compile_end
+NATIVE_REPRO_STAGE ms=1 stage=floor.forward_end
+NATIVE_REPRO_STAGE ms=1 stage=first.parse_begin
+NATIVE_REPRO_STAGE ms=2 stage=first.compile_begin
+NATIVE_REPRO_STAGE ms=342 stage=first.compile_end
+NATIVE_REPRO_STAGE ms=342 stage=first.forward_end
+NATIVE_REPRO_STAGE ms=343 stage=attach_0.begin
+NATIVE_REPRO_STAGE ms=344 stage=attach_0.end
+NATIVE_REPRO_STAGE ms=344 stage=attach_1.begin
+NATIVE_REPRO_STAGE ms=370 stage=attach_1.end
+NATIVE_REPRO_STAGE ms=370 stage=combined_2.compile_begin
+NATIVE_REPRO_STAGE ms=453 stage=combined_2.compile_end
+NATIVE_REPRO_STAGE ms=458 stage=step.begin
+NATIVE_REPRO_STAGE ms=675 stage=step.end
+NATIVE_REPRO_STAGE ms=675 stage=second.parse_begin
+NATIVE_REPRO_STAGE ms=676 stage=second.compile_begin
+NATIVE_REPRO_STAGE ms=753 stage=second.compile_end
+NATIVE_REPRO_STAGE ms=754 stage=second.forward_end
+NATIVE_REPRO_STAGE ms=755 stage=attach_0.begin
+NATIVE_REPRO_STAGE ms=755 stage=attach_0.end
+NATIVE_REPRO_STAGE ms=755 stage=attach_1.begin
+NATIVE_REPRO_STAGE ms=773 stage=attach_1.end
+NATIVE_REPRO_STAGE ms=773 stage=attach_2.begin
+NATIVE_REPRO_STAGE ms=799 stage=attach_2.end
+NATIVE_REPRO_STAGE ms=799 stage=combined_3.compile_begin
+NATIVE_REPRO_STAGE ms=971 stage=combined_3.compile_end
+NATIVE_REPRO_STAGE ms=975 stage=transfer.begin
+NATIVE_REPRO_STAGE ms=975 stage=transfer.end
+NATIVE_REPRO_STAGE ms=975 stage=forward.begin
+NATIVE_REPRO_STAGE ms=976 stage=forward.end
+NATIVE_REPRO_RESULT PASS time=5.9999999999995612 ngeom=139 nv=70

@@ -1,0 +1,323 @@
+Godot Engine v4.7.2.stable.mono.official.ed1daf0bf - https://godotengine.org
+
+REPRO_STAGE {"detail":{"cpu":5,"godot":"4.7.2-stable (official)","hot":false,"probes":false},"ms":192,"stage":"begin"}
+MuJoCo: compile time (ms)
+  total:          0.2   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.2   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+REPRO_STAGE {"detail":{},"ms":195,"stage":"floor_load_begin"}
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=load.enter a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=load.document_construct_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.compile_begin a=1 b=-1 thread=4084559758805674568
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.compile_end a=1 b=0 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.make_data_begin a=13631488 b=4287 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.make_data_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.forward_options a=0 b=2 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.forward_begin a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.forward_end a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.old_destroy_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.old_destroy_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=load.document_construct_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=load.restore_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.asset_paths_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.asset_paths_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.compile_begin a=1 b=-1 thread=4084559758805674568
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.compile_end a=1 b=0 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.make_data_begin a=13631488 b=4287 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.make_data_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.forward_options a=3 b=2 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.forward_begin a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.forward_end a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.old_destroy_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.old_destroy_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=load.restore_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=load.insert_arguments_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=load.initial_state_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=load.initial_state_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=load.take_spec_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=load.take_spec_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=insert.enter a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=insert.rebuild_begin a=1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.enter a=1 b=1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.attach_begin a=98784247809 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.attach_end a=98784247809 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.compile_begin a=1 b=-1 thread=4084559758805674568
+MuJoCo: compile time (ms)
+  total:          0.0   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.0   (wall clock)
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.compile_end a=1 b=0 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.spec_delete_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.make_data_begin a=13631488 b=4287 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.make_data_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.transfer_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.transfer_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.forward_options a=3 b=2 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.forward_begin a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.forward_end a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.old_delete_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.old_delete_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.commit_forward_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.commit_forward_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=rebuild.exit a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=insert.rebuild_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=load.insert_returned a=1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.destroy_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=0 stage=document.destroy_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=1 elapsed_ms=1 stage=load.exit a=-1 b=-1 thread=4084559758805674568
+REPRO_STAGE {"detail":{},"ms":196,"stage":"first_load_begin"}
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=0 stage=load.enter a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=0 stage=load.document_construct_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=0 stage=document.compile_begin a=1 b=-1 thread=4084559758805674568
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=0 stage=document.compile_end a=1 b=0 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=0 stage=document.make_data_begin a=13631488 b=4287 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=0 stage=document.make_data_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=0 stage=document.forward_options a=0 b=2 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=0 stage=document.forward_begin a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=0 stage=document.forward_end a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=0 stage=document.old_destroy_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=0 stage=document.old_destroy_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=0 stage=load.document_construct_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=0 stage=load.restore_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=0 stage=document.asset_paths_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=1 stage=document.asset_paths_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=2 stage=document.compile_begin a=1 b=-1 thread=4084559758805674568
+MuJoCo: compile time (ms)
+  total:        372.7   (wall clock)
+  assets:       339.3   -
+    load:       101.7     (CPU time)
+    hull:       140.1     -
+    polygon:     47.6     -
+    inertia:     28.9     -
+    bvh:        222.4     -
+    octree:       0.3     -
+    texture:      0.0     -
+  other:         33.4   (wall clock)
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=document.compile_end a=69 b=35 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=document.make_data_begin a=15728640 b=78150355 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=document.make_data_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=document.forward_options a=3 b=2 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=document.forward_begin a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=document.forward_end a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=document.old_destroy_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=document.old_destroy_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=load.restore_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=load.insert_arguments_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=load.initial_state_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=load.initial_state_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=load.take_spec_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=load.take_spec_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=insert.enter a=1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=insert.rebuild_begin a=2 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=rebuild.enter a=2 b=1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=375 stage=rebuild.attach_begin a=98784247809 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=376 stage=rebuild.attach_end a=98784247809 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=376 stage=rebuild.attach_begin a=103079215106 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=405 stage=rebuild.attach_end a=103079215106 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=405 stage=rebuild.compile_begin a=1 b=-1 thread=4084559758805674568
+MuJoCo: compile time (ms)
+  total:         89.1   (wall clock)
+  assets:        55.8   -
+    load:       104.9     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         33.3   (wall clock)
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=494 stage=rebuild.compile_end a=70 b=35 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=494 stage=rebuild.spec_delete_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=503 stage=rebuild.make_data_begin a=15728640 b=78154067 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=503 stage=rebuild.make_data_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=503 stage=rebuild.transfer_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=503 stage=rebuild.transfer_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=503 stage=rebuild.forward_options a=3 b=2 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=503 stage=rebuild.forward_begin a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=503 stage=rebuild.forward_end a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=503 stage=rebuild.old_delete_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=503 stage=rebuild.old_delete_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=503 stage=rebuild.commit_forward_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=504 stage=rebuild.commit_forward_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=504 stage=rebuild.exit a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=504 stage=insert.rebuild_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=504 stage=load.insert_returned a=1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=504 stage=document.destroy_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=508 stage=document.destroy_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=2 elapsed_ms=508 stage=load.exit a=-1 b=-1 thread=4084559758805674568
+REPRO_STAGE {"detail":{"applied_force_norm":0.0,"authored_option_values":{"ccd_iterations":35,"ccd_tolerance":0.000001,"cone":0,"density":0.0,"disableactuator":0,"disableflags":0,"enableflags":0,"gravity":[0.0,0.0,-9.81],"impratio":1.0,"integrator":3,"iterations":100,"jacobian":2,"ls_iterations":50,"ls_tolerance":0.01,"magnetic":[0.0,-0.5,0.0],"noslip_iterations":0,"noslip_tolerance":0.000001,"o_friction":[1.0,1.0,0.005,0.0001,0.0001],"o_margin":0.0,"o_solimp":[0.9,0.95,0.001,0.5,2.0],"o_solref":[0.02,1.0],"sdf_initpoints":40,"sdf_iterations":10,"sleep_tolerance":0.001,"solver":2,"timestep":0.002,"tolerance":0.00000001,"viscosity":0.0,"wind":[0.0,0.0,0.0]},"authored_options":true,"contact_details":[],"contacts":[],"has_checkpoint":false,"last_error":"","nbody":31,"ncon":0,"nexclude":0,"ngeom":70,"njnt":30,"npair":0,"nu":0,"objects":[{"label":"floor","prefix":"import_98784247809_","rid":"RID(98784247809)"},{"label":"first","prefix":"import_103079215106_","rid":"RID(103079215106)"}],"options":{"ccd_iterations":35,"ccd_tolerance":0.000001,"cone":0,"density":0.0,"disableactuator":0,"disableflags":0,"enableflags":0,"gravity":[0.0,0.0,-9.81],"impratio":1.0,"integrator":3,"iterations":100,"jacobian":2,"ls_iterations":50,"ls_tolerance":0.01,"magnetic":[0.0,-0.5,0.0],"noslip_iterations":0,"noslip_tolerance":0.000001,"o_friction":[1.0,1.0,0.005,0.0001,0.0001],"o_margin":0.0,"o_solimp":[0.9,0.95,0.001,0.5,2.0],"o_solref":[0.02,1.0],"sdf_initpoints":40,"sdf_iterations":10,"sleep_tolerance":0.001,"solver":2,"timestep":0.002,"tolerance":0.00000001,"viscosity":0.0,"wind":[0.0,0.0,0.0]},"options_source":"authored_cache_legacy_alias","paused":true,"revision":4,"runtime_options":{"ccd_iterations":35,"ccd_tolerance":0.000001,"cone":0,"density":0.0,"disableactuator":0,"disableflags":0,"enableflags":0,"gravity":[0.0,0.0,-9.81],"impratio":1.0,"integrator":3,"iterations":100,"jacobian":2,"ls_iterations":50,"ls_tolerance":0.01,"magnetic":[0.0,-0.5,0.0],"noslip_iterations":0,"noslip_tolerance":0.000001,"o_friction":[1.0,1.0,0.005,0.0001,0.0001],"o_margin":0.0,"o_solimp":[0.9,0.95,0.001,0.5,2.0],"o_solref":[0.02,1.0],"sdf_initpoints":40,"sdf_iterations":10,"sleep_tolerance":0.001,"solver":2,"timestep":0.002,"tolerance":0.00000001,"viscosity":0.0,"wind":[0.0,0.0,0.0]},"time":0.0,"timestep":0.002,"version":"3.16.0","warmstart_norm":0.0,"warning_count":0},"ms":705,"stage":"first_load_end"}
+REPRO_STAGE {"detail":{"first_id":103079215106,"time":0.0},"ms":705,"stage":"second_load_begin"}
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=0 stage=load.enter a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=0 stage=load.document_construct_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=0 stage=document.compile_begin a=1 b=-1 thread=4084559758805674568
+MuJoCo: compile time (ms)
+  total:          0.1   (wall clock)
+  assets:         0.0   -
+    load:         0.0     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:          0.1   (wall clock)
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=0 stage=document.compile_end a=1 b=0 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=0 stage=document.make_data_begin a=13631488 b=4287 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=0 stage=document.make_data_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=0 stage=document.forward_options a=0 b=2 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=0 stage=document.forward_begin a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=0 stage=document.forward_end a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=0 stage=document.old_destroy_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=0 stage=document.old_destroy_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=0 stage=load.document_construct_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=0 stage=load.restore_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=0 stage=document.asset_paths_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=4 stage=document.asset_paths_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=7 stage=document.compile_begin a=1 b=-1 thread=4084559758805674568
+MuJoCo: compile time (ms)
+  total:         88.8   (wall clock)
+  assets:        53.2   -
+    load:        98.1     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         35.6   (wall clock)
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=96 stage=document.compile_end a=69 b=35 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=96 stage=document.make_data_begin a=15728640 b=78150355 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=96 stage=document.make_data_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=96 stage=document.forward_options a=3 b=2 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=96 stage=document.forward_begin a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=97 stage=document.forward_end a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=97 stage=document.old_destroy_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=97 stage=document.old_destroy_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=97 stage=load.restore_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=97 stage=load.insert_arguments_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=97 stage=load.initial_state_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=97 stage=load.initial_state_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=97 stage=load.take_spec_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=97 stage=load.take_spec_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=97 stage=insert.enter a=2 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=97 stage=insert.rebuild_begin a=3 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=97 stage=rebuild.enter a=3 b=1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=97 stage=rebuild.attach_begin a=98784247809 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=97 stage=rebuild.attach_end a=98784247809 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=97 stage=rebuild.attach_begin a=103079215106 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=117 stage=rebuild.attach_end a=103079215106 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=117 stage=rebuild.attach_begin a=107374182403 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=143 stage=rebuild.attach_end a=107374182403 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=143 stage=rebuild.compile_begin a=1 b=-1 thread=4084559758805674568
+MuJoCo: compile time (ms)
+  total:        171.4   (wall clock)
+  assets:       105.9   -
+    load:       202.9     (CPU time)
+    hull:         0.0     -
+    polygon:      0.0     -
+    inertia:      0.0     -
+    bvh:          0.0     -
+    octree:       0.0     -
+    texture:      0.0     -
+  other:         65.5   (wall clock)
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=315 stage=rebuild.compile_end a=139 b=70 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=315 stage=rebuild.spec_delete_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=322 stage=rebuild.make_data_begin a=17825792 b=156302183 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=322 stage=rebuild.make_data_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=322 stage=rebuild.transfer_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=322 stage=rebuild.transfer_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=322 stage=rebuild.forward_options a=3 b=2 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=322 stage=rebuild.forward_begin a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=322 stage=rebuild.forward_end a=0 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=322 stage=rebuild.old_delete_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=323 stage=rebuild.old_delete_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=323 stage=rebuild.commit_forward_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=323 stage=rebuild.commit_forward_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=323 stage=rebuild.exit a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=323 stage=insert.rebuild_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=323 stage=load.insert_returned a=1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=323 stage=document.destroy_begin a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=327 stage=document.destroy_end a=-1 b=-1 thread=4084559758805674568
+MJ_NATIVE_LOAD_STAGE id=3 elapsed_ms=327 stage=load.exit a=-1 b=-1 thread=4084559758805674568
+REPRO_STAGE {"detail":{},"ms":1033,"stage":"second_load_end"}
+REPRO_STAGE {"detail":{"first_id":103079215106,"ngeom":139,"second_id":107374182403,"time":0.0},"ms":1033,"stage":"PASS"}

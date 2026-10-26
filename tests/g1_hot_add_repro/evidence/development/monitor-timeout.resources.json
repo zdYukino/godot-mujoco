@@ -1,0 +1,39 @@
+{
+  "command": [
+    "python3",
+    "-c",
+    "import time; time.sleep(5)"
+  ],
+  "elapsed_seconds": 0.30772817700199084,
+  "exit": -2,
+  "reason": "timeout",
+  "peak_sampled_rss_kib": 6384,
+  "lowest_available_kib": 14834180,
+  "cpu_thread_samples": [
+    {
+      "elapsed": 0.0027901669964194298,
+      "threads": {
+        "42798": {
+          "state": "R",
+          "utime_ticks": 0,
+          "stime_ticks": 0,
+          "wchan": "0"
+        }
+      }
+    }
+  ],
+  "cgroup_before": {
+    "/sys/fs/cgroup/memory.current": "3186221056\n",
+    "/sys/fs/cgroup/memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+    "/sys/fs/cgroup/memory.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/memory.pressure'",
+    "/sys/fs/cgroup/io.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/io.pressure'",
+    "/sys/fs/cgroup/cpu.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/cpu.pressure'"
+  },
+  "cgroup_after": {
+    "/sys/fs/cgroup/memory.current": "3186696192\n",
+    "/sys/fs/cgroup/memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+    "/sys/fs/cgroup/memory.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/memory.pressure'",
+    "/sys/fs/cgroup/io.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/io.pressure'",
+    "/sys/fs/cgroup/cpu.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/cpu.pressure'"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "command": [
+    "/workspace/shared/tools/bin/godot",
+    "--headless",
+    "--path",
+    "/tmp/g1-minimal-repro-final/project",
+    "--fixed-fps",
+    "60",
+    "--script",
+    "res://runtime.gd",
+    "--",
+    "hot",
+    "probes"
+  ],
+  "elapsed_seconds": 1.4088976519997232,
+  "exit": 0,
+  "reason": "completed",
+  "peak_sampled_rss_kib": 1112060,
+  "lowest_available_kib": 13157000,
+  "cpu_thread_samples": [
+    {
+      "elapsed": 0.0006441369987442158,
+      "threads": {
+        "42752": {
+          "state": "R",
+          "utime_ticks": 0,
+          "stime_ticks": 0,
+          "wchan": "0"
+        }
+      }
+    }
+  ],
+  "cgroup_before": {
+    "/sys/fs/cgroup/memory.current": "3186253824\n",
+    "/sys/fs/cgroup/memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+    "/sys/fs/cgroup/memory.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/memory.pressure'",
+    "/sys/fs/cgroup/io.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/io.pressure'",
+    "/sys/fs/cgroup/cpu.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/cpu.pressure'"
+  },
+  "cgroup_after": {
+    "/sys/fs/cgroup/memory.current": "3188834304\n",
+    "/sys/fs/cgroup/memory.events": "low 0\nhigh 0\nmax 0\noom 0\noom_kill 0\noom_group_kill 0\n",
+    "/sys/fs/cgroup/memory.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/memory.pressure'",
+    "/sys/fs/cgroup/io.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/io.pressure'",
+    "/sys/fs/cgroup/cpu.pressure": "[Errno 2] No such file or directory: '/sys/fs/cgroup/cpu.pressure'"
+  }
+}
