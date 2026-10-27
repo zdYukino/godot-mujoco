@@ -2,7 +2,7 @@
 
 Linux x86_64，Godot 4.7.2 .NET、MuJoCo 3.16.0。两个固定基座单关节模型、一个普通 Godot box 和专用静态地形；无需 G1 资产。使用产品级 `WorldHandle`、`InstanceHandle`、`TerrainHandle`，区分请求 accepted 与实际 completed，等待期间禁用重复操作。
 
-先按仓库说明构建 native 扩展并放入 `demo/addons/godot_mujoco/bin`，确保 `godot` 指向固定 .NET 版本，`dotnet` 可用：
+先按仓库说明构建 native 扩展并放入 `addons/godot_mujoco/bin`，确保 `godot` 指向固定 .NET 版本，`dotnet` 可用：
 
 ```sh
 OUT=/tmp/gmj-light-example GODOT_BIN=/path/to/godot bash examples/light_workflow/run.sh

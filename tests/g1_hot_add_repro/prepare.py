@@ -16,7 +16,7 @@ for name,pattern in [('floor','gallery_floor_*'),('g1','passive_g1_*')]:
   manifest[str(dst.relative_to(project))]=hashlib.sha256(dst.read_bytes()).hexdigest()
  manifest[str(target.relative_to(project)/'model.xml')]=hashlib.sha256((target/'model.xml').read_bytes()).hexdigest()
 addon=project/'addons/godot_mujoco';(addon/'bin').mkdir(parents=True)
-source=root/'demo/addons/godot_mujoco';shutil.copyfile(source/'godot_mujoco.gdextension',addon/'godot_mujoco.gdextension')
+source=root/'addons/godot_mujoco';shutil.copyfile(source/'godot_mujoco.gdextension',addon/'godot_mujoco.gdextension')
 for name in ['libgodot_mujoco.linux.template_debug.x86_64.so','libmujoco.so.3.16.0']:
  shutil.copyfile(source/'bin'/name,addon/'bin'/name);manifest[name]=hashlib.sha256((addon/'bin'/name).read_bytes()).hexdigest()
 (project/'.godot').mkdir();(project/'.godot/extension_list.cfg').write_text('res://addons/godot_mujoco/godot_mujoco.gdextension\n')

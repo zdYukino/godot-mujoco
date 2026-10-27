@@ -9,7 +9,7 @@ cp "$ROOT/tests/native_hinge_drive/"{project.godot,acceptance.gd,negative.gd,gui
 cp "$ROOT/tests/native_joints/acceptance.gd" "$OUT/project/pin_support.gd"
 cp "$ROOT/tests/native_hinge/acceptance.gd" "$OUT/project/hinge_support.gd"
 cp "$ROOT/tests/native_hinge/gui.gd" "$OUT/project/passive_gui.gd"
-cp -a "$ROOT/demo/addons" "$OUT/project/"
+cp -a "$ROOT/addons" "$OUT/project/"
 run_stage() {
  local stage="$1" code;shift
  set +e

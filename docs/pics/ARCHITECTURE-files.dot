@@ -1,0 +1,57 @@
+// Repository layout as observed in the working tree, 2026-10-28.
+// Evidence: CMakeLists.txt; scripts/local_tools.py; scripts/em_run.py;
+// examples/README.md; addons/; assets/; examples/; docs/; tests/.
+digraph "仓库文件结构" {
+  graph [charset="UTF-8", bgcolor="#f5f7fb", pad="0.38", nodesep="0.32", ranksep="0.42", rankdir=TB,
+    fontname="Noto Sans CJK SC", labelloc=t, labeljust=l,
+    label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="23" COLOR="#17213a"><B>仓库文件结构</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12" COLOR="#56637c">godot-mujoco/ · 按职责分组；生成内容在图中明确标注</FONT></TD></TR>
+    </TABLE>>];
+  node [shape=box, style="rounded,filled", color="#d4deee", fillcolor="#ffffff", penwidth="1.2", margin="0.19,0.16", fontname="Noto Sans CJK SC"];
+  native [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="17" COLOR="#2057ae"><B>src/ · 原生扩展</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">register_types.cpp  注册扩展</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">mj_editor_document.*  文档事务</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">mj_world.*  独立仿真接口</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">physics/  后端、关节、空间查询</FONT></TD></TR>
+  </TABLE>>];
+  addon [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="17" COLOR="#00746c"><B>addons/ · 共享插件</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">godot_mujoco/  GDExtension</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">model/、map/、csharp/  运行 API</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">mujoco_editor/  Godot 编辑面板</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">bin/  构建产生的原生库</FONT></TD></TR>
+  </TABLE>>];
+  examples [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="17" COLOR="#8c500c"><B>examples/ · 例程与模板</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">shape_gallery / g1_passive / sdf_terrain</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">pendulum / light_workflow</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">_shared/  共享素材</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">templates/new_project/  新工程模板</FONT></TD></TR>
+  </TABLE>>];
+  assets [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="17" COLOR="#8c500c"><B>assets/ · 共享原始资产</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">robots/unitree_g1/  URDF 与网格</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">保留来源清单和许可证</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">例程素材另见 examples/_shared/</FONT></TD></TR>
+  </TABLE>>];
+  tools [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="17" COLOR="#6342a8"><B>构建与本地工程</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">CMakeLists.txt / cmake/  构建扩展</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">scripts/、boostup.sh、em_run.sh</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">third_party/、build-*/  本地生成</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">projects/  新建工程及插件副本</FONT></TD></TR>
+  </TABLE>>];
+  docs [label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="17" COLOR="#56637c"><B>docs/ 与 tests/</B></FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">docs/  使用说明与验证证据</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">docs/pics/  当前架构图及源文件</FONT></TD></TR>
+    <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="13">tests/  编辑器、例程与物理测试</FONT></TD></TR>
+  </TABLE>>];
+  {rank=same; native; addon; examples;}
+  {rank=same; assets; tools; docs;}
+  native -> assets [style=invis]; addon -> tools [style=invis]; examples -> docs [style=invis];
+  native -> addon [style=invis]; addon -> examples [style=invis];
+  assets -> tools [style=invis]; tools -> docs [style=invis];
+}

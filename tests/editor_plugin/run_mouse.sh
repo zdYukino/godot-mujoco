@@ -7,7 +7,7 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 [[ ! -e "$OUT/project" ]] || exit 2
 mkdir -p "$OUT/project"
 cp -a "$ROOT/tests/editor_plugin/". "$OUT/project/"
-cp -a "$ROOT/demo/addons" "$OUT/project/"
+cp -a "$ROOT/addons" "$OUT/project/"
 cp "$ROOT/tests/editor_plugin/mouse_probe.gd" "$OUT/project/acceptance.gd"
 timeout --kill-after=5 120 "$ROOT/scripts/import_headless.sh" "$OUT/project" > "$OUT/import.log" 2>&1
 timeout --kill-after=5 240 "$GODOT_BIN" --editor --path "$OUT/project" --rendering-method gl_compatibility --audio-driver Dummy --resolution 1600x1000 -- --mj-editor-test --probe-dir="$OUT" > "$OUT/editor.log" 2>&1 &

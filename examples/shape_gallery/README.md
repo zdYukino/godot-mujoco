@@ -15,35 +15,22 @@
 
 不依赖尚不支持的 Godot `ConvexPolygonShape3D` 后端，也不引入动态 SDF。`nativeccd` 是 MuJoCo 的凸碰撞算法开关，不是 PhysX 连续碰撞。
 
-## 运行保存的示例
+## 在 Godot 中直接打开
 
-先按仓库文档构建并在 `demo/addons/godot_mujoco/bin/` 放置匹配 Godot 4.7.2 .NET / MuJoCo 3.16 的扩展。下面从仓库根目录在独立工作目录运行，避免生成缓存污染示例源目录：
+前提：已完成[原生插件构建](../../docs/linux-install.zh-CN.md)。例程直接使用仓库中 addons 的构建产物。
 
-```bash
-export GODOT_BIN=/absolute/path/to/Godot_v4.7.2-stable_mono_linux.x86_64
-GALLERY_DIR=$(mktemp -d /tmp/gmj-gallery.XXXXXX)
-cp -a examples/shape_gallery/. "$GALLERY_DIR/"
-cp -a demo/addons "$GALLERY_DIR/"
-bash scripts/import_headless.sh "$GALLERY_DIR"
-"$GODOT_BIN" --editor --path "$GALLERY_DIR" res://Main.tscn
-# 或直接运行已保存场景
-"$GODOT_BIN" --path "$GALLERY_DIR"
-```
+1. 启动 **Godot 4.7.2 .NET 项目管理器**，点击 **导入（Import）**，选择当前仓库里的 **examples/shape_gallery/project.godot**，点击 **导入并编辑**。
+2. 等待首次资源导入完成，点击 **运行项目**（F5）。主场景已经配置为 **Main.tscn**，模型包、相机、天空、地面和运行控件均已保存。
+3. 在运行画面右上角勾选 **实体 / 碰撞**，点击 **暂停 / 继续**、**重置** 或 **说明 / 帮助**。
+4. 点击编辑器的 **停止**（F8）返回。修改场景后点击 **保存场景**（Ctrl+S），下次直接从项目管理器重开。
+
+无需复制项目或 addons，无需运行 prepare.gd。保持完整仓库目录结构，共享插件通过相对链接连接。项目已经配置 MuJoCo 后端、编辑插件和 GL Compatibility。需要从源模型练习导入时，在右侧 **MuJoCo → MJCF 文档** 展开 **文档 / 导入 / 发布**，开启草稿显示，再点击 **Import MJCF** 选择 **assets/gallery.xml**。
 
 编辑器保留一个原生 3D 视图；`MuJoCo 显示` 菜单独立勾选实体与碰撞网格，属性在右侧。运行场景顶部提供紧凑的实体/碰撞开关、暂停/继续、重置及“说明 / 帮助”。帮助默认收起，点击可展开，再次点击或用“收起说明”关闭；不绑定相机快捷键。打开或关闭帮助不改变物理状态，重开场景恢复默认收起。此运行 UI 由 `gallery.gd` 在 CanvasLayer 内动态创建，与编辑器右侧属性 dock 无关。切换四种显示组合不改变碰撞参与或视觉材质。橙色边线为碰撞表示，非实心替换材质。编辑真实节点使用 Godot 原生变换轴；未应用草稿仅提供可靠的右侧数值编辑，不绘制伪可拖动轴。
 
-## 从空场景重新构建
+## 开发者：重新生成与验收
 
-`assets/gallery.xml` 是导入资产，`generate_source.py` 可确定性重新生成它（使用 Python 标准库）。在上述独立工作目录运行：
-
-```bash
-python3 "$GALLERY_DIR/generate_source.py"
-"$GODOT_BIN" --headless --path "$GALLERY_DIR" --script res://prepare.gd
-```
-
-`prepare.gd` 导入 MJCF、保存带源快照的独立模型包，再从新的世界创建并保存 `Main.tscn`，加入 HDR 天空、相机和运行控件。保存模型的 source 使用 `res://assets/gallery.xml`，无机器绝对路径。已保存的模型包包含自身 XML 与源快照，原始 MJCF 缺失后仍可运行。重新生成会覆盖工作目录中的 `Main.tscn`；需要保留的手工改动请使用另一份工作目录。
-
-## 验收
+**assets/gallery.xml** 是已保存的导入资产，generate_source.py 可确定性重新生成。日常打开例程无需重建资源；需要验证源模型重新导入时，下面的隔离测试会创建独立项目、执行 prepare.gd、保存模型和场景，并验证重开，不改 examples 中的设计。
 
 ```bash
 GODOT_BIN="$GODOT_BIN" OUT=/tmp/gmj-gallery-check bash tests/shape_gallery/run.sh

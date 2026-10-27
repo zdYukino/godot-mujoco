@@ -1,5 +1,8 @@
 {
   "platform": "Linux-x86_64",
+  "dotnet_sdk_version": "8.0.426",
+  "cmake_minimum_version": "3.24",
+  "godot_cpp_tag": "godot-4.5-stable",
   "godot_version": "4.7.2.stable.mono.official.ed1daf0bf",
   "godot_url": "https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable/Godot_v4.7.2-stable_mono_linux_x86_64.zip",
   "godot_archive_sha256": "129f82db7bafd54ae14bb5bb284041c73860e8c7a009a3a026ca5e946cbff247",
@@ -9,5 +12,10 @@
   "mujoco_version": "3.16.0",
   "mujoco_url": "https://github.com/google-deepmind/mujoco/releases/download/3.16.0/mujoco-3.16.0-linux-x86_64.tar.gz",
   "mujoco_archive_sha256": "139577c541d43716a63992ab698cbc7b09788b1d547fb82b682d59b40ef49b9d",
-  "mujoco_binary_sha256": "d89b5532a1ec9c4ca8744449d648233a2f7ae5d9e7b2ccddd692e11955f6cb04"
+  "mujoco_binary_sha256": "d89b5532a1ec9c4ca8744449d648233a2f7ae5d9e7b2ccddd692e11955f6cb04",
+  "dotnet_url": "https://builds.dotnet.microsoft.com/dotnet/Sdk/8.0.426/dotnet-sdk-8.0.426-linux-x64.tar.gz",
+  "dotnet_archive_sha512": "8141d01bdc53f604aed3bb661b604707a64209f8a947cd81bf95b4f518951593d77864069191f54ea5e84362a409da6b0f69074bf893b283d7e0cf93e2bf20a8",
+  "cmake_bootstrap_version": "3.31.10",
+  "cmake_url": "https://github.com/Kitware/CMake/releases/download/v3.31.10/cmake-3.31.10-linux-x86_64.tar.gz",
+  "cmake_archive_sha256": "3cb3dd247b6a1de2d0f4b20c6fd4326c9024e894cebc9dc8699758887e566ca7"
 }

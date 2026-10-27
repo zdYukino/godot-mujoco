@@ -29,7 +29,7 @@ Linux 默认构建流：
 
 1. CMake 获取绑定及带 SHA-256 校验的 MuJoCo **3.16.0** 官方预编译包。
 2. 编译独立 API、编辑器文档和原生物理后端，共同链接 godot-cpp、MuJoCo。
-3. 将扩展 `libgodot_mujoco.linux.template_debug.x86_64.so` 和 `libmujoco.so.3.16.0` 等运行库放入 `demo/addons/godot_mujoco/bin/`。
+3. 将扩展 `libgodot_mujoco.linux.template_debug.x86_64.so` 和 `libmujoco.so.3.16.0` 等运行库放入 `addons/godot_mujoco/bin/`。
 4. Linux 扩展通过 `$ORIGIN` RUNPATH 解析同目录运行库。实际链接验证见[Linux 基线](docs/headless-baseline.md)。
 
 原生库、构建树及 `.godot` 缓存被忽略；只克隆源码需要先构建。源码构建选项及移动平台配置仍保留，但不是本轮跨平台质量保证。
@@ -50,7 +50,7 @@ godot-mujoco/
 │       ├── mj_g1_import.h          # 原始 G1 的显式运行时适配
 │       ├── mj_options.h            # 完整 mjOption 比较与导出
 │       └── mj_assets.h             # 通过 C API / XML 处理资源路径
-├── demo/
+├── examples/pendulum/
 │   ├── addons/godot_mujoco/
 │   │   ├── godot_mujoco.gdextension
 │   │   ├── model/                 # 资源打包、运行时 world / instance、场景和可视化
@@ -167,11 +167,11 @@ Unitree `g1_29dof_mode_18` 的 **36 个原始文件保持字节不变**。需要
 - **2026-10-17，3.16.0 基线复核**：裸 `--headless --editor --import` 的快速退出仍出现过 139；使用 [`scripts/import_headless.sh`](scripts/import_headless.sh) 的固定版本/帧延迟流程完成多次独立冷导入。详见[历史导入记录](docs/headless-baseline.md)，不能把规避流程等同于已证明所有裸导入方式都无竞态。
 - **2026-10-18，原生后端至 portable 阶段**：增加原生共享 space、隔离编辑器和可移植资源运行时。开发中的 ABI、惯量编辑、延迟释放和截图等待问题及修复证据保留在[阶段记录](docs/portable-model-runtime-validation.md)，不列作当前未解决故障。
 
-旧 SVG：[Godot 本体](ARCHITECTURE-godot.svg)、[文件结构](ARCHITECTURE-files.svg)、[通信流](ARCHITECTURE-runtime.svg) **仅保留为 2026-10-16 历史图**。其中版本和“MuJoCo 不替换 PhysicsServer”等文字不适用于当前后端；当前分层以本文表格和流程图为准。
+当前架构图已按工作区重新绘制：[文件结构](docs/pics/ARCHITECTURE-files.svg)、[Godot 集成](docs/pics/ARCHITECTURE-godot.svg)、[运行时通信](docs/pics/ARCHITECTURE-runtime.svg)。本文保留各阶段历史记录；当历史描述与当前代码不一致时，以源码和新图为准。
 
 当前源码入口：
 
 - [注册与日志](src/register_types.cpp)、[独立 MjWorld](src/mj_world.h)
 - [原生后端](src/physics/mj_physics_server.h)、[资源运行时组合](src/physics/mj_runtime_model.cpp)
-- [编辑器文档](src/mj_editor_document.h)、[插件界面](demo/addons/mujoco_editor/panel.gd)
-- [资源和运行时节点](demo/addons/godot_mujoco/model/)、[使用与限制](docs/portable-models.md)
+- [编辑器文档](src/mj_editor_document.h)、[插件界面](addons/mujoco_editor/panel.gd)
+- [资源和运行时节点](addons/godot_mujoco/model/)、[使用与限制](docs/portable-models.md)

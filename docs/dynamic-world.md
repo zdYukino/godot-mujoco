@@ -68,7 +68,7 @@ substeps (at most 0.002 seconds) to stabilize damped articulated drives.
 ## G1 compatibility and explicit adaptations
 
 Import the copied original
-`demo/assets/robots/unitree_g1/g1_29dof_mode_18/g1_29dof_mode_18.urdf`.
+`assets/robots/unitree_g1/g1_29dof_mode_18/g1_29dof_mode_18.urdf`.
 MuJoCo 3.16.0's default path handling otherwise repeats `meshes/meshes/`.
 The importer parses without rewriting the file, resolves **spec copies** of
 mesh filenames against the asset's `meshes` directory, and validates the

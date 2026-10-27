@@ -1,4 +1,4 @@
 # Keep the pinned upstream URDF and binary meshes byte-exact on every checkout.
-demo/assets/robots/unitree_g1/g1_29dof_mode_18/*.urdf -text
-demo/assets/robots/unitree_g1/g1_29dof_mode_18/meshes/*.STL -text
-demo/assets/robots/unitree_g1/g1_29dof_mode_18/LICENSE -text
+assets/robots/unitree_g1/g1_29dof_mode_18/*.urdf -text
+assets/robots/unitree_g1/g1_29dof_mode_18/meshes/*.STL -text
+assets/robots/unitree_g1/g1_29dof_mode_18/LICENSE -text

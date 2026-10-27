@@ -5,7 +5,7 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 : "${OUT:=$(mktemp -d /tmp/gmj-map-editor.XXXXXX)}"
 mkdir -p "$OUT/project"
 cp "$ROOT/tests/static_map/"{project.godot,map_editor_test.gd,source_transaction_test.gd} "$OUT/project/"
-cp -a "$ROOT/demo/addons" "$OUT/project/"
+cp -a "$ROOT/addons" "$OUT/project/"
 printf '\n[editor_plugins]\nenabled=PackedStringArray("res://addons/mujoco_editor/plugin.cfg")\n' >> "$OUT/project/project.godot"
 timeout --kill-after=5 120 bash "$ROOT/scripts/import_headless.sh" "$OUT/project" > "$OUT/import.log" 2>&1
 python3 "$ROOT/tests/static_map/fixtures.py" "$OUT/project/fixtures"

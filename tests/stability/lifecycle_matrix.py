@@ -20,7 +20,7 @@ def run(kind,index,slot):
    if rc==0:
     text=(d/'pressure.log').read_text();rc=0 if pressure_passed(text) else 1
  else:
-  project=d/'project';shutil.copytree(a.source/'tests/editor_plugin',project);shutil.copytree(a.source/'demo/addons',project/'addons');assert not(project/'.godot').exists()
+  project=d/'project';shutil.copytree(a.source/'tests/editor_plugin',project);shutil.copytree(a.source/'addons',project/'addons');assert not(project/'.godot').exists()
   rc=execute('import',[str(a.source/'scripts/import_headless.sh'),str(project)],120)
   if rc==0:
    env['DISPLAY']=':97';env['LIBGL_ALWAYS_SOFTWARE']='1'

@@ -9,9 +9,9 @@ include(FetchContent)
 set(MUJOCO_VERSION "3.16.0" CACHE STRING "MuJoCo release version to fetch")
 set(GODOT_CPP_TAG "godot-4.5-stable" CACHE STRING "godot-cpp git tag to build against")
 
-# Where the built extension + MuJoCo runtime are staged so the demo project
+# Where the built extension + MuJoCo runtime are staged so the example projects
 # (and any exported game) can load them with zero manual steps.
-set(GMJ_ADDON_BIN "${CMAKE_CURRENT_SOURCE_DIR}/demo/addons/godot_mujoco/bin"
+set(GMJ_ADDON_BIN "${CMAKE_CURRENT_SOURCE_DIR}/addons/godot_mujoco/bin"
     CACHE PATH "Directory that receives the extension and bundled MuJoCo runtime")
 
 # Desktop uses official prebuilts. Android / iOS have none, so those toolchains
@@ -263,28 +263,32 @@ if(GMJ_BUILD_CORE_SMOKE OR GMJ_MOBILE)
 endif()
 
 # ---------------------------------------------------------------------------
-# Stage the extension + MuJoCo runtime into the demo addon bin folder
+# Stage the extension + MuJoCo runtime into the shared addon bin folder
 # ---------------------------------------------------------------------------
-add_custom_command(TARGET godot_mujoco POST_BUILD
+# Run even when the extension is up to date, so deleted staged libraries recover.
+# Keep unchanged library timestamps stable for an already-open editor.
+add_custom_target(gmj_stage_addon ALL
     COMMAND ${CMAKE_COMMAND} -E make_directory "${GMJ_ADDON_BIN}"
-    COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:godot_mujoco>" "${GMJ_ADDON_BIN}/"
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:godot_mujoco>" "${GMJ_ADDON_BIN}/"
+    DEPENDS godot_mujoco
+    VERBATIM
     COMMENT "Staging godot_mujoco extension into ${GMJ_ADDON_BIN}")
 
 if(GMJ_MUJOCO_FROM_SOURCE_TARGET)
-    add_custom_command(TARGET godot_mujoco POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:mujoco>"
+    add_custom_command(TARGET gmj_stage_addon POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:mujoco>"
             "${GMJ_ADDON_BIN}/$<TARGET_FILE_NAME:mujoco>"
         COMMENT "Bundling MuJoCo runtime from source")
     # Also drop the unversioned linker name so the .gdextension dependency path
     # stays stable across patch versions when the SONAME file is a symlink.
-    add_custom_command(TARGET godot_mujoco POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:mujoco>"
+    add_custom_command(TARGET gmj_stage_addon POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:mujoco>"
             "${GMJ_ADDON_BIN}/$<TARGET_LINKER_FILE_NAME:mujoco>"
         COMMENT "Bundling MuJoCo linker-name copy")
     if(TARGET gmj_core_smoke)
         add_custom_command(TARGET gmj_core_smoke POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E make_directory "${GMJ_ADDON_BIN}"
-            COMMAND ${CMAKE_COMMAND} -E copy "$<TARGET_FILE:gmj_core_smoke>"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:gmj_core_smoke>"
                 "${GMJ_ADDON_BIN}/"
             COMMENT "Staging gmj_core_smoke")
     endif()
@@ -298,8 +302,8 @@ if(GMJ_MUJOCO_FROM_SOURCE_TARGET)
             endif()
         endif()
         if(EXISTS "${_gmj_libcxx}")
-            add_custom_command(TARGET godot_mujoco POST_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy "${_gmj_libcxx}" "${GMJ_ADDON_BIN}/libc++_shared.so"
+            add_custom_command(TARGET gmj_stage_addon POST_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_gmj_libcxx}" "${GMJ_ADDON_BIN}/libc++_shared.so"
                 COMMENT "Bundling NDK libc++_shared.so")
         endif()
     endif()
@@ -310,8 +314,8 @@ else()
         "${mujoco_SOURCE_DIR}/bin/*.dll"
         "${mujoco_SOURCE_DIR}/lib/*.dll")
     foreach(_rt IN LISTS MUJOCO_RUNTIME_FILES)
-        add_custom_command(TARGET godot_mujoco POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy "${_rt}" "${GMJ_ADDON_BIN}/"
+        add_custom_command(TARGET gmj_stage_addon POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different "${_rt}" "${GMJ_ADDON_BIN}/"
             COMMENT "Bundling MuJoCo runtime: ${_rt}")
     endforeach()
 endif()

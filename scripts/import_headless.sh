@@ -19,4 +19,4 @@ if [[ "$(uname -s)" != Linux ]]; then
 fi
 # Frame delay mitigates the race; it is not an engine fix or a guarantee.
 # exec preserves Godot's actual status (including crashes) for callers/CI.
-exec "$GODOT_BIN" --headless --editor --path "${1:-$ROOT/demo}" --import --frame-delay 1000
+exec "$GODOT_BIN" --headless --editor --path "${1:-$ROOT/examples/pendulum}" --import --frame-delay 1000

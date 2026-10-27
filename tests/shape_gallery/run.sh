@@ -12,8 +12,13 @@ for key in ['compress/mode','compress/hdr_compression','detect_3d/compress_to']:
  assert key+'=0\n' in settings,key
 PYASSET
 mkdir -p "$OUT/project"
-cp -a "$ROOT/examples/shape_gallery/". "$OUT/project/"
-cp -a "$ROOT/demo/addons" "$OUT/project/"
+# Exclude the shared addon symlink and editor cache from isolated fixtures.
+python3 - "$ROOT/examples/shape_gallery" "$OUT/project" <<'PYCOPY'
+import shutil, sys
+shutil.copytree(sys.argv[1], sys.argv[2], dirs_exist_ok=True,
+                ignore=shutil.ignore_patterns("addons", ".godot", ".godot.*"))
+PYCOPY
+cp -a "$ROOT/addons" "$OUT/project/"
 cp "$ROOT/tests/shape_gallery/acceptance.gd" "$OUT/project/"
 timeout --kill-after=5 120 bash "$ROOT/scripts/import_headless.sh" "$OUT/project" > "$OUT/import.log" 2>&1
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/project" --script res://acceptance.gd > "$OUT/shipped.log" 2>&1

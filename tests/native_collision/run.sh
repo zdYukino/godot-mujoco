@@ -6,7 +6,7 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 mkdir -p "$OUT/project"
 cp "$ROOT/tests/static_map/project.godot" "$OUT/project/"
 cp "$ROOT/tests/native_collision/"*.gd "$OUT/project/"
-cp -a "$ROOT/demo/addons" "$OUT/project/"
+cp -a "$ROOT/addons" "$OUT/project/"
 python3 "$ROOT/tests/static_map/fixtures.py" "$OUT/project/fixtures"
 timeout 150 bash "$ROOT/scripts/import_headless.sh" "$OUT/project" > "$OUT/import.log" 2>&1
 ! rg 'SCRIPT ERROR|Parse Error' "$OUT/import.log"

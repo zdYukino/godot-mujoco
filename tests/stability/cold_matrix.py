@@ -7,7 +7,7 @@ godot=os.environ.get('GODOT_BIN','godot');cpus=sorted(os.sched_getaffinity(0));g
 manifest=json.loads((a.out.parent/'frozen-manifest.json').read_text());rows=[]
 def trial(mode,index,slot=0):
  d=a.out/f'{mode}-{index:02}';d.mkdir();project=d/'project';project.mkdir()
- shutil.copytree(a.source/'demo/addons',project/'addons');shutil.copytree(a.source/'tests/portable_runtime',project,dirs_exist_ok=True)
+ shutil.copytree(a.source/'addons',project/'addons');shutil.copytree(a.source/'tests/portable_runtime',project,dirs_exist_ok=True)
  assert not (project/'.godot').exists()
  env=os.environ.copy()
  for key,suffix in [('XDG_DATA_HOME','data'),('XDG_CONFIG_HOME','config'),('XDG_CACHE_HOME','cache')]:

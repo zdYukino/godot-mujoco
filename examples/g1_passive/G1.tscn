@@ -1,14 +1,15 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://c2pxxpn8e7pwy"]
 
-[ext_resource type="Script" path="res://addons/godot_mujoco/model/runtime_world.gd" id="1_xlmrq"]
+[ext_resource type="Script" uid="uid://bdfc73w5oq5aa" path="res://addons/godot_mujoco/model/runtime_world.gd" id="1_xlmrq"]
 [ext_resource type="Resource" path="res://models/gallery_floor_6546a18060d0f73224767bcaf845e03466805bc190bfeac40f835789c50420f4/model.tres" id="2_loo5h"]
-[ext_resource type="Script" path="res://addons/godot_mujoco/model/model_instance.gd" id="3_oufwx"]
+[ext_resource type="Script" uid="uid://ccgoiad3e21f3" path="res://addons/godot_mujoco/model/model_instance.gd" id="3_oufwx"]
 [ext_resource type="Resource" path="res://models/passive_g1_f5621afff23ae13f5caa857b008ca2de3bc49f2a4fae0be11679997028d833d9/model.tres" id="4_52wb0"]
-[ext_resource type="Texture2D" path="res://assets/kloofendal_43d_clear_puresky_4k.hdr" id="5_c4kqx"]
-[ext_resource type="Script" path="res://g1_controls.gd" id="6_axh8q"]
+[ext_resource type="Texture2D" uid="uid://pkxaajk682h5" path="res://assets/kloofendal_43d_clear_puresky_4k.hdr" id="5_c4kqx"]
+[ext_resource type="Script" uid="uid://b82n18hgfc4uw" path="res://g1_controls.gd" id="6_axh8q"]
 [ext_resource type="Resource" path="res://g1_collision_previews.res" id="7_6kll8"]
-
-[ext_resource type="Script" path="res://g1_camera.gd" id="8_camera"]
+[ext_resource type="Script" uid="uid://3xiyirfvmhaj" path="res://g1_camera.gd" id="8_camera"]
+[ext_resource type="Script" uid="uid://kby3kf21hbss" path="res://addons/godot_mujoco/model/static_heightfield.gd" id="9_52wb0"]
+[ext_resource type="Script" uid="uid://dvuufh4pqllnt" path="res://addons/godot_mujoco/model/heightfield_data.gd" id="10_c4kqx"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_wkp8b"]
 panorama = ExtResource("5_c4kqx")
@@ -22,6 +23,14 @@ sky = SubResource("Sky_20pc6")
 ambient_light_source = 3
 ambient_light_energy = 0.65
 
+[sub_resource type="Resource" id="Resource_axh8q"]
+script = ExtResource("10_c4kqx")
+heights = PackedFloat32Array(0, 0, 0, 0)
+
+[sub_resource type="Resource" id="Resource_6kll8"]
+script = ExtResource("10_c4kqx")
+heights = PackedFloat32Array(0, 0, 0, 0)
+
 [node name="PassiveG1Gallery" type="Node3D" unique_id=1339871244]
 script = ExtResource("1_xlmrq")
 world_model = ExtResource("2_loo5h")
@@ -31,21 +40,20 @@ script = ExtResource("3_oufwx")
 model = ExtResource("2_loo5h")
 
 [node name="G1_1" type="Node3D" parent="." unique_id=205651566]
-transform = Transform3D(0.9961947, -0.08715574, 0, 0.08715574, 0.9961947, 0, 0, 0, 1, -1.8, 0.82, 0)
+transform = Transform3D(0.9961947, -0.08715574, 0, 0.08715574, 0.9961947, 0, 0, 0, 1, -1.9921205, 1.007184, 0)
 script = ExtResource("3_oufwx")
 model = ExtResource("4_52wb0")
 
 [node name="Camera" type="Camera3D" parent="." unique_id=1939554655]
-transform = Transform3D(1, 0, 0, 0, 0.7960837985490559, -0.6051864057360395, 0, 0.6051864057360395, 0.7960837985490559, -1.8, 2.3865964983553267, 2.547468155356979)
+transform = Transform3D(1, 0, 0, 0, 0.7960838, -0.6051864, 0, 0.6051864, 0.7960838, -1.8, 2.3865964, 2.5474682)
 fov = 50.0
-near = 0.05
 script = ExtResource("8_camera")
 
 [node name="PolyHavenSky" type="WorldEnvironment" parent="." unique_id=1725586761]
 environment = SubResource("Environment_5vvyt")
 
 [node name="Sun" type="DirectionalLight3D" parent="." unique_id=405375781]
-transform = Transform3D(0.81915206, 0.43938506, -0.36868784, 0, 0.64278764, 0.76604444, 0.57357645, -0.62750685, 0.5265408, 0, 0, 0)
+transform = Transform3D(0.81915206, 0.43938503, -0.36868784, 0, 0.64278764, 0.76604444, 0.57357645, -0.62750685, 0.5265408, 0, 5.033901, 0)
 light_energy = 1.3
 shadow_enabled = true
 
@@ -53,3 +61,15 @@ shadow_enabled = true
 script = ExtResource("6_axh8q")
 robot_model = ExtResource("4_52wb0")
 collision_definitions = ExtResource("7_6kll8")
+
+[node name="Heightfield" type="Node3D" parent="." unique_id=1156055065]
+process_mode = 3
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.91473174, 1.2373375)
+script = ExtResource("9_52wb0")
+design = SubResource("Resource_axh8q")
+
+[node name="@Node3D@26311" type="Node3D" parent="Heightfield" unique_id=2067214357]
+process_mode = 3
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2429996, -0.2732746, 0)
+script = ExtResource("9_52wb0")
+design = SubResource("Resource_6kll8")

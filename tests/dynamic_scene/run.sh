@@ -6,7 +6,7 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 [[ ! -e "$OUT/project" ]] || { echo 'Use a fresh OUT directory' >&2; exit 2; }
 mkdir -p "$OUT/project"
 cp -a "$ROOT/tests/dynamic_scene/". "$OUT/project/"
-cp -a "$ROOT/demo/addons" "$ROOT/demo/assets" "$OUT/project/"
+cp -a "$ROOT/addons" "$ROOT/assets" "$OUT/project/"
 GODOT_BIN="$GODOT_BIN" timeout 120 "$ROOT/scripts/import_headless.sh" "$OUT/project" > "$OUT/import.log" 2>&1
 timeout 180 "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 res://Acceptance.tscn -- --report="$OUT/results.json" > "$OUT/runtime.log" 2>&1
 timeout 120 "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 -- --ui-smoke > "$OUT/ui-smoke.log" 2>&1

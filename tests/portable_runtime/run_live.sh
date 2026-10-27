@@ -6,7 +6,7 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 [[ ! -e "$OUT/project" ]] || { echo 'Use a fresh OUT directory' >&2; exit 2; }
 mkdir -p "$OUT/project"
 cp "$ROOT/tests/portable_runtime/"*.gd "$ROOT/tests/portable_runtime/project.godot" "$OUT/project/"
-cp -a "$ROOT/demo/addons" "$ROOT/demo/assets" "$OUT/project/"
+cp -a "$ROOT/addons" "$ROOT/assets" "$OUT/project/"
 timeout --kill-after=5 120 "$ROOT/scripts/import_headless.sh" "$OUT/project" > "$OUT/import.log" 2>&1
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/project" --script res://prepare_runtime.gd > "$OUT/author.log" 2>&1
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/project" --script res://live_edit_test.gd > "$OUT/live-edit.log" 2>&1

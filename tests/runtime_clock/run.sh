@@ -6,7 +6,7 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 [[ ! -e "$OUT/project" ]] || exit 2
 mkdir -p "$OUT/project"
 cp "$ROOT/tests/runtime_clock/"*.gd "$ROOT/tests/runtime_clock/project.godot" "$OUT/project/"
-cp -a "$ROOT/demo/addons" "$OUT/project/"
+cp -a "$ROOT/addons" "$OUT/project/"
 timeout --kill-after=5 120 "$ROOT/scripts/import_headless.sh" "$OUT/project" > "$OUT/import.log" 2>&1
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/project" --script res://acceptance.gd > "$OUT/runtime.log" 2>&1
 cp "$ROOT/tests/runtime_clock/ClockBinding.cs" "$ROOT/tests/runtime_clock/ClockBinding.csproj" "$ROOT/tests/runtime_clock/ClockBinding.tscn" "$OUT/project/"

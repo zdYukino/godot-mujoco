@@ -34,9 +34,9 @@ class RunnerTests(unittest.TestCase):
         import json
         with tempfile.TemporaryDirectory() as tmp:
             root=pathlib.Path(tmp)/'source'
-            for directory in ('scripts/ci','demo/scripts','demo/models','demo/addons/godot_mujoco/bin','tests/mjworld_smoke'):
+            for directory in ('scripts/ci','examples/pendulum/scripts','examples/pendulum/models','addons/godot_mujoco/bin','tests/mjworld_smoke'):
                 (root/directory).mkdir(parents=True,exist_ok=True)
-            for name in ('demo/HeadlessTest.tscn','demo/scripts/headless_smoke_test.gd','tests/mjworld_smoke/invalid_qpos.gd'):
+            for name in ('examples/pendulum/HeadlessTest.tscn','examples/pendulum/scripts/headless_smoke_test.gd','tests/mjworld_smoke/invalid_qpos.gd'):
                 (root/name).write_text('fixture')
             def fake_digest(path):
                 return run.CONFIG['mujoco_binary_sha256'] if path.name=='libmujoco.so.3.16.0' else ('extension' if path.suffix=='.so' else run.CONFIG['godot_binary_sha256'])

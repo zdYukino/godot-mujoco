@@ -1,0 +1,415 @@
+{
+	"chunks": [
+		{
+			"actual_mode": "sdf",
+			"geometry_types": [
+				8
+			],
+			"inspect": {
+				"contacts": 0,
+				"entities": [
+					{
+						"kind": "body",
+						"name": "world",
+						"parent": "",
+						"properties": {
+							"compiler_inertia_policy": "automatic",
+							"explicit_inertia": false,
+							"inertia": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"inertia_mode": "automatic",
+							"ipos": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"iquat": [
+								1.0,
+								0.0,
+								0.0,
+								0.0
+							],
+							"mass": 0.0,
+							"pos": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"pose_editable": true,
+							"quat": [
+								1.0,
+								0.0,
+								0.0,
+								0.0
+							]
+						}
+					},
+					{
+						"kind": "body",
+						"name": "map_collision",
+						"parent": "world",
+						"properties": {
+							"compiler_inertia_policy": "automatic",
+							"explicit_inertia": false,
+							"inertia": [
+								4366.96683119549,
+								3196.7511508722,
+								1757.26215430535
+							],
+							"inertia_mode": "automatic",
+							"ipos": [
+								-2.63647369724503,
+								0.0,
+								0.189890544803964
+							],
+							"iquat": [
+								0.0,
+								0.633561284657504,
+								0.0,
+								0.773692509064898
+							],
+							"mass": 4518.69466405765,
+							"pos": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"pose_editable": true,
+							"quat": [
+								1.0,
+								0.0,
+								0.0,
+								0.0
+							]
+						}
+					},
+					{
+						"kind": "geom",
+						"name": "collision",
+						"parent": "map_collision",
+						"properties": {
+							"conaffinity": 1,
+							"contype": 1,
+							"density": 1000.0,
+							"friction": [
+								0.8,
+								0.005,
+								0.0001
+							],
+							"margin": 0.0,
+							"mass": "density-derived",
+							"pos": [
+								-2.63647369724503,
+								0.0,
+								0.189890544803964
+							],
+							"pose_editable": true,
+							"quat": [
+								0.0,
+								0.633561284657504,
+								0.0,
+								0.773692509064898
+							],
+							"size": [
+								0.655365356896663,
+								1.0,
+								1.91367918606054
+							],
+							"size_editable": true,
+							"type": 8
+						}
+					}
+				],
+				"error": "",
+				"model_buffer_bytes": 8954431,
+				"octree_cells": 60393,
+				"paused": true,
+				"revision": 2,
+				"sensors_readonly": 0,
+				"source": "",
+				"tendons_readonly": 0,
+				"time": 0.0,
+				"version": "3.16.0"
+			},
+			"node": "SourceCoordinates/OBJ/stairs"
+		},
+		{
+			"actual_mode": "sdf",
+			"geometry_types": [
+				8
+			],
+			"inspect": {
+				"contacts": 0,
+				"entities": [
+					{
+						"kind": "body",
+						"name": "world",
+						"parent": "",
+						"properties": {
+							"compiler_inertia_policy": "automatic",
+							"explicit_inertia": false,
+							"inertia": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"inertia_mode": "automatic",
+							"ipos": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"iquat": [
+								1.0,
+								0.0,
+								0.0,
+								0.0
+							],
+							"mass": 0.0,
+							"pos": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"pose_editable": true,
+							"quat": [
+								1.0,
+								0.0,
+								0.0,
+								0.0
+							]
+						}
+					},
+					{
+						"kind": "body",
+						"name": "map_collision",
+						"parent": "world",
+						"properties": {
+							"compiler_inertia_policy": "automatic",
+							"explicit_inertia": false,
+							"inertia": [
+								2480.98212238398,
+								1452.28607825348,
+								1448.86624057156
+							],
+							"inertia_mode": "automatic",
+							"ipos": [
+								0.0000000000000000148374247394233,
+								0.0000000000000000139100856932094,
+								-0.174570086593246
+							],
+							"iquat": [
+								0.270598050073099,
+								0.65328148243819,
+								-0.270598050073099,
+								0.65328148243819
+							],
+							"mass": 3777.11941589507,
+							"pos": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"pose_editable": true,
+							"quat": [
+								1.0,
+								0.0,
+								0.0,
+								0.0
+							]
+						}
+					},
+					{
+						"kind": "geom",
+						"name": "collision",
+						"parent": "map_collision",
+						"properties": {
+							"conaffinity": 1,
+							"contype": 1,
+							"density": 1000.0,
+							"friction": [
+								0.8,
+								0.005,
+								0.0001
+							],
+							"margin": 0.0,
+							"mass": "density-derived",
+							"pos": [
+								0.0000000000000000148374247394233,
+								0.0000000000000000139100856932094,
+								-0.174570086593246
+							],
+							"pose_editable": true,
+							"quat": [
+								0.270598050073099,
+								0.65328148243819,
+								-0.270598050073099,
+								0.65328148243819
+							],
+							"size": [
+								0.474570068711854,
+								1.4142135623731,
+								1.4142135623731
+							],
+							"size_editable": true,
+							"type": 8
+						}
+					}
+				],
+				"error": "",
+				"model_buffer_bytes": 9710015,
+				"octree_cells": 64745,
+				"paused": true,
+				"revision": 2,
+				"sensors_readonly": 0,
+				"source": "",
+				"tendons_readonly": 0,
+				"time": 0.0,
+				"version": "3.16.0"
+			},
+			"node": "SourceCoordinates/OBJ/depression"
+		},
+		{
+			"actual_mode": "sdf",
+			"geometry_types": [
+				8
+			],
+			"inspect": {
+				"contacts": 0,
+				"entities": [
+					{
+						"kind": "body",
+						"name": "world",
+						"parent": "",
+						"properties": {
+							"compiler_inertia_policy": "automatic",
+							"explicit_inertia": false,
+							"inertia": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"inertia_mode": "automatic",
+							"ipos": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"iquat": [
+								1.0,
+								0.0,
+								0.0,
+								0.0
+							],
+							"mass": 0.0,
+							"pos": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"pose_editable": true,
+							"quat": [
+								1.0,
+								0.0,
+								0.0,
+								0.0
+							]
+						}
+					},
+					{
+						"kind": "body",
+						"name": "map_collision",
+						"parent": "world",
+						"properties": {
+							"compiler_inertia_policy": "automatic",
+							"explicit_inertia": false,
+							"inertia": [
+								2077.78298189306,
+								1203.7508694483,
+								1185.78483754579
+							],
+							"inertia_mode": "automatic",
+							"ipos": [
+								3.00327505123159,
+								-0.00503560658246133,
+								-0.21134755991022
+							],
+							"iquat": [
+								0.190722758976489,
+								0.679271049688893,
+								-0.186494652160603,
+								0.683692485682302
+							],
+							"mass": 3114.05180809617,
+							"pos": [
+								0.0,
+								0.0,
+								0.0
+							],
+							"pose_editable": true,
+							"quat": [
+								1.0,
+								0.0,
+								0.0,
+								0.0
+							]
+						}
+					},
+					{
+						"kind": "geom",
+						"name": "collision",
+						"parent": "map_collision",
+						"properties": {
+							"conaffinity": 1,
+							"contype": 1,
+							"density": 1000.0,
+							"friction": [
+								0.8,
+								0.005,
+								0.0001
+							],
+							"margin": 0.0,
+							"mass": "density-derived",
+							"pos": [
+								3.00327505123159,
+								-0.00503560658246133,
+								-0.21134755991022
+							],
+							"pose_editable": true,
+							"quat": [
+								0.190722758976489,
+								0.679271049688893,
+								-0.186494652160603,
+								0.683692485682302
+							],
+							"size": [
+								0.481712955441725,
+								1.37606802622544,
+								1.38016219497222
+							],
+							"size_editable": true,
+							"type": 8
+						}
+					}
+				],
+				"error": "",
+				"model_buffer_bytes": 8408383,
+				"octree_cells": 55937,
+				"paused": true,
+				"revision": 2,
+				"sensors_readonly": 0,
+				"source": "",
+				"tendons_readonly": 0,
+				"time": 0.0,
+				"version": "3.16.0"
+			},
+			"node": "SourceCoordinates/OBJ/rough"
+		}
+	],
+	"default_collision": "sdf",
+	"octree_maxdepth": 6,
+	"package": "res://models/map_978d7170dfd5fbb4530a1036addc9f525853fc07ffdec79da06980d4a87ee903"
+}

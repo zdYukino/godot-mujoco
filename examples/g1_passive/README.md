@@ -1,16 +1,32 @@
-# 第二示例：无控 G1 与运行时热添加
+# 例程 2：无控制 G1 倒地
 
 真实 Unitree G1 在同一个 `MjRuntimeWorld` 中自由落下、接触地板。此示例复用第一示例的原始 CC0 HDR、非 VRAM 导入配置、灯光、原创建模的地板和 1 m 网格，以及默认收起的帮助和紧凑运行控件。没有额外中央预览、动画倒地或平衡控制器。
 
-## 启动保存的示例
+## 在 Godot 中直接打开
 
-先按仓库说明构建 Godot 4.7.2 .NET / MuJoCo 3.16 扩展并放到 `demo/addons`。从仓库根目录执行：
+前提：已完成[原生插件构建](../../docs/linux-install.zh-CN.md)。
+
+1. 启动 **Godot 4.7.2 .NET 项目管理器**，点击 **导入（Import）**，选择当前仓库的 **examples/g1_passive/project.godot**，点击 **导入并编辑**。
+2. 等待资源导入完成，点击 **运行项目**（F5）。主场景已经配置为 **G1.tscn**，初始是一台机器人。
+3. 观察自由基座 G1 在重力下自然倒地。若面板显示“继续”，先点击它；本例没有站立 / 行走控制。
+4. 在运行画面右上角使用 **实体 / 碰撞**、**暂停 / 继续**、**重置** 和 **说明 / 帮助**；滚轮缩放，F 重新取景。
+5. 点击编辑器的 **停止**（F8）返回，保存场景用 **Ctrl+S**。以后从项目列表直接重开。
+
+无需复制形状例程、HDR 或插件，也不需要执行 prepare.sh。共享控件、着色器和天空通过仓库内相对链接连接，保持完整仓库目录结构即可。
+
+**“添加 G1”有实现，但既有 dot 宿主热加仍超时、未通过验收。** 首次体验以单台倒地为主，第二台的添加不作为必需步骤。机器人自碰撞及机器人之间碰撞被配置为排除；下文保留原始边界和失败记录。
+
+## 开发者：隔离组装与源模型重建
+
+下面的准备脚本用于独立输出和自动化验证，日常直接打开项目不需要执行。
+
+先按[通用安装指南](../../docs/linux-install.zh-CN.md)运行 `bash scripts/setup.sh build`，构建 Godot 4.7.2 .NET / MuJoCo 3.16 扩展并放到 `addons`。从仓库根目录执行：
 
 ```bash
 export GODOT_BIN=/absolute/path/to/Godot_v4.7.2-stable_mono_linux.x86_64
-export OUT=$(mktemp -d /tmp/gmj-g1-demo.XXXXXX)
+export OUT=$(mktemp -d "${TMPDIR:-/tmp}/gmj-g1-demo.XXXXXX")
 bash examples/g1_passive/prepare.sh
-"$GODOT_BIN" --path "$OUT/project"
+"$GODOT_BIN" --path "$OUT/project" --rendering-method gl_compatibility
 ```
 
 脚本在独立目录组装已保存的 `G1.tscn`、独立模型包、共用地板 shader 和 HDR，并进行导入。默认直接使用已保存模型，无需重新编译 URDF。仓库不重复存储 HDR，组装时从第一示例复制。`--editor --path "$OUT/project" res://G1.tscn` 可在原生编辑器打开；运行界面右上方有“添加 G1”，帮助默认收起。第二示例使用独立近景相机：初始取景第一台，成功添加后自动取景两台。滚轮缩放（单机距离限制 2–9 m，双机 4.2–9 m 以保留两台在画面内），F 恢复当前单机/双机取景；UI 消耗的输入不会传给相机，不增加拖拽操作。相机只改变视图，机器人、地板尺寸及物理状态不变。
@@ -37,9 +53,9 @@ REBUILD=1 OUT=/tmp/gmj-g1-rebuild bash examples/g1_passive/prepare.sh
 
 ## 来源与许可
 
-复用仓库 `demo/assets/robots/unitree_g1/g1_29dof_mode_18`，原始来源为 https://github.com/unitreerobotics/unitree_ros ，固定提交 `5994d4faef0a9cadd3287f8de0199a67eeb2a259`，目录 `robots/g1_description`。保留全部 34 个原始 STL 资产，不换简化人偶。完整原始文件哈希见 [upstream-manifest.json](upstream-manifest.json)，BSD-3-Clause 许可见 [UPSTREAM_LICENSE](UPSTREAM_LICENSE)。模型包内网格按原始内容 SHA256 命名，原 URDF 另存于 sources，路径转换不修改网格字节。
+复用仓库 `assets/robots/unitree_g1/g1_29dof_mode_18`，原始来源为 https://github.com/unitreerobotics/unitree_ros ，固定提交 `5994d4faef0a9cadd3287f8de0199a67eeb2a259`，目录 `robots/g1_description`。保留全部 34 个原始 STL 资产，不换简化人偶。完整原始文件哈希见 [upstream-manifest.json](upstream-manifest.json)，BSD-3-Clause 许可见 [UPSTREAM_LICENSE](UPSTREAM_LICENSE)。模型包内网格按原始内容 SHA256 命名，原 URDF 另存于 sources，路径转换不修改网格字节。
 
-天空作者 Greg Zaal / Poly Haven，CC0；详细下载、SHA256 和导入设置沿用 [第一示例素材说明](../shape_gallery/assets/SOURCES.md)（组装后的独立项目中为 `assets/SOURCES.md`）。网格是项目原创，不包含 NVIDIA 地板 USD 或 MuJoCo 原纹理。
+天空作者 Greg Zaal / Poly Haven，CC0；详细下载、SHA256 见 [共用素材说明](../_shared/assets/SOURCES.md)，导入设置保留在本工程中（组装后的独立项目说明为 `assets/SOURCES.md`）。网格是项目原创，不包含 NVIDIA 地板 USD 或 MuJoCo 原纹理。
 
 ## 有界验收与资源
 

@@ -1,6 +1,6 @@
 # Typed C# runtime control (Linux, Godot 4.7.2 .NET / MuJoCo 3.16)
 
-The product API is `demo/addons/godot_mujoco/csharp/MuJoCoRuntime.cs`, namespace
+The product API is `addons/godot_mujoco/csharp/MuJoCoRuntime.cs`, namespace
 `GodotMuJoCo`. Copy the addon into a .NET Godot project; the normal SDK compile
 includes its C# sources. Bind existing configured `MjRuntimeWorld` and loaded
 `MjModelInstance` nodes (including scripts inheriting from them) on the main thread. This facade uses the existing native

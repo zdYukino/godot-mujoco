@@ -17,25 +17,32 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y build-essential git curl unzip python3 python3-pip binutils
           python3 -m pip install cmake==3.31.6
+      - name: Read pinned .NET SDK version
+        id: toolchain
+        run: python3 -c 'import json; print("dotnet_sdk=" + json.load(open("scripts/ci/toolchain.json"))["dotnet_sdk_version"])' >> "$GITHUB_OUTPUT"
       - name: Install .NET runtime SDK
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.426'
+          dotnet-version: ${{ steps.toolchain.outputs.dotnet_sdk }}
       - name: Fetch and verify official Godot .NET
         run: |
           mkdir -p evidence
           python3 scripts/ci/install_godot.py "$RUNNER_TEMP/godot" > evidence/godot-path.txt 2> evidence/toolchain-install.log
           echo "GODOT_BIN=$(cat evidence/godot-path.txt)" >> "$GITHUB_ENV"
+      - name: Test portable setup interfaces
+        run: PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests/setup -p 'test_*.py'
       - name: Build pinned Linux extension
         run: |
           set -o pipefail
-          cmake -S . -B build -DMUJOCO_VERSION=3.16.0 2>&1 | tee evidence/configure.log
-          cmake --build build -j2 2>&1 | tee evidence/build.log
-          objdump -p demo/addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so > evidence/linkage.log
+          bash scripts/setup.sh check 2>&1 | tee evidence/preflight.log
+          bash scripts/setup.sh build 2>&1 | tee evidence/build.log
+          objdump -p addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so > evidence/linkage.log
           grep -q 'RUNPATH .*\$ORIGIN' evidence/linkage.log
           grep -q 'NEEDED .*libmujoco.so.3.16.0' evidence/linkage.log
+      - name: Check downloaded SDK can be reused locally
+        run: bash scripts/setup.sh check --mujoco-root "$GITHUB_WORKSPACE/build-linux/_deps/mujoco-src" --build-dir "$RUNNER_TEMP/gmj-sdk-check"
       - name: Strict isolated lightweight smoke
-        run: OUT="$GITHUB_WORKSPACE/evidence/smoke" bash tests/mjworld_smoke/run.sh
+        run: bash scripts/setup.sh smoke --out "$GITHUB_WORKSPACE/evidence/smoke"
       - name: Preserve outcomes and logs, including initialization failures
         if: always()
         uses: actions/upload-artifact@v4

@@ -92,4 +92,4 @@ cmake -S "$ROOT" -B "$BUILD_DIR" \
 
 cmake --build "$BUILD_DIR" -j "$(nproc 2>/dev/null || sysctl -n hw.ncpu)"
 
-echo "Android build finished. Staged under demo/addons/godot_mujoco/bin/"
+echo "Android build finished. Staged under addons/godot_mujoco/bin/"

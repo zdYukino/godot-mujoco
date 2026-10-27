@@ -7,7 +7,7 @@ ROOT=$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)
 : "${OUT:=$(mktemp -d /tmp/g1-actuation.XXXXXX)}"
 mkdir -p "$OUT"; OUT=$(realpath "$OUT"); MUJOCO_ROOT=$(realpath "$MUJOCO_ROOT")
 [[ ! -e "$OUT/generated" && ! -e "$OUT/godot" ]] || { echo 'OUT must have no generated or godot directory; use a fresh directory' >&2; exit 1; }
-ASSETS="$ROOT/demo/assets/robots/unitree_g1/g1_29dof_mode_18"
+ASSETS="$ROOT/assets/robots/unitree_g1/g1_29dof_mode_18"
 g++ -O2 -std=c++17 -I"$MUJOCO_ROOT/include" "$ROOT/tests/g1_actuation/native_test.cpp" -L"$MUJOCO_ROOT/lib" -Wl,-rpath,"$MUJOCO_ROOT/lib" -lmujoco -o "$OUT/native_test"
 python3 "$ROOT/tests/g1_actuation/prepare_fixture.py" --assets "$ASSETS" --out "$OUT/generated" --native "$OUT/native_test" | tee "$OUT/generation.log"
 for f in actuation-test.xml joint-inventory.json joint-inventory.tsv g1_29dof_mode_18.mujoco316.urdf; do cmp "$ASSETS/$f" "$OUT/generated/$f"; done
@@ -15,9 +15,11 @@ for f in actuation-test.xml joint-inventory.json joint-inventory.tsv g1_29dof_mo
 python3 - "$ROOT" "$OUT" <<'PY'
 import pathlib,shutil,sys
 r,o=map(pathlib.Path,sys.argv[1:]);p=o/'godot'
-shutil.copytree(r/'demo',p,ignore=shutil.ignore_patterns('.godot','bin','obj'))
-# The extension's bin directory is required; do not reuse project caches.
-shutil.copytree(r/'demo/addons/godot_mujoco/bin',p/'addons/godot_mujoco/bin')
+shutil.copytree(r/'examples/pendulum',p,ignore=shutil.ignore_patterns('.godot','addons','assets','bin','obj'))
+# Copy canonical sources directly, including native libraries. Do not depend on
+# setup-generated example links, so this fixture also works from a fresh checkout.
+shutil.copytree(r/'addons',p/'addons')
+shutil.copytree(r/'assets',p/'assets')
 shutil.copytree(r/'tests/g1_actuation',p/'tests/g1_actuation')
 shutil.copy2(r/'tests/g1_actuation/G1ActuationTests.csproj',p/'G1ActuationTests.csproj')
 with (p/'project.godot').open('a') as f:f.write('\n[dotnet]\nproject/assembly_name="G1ActuationTests"\n')

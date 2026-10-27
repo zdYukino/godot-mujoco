@@ -1,0 +1,45 @@
+// Integration overview. Evidence: src/register_types.cpp:40-61;
+// addons/mujoco_editor/plugin.gd:25-66; addons/mujoco_editor/panel.gd:57-75,204-215,317-353;
+// addons/godot_mujoco/model/runtime_world.gd:14-45;
+// addons/godot_mujoco/model/model_instance.gd:51-90; src/mj_world.h:22-35.
+digraph "Godot 与 MuJoCo 的集成" {
+  graph [charset="UTF-8", bgcolor="#f5f7fb", pad="0.38", nodesep="0.33", ranksep="0.48", rankdir=TB, splines=polyline,
+    fontname="Noto Sans CJK SC", labelloc=t, labeljust=l,
+    label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="23" COLOR="#17213a"><B>Godot 与 MuJoCo 的集成</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12" COLOR="#56637c">编辑预览、共享物理世界与独立 MjWorld 是三条不同路径</FONT></TD></TR>
+    </TABLE>>];
+  node [shape=box, style="rounded,filled", color="#d4deee", fillcolor="#ffffff", penwidth=1.2, margin="0.18,0.15", fontname="Noto Sans CJK SC", fontsize=15, fontcolor="#17213a"];
+  edge [color="#64748b", penwidth=1.35, arrowsize=0.7, fontname="Noto Sans CJK SC", fontsize=10, fontcolor="#475569"];
+  editor [fillcolor="#e9f2ff", color="#9dbce6", label="Godot 编辑器\nMuJoCo 右侧面板"];
+  document [fillcolor="#e8f7f4", color="#9fd6c9", label="MjEditorDocument\n独立文档与预览"];
+  package [fillcolor="#fff5e2", color="#e6cc94", label="模型包\nmodel.tres / XML / assets"];
+  world [fillcolor="#e9f2ff", color="#9dbce6", label="共享世界节点\nMjRuntimeWorld\nMjModelInstance"];
+  physics [fillcolor="#efeaff", color="#c5b5e7", label="MuJoCo 物理后端\nMjPhysicsServer3D"];
+  shared [fillcolor="#e8f7f4", color="#9fd6c9", label="共享 space 的状态\nmjModel / mjData"];
+  bodies [fillcolor="#e9f2ff", color="#9dbce6", label="Godot 3D 场景节点\n受支持的静态体 / 刚体"];
+  legacy [fillcolor="#fff5e2", color="#e6cc94", label="MjWorld\n独立仿真节点"];
+  isolated [fillcolor="#fff5e2", color="#e6cc94", label="独立 MuJoCo 状态\nmjModel / mjData"];
+  {rank=same; editor; document; package;}
+  {rank=same; world; physics; shared;}
+  {rank=same; bodies; legacy; isolated;}
+  editor -> document [label="导入 / 编辑", constraint=false];
+  document -> package [label="文档快照与资产", constraint=false];
+  package -> world [label="场景引用"];
+  world -> physics [label="配置 / 加载", constraint=false];
+  physics -> shared [label="编译 / 求解", constraint=false];
+  bodies -> physics [label="PhysicsServer3D", constraint=false];
+  legacy -> isolated [label="加载 / 步进", constraint=false];
+  editor -> document [style=invis, weight=100];
+  document -> package [style=invis, weight=100];
+  world -> physics [style=invis, weight=100];
+  physics -> shared [style=invis, weight=100];
+  bodies -> legacy [style=invis, weight=100];
+  legacy -> isolated [style=invis, weight=100];
+  editor -> world [style=invis, weight=10];
+  document -> physics [style=invis, weight=10];
+  package -> shared [style=invis, weight=10];
+  world -> bodies [style=invis, weight=10];
+  physics -> legacy [style=invis, weight=10];
+  shared -> isolated [style=invis, weight=10];
+}

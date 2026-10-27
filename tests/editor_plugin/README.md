@@ -35,7 +35,7 @@ it does not replace dot's independent actual desktop acceptance.
 
 ## Manual acceptance
 
-1. Build/stage the addon. Open `demo/project.godot`, enable **MuJoCo Model Editor**
+1. Build/stage the addon. Open `examples/pendulum/project.godot`, enable **MuJoCo Model Editor**
    under Project Settings → Plugins, and choose the **MuJoCo** main workspace.
 2. Import `tests/editor_plugin/fixtures/pendulum.xml` through the file chooser
    (filesystem access accepts files outside the project). Select body, joint and

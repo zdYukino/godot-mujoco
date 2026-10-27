@@ -6,7 +6,7 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 [[ ! -e "$OUT/project" ]] || { echo 'Use a fresh OUT directory' >&2; exit 2; }
 mkdir -p "$OUT/project"
 cp -a "$ROOT/tests/control_presets/". "$OUT/project/"
-cp -a "$ROOT/demo/addons" "$OUT/project/"
+cp -a "$ROOT/addons" "$OUT/project/"
 timeout --kill-after=5 120 "$ROOT/scripts/import_headless.sh" "$OUT/project" > "$OUT/import.log" 2>&1
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --editor --path "$OUT/project" -- --mj-editor-test --report="$OUT/results.json" > "$OUT/runtime.log" 2>&1
 python3 - "$OUT" <<'PY'

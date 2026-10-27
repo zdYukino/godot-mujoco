@@ -4,13 +4,14 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 : "$GODOT_BIN" "$OUT"
 [[ ! -e "$OUT/project" ]] || { echo "Existing fixture preserved"; exit 2; }
 mkdir -p "$OUT/project/assets"
-cp -a "$ROOT/demo/addons" "$OUT/project/"
+cp -a "$ROOT/addons" "$OUT/project/"
 cp "$ROOT/tests/static_map/project.godot" "$OUT/project/"
 cp "$ROOT/examples/sdf_terrain/"*.gd "$OUT/project/"
 python3 "$ROOT/examples/sdf_terrain/generate.py" --out "$OUT/project/assets" > "$OUT/generate.log"
-cp "$ROOT/examples/shape_gallery/assets/SOURCES.md" "$OUT/project/assets/"
-cp "$ROOT/examples/shape_gallery/floor_grid.gdshader" "$OUT/project/"
-cp "$ROOT/examples/shape_gallery/assets/kloofendal_43d_clear_puresky_4k.hdr"* "$OUT/project/assets/"
+cp "$ROOT/examples/_shared/assets/SOURCES.md" "$OUT/project/assets/"
+cp "$ROOT/examples/_shared/floor_grid.gdshader" "$OUT/project/"
+cp "$ROOT/examples/_shared/assets/kloofendal_43d_clear_puresky_4k.hdr" "$OUT/project/assets/"
+cp "$ROOT/examples/sdf_terrain/assets/kloofendal_43d_clear_puresky_4k.hdr.import" "$OUT/project/assets/"
 bash "$ROOT/scripts/import_headless.sh" "$OUT/project" > "$OUT/import.log" 2>&1
 "$GODOT_BIN" --headless --path "$OUT/project" --script res://prepare.gd > "$OUT/prepare.log" 2>&1
 python3 - "$OUT/project/project.godot" <<'PY'

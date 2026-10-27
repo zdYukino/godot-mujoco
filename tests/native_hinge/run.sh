@@ -7,7 +7,7 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 mkdir -p "$OUT/project"
 cp "$ROOT/tests/native_hinge/"{project.godot,acceptance.gd,gui.gd,input_smoke.gd,negative.gd} "$OUT/project/"
 cp "$ROOT/tests/native_joints/acceptance.gd" "$OUT/project/pin_support.gd"
-cp -a "$ROOT/demo/addons" "$OUT/project/"
+cp -a "$ROOT/addons" "$OUT/project/"
 run_stage() {
  local stage="$1" code;shift
  set +e

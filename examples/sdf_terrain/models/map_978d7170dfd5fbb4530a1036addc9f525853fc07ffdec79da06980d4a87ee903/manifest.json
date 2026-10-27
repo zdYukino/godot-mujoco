@@ -1,0 +1,18 @@
+{
+	"axes": "Y_UP",
+	"backend": "MuJoCo 3.16.0 native shapes and map MJCF",
+	"collision_schema": 1,
+	"diagnostics": [],
+	"engine": "Godot 4.7.2 .NET",
+	"files": {
+		"map.tscn": "289d1bc1f20856000ce6b3f09be9948286fe77e0f070eda8d61b88810c1752d9"
+	},
+	"physical_readiness": "authored collision; independently verify traversal/contact",
+	"requires_addon": "godot_mujoco",
+	"sources": {
+		"res://assets/terrain.obj": "0349bd5a2f375312a3c297f06a13f303956733fb696507f56514d876ccaa7af3"
+	},
+	"units": "m",
+	"version": 1,
+	"world_settings": {}
+}

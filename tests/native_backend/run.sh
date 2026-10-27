@@ -8,7 +8,7 @@ OUT=${OUT:-$(mktemp -d /tmp/mujoco-native-backend.XXXXXX)}
 [[ ! -e "$OUT/project" ]] || { echo "Use a fresh OUT directory" >&2; exit 2; }
 mkdir -p "$OUT/project"
 cp "$TEST/project.godot" "$TEST/Main.tscn" "$TEST/acceptance.gd" "$TEST/primitives.gd" "$TEST/rotation_sync.gd" "$TEST/VisualDemo.tscn" "$TEST/visual_demo.gd" "$OUT/project/"
-cp -a "$ROOT/demo/addons" "$OUT/project/"
+cp -a "$ROOT/addons" "$OUT/project/"
 printf 'Native backend results: %s\n' "$OUT"
 GODOT_BIN="$GODOT_BIN" timeout 120 "$ROOT/scripts/import_headless.sh" "$OUT/project" > "$OUT/import.log" 2>&1
 # Three fresh engine processes exercise shutdown and startup independently.

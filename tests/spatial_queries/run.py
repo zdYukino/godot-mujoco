@@ -9,9 +9,9 @@ out=pathlib.Path(a.out).resolve()
 if out.exists():ap.error('output must be new; existing evidence is preserved')
 out.mkdir(parents=True)
 def digest(p):return hashlib.sha256(p.read_bytes()).hexdigest()
-sources={str(p.relative_to(root)):digest(p) for base in ['src','demo/addons','tests/spatial_queries','tests/sdf_terrain','examples/sdf_terrain'] for p in (root/base).rglob('*') if p.is_file() and p.suffix in ['.cpp','.h','.gd','.py','.sh','.gdshader','.json','.obj'] and '.godot' not in p.parts and 'bin' not in p.parts}
+sources={str(p.relative_to(root)):digest(p) for base in ['src','addons','tests/spatial_queries','tests/sdf_terrain','examples/sdf_terrain'] for p in (root/base).rglob('*') if p.is_file() and p.suffix in ['.cpp','.h','.gd','.py','.sh','.gdshader','.json','.obj'] and '.godot' not in p.parts and 'bin' not in p.parts}
 sources['CMakeLists.txt']=digest(root/'CMakeLists.txt')
-provenance={'host':platform.node(),'system':platform.platform(),'head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip(),'branch':subprocess.check_output(['git','branch','--show-current'],cwd=root,text=True).strip(),'sources':sources,'binary_sha256':digest(root/'demo/addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so'),'godot':subprocess.check_output([a.godot,'--version'],text=True).strip()}
+provenance={'host':platform.node(),'system':platform.platform(),'head':subprocess.check_output(['git','rev-parse','HEAD'],cwd=root,text=True).strip(),'branch':subprocess.check_output(['git','branch','--show-current'],cwd=root,text=True).strip(),'sources':sources,'binary_sha256':digest(root/'addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so'),'godot':subprocess.check_output([a.godot,'--version'],text=True).strip()}
 if a.build_dir:
     build=pathlib.Path(a.build_dir).resolve()
     cache=build/'CMakeCache.txt';flags=build/'CMakeFiles/godot_mujoco.dir/flags.make'
@@ -42,7 +42,7 @@ if run('sdf-interval-compile',['g++','-O2','-std=c++17','-I'+str(sdk/'include'),
     run('sdf-interval',[native,*(['--extended'] if a.extended else [])],'SDF_INTERVAL_NATIVE_RESULT',45)
 query=out/'query-project';query.mkdir()
 shutil.copy(root/'tests/static_map/project.godot',query)
-shutil.copytree(root/'demo/addons',query/'addons')
+shutil.copytree(root/'addons',query/'addons')
 shutil.copy(root/'tests/spatial_queries/query_test_base.gd',query)
 for name in ['area','convex_cast','hfield_cast','status','asset_pair_matrix','sdf_thin']:shutil.copy(root/'tests/spatial_queries'/f'{name}.gd',query)
 run('query-import',['bash',root/'scripts/import_headless.sh',query])

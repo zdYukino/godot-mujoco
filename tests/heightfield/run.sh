@@ -6,7 +6,7 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 [[ ! -e "$OUT/project" ]] || exit 2
 mkdir -p "$OUT/project"
 cp "$ROOT/tests/heightfield/"{prepare.gd,acceptance.gd,gui.gd,project.godot} "$OUT/project/"
-cp -a "$ROOT/demo/addons" "$OUT/project/"
+cp -a "$ROOT/addons" "$OUT/project/"
 run_stage() {
  local stage="$1" code; shift
  set +e

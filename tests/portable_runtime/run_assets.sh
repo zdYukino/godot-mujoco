@@ -6,7 +6,7 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 [[ ! -e "$OUT/project" ]] || { echo 'Use a fresh OUT directory' >&2; exit 2; }
 mkdir -p "$OUT/project"
 cp -a "$ROOT/tests/portable_runtime/". "$OUT/project/"
-cp -a "$ROOT/demo/addons" "$OUT/project/"
+cp -a "$ROOT/addons" "$OUT/project/"
 cp -a "$ROOT/tests/editor_plugin/fixtures/external" "$OUT/source"
 cp -a "$ROOT/tests/editor_plugin/fixtures/external" "$OUT/source_other"
 sed -i 's/v 1 0 0/v 2 0 0/' "$OUT/source_other/meshes/tetra.obj"

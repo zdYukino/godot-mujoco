@@ -1,6 +1,6 @@
 # Linux G1 bounded-actuation checks
 
-Requires a C++17 compiler, Python 3, MuJoCo **3.16.0** development files, a freshly built Linux GDExtension in `demo/addons/godot_mujoco/bin`, Godot 4.7.2 .NET and .NET SDK 8.
+Requires a C++17 compiler, Python 3, MuJoCo **3.16.0** development files, a freshly built Linux GDExtension in `addons/godot_mujoco/bin`, Godot 4.7.2 .NET and .NET SDK 8.
 
 ```sh
 . /workspace/shared/tools/env.sh   # optional environment-specific SDK setup

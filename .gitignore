@@ -1,3 +1,7 @@
+# Local toolchain, downloads, environment configuration and user projects
+/third_party/
+/projects/
+
 # CMake build trees
 /build/
 /build-release/
@@ -6,17 +10,31 @@
 /build-from-source/
 
 # Godot import cache
-/demo/.godot/
+/examples/**/.godot/
+/examples/**/.godot.*/
+# Regenerated example script/shader IDs; keep IDs referenced by the G1 scene
+/examples/**/*.uid
+!/examples/g1_passive/g1_camera.gd.uid
+!/examples/g1_passive/g1_controls.gd.uid
+# Default OBJ import metadata; retain configured imports such as HDR settings
+/examples/pendulum/models/composite/assets/box.obj.import
+/examples/sdf_terrain/assets/terrain.obj.import
+/examples/**/addons
+/examples/pendulum/assets
+/examples/**/bin/
+/examples/**/obj/
+__pycache__/
+*.pyc
 
 # Built + bundled binaries (produced by the CMake build, not source)
-/demo/addons/godot_mujoco/bin/*.so
-/demo/addons/godot_mujoco/bin/*.so.*
-/demo/addons/godot_mujoco/bin/*.dylib
-/demo/addons/godot_mujoco/bin/*.dll
-/demo/addons/godot_mujoco/bin/*.a
-/demo/addons/godot_mujoco/bin/gmj_core_smoke
-/demo/addons/godot_mujoco/bin/libc++_shared.so
-/demo/addons/godot_mujoco/bin/*.framework/
+/addons/godot_mujoco/bin/*.so
+/addons/godot_mujoco/bin/*.so.*
+/addons/godot_mujoco/bin/*.dylib
+/addons/godot_mujoco/bin/*.dll
+/addons/godot_mujoco/bin/*.a
+/addons/godot_mujoco/bin/gmj_core_smoke
+/addons/godot_mujoco/bin/libc++_shared.so
+/addons/godot_mujoco/bin/*.framework/
 
 # Local validation outputs and .NET build artifacts
 /build-*/

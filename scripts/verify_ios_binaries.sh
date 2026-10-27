@@ -9,7 +9,7 @@ if [[ "$(uname -s)" != "Darwin" ]]; then
 fi
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-BIN="${GMJ_ADDON_BIN:-$ROOT/demo/addons/godot_mujoco/bin}"
+BIN="${GMJ_ADDON_BIN:-$ROOT/addons/godot_mujoco/bin}"
 
 echo "== staged files =="
 ls -la "$BIN"

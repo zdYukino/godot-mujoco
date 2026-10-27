@@ -5,14 +5,16 @@ are compiled into the **same space's mjModel/mjData**, alongside any ordinary
 Godot static/rigid bodies. Meshes are generated from that compiled model and
 updated from its actual geometry transforms; a render-only robot is not accepted.
 
-Build with Godot 4.7.2 .NET, MuJoCo 3.16.0 and .NET SDK 8 as documented in
-`docs/headless-baseline.md`. Then choose a new output directory:
+Build with Godot 4.7.2 .NET, MuJoCo 3.16.0 and .NET SDK 8.0.426 using the
+[portable installation guide](../../docs/linux-install.zh-CN.md). From the
+repository root, select the installed executable and a fresh output directory:
 
 ```bash
-source /workspace/shared/tools/env.sh  # cloud-specific; use local paths on dot
-OUT=/tmp/gmj-dynamic-acceptance tests/dynamic_scene/run.sh
-"$GODOT_BIN" --path /tmp/gmj-dynamic-acceptance/project \
-  --rendering-method gl_compatibility
+export GODOT_BIN="/absolute/path/to/Godot_v4.7.2-stable_mono_linux.x86_64"
+bash scripts/setup.sh build
+OUT="$(mktemp -d "${TMPDIR:-/tmp}/gmj-dynamic-acceptance.XXXXXX")"
+OUT="$OUT" bash tests/dynamic_scene/run.sh
+"$GODOT_BIN" --path "$OUT/project" --rendering-method gl_compatibility
 ```
 
 The runner copies a fresh project, the compiled addon and model assets; applies
@@ -59,7 +61,7 @@ neither headless mode establishes rendered acceptance.
 Optional real-render diagnostics (requires a desktop/display): pass
 `-- --capture-dir=/tmp/gmj-camera-images` to save floor-only, G1/obstacle,
 focused G1 and a genuinely simulated 1.08-rad elbow pose. This does not replace
-dot's independent screenshot acceptance.
+independent screenshot acceptance on the tested host.
 
 ## Quantitative scope
 

@@ -1,0 +1,21 @@
+; Engine configuration file.
+; Legacy independent MjWorld pendulum example.
+
+config_version=5
+
+[application]
+
+config/name="MuJoCo Independent Pendulum"
+run/main_scene="res://Main.tscn"
+config/features=PackedStringArray("4.7")
+
+[physics]
+
+common/physics_ticks_per_second=60
+3d/run_on_separate_thread=false
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+
+[editor_plugins]
+enabled=PackedStringArray("res://addons/mujoco_editor/plugin.cfg")

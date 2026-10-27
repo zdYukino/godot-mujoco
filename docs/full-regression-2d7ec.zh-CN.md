@@ -52,7 +52,7 @@ dot 此前真实全桌面截图已证明双 G1 的 F5 嵌入可渲染；单宿�
 
 ## 已授权的测试隔离修正
 
-仅把错误长度 qpos 从 `demo/scripts/headless_smoke_test.gd` 移入 `tests/mjworld_smoke/invalid_qpos.gd`。正例仍验证模型加载、运动、传感器、VFS、多文件、名称与 step(0)。新负例独立进程验证加载、拒绝错误长度与状态不变；7 个审计器测试覆盖额外/重复错误、泄漏、非零退出、缺失/重复/失败结果。没有放宽正例要求，没有修改 native/model/editor 产品代码。
+仅把错误长度 qpos 从 `examples/pendulum/scripts/headless_smoke_test.gd` 移入 `tests/mjworld_smoke/invalid_qpos.gd`。正例仍验证模型加载、运动、传感器、VFS、多文件、名称与 step(0)。新负例独立进程验证加载、拒绝错误长度与状态不变；7 个审计器测试覆盖额外/重复错误、泄漏、非零退出、缺失/重复/失败结果。没有放宽正例要求，没有修改 native/model/editor 产品代码。
 
 修正后的 smoke 结果与提交见报告末尾。原始2d7失败永久保留；不能把原版本整个矩阵自动归到测试修正提交名下。
 

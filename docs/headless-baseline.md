@@ -1,3 +1,4 @@
+> 本文为历史恢复记录，包含原测试机路径及当时入口状态。当前通用安装与验证使用 `scripts/setup.sh`，不依赖这些路径。
 > [中文使用指南](linux-install.zh-CN.md) · [当前范围与验证](freebase-clock-validation.zh-CN.md)。本文保留原阶段的英文说明；版本和支持范围以当前入口为准。
 
 # Linux headless baseline
@@ -27,10 +28,10 @@ cmake -S . -B /workspace/shared/builds/godot-mujoco-3.16 \
   -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++
 cmake --build /workspace/shared/builds/godot-mujoco-3.16 -j 8
 scripts/import_headless.sh
-"$GODOT_BIN" --headless --path demo res://HeadlessTest.tscn
-"$GODOT_BIN" --headless --path demo res://ChaosPendulumTest.tscn
-"$GODOT_BIN" --headless --path demo res://VisualDebugTest.tscn
-"$GODOT_BIN" --headless --path demo --quit-after 120
+"$GODOT_BIN" --headless --path examples/pendulum res://HeadlessTest.tscn
+"$GODOT_BIN" --headless --path examples/pendulum res://ChaosPendulumTest.tscn
+"$GODOT_BIN" --headless --path examples/pendulum res://VisualDebugTest.tscn
+"$GODOT_BIN" --headless --path examples/pendulum --quit-after 120
 ```
 
 The separate build directory preserves the old `build/` cache. Do not reuse a

@@ -8,7 +8,7 @@ export GODOT_BIN="/absolute/path/to/tools/godot/Godot_v4.7.2-stable_mono_linux_x
 OUT="/absolute/new/output" bash tests/mjworld_smoke/run.sh
 ```
 
-入口兼容原有 `GODOT_BIN` / `OUT` 调用方式；OUT 必须不存在或为空。Python 需要 3.10+，系统需 timeout 之外的常规 Linux 进程支持（runner 自行管理超时与进程组）。不依赖安装 EditorPlugin，不使用整份 demo/G1 资产复制。
+入口兼容原有 `GODOT_BIN` / `OUT` 调用方式；OUT 必须不存在或为空。Python 需要 3.10+，系统需 timeout 之外的常规 Linux 进程支持（runner 自行管理超时与进程组）。不依赖安装 EditorPlugin，不使用整份 examples/pendulum/G1 资产复制。
 
 工具链由 `scripts/ci/toolchain.json` 固定：Godot 下载来自官方 godot-builds 发布，压缩包 SHA256/SHA512 与执行文件 SHA256 均核验。已安装 Godot 也必须匹配准确 binary 和版本；仅匹配 `4.7.2` 前缀不够。MuJoCo 官方压缩包由 CMake 固定 URL/SHA256 获取；runner 再核对随扩展的 `libmujoco.so.3.16.0` SHA256。godot-cpp 使用现有固定 API 目标，不扩大引擎兼容范围。自行重编译的 MuJoCo 不属于此官方二进制严格入口。
 

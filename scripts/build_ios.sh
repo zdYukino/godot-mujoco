@@ -45,4 +45,4 @@ cmake -S "$ROOT" -B "$BUILD_DIR" \
 JOBS="$(sysctl -n hw.ncpu)"
 cmake --build "$BUILD_DIR" -j "$JOBS"
 
-echo "iOS build finished. Staged under demo/addons/godot_mujoco/bin/"
+echo "iOS build finished. Staged under addons/godot_mujoco/bin/"

@@ -1,0 +1,41 @@
+// Runtime flow. Evidence: addons/godot_mujoco/model/runtime_world.gd:14-45,65-104;
+// addons/godot_mujoco/model/model_instance.gd:51-90,121-145,157-165;
+// addons/godot_mujoco/map/map_root.gd:1-47; src/physics/mj_runtime_model.cpp:16-60;
+// src/physics/mj_physics_server.cpp:240-255,339-355,455-505; src/physics/mj_scene.cpp:102-110.
+digraph "共享物理世界运行时通信" {
+  graph [charset="UTF-8", bgcolor="#f5f7fb", pad="0.38", nodesep="0.35", ranksep="0.60", rankdir=TB, splines=polyline,
+    fontname="Noto Sans CJK SC", labelloc=t, labeljust=l,
+    label=<<TABLE BORDER="0" CELLBORDER="0" CELLSPACING="0" CELLPADDING="3">
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="23" COLOR="#17213a"><B>共享物理世界：运行时通信</B></FONT></TD></TR>
+      <TR><TD ALIGN="LEFT"><FONT POINT-SIZE="12" COLOR="#56637c">同一 World3D 的模型、地图和受支持的 Godot 刚体汇入同一 space</FONT></TD></TR>
+    </TABLE>>];
+  node [shape=box, style="rounded,filled", color="#d4deee", fillcolor="#ffffff", penwidth=1.2, margin="0.18,0.15", fontname="Noto Sans CJK SC", fontsize=15, fontcolor="#17213a"];
+  edge [color="#64748b", penwidth=1.35, arrowsize=0.7, fontname="Noto Sans CJK SC", fontsize=10, fontcolor="#475569"];
+  package [fillcolor="#fff5e2", color="#e6cc94", label="已保存模型包\nmodel.tres / assets"];
+  world [fillcolor="#e9f2ff", color="#9dbce6", label="MjRuntimeWorld\n配置世界参数与时钟"];
+  instance [fillcolor="#e9f2ff", color="#9dbce6", label="MjModelInstance\n加载模型 / 控制 / 状态"];
+  bodies [fillcolor="#e9f2ff", color="#9dbce6", label="Godot 场景\n静态体 / 刚体"];
+  map [fillcolor="#e8f7f4", color="#9fd6c9", label="StaticMap\n已应用的静态地图"];
+  control [fillcolor="#e9f2ff", color="#9dbce6", label="运行控制 / C#\n暂停、单步、控制输入"];
+  physics [fillcolor="#efeaff", color="#c5b5e7", label="MjPhysicsServer3D\n每个 space 独立管理"];
+  solver [fillcolor="#e8f7f4", color="#9fd6c9", label="MuJoCo 3.16\nmjModel / mjData\nmj_step"];
+  view [fillcolor="#e9f2ff", color="#9dbce6", label="Godot 3D 视图\n节点同步 / 网格显示"];
+  {rank=same; package; control; bodies; map;}
+  {rank=same; instance; world;}
+  {rank=same; solver; view;}
+  package -> instance [label="资源快照"];
+  control -> instance [label="控制目标"];
+  control -> world [label="暂停 / 单步"];
+  world -> instance [label="所属世界", constraint=false];
+  instance -> physics [label="加载 / 控制"];
+  world -> physics [label="配置 / 时钟"];
+  bodies -> physics [label="物理接口"];
+  map -> physics [label="地图碰撞"];
+  physics -> solver [dir=both, label="步进 / 状态"];
+  physics -> view [label="姿态 / 几何"];
+  package -> control [style=invis, weight=100];
+  control -> bodies [style=invis, weight=100];
+  bodies -> map [style=invis, weight=100];
+  instance -> world [style=invis, weight=50];
+  solver -> view [style=invis, weight=50];
+}

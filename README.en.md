@@ -1,37 +1,178 @@
 # godot-mujoco
 
-[中文默认入口](README.md) · [Chinese documentation index](docs/README.zh-CN.md)
+Import, edit and run MuJoCo models in Godot, with static maps and supported Godot bodies in the same physics world.
 
-This branch targets **Linux x86_64, official Godot 4.7.2 .NET, and MuJoCo 3.16.0**. It does not modify the engine. Other platform configurations and historical reports do not establish current support.
+[中文](README.md) · [Example catalog](examples/README.md) · [Installation and troubleshooting (Chinese)](docs/linux-install.zh-CN.md) · [Documentation index](docs/README.zh-CN.md)
 
-The native PhysicsServer integrates ordinary box/sphere/plane/cylinder/[capsule](docs/native-capsule-stage3.zh-CN.md) bodies and ray queries with imported models. [Stage-one native overlap queries](docs/native-overlap-stage1.zh-CN.md) cover native primitives; heightfield/MJCF overlap remains unsupported. [Continuous translation sweeps](docs/native-continuous-sweep-stage2.zh-CN.md) support sphere-or-capsule/primitive and finite/plane pairs only, with explicit failure outside that matrix. [Stage-one Area3D monitoring](tests/native_area/README.zh-CN.md) supports impulse-free native box/sphere/cylinder/capsule triggers and was independently accepted with candidate 4c2f1f7. [Native Pin](docs/native-pin-stage1.zh-CN.md) and [restricted passive Hinge](docs/native-hinge-passive.zh-CN.md) support acyclic connections with fixed passive response. [Bounded isolated Hinge limits and velocity motors](docs/native-hinge-drive.zh-CN.md) add real impulse response and whole-interval rejection rollback; this stage awaits independent acceptance. [Area environment overrides](tests/native_area_environment/README.zh-CN.md) provide priority-ordered gravity and damping. [Minimal CharacterBody workflow](docs/native-character-stage4.zh-CN.md) supports sphere/capsule translation as a one-way query obstacle, not full platform/stair or dynamic pushing behavior. The MuJoCo editor workspace provides model properties, viewport selection and transforms, undo/redo, portable resources, and explicit runtime application. `MjRuntimeWorld` and `MjModelInstance` compose models in one physics space. The legacy `MjWorld` demonstration owns an independent model.
+## Quick start
 
-Build with CMake 3.24+ and a C++17 compiler:
+The current baseline is Linux x86_64, Godot 4.7.2 .NET, MuJoCo 3.16.0 and .NET SDK 8.0.426. Source checkouts do not contain compiled native libraries; run the setup wizard before first use.
 
-```sh
-cmake -S . -B build -DMUJOCO_VERSION=3.16.0
-cmake --build build -j4
-/path/to/official-godot --editor --path demo --rendering-method gl_compatibility
+```bash
+./boostup.sh                      # Check the environment, install or import tools, and build the addon
+./boostup.sh --check              # Inspect existing tools
+./boostup.sh --rebuild            # Rebuild with installed tools
+./boostup.sh --configure          # Choose tool sources again or reinstall
+./em_run.sh                       # Open the Godot project manager
+./em_run.sh --exp                 # Choose an example
+./em_run.sh --exp shape_gallery   # Open a specific example
+./em_run.sh --new my-project      # Create and open a local project
 ```
 
-C# uses the addon’s typed `GodotMuJoCo.WorldHandle` / `InstanceHandle` API for inherited runtime nodes, state, control and request completion; see the [typed API guide](docs/typed-control.md). Existing `Call` / `Get` dynamic access remains compatible. C# regression tests require .NET SDK 8. Build before copying both addon directories, including the native libraries. Enable **MuJoCo Model Editor** for the independent editor preview. For `MjRuntimeWorld`, separately select the MuJoCo 3D physics engine and restart. The default `demo/Main.tscn` is the independent legacy `MjWorld` example; it does not require either setting. Save a project model before creating a runtime scene or simulation playground. See the [current installation guide](docs/linux-install.zh-CN.md).
+The wizard can download or import Godot Mono and .NET. On Ubuntu 22.04/24.04 it can install missing system dependencies after confirmation; other Linux distributions require those dependencies to be prepared manually. See the [installation guide](docs/linux-install.zh-CN.md).
 
-Free-base G1 import is explicit; fixed-base import remains the default. The relaxed free-base option has no gravity compensation or synthetic position drives. Falling is expected; standing and walking are not implemented.
+## Repository layout
 
-Per-world pause, exact N native steps, capture, and reset commands execute at the native physics boundary. State reset retains current topology and committed model edits. Environment rebuild explicitly discards runtime topology changes and constructs a saved scene in a separate World3D before replacement. UI, input, and the game clock remain active. Runtime snapshots do not automatically save design resources.
+```text
+godot-mujoco/
+├── src/          # Native extension source
+├── addons/       # Runtime and editor addons
+├── assets/       # Shared assets
+├── examples/     # Examples and project template
+├── projects/     # Locally created projects (generated, Git-ignored)
+├── scripts/      # Setup, build and launch scripts
+├── tests/        # Tests and acceptance checks
+├── docs/         # Documentation and architecture diagrams
+└── third_party/  # Local tools and environment (generated, Git-ignored)
+```
 
-See the [implementation and validation report](docs/freebase-clock-validation.zh-CN.md) and retained English guides for [models](docs/portable-models.md), [editor properties](docs/editor-advanced-properties.md), and [runtime model edits](docs/runtime-safe-editing.md).
+<details>
+<summary>Detailed repository layout</summary>
 
-**Known limits:** cold-import exit 139 remains unresolved and is a non-blocking known issue for the approved daily workflows; cached retries are not fresh passes. Prefer GUI initialization before headless API editing of an existing project. The [2026-10-22 development baseline with known limits](docs/linux-development-baseline-20261022.zh-CN.md) passed independent lightweight dot GUI/F5 acceptance with normal software-driver configuration; earlier Vulkan-probe failures remain historical failures. Heavy G1/multi-G1 pressure did not pass and is left to user testing. Ubuntu 22.04 is a target, not a substitute for the recorded Debian-host acceptance. Main-thread physics is required; synchronous compilation may stall the UI. Windows and other platforms are not adapted for this baseline. No stable release, complete Godot-body/joint compatibility, complex-geometry Area support, complete CharacterBody/platform/stair behavior, standing, or walking support is claimed. Dedicated static `MjStaticHeightField` terrain is supported; ordinary static [`HeightMapShape3D`](docs/native-heightmap.zh-CN.md) now has a bounded implementation with Inspector PhysicsMaterial friction (pending independent dot acceptance); dynamic terrain remains unsupported. See [known issues](docs/known-issues.zh-CN.md).
+`[generated, ignored]` denotes local output absent from a fresh clone; `[optional]` appears only when needed.
 
-[Typed C# control API](docs/typed-control.md): request completion, handle lifetime, and lightweight validation. Native [`CylinderShape3D`](tests/native_cylinder/README.zh-CN.md) supports static and rigid bodies; MJCF cylinder editing remains a separate capability. This addition awaits independent dot build/GUI acceptance.
+```text
+godot-mujoco/
+├── README.md / README.en.md       # Chinese and English entry documentation
+├── boostup.sh                     # Install, configure, check and build wizard
+├── em_run.sh                      # Launch Godot, an example or a new project
+├── CMakeLists.txt                 # Native build, dependency pins and addon staging
+├── global.json                    # Pinned .NET SDK selection
+├── .gitignore / .gitattributes    # Git ignore and file attribute rules
+├── .github/workflows/             # CI builds, acceptance and upstream version checks
+├── .vscode/                       # Local VS Code settings/index; not ignored as a whole
+├── src/                           # C/C++ GDExtension source
+│   ├── register_types.*           # GDExtension type registration
+│   ├── mj_world.*                 # Independent MjWorld simulation interface
+│   ├── mj_editor_document.*       # MJCF documents and editing transactions
+│   └── physics/                   # MuJoCo backend, bodies, joints and spatial queries
+├── cmake/                         # Build helpers, symbol export map and mobile patches
+├── scripts/                       # Setup, launch, build and validation implementation
+│   ├── bootstrap.py               # Download/import tools, configure and build
+│   ├── local_tools.py             # Tool paths, version checks and local state
+│   ├── em_run.py                  # --exp / --new implementation
+│   ├── setup.sh / setup.py        # Lower-level check / build / smoke interface
+│   ├── ci/toolchain.json          # Pinned versions, official URLs and checksums
+│   ├── ci/install_godot.py        # Verified Godot download and extraction
+│   └── build_*.sh / verify_*.sh    # Android / iOS builds and binary checks
+├── addons/                        # Canonical plugin source and staged libraries
+│   ├── godot_mujoco/             # GDExtension config, runtime scripts and C# API
+│   │   └── bin/                  # [generated, ignored] Native/MuJoCo libraries; .gitkeep retained
+│   └── mujoco_editor/            # MuJoCo editor plugin source
+├── assets/                       # Shared original assets maintained with source
+│   └── robots/unitree_g1/        # Original G1 URDF, meshes, provenance and license
+├── examples/                      # Example source and required assets
+│   ├── _shared/                  # Shared sky, floor shader and UI script; no project.godot
+│   ├── shape_gallery/            # Falling shapes and collisions
+│   ├── g1_passive/               # Uncontrolled G1 robot
+│   ├── sdf_terrain/              # SDF stairs, depression and rough terrain
+│   ├── pendulum/                 # Former demo/: independent MjWorld and diagnostics
+│   ├── light_workflow/           # C# control and terrain developer example
+│   ├── templates/new_project/   # --new template: project.godot, Main.tscn, README, .gitignore
+│   └── <each of the four ready examples>/
+│       ├── addons -> ../../addons  # [generated, ignored] Shared addon link from setup
+│       ├── .godot/               # [generated, ignored] Cache created on opening
+│       └── bin/ / obj/           # [optional, generated, ignored] .NET build output
+├── third_party/                  # [generated, ignored] Local tools and environment
+│   ├── godot/                    # Complete Godot Mono engine and GodotSharp/
+│   ├── dotnet/                   # .NET SDK: dotnet, sdk/, shared/, etc.
+│   ├── cmake/                    # [optional] Installed when system CMake is too old
+│   ├── cache/                    # [optional] Downloaded tool archives
+│   ├── environment.json          # Relative tool paths, versions and build status
+│   ├── environment.sh            # Environment variables for terminal use
+│   └── .boostup.lock             # Prevents concurrent setup processes
+├── build-linux/                  # [generated, ignored] Default build; --build-dir overrides it
+│   ├── CMakeCache.txt / CMakeFiles/ # CMake configuration and intermediate files
+│   ├── _deps/                    # godot-cpp / MuJoCo dependencies and sub-builds, depending on SDK mode
+│   └── libgodot_mujoco*.so        # Linux extension, staged into shared addon bin/
+├── projects/                     # [generated, ignored] User projects created by --new
+│   └── <project-name>/
+│       ├── project.godot / Main.tscn # New project and flat-ground falling-ball scene
+│       ├── addons/               # Complete addon/library copies, independently movable
+│       ├── global.json / README.md / .gitignore
+│       └── .godot/               # [optional] Import cache created on opening
+├── tests/                        # Setup, examples, physics backend and editor acceptance
+│   ├── setup/                    # Isolated bootstrap and launcher tests
+│   ├── example_projects/         # Acceptance for the four directly openable examples
+│   └── native_*/ / spatial_queries/ / …
+├── docs/                         # Installation, features, known issues and validation evidence
+│   └── pics/                     # Architecture diagrams and their sources
+├── ARCHITECTURE.zh-CN.md         # Architecture documentation and history
+└── LICENSE                       # Project license
+```
 
-[Static fixed-grid heightfield](docs/static-heightfield.md): `MjStaticHeightField` / `MjHeightFieldData`, boundary transactions and matching visual/collision geometry; ordinary `HeightMapShape3D` has a separate [native entry point](docs/native-heightmap.zh-CN.md).
+</details>
 
-Dedicated terrain now includes an [editor panel](docs/heightfield-editor.zh-CN.md) and [typed C# TerrainHandle](docs/typed-terrain.zh-CN.md), with design drafts, undo, runtime targets and completion feedback. These additions were independently accepted and merged through PR #2.
+## Run an example
 
-[Lightweight integrated workflow](examples/light_workflow/README.zh-CN.md): two fixed-base models, typed terrain, box contact, controls, pause/step and checkpoint reset. New example awaits independent GUI acceptance.
+After the one-time [addon build](docs/linux-install.zh-CN.md), run `./em_run.sh --exp` to choose an example. Alternatively, import its `project.godot` in the Godot project manager, wait for resource import and press F5.
 
-New feature branch: [ordinary scene body creation](docs/scene-objects.zh-CN.md) and [document control presets](docs/control-presets.zh-CN.md). Independent GUI acceptance pending; atomic runtime preset application is available on the new feature branch, pending independent acceptance; see [contract](docs/runtime-presets.zh-CN.md).
+| Example | Project file | Main scene |
+|---|---|---|
+| [Shape gallery](examples/shape_gallery/README.md) | `examples/shape_gallery/project.godot` | `Main.tscn` |
+| [Passive G1](examples/g1_passive/README.md) | `examples/g1_passive/project.godot` | `G1.tscn` |
+| [SDF terrain](examples/sdf_terrain/README.md) | `examples/sdf_terrain/project.godot` | `Main.tscn` |
+| [Independent pendulum](examples/pendulum/README.md) | `examples/pendulum/project.godot` | `Main.tscn` |
 
-[Area environment overrides](tests/native_area_environment/README.zh-CN.md): native finite-shape gravity, damping and priority with P0 integration semantics; independent GUI acceptance remains pending.
+Keep the repository layout intact so examples can use shared addons and assets. The first three use the shared MuJoCo physics backend; the pendulum uses independent MjWorld. G1 has no standing or walking controller and is expected to fall; multi-robot hot-add has [known limitations](examples/g1_passive/README.md).
+
+## Import and run a model
+
+1. Open a 3D scene. In the **MuJoCo** dock, select **MJCF 文档**, expand **文档 / 导入 / 发布** and enable **显示 MJCF 草稿（独立于正式场景）**.
+2. Click **Import MJCF** and choose the model's `.xml`, keeping its includes, meshes and textures available. Click **聚焦模型** to frame it.
+3. Select an object in the model tree or viewport, edit its fields and click **Apply** or **Discard**. Use **Run / Pause** to control the draft preview.
+4. Click **Save project model** to save the model package, then **Create simulation playground** to save a simulation scene.
+5. Open the generated scene, press F6 to run it and click **恢复仿真 / Resume**.
+
+For G1, use **Import fixed G1** or **Import free G1 (relaxed)** to select a URDF. **Create runtime scene** creates world and model nodes for further scene authoring; use **Open project model** to reopen a saved package. See the [MJCF editor guide](docs/mjcf-editor.md) and [portable models guide](docs/portable-models.md).
+
+## Import a map and configure collisions
+
+1. Create and save a 3D scene with a **Node3D** root.
+2. In the **MuJoCo** dock select **静态地图草稿**. Under **导入 / 独立包**, browse to a `.glb`, `.gltf`, `.obj` or `.stl` file.
+3. Select the source units and up axis, then click **导入（保留脏数据）**.
+4. Select each mesh in the map tree, choose a collision representation and click **验证并应用碰撞草稿**. Use **聚焦全图** and the viewport's **MuJoCo 显示** menu to inspect it.
+5. Click **保存独立地图包**, then **Apply 到编辑场景**; save and run the host scene. Apply, save and rerun after changing collisions.
+
+Reopen a saved map package using **打开地图包** and its `manifest.json`. See the [SDF terrain example’s map workflow (Chinese)](examples/sdf_terrain/README.md).
+
+## Save and reopen
+
+| Content | Save / open action |
+|---|---|
+| Editable MJCF document | **Save document / Open document**: `.gmj.json`; source assets remain in place |
+| Portable model | **Save project model / Open project model**: `model.tres`; copy the entire package when moving it |
+| Static map | **保存独立地图包 / 打开地图包**: `manifest.json`; keep the entire package |
+| Scene layout | Godot **Save Scene**: `.tscn` |
+
+## Architecture diagrams
+
+### Repository layout: source, addons, examples and local projects
+
+[![Repository layout](docs/pics/ARCHITECTURE-files.svg)](docs/pics/ARCHITECTURE-files.svg)
+
+### Godot integration: editor preview, shared backend and independent MjWorld
+
+[![Godot and MuJoCo integration](docs/pics/ARCHITECTURE-godot.svg)](docs/pics/ARCHITECTURE-godot.svg)
+
+### Runtime communication: models, maps, bodies and the physics world
+
+[![Shared physics world runtime](docs/pics/ARCHITECTURE-runtime.svg)](docs/pics/ARCHITECTURE-runtime.svg)
+
+## Limits and further reading
+
+Cold-import exit 139 and heavy G1/multi-G1 operation have known issues; see [known issues (Chinese)](docs/known-issues.zh-CN.md) and the [G1 limits](examples/g1_passive/README.md). SDF continuous sweeps still have unresolved exact-contact and grazing cases; callers must check query status and must not treat uncertified results as collision-free. The default 0.5 mm total spatial error budget applies to the compiled SDF; public sweeps do not establish dynamic-body CCD. See the [spatial query matrix](docs/development/spatial-query-matrix.md).
+
+[Editor guide](docs/mjcf-editor.md) · [Heightfields](docs/static-heightfield.md) · [Typed control API](docs/typed-control.md) · [Runtime edits](docs/runtime-safe-editing.md) · [GUI workflow audit (Chinese)](docs/gui-workflow-audit.zh-CN.md)
+
+Licensed under [MIT](LICENSE). See [third-party notices](addons/godot_mujoco/THIRD_PARTY.md); Unitree assets retain their original licenses and provenance.

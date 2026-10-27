@@ -3,8 +3,8 @@
 // Proves the from-source simulation core actually steps a model. On Android
 // this is a PIE executable you can `adb push` to a device or emulator:
 //
-//   adb push demo/addons/godot_mujoco/bin/gmj_core_smoke /data/local/tmp/
-//   adb push demo/addons/godot_mujoco/bin/libmujoco.so* /data/local/tmp/
+//   adb push addons/godot_mujoco/bin/gmj_core_smoke /data/local/tmp/
+//   adb push addons/godot_mujoco/bin/libmujoco.so* /data/local/tmp/
 //   adb shell "cd /data/local/tmp && LD_LIBRARY_PATH=. ./gmj_core_smoke"
 //
 // Exit 0 and a "CORE SMOKE: PASS" line means mj_loadXML + mj_step worked.

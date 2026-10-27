@@ -1,214 +1,178 @@
 # godot-mujoco
 
-在 Godot 中导入、编辑和运行 MuJoCo 模型，也可将静态地图及受支持的 Godot 刚体放进同一个物理世界。
+在 Godot 中导入、编辑和运行 MuJoCo 模型，将机器人、静态地图及受支持的 Godot 刚体放进同一个物理世界。
 
-[English](README.en.md) · [安装详解](docs/linux-install.zh-CN.md) · [更多使用文档](docs/README.zh-CN.md)
+[English](README.en.md) · [例程目录](examples/README.md) · [安装与故障排查](docs/linux-install.zh-CN.md) · [使用文档](docs/README.zh-CN.md)
 
-本页按“安装 → 启用插件 → 在编辑器运行例程 → 导入和保存地图”组织。当前开发与验收在 **GTR Ubuntu 22.04.5 x86_64** 进行。本分支仍有复杂 SDF 扫掠边界待完成；能力限制见文末，详细实现与测试放在[开发矩阵](docs/development/spatial-query-matrix.md)。
+## 快速开始
 
-## 1. 准备固定版本并构建插件
+当前基线为 Linux x86_64、Godot 4.7.2 .NET、MuJoCo 3.16.0 和 .NET SDK 8.0.426。源码不包含编译后的原生库，首次使用需运行配置向导。
 
-| 软件 | 要求 |
+```bash
+./boostup.sh                      # 检查环境、安装或导入工具并构建插件
+./boostup.sh --check              # 检查已有环境
+./boostup.sh --rebuild            # 使用已安装工具重新构建
+./boostup.sh --configure          # 重新选择工具来源或安装
+./em_run.sh                       # 打开 Godot 项目管理器
+./em_run.sh --exp                 # 选择例程
+./em_run.sh --exp shape_gallery   # 打开指定例程
+./em_run.sh --new my-project      # 创建并打开本地工程
+```
+
+向导支持下载或导入 Godot Mono 和 .NET；Ubuntu 22.04/24.04 可经确认安装缺少的系统依赖。其他 Linux 发行版需自行准备依赖。详见[安装指南](docs/linux-install.zh-CN.md)。
+
+## 项目目录结构
+
+```text
+godot-mujoco/
+├── src/          # 原生扩展源码
+├── addons/       # 运行时与编辑器插件
+├── assets/       # 共享素材
+├── examples/     # 例程和工程模板
+├── projects/     # 本地创建的工程（生成，Git 忽略）
+├── scripts/      # 配置、构建和启动脚本
+├── tests/        # 测试与验收
+├── docs/         # 使用文档和架构图
+└── third_party/  # 本地工具和环境配置（生成，Git 忽略）
+```
+
+<details>
+<summary>详细项目目录</summary>
+
+`[生成·忽略]` 表示本地生成且不随克隆获得；`[按需]` 表示仅在对应操作后出现。
+
+```text
+godot-mujoco/
+├── README.md / README.en.md       # 中英文入口文档
+├── boostup.sh                     # 环境安装、配置、检查和编译向导
+├── em_run.sh                      # 打开 Godot、选择例程或创建工程
+├── CMakeLists.txt                 # 原生扩展构建入口、依赖版本和产物部署
+├── global.json                    # 固定 .NET SDK 版本
+├── .gitignore / .gitattributes    # Git 忽略与文件属性规则
+├── .github/workflows/             # CI 构建、验收和上游版本检查
+├── .vscode/                       # 本机 VS Code 配置、索引；当前未整体忽略
+├── src/                           # C/C++ 原生扩展源码
+│   ├── register_types.*           # GDExtension 类型注册
+│   ├── mj_world.*                 # 独立 MjWorld 仿真接口
+│   ├── mj_editor_document.*       # MJCF 文档与编辑事务
+│   └── physics/                   # MuJoCo 物理后端、刚体、关节和空间查询
+├── cmake/                         # 构建辅助、符号导出表和移动端补丁
+├── scripts/                       # 环境、启动、构建及验证实现
+│   ├── bootstrap.py               # 下载或导入工具，配置环境并编译
+│   ├── local_tools.py             # 工具路径、版本校验和本地配置读写
+│   ├── em_run.py                  # --exp / --new 的实现
+│   ├── setup.sh / setup.py        # check / build / smoke 底层入口
+│   ├── ci/toolchain.json          # 锁定版本、官方下载地址和校验值
+│   ├── ci/install_godot.py        # Godot 下载与解压校验
+│   └── build_*.sh / verify_*.sh    # Android / iOS 构建与产物检查
+├── addons/                        # 插件唯一源码与部署位置，各例程共同使用
+│   ├── godot_mujoco/             # GDExtension 配置、运行脚本和 C# API
+│   │   └── bin/                  # [生成·忽略] 扩展及 MuJoCo 库；保留 .gitkeep
+│   └── mujoco_editor/            # MuJoCo 编辑器插件源码
+├── assets/                       # 共享原始素材，随源码维护
+│   └── robots/unitree_g1/        # G1 原始 URDF、网格、来源清单与许可证
+├── examples/                      # 可直接打开的例程源码和必需资源
+│   ├── _shared/                  # 共用天空、地板着色器和界面脚本，无 project.godot
+│   ├── shape_gallery/            # 形状下落与碰撞
+│   ├── g1_passive/               # 无控制 G1 机器人
+│   ├── sdf_terrain/              # SDF 台阶、洼地和崎岖地形
+│   ├── pendulum/                 # 原 demo/ 的独立 MjWorld 摆杆与诊断工程
+│   ├── light_workflow/           # C# 控制与地形开发例程
+│   ├── templates/new_project/   # --new 使用的工程模板：project.godot、Main.tscn、README、.gitignore
+│   └── <四个可直接打开的例程>/
+│       ├── addons -> ../../addons  # [生成·忽略] 向导建立的共享插件链接
+│       ├── .godot/               # [生成·忽略] 首次打开后生成的缓存
+│       └── bin/ / obj/           # [按需·生成·忽略] .NET 构建产物
+├── third_party/                  # [生成·忽略] 仓库本地工具与环境配置
+│   ├── godot/                    # 完整 Godot Mono 引擎和 GodotSharp/
+│   ├── dotnet/                   # .NET SDK：dotnet、sdk/、shared/ 等
+│   ├── cmake/                    # [按需] 系统 CMake 不足时安装
+│   ├── cache/                    # [按需] 自动下载的工具压缩包缓存
+│   ├── environment.json          # 工具相对路径、版本及构建完成状态
+│   ├── environment.sh            # 提供给终端加载的环境变量
+│   └── .boostup.lock             # 防止安装向导同时运行的锁文件
+├── build-linux/                  # [生成·忽略] 默认构建目录，可用 --build-dir 改位置
+│   ├── CMakeCache.txt / CMakeFiles/ # CMake 配置和中间文件
+│   ├── _deps/                    # godot-cpp / MuJoCo 依赖与子构建，视 SDK 模式而定
+│   └── libgodot_mujoco*.so        # Linux 原生扩展；构建后部署到共享插件 bin/
+├── projects/                     # [生成·忽略] --new 创建的用户工程
+│   └── <project-name>/
+│       ├── project.godot / Main.tscn # 新工程配置与平地落球场景
+│       ├── addons/               # 完整插件副本和运行库，可移出仓库独立使用
+│       ├── global.json / README.md / .gitignore
+│       └── .godot/               # [按需] 打开工程后的导入缓存
+├── tests/                        # 环境入口、例程、物理后端、编辑器等验收
+│   ├── setup/                    # 配置向导和启动脚本隔离测试
+│   ├── example_projects/         # 四个可直接打开例程的验收
+│   └── native_*/ / spatial_queries/ / …
+├── docs/                         # 安装、功能说明、已知问题与验收证据
+│   └── pics/                     # 文件、Godot 集成和运行时架构图及源文件
+├── ARCHITECTURE.zh-CN.md         # 架构说明和历史记录
+└── LICENSE                       # 项目许可证
+```
+
+</details>
+
+## 运行例程
+
+完成一次[插件构建](docs/linux-install.zh-CN.md)后，运行 `./em_run.sh --exp` 选择例程；也可在 Godot 项目管理器中导入对应的 `project.godot`，等待资源导入后按 F5 运行。
+
+| 例程 | 项目文件 | 主场景 |
+|---|---|---|
+| [形状下落与碰撞](examples/shape_gallery/README.md) | `examples/shape_gallery/project.godot` | `Main.tscn` |
+| [无控制 G1](examples/g1_passive/README.md) | `examples/g1_passive/project.godot` | `G1.tscn` |
+| [SDF 地形](examples/sdf_terrain/README.md) | `examples/sdf_terrain/project.godot` | `Main.tscn` |
+| [独立世界摆杆](examples/pendulum/README.md) | `examples/pendulum/project.godot` | `Main.tscn` |
+
+保持仓库目录结构完整，以便例程使用共享插件和素材。前三个例程使用共享 MuJoCo 物理后端，摆杆使用独立 MjWorld。G1 没有站立或行走控制，倒地是预期行为；多机器人热添加仍有[已知限制](examples/g1_passive/README.md)。
+
+## 导入模型并运行
+
+1. 打开 3D 场景，在右侧 **MuJoCo** 面板选择 **MJCF 文档**，展开 **文档 / 导入 / 发布**，勾选 **显示 MJCF 草稿（独立于正式场景）**。
+2. 点击 **Import MJCF**，选择模型的 `.xml`，并保留配套的 include、网格和纹理。点击 **聚焦模型** 查看。
+3. 在模型树或视图中选择对象并修改参数，点击 **Apply** 或 **Discard**；使用 **Run / Pause** 控制草稿预览。
+4. 点击 **Save project model** 保存模型包，再点击 **Create simulation playground** 保存仿真场景。
+5. 打开生成的场景，按 F6 运行当前场景，再点击 **恢复仿真 / Resume**。
+
+G1 可使用 **Import fixed G1** 或 **Import free G1 (relaxed)** 选择 URDF。**Create runtime scene** 生成适合继续搭建的世界和模型节点；保存的模型包可用 **Open project model** 打开。详见 [MJCF 编辑器指南](docs/mjcf-editor.zh-CN.md)和[模型包说明](docs/portable-models.zh-CN.md)。
+
+## 导入地图并设置碰撞
+
+1. 新建以 **Node3D** 为根的 3D 场景并保存。
+2. 在 **MuJoCo** 面板选择 **静态地图草稿**，在 **导入 / 独立包** 中浏览并选择 `.glb`、`.gltf`、`.obj` 或 `.stl` 文件。
+3. 设置来源单位和坐标方向，点击 **导入（保留脏数据）**。
+4. 在地图树中逐个选择网格，设置碰撞方式，点击 **验证并应用碰撞草稿**。使用 **聚焦全图** 和视图中的 **MuJoCo 显示** 菜单检查结果。
+5. 点击 **保存独立地图包**；再点击 **Apply 到编辑场景**，保存宿主场景并运行。修改碰撞后重新 Apply、保存并重跑。
+
+已保存的地图包可通过 **打开地图包** 选择 `manifest.json` 重开。详见 [SDF 地形例程的地图操作步骤](examples/sdf_terrain/README.md)。
+
+## 保存与重开
+
+| 内容 | 保存 / 打开方式 |
 |---|---|
-| Godot | **4.7.2 .NET 官方版**，构建 ed1daf0bf |
-| .NET SDK | **8.0.426** |
-| MuJoCo | **3.16.0** Linux x86_64 SDK |
-| 编译工具 | Git、Python 3、C++17 工具链、CMake ≥3.24、Make 或 Ninja |
+| MJCF 编辑文档 | **Save document / Open document**：`.gmj.json`，源素材仍在原位置 |
+| 可搬迁模型 | **Save project model / Open project model**：`model.tres`，搬迁时复制整个模型包 |
+| 静态地图 | **保存独立地图包 / 打开地图包**：`manifest.json`，保留整个地图包 |
+| 场景布局 | Godot **保存场景**：`.tscn` |
 
-三个图形例程使用 GDScript，没有必须手动编译的 C# 项目；仍请使用上述 .NET 版 Godot。Windows 不是本轮适配或验收平台。
+## 架构图
 
-### 已配置好的 GTR
+### 文件结构：源码、插件、例程与本地工程
 
-在 GTR 终端或已授权 SSH 会话中执行，无需重新安装：
+[![仓库文件结构](docs/pics/ARCHITECTURE-files.svg)](docs/pics/ARCHITECTURE-files.svg)
 
-~~~bash
-. ~/.config/godot-mujoco/gtr-env.sh
-cd /home/zdyukino/workspace/godot-mujoco
-"$GODOT_BIN" --version
-dotnet --version
-cmake --build build-gtr-3.16.0 -j2
-~~~
+### Godot 集成：编辑预览、共享后端与独立 MjWorld
 
-配置文件在新 SSH 会话中仍可加载。它设置 Godot、.NET SDK、CMake 和 MUJOCO_SDK_DIR；不要改用云电脑的工具或二进制。
+[![Godot 与 MuJoCo 集成](docs/pics/ARCHITECTURE-godot.svg)](docs/pics/ARCHITECTURE-godot.svg)
 
-### 在新的 Linux x86_64 环境安装
+### 运行时通信：模型、地图、刚体和物理世界
 
-从官方来源下载固定版本，核验发布哈希，再解压到用户目录：
+[![共享物理世界运行时通信](docs/pics/ARCHITECTURE-runtime.svg)](docs/pics/ARCHITECTURE-runtime.svg)
 
-- [Godot 4.7.2 官方发布](https://github.com/godotengine/godot-builds/releases/tag/4.7.2-stable)：选择 Godot_v4.7.2-stable_mono_linux_x86_64.zip。
-- [.NET 8 官方下载](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)：选择 SDK 8.0.426，设置 DOTNET_ROOT 并将其加入 PATH。
-- [MuJoCo 3.16.0 官方发布](https://github.com/google-deepmind/mujoco/releases/tag/3.16.0)：选择 mujoco-3.16.0-linux-x86_64.tar.gz。下载校验与依赖检查见[安装详解](docs/linux-install.zh-CN.md)。
+## 限制与更多文档
 
-版本或资产不可用时先检查原因，不自动换版本或换成普通版 Godot。准备好 Git、Python、C/C++ 编译工具和 CMake 后：
+冷导入退出 139、重型 G1 与多 G1 操作仍有已知问题，见[已知问题](docs/known-issues.zh-CN.md)和 [G1 例程限制](examples/g1_passive/README.md)。SDF 连续扫掠在精确切触和擦边等情况下仍有未完成边界；调用方须检查查询状态，未认证结果不能视为无碰撞。默认 0.5 mm 总空间误差预算适用于编译后的 SDF，公共 sweep 不等于动态刚体 CCD。详见[空间查询矩阵](docs/development/spatial-query-matrix.md)。
 
-~~~bash
-git clone https://github.com/zdYukino/godot-mujoco.git
-cd godot-mujoco
-export MUJOCO_SDK_DIR="$HOME/.local/opt/mujoco-3.16.0"
-export GODOT_BIN="/absolute/path/to/Godot_v4.7.2-stable_mono_linux.x86_64"
-cmake -S . -B build-gtr-3.16.0 \
-  -DMUJOCO_VERSION=3.16.0 \
-  -DGMJ_BUILD_MUJOCO_FROM_SOURCE=OFF \
-  -DGMJ_MUJOCO_ROOT="$MUJOCO_SDK_DIR"
-cmake --build build-gtr-3.16.0 -j2
-~~~
+[编辑器操作](docs/mjcf-editor.zh-CN.md) · [静态高度场](docs/static-heightfield.md) · [类型化控制 API](docs/typed-control.md) · [运行时安全编辑](docs/runtime-safe-editing.zh-CN.md) · [图形化工作流分析](docs/gui-workflow-audit.zh-CN.md)
 
-将环境变量中的路径改为实际安装位置。构建会生成 demo/addons/godot_mujoco/bin/ 中的扩展及 MuJoCo 运行库；使用本地 SDK 可以避免重复下载。更换依赖版本时使用新的构建目录。
-
-## 2. 安装到项目并启用
-
-关闭目标项目编辑器，先备份同名插件，再复制两个 addon，必须包含 bin/：
-
-~~~bash
-TARGET_PROJECT="/absolute/path/to/your-project"
-mkdir -p "$TARGET_PROJECT/addons"
-cp -a demo/addons/godot_mujoco "$TARGET_PROJECT/addons/"
-cp -a demo/addons/mujoco_editor "$TARGET_PROJECT/addons/"
-"$GODOT_BIN" --editor --path "$TARGET_PROJECT" \
-  --display-driver x11 --rendering-method gl_compatibility
-~~~
-
-1. 等待首次资源导入完成。在 **项目 → 项目设置 → 插件** 中启用 **MuJoCo Model Editor**。
-2. 要运行共享物理世界，在项目设置中搜索 **3D Physics Engine**，将 physics/3d/physics_engine 设为 **MuJoCo**；保持 physics/3d/run_on_separate_thread=false，按提示重开项目。
-3. 右侧切换到 **MuJoCo** 页签。界面使用左侧场景树、一个中央 3D 视窗和右侧属性；不用另开预览视窗。
-4. 刚更新过 native 库时，完全退出编辑器后重新打开。只刷新脚本无法重新加载所有 native 改动。
-
-编辑插件和物理后端是两项设置：能看到 MuJoCo 页签，不代表项目已经选用 MuJoCo 物理后端。下面三个例程的 project.godot 已配置插件和后端，首次打开仍应核对。
-
-### F5、F6 和停止
-
-- **F5** 运行项目主场景，依据 Project Settings 中的 run/main_scene。
-- **F6** 运行当前打开的场景。先双击下面指定的 .tscn，避免运行错场景。
-- **F8** 停止运行；也可关闭本次运行窗口。Ctrl+S 保存场景，停止运行不会代替保存。
-- 运行窗口中的“暂停/继续”只控制本例仿真；与编辑器调试暂停不同。
-
-本轮已在 GTR 原生 X11 窗口运行并截取三个例程，编辑器导入/Apply/保存重开也有自动验证。下面快捷键和手动菜单步骤作为使用指南；未宣称已经逐键完成人工验收。
-
-## 3. 例程 1：刚体形状 gallery
-
-在 GTR 仓库根目录执行，使用一个不存在的新项目目录：
-
-~~~bash
-export GALLERY_PROJECT="$HOME/workspace/gallery-$(date -u +%Y%m%dT%H%M%SZ)"
-mkdir "$GALLERY_PROJECT"
-cp -a examples/shape_gallery/. "$GALLERY_PROJECT/"
-cp -a demo/addons "$GALLERY_PROJECT/"
-"$GODOT_BIN" --editor --path "$GALLERY_PROJECT" \
-  --display-driver x11 --rendering-method gl_compatibility
-~~~
-
-1. 记下 GALLERY_PROJECT；要从项目管理器打开时，导入该目录的 **project.godot**。
-2. 等待首次导入，核对插件和 MuJoCo 后端。此例已有保存的模型包，无需重新生成。
-3. 在文件系统面板打开 **res://Main.tscn**。按 F6 运行当前场景；F5 也会运行 Main.tscn，因为它已设为主场景。
-4. 观察球、盒、圆柱、圆锥、胶囊等形状在天空和网格地面中下落、接触。
-5. 运行面板勾选 **实体** 或 **碰撞**，可分别隐藏视觉实体或显示橙色碰撞叠加。显示开关不改变物理。
-6. 点击 **暂停** 冻结仿真，按钮变为 **继续**；点击 **重置** 恢复初始状态。**说明 / 帮助** 展开操作说明。
-7. 完成后按 F8 或关闭运行窗口，返回编辑器。
-
-[例程源码及素材](examples/shape_gallery/) · [隔离验证入口](tests/shape_gallery/run.sh)
-
-## 4. 例程 2：无控制 G1 倒地与热添加
-
-先用已有模型包准备独立项目；默认不重新导入机器人资产：
-
-~~~bash
-export G1_OUT="$HOME/workspace/g1-example-$(date -u +%Y%m%dT%H%M%SZ)"
-OUT="$G1_OUT" bash examples/g1_passive/prepare.sh
-"$GODOT_BIN" --editor --path "$G1_OUT/project" \
-  --display-driver x11 --rendering-method gl_compatibility
-~~~
-
-1. 项目文件是 **$G1_OUT/project/project.godot**；首次导入完成后核对插件与后端。
-2. 双击 **res://G1.tscn**，按 F6。此项目的主场景也已设为 G1.tscn，F5 可运行它；不要误选同目录的 gallery Main.tscn。
-3. 初始 G1 为自由基座、重力开启、没有 actuator/PD 站立控制。若面板显示“继续”，先点击继续；轻微倾斜后自由倒地是预期现象。
-4. 使用 **实体 / 碰撞** 分别查看外观和碰撞轮廓；滚轮缩放，F 重新取景。
-5. 点击 **添加 G1**。同步编译时会短暂停顿，成功后显示第二台和耗时，并自动取景到两台。已有实例状态、RID、世界时间及暂停/运行状态应保留。
-6. 本例最多 **2 台**，第二台成功后按钮禁用。模型有意排除机器人自碰撞及机器人之间碰撞；互相穿过不代表这项配置回归。
-7. **暂停/继续** 控制仿真；**重置** 恢复机器人载入姿态。结束时 F8 停止。
-
-不要反复无界启动重型多 G1。内存紧张时先停止本次运行，查看日志，再使用[有界热添加监测](tests/g1_hot_add_repro/)。它不发送真机控制命令。
-
-[例程说明及资产来源](examples/g1_passive/README.md) · [Unitree 资产许可](demo/assets/robots/unitree_g1/g1_29dof_mode_18/LICENSE)
-
-## 5. 例程 3：台阶、洼地与崎岖 SDF 地形
-
-### 先运行已准备的落球场景
-
-~~~bash
-export TERRAIN_OUT="$HOME/workspace/sdf-terrain-$(date -u +%Y%m%dT%H%M%SZ)"
-OUT="$TERRAIN_OUT" bash examples/sdf_terrain/prepare.sh
-"$GODOT_BIN" --editor --path "$TERRAIN_OUT/project" \
-  --display-driver x11 --rendering-method gl_compatibility
-~~~
-
-1. 项目文件是 **$TERRAIN_OUT/project/project.godot**。准备脚本会生成地形并导入资源，输出 **res://Main.tscn**、**res://assets/terrain.obj**、参数文件及独立地图包。
-2. 双击 **res://Main.tscn**，F6 运行；F5 的主场景也已配置为 Main.tscn。
-3. 三块闭合网格包含六级台阶、中央洼地和崎岖路面，单位 **m**、坐标 **Y_UP**、固定 seed **20261026**。默认选择真实 **SDF**，八叉树深度 **6**。
-4. 观察三颗球下落并接触地形。中央球半径 0.12m，落在 -0.35m 坑底后球心应接近 -0.23m；它应落入洼地，不能悬在被填平的凸包顶面。
-5. 顶部 **实体** 与 **SDF 距离切片** 独立切换。黄色轮廓是距离场切片，不是完整三维碰撞边界。
-6. 本例工具条目前没有独立暂停/重置按钮。用 F8 停止，再 F6 重新运行可恢复初始落球状态；不要把隐藏实体当作暂停。
-
-### 在右侧导入、修改碰撞并保存
-
-以下流程使用新的宿主场景，避免替换地图根节点或叠加重复碰撞：
-
-1. 在同一项目新建 **3D 场景**，以 Node3D 为根，保存为 **res://TerrainHost.tscn**。保持这个场景打开。
-2. 右侧打开 **MuJoCo** 页签，将范围选为 **静态地图草稿**。在“导入 / 独立包”中填写 **res://assets/terrain.obj**，选择 **m** 和 **Y_UP**，点击 **导入（保留脏数据）**。
-3. 在右侧地图树选择 stairs、depression、rough 各网格。滚动到 **选中对象 · 基本碰撞**，选择 **sdf**，将 **SDF 八叉树深度（0=引擎默认）** 设为 **6**，点击 **验证并应用碰撞草稿**。每块分别确认。
-4. 深度 0 使用默认；显式值只允许 3..8。深度越高，编译、内存及查询成本越大。保存失败时先看右侧状态，不自动换成 mesh。
-5. 使用 **MuJoCo 显示** 中的显示开关及 **聚焦全图 / 聚焦选中** 检查实体和碰撞。不要把视觉网格正确当作碰撞已通过。
-6. 点击 **保存独立地图包**，记下状态栏生成的包路径；以后用 **打开地图包** 选择其 manifest.json 重开。保存地图包与保存 Godot 场景是两步。
-7. 点击 **Apply 到编辑场景**，宿主下应出现一个 **StaticMap**。Ctrl+S 保存 TerrainHost.tscn；重复 Apply 应更新原地图。若更改了宿主/地图变换，按状态提示重新载入目标。
-8. 关闭并重开场景或项目，确认地图和 sdf/depth 参数保留。运行实例需要明确停止并重新运行，保存文件不会自动替换已运行地图。
-9. 需要在宿主中手动落球时，给 TerrainHost 添加与 StaticMap 同级的 RigidBody3D（位置 0,1.5,0，质量 0.2），添加 CollisionShape3D/SphereShape3D（半径 0.12）及匹配的 MeshInstance3D/SphereMesh。保存后 F6。此手动建球和快捷键步骤尚未逐项人工验收；已准备的 Main.tscn 是本轮真实运行过的落球入口。
-
-### 如何比较凸包与 SDF
-
-先另存宿主场景和地图包作为对照，再把 depression 的碰撞方式改为 **mesh**，验证草稿、Apply、保存并停止重跑。mesh 的凸包会填平凹陷，球可能停在外沿高度附近；切回 **sdf** 后应落到坑底。对照必须标明“凸包”，不要覆盖原 SDF 示例。
-
-高度场 hfield 适合单值高度地表；SDF 封闭网格可表达更复杂凹形。视觉网格、凸包、高度场和 SDF 是不同碰撞数据。更多参数、可重复生成方式及自动对照见[例程 3](examples/sdf_terrain/README.md)。
-
-## 6. C# 项目首次构建
-
-三个例程不需要 C# 编译。自己的 .NET 项目已有 .csproj 时，在该项目目录执行 **dotnet build**，再用 Godot .NET 打开。首次构建可能需要恢复 NuGet 包；使用与当前 Godot 匹配的 Godot.NET.Sdk，不混用其他 SDK 版本。
-
-仓库有可照用的[类型化 C# 控制 API](docs/typed-control.md)和隔离入口：
-
-~~~bash
-OUT="$HOME/workspace/typed-example-$(date -u +%Y%m%dT%H%M%SZ)" \
-  bash tests/typed_control/run.sh
-~~~
-
-它会准备自己的 project、编译 TypedControl.csproj 并运行，日志分开保存，不改现有项目。请求入队的 Accepted 不等于完成，控制代码仍需检查完成反馈。
-
-## 常见问题
-
-| 现象 | 检查方法 |
-|---|---|
-| 缺 .so、插件类找不到 | 确认 native 构建成功，复制了完整 bin/，扩展与 MuJoCo 运行库都在；完全退出并重开 Godot |
-| 提示缺 DLL、C# 无法加载 | 确认使用 Godot 4.7.2 **.NET**、SDK 8.0.426，并先在项目目录 dotnet build；不要混用普通版引擎 |
-| 有右侧页签但刚体不动 | 核对 physics/3d/physics_engine=MuJoCo、主线程物理和运行面板暂停状态 |
-| F5 运行错场景 | 核对主场景；先双击正确 .tscn，用 F6 运行当前场景 |
-| 首次导入慢或失败 | 等待导入完成并查看输出；确认资源路径可写、资产齐全、磁盘和内存充足，不连续重复启动 |
-| G1 添加按钮禁用 | 检查加载错误及是否已达 max2；无控制倒地不是站立控制失败 |
-| 洼地被填平 | 核对实际碰撞方式是否 sdf，是否 Apply、保存并重新运行；不要以视觉形状判断 |
-| Apply 提示不能替换根 | 新建 Node3D 宿主，把地图作为 StaticMap 子节点；不要直接替换地图场景根 |
-| SSH 成功但没画面 | SSH 不等于 GUI 控制；需要已授权、已解锁的 GTR 图形会话。锁屏时继续 headless，不绕过锁屏 |
-| 原生 Wayland 崩溃 | 本轮该路径报 client error 11；已有 Xwayland 下 --display-driver x11 成功，不需要更改显示安全设置 |
-
-## 使用边界与进一步文档
-
-普通形状、导入资源及空间查询有明确支持范围。SDF 连续扫掠默认使用 **0.5mm 总空间误差预算**，可在每个空间查询状态上设置至 1mm：
-~~~gdscript
-var state = get_world_3d().direct_space_state
-state.call("set_sdf_query_precision_m", 0.001) # 米；默认 0.0005
-var fractions = state.cast_motion(parameters)
-var status: Dictionary = state.call("get_query_status")
-if not status.ok:
-    push_error(status.error) # 未认证不能当作无碰撞
-~~~
-预算针对**编译后的 SDF**，不保证原始网格与 SDF 的偏差也在 1mm 内。精确初始切触、擦边或过严预算仍可能返回未知；调用者必须检查状态。查询有耗时较长的情况，不适合默认按高频实时使用；公共 sweep 也不等于动态刚体 CCD。
-
-[查询能力和性能限制](docs/development/spatial-query-matrix.md) · [静态高度场](docs/static-heightfield.md) · [模型包搬迁](docs/portable-models.zh-CN.md) · [运行时安全编辑](docs/runtime-safe-editing.zh-CN.md)
-
-本项目使用 [MIT](LICENSE)。第三方声明见 [THIRD_PARTY](demo/addons/godot_mujoco/THIRD_PARTY.md)；Unitree 资产保留原有许可和来源。
+本项目使用 [MIT](LICENSE) 许可。第三方声明见 [THIRD_PARTY](addons/godot_mujoco/THIRD_PARTY.md)；Unitree 资产保留原有许可和来源。

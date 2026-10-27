@@ -66,7 +66,7 @@ def run(out, godot):
         save()
         if verification['exit_code'] != 0 or verification['timed_out'] or (out / 'version.log').read_text().strip() != CONFIG['godot_version']:
             raise RuntimeError('Godot version check failed')
-        native = ROOT / 'demo/addons/godot_mujoco/bin'
+        native = ROOT / 'addons/godot_mujoco/bin'
         mujoco = native / 'libmujoco.so.3.16.0'
         extension = native / 'libgodot_mujoco.linux.template_debug.x86_64.so'
         if digest(mujoco) != CONFIG['mujoco_binary_sha256']:
@@ -77,11 +77,11 @@ def run(out, godot):
         project.mkdir()
         # Only small MjWorld fixtures, no Unitree assets or migration/G1 runners.
         (project / 'project.godot').write_text('config_version=5\n[application]\nconfig/name="Strict MjWorld smoke"\n')
-        shutil.copy2(ROOT / 'demo/HeadlessTest.tscn', project)
+        shutil.copy2(ROOT / 'examples/pendulum/HeadlessTest.tscn', project)
         (project / 'scripts').mkdir()
-        shutil.copy2(ROOT / 'demo/scripts/headless_smoke_test.gd', project / 'scripts')
-        shutil.copytree(ROOT / 'demo/models', project / 'models')
-        shutil.copytree(ROOT / 'demo/addons/godot_mujoco', project / 'addons/godot_mujoco')
+        shutil.copy2(ROOT / 'examples/pendulum/scripts/headless_smoke_test.gd', project / 'scripts')
+        shutil.copytree(ROOT / 'examples/pendulum/models', project / 'models')
+        shutil.copytree(ROOT / 'addons/godot_mujoco', project / 'addons/godot_mujoco')
         shutil.copy2(ROOT / 'tests/mjworld_smoke/invalid_qpos.gd', project)
         save()
         imp = process([str(binary), '--headless', '--editor', '--path', str(project), '--import', '--frame-delay', '1000'], out / 'import.log', 120)

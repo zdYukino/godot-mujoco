@@ -1,0 +1,21 @@
+config_version=5
+
+[application]
+config/name=__PROJECT_NAME__
+run/main_scene="res://Main.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[display]
+window/size/viewport_width=1152
+window/size/viewport_height=720
+
+[physics]
+3d/physics_engine="MuJoCo"
+3d/run_on_separate_thread=false
+common/physics_ticks_per_second=60
+
+[rendering]
+renderer/rendering_method="gl_compatibility"
+
+[editor_plugins]
+enabled=PackedStringArray("res://addons/mujoco_editor/plugin.cfg")
