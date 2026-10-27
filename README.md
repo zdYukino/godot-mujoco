@@ -50,7 +50,7 @@ godot-mujoco/
 ├── global.json                    # 固定 .NET SDK 版本
 ├── .gitignore / .gitattributes    # Git 忽略与文件属性规则
 ├── .github/workflows/             # CI 构建、验收和上游版本检查
-├── .vscode/                       # 本机 VS Code 配置、索引；当前未整体忽略
+├── .vscode/                       # [生成·忽略] 本机 VS Code 配置与索引
 ├── src/                           # C/C++ 原生扩展源码
 │   ├── register_types.*           # GDExtension 类型注册
 │   ├── mj_world.*                 # 独立 MjWorld 仿真接口

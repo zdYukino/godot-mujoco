@@ -50,7 +50,7 @@ godot-mujoco/
 ├── global.json                    # Pinned .NET SDK selection
 ├── .gitignore / .gitattributes    # Git ignore and file attribute rules
 ├── .github/workflows/             # CI builds, acceptance and upstream version checks
-├── .vscode/                       # Local VS Code settings/index; not ignored as a whole
+├── .vscode/                       # [generated, ignored] Local VS Code settings and index
 ├── src/                           # C/C++ GDExtension source
 │   ├── register_types.*           # GDExtension type registration
 │   ├── mj_world.*                 # Independent MjWorld simulation interface

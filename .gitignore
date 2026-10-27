@@ -1,6 +1,7 @@
 # Local toolchain, downloads, environment configuration and user projects
 /third_party/
 /projects/
+.vscode/
 
 # CMake build trees
 /build/
