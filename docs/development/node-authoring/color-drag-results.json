@@ -1,0 +1,43 @@
+{
+  "author": {
+    "checks": 42,
+    "failed": 0,
+    "failures": []
+  },
+  "appearance": {
+    "checks": 38,
+    "failed": 0,
+    "failures": []
+  },
+  "runtime": {
+    "checks": 33,
+    "failed": 0,
+    "failures": []
+  },
+  "editor": {
+    "checks": 37,
+    "failed": 0,
+    "failures": []
+  },
+  "live": {
+    "checks": 18,
+    "failed": 0,
+    "failures": []
+  },
+  "gui": {
+    "before": {
+      "distinct_controls": 3,
+      "control_replaced": true,
+      "popup_closed_while_dragging": true
+    },
+    "after": {
+      "failed": 0,
+      "distinct_controls": 1,
+      "distinct_colors": 12,
+      "control_replaced": false,
+      "popup_closed_while_dragging": false,
+      "one_undo_restores_start": true,
+      "one_redo_restores_final": true
+    }
+  }
+}

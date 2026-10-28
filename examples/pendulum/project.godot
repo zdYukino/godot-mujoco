@@ -1,21 +1,31 @@
 ; Engine configuration file.
-; Legacy independent MjWorld pendulum example.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
 
 config_version=5
 
 [application]
 
-config/name="MuJoCo Independent Pendulum"
+config/name="MuJoCo Editable Pendulum"
 run/main_scene="res://Main.tscn"
 config/features=PackedStringArray("4.7")
 
-[physics]
+[dotnet]
 
-common/physics_ticks_per_second=60
-3d/run_on_separate_thread=false
-
-[rendering]
-renderer/rendering_method="gl_compatibility"
+project/assembly_name="MuJoCo Editable Pendulum"
 
 [editor_plugins]
+
 enabled=PackedStringArray("res://addons/mujoco_editor/plugin.cfg")
+
+[physics]
+
+3d/physics_engine="MuJoCo"
+
+[rendering]
+
+renderer/rendering_method="gl_compatibility"

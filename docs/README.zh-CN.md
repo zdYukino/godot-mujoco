@@ -11,7 +11,7 @@
 | 从 Godot 项目管理器直接导入并运行三个例程 | [首页操作步骤](../README.md) |
 | 区分文档问题、已补齐的入口和程序缺口 | [图形化工作流分析](gui-workflow-audit.zh-CN.md) |
 | 通用 Linux 环境检查、构建、导入、插件启用、排查灰屏 | [Linux 安装与限制](linux-install.zh-CN.md) |
-| 编辑质量/惯量/关节、视口操作、保存 | [编辑器使用](mjcf-editor.zh-CN.md) |
+| MJCF 层级节点、Inspector / Gizmo、保存与运行同步 | [节点编辑](node-authoring.zh-CN.md) |
 | 打包模型、建立场景、搬迁、多实例 | [模型资源与场景](portable-models.zh-CN.md) |
 | 将已保存设计安全应用到运行实例 | [运行安全编辑](runtime-safe-editing.zh-CN.md) |
 | 暂停、单步、快照、两种重置、C# | [独立仿真时钟](runtime-clock.zh-CN.md) |

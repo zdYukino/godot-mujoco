@@ -15,8 +15,10 @@
 #include <deque>
 #include <functional>
 #include <tuple>
+#include <thread>
 namespace gmj_sdf {class Field;}
 namespace godot {
+struct MjAsyncCandidate;
 class MjPhysicsServer3D;
 class MjDirectBodyState;
 class MjDirectSpaceState;
@@ -33,6 +35,8 @@ struct MjImported {
  RID rid; String label; Transform3D pose; mjSpec *spec=nullptr;
  uint64_t query_object_id=0; bool query_ray_pickable=true;
  bool whole_model=false; Dictionary initial; uint64_t property_revision=0;
+ String author_xml; Dictionary author_definition, committed_definition;
+ Transform3D committed_pose; bool has_committed_pose=false;
  std::string prefix;
  ~MjImported() { if(spec) mj_deleteSpec(spec); }
 };
@@ -67,6 +71,15 @@ struct MjArea {
  Callable body_callback, area_callback; std::set<MjAreaPair> reported;
 };
 struct MjSpace {
+ bool authoring=false, preparing_source=false, design_blocked=false, author_initializing=true;
+ uint64_t design_revision=0, committed_design_revision=0;
+ std::set<uint64_t> author_reset_bodies;
+ String prepared_xml, compile_status;
+ std::vector<std::pair<RID,int>> prepared_owners;
+ std::map<uint64_t,MjBody> committed_bodies;
+ std::map<uint64_t,MjShape> committed_shapes;
+ std::map<uint64_t,MjArea> committed_areas;
+ std::shared_ptr<MjAsyncCandidate> candidate;
  bool paused=false; uint64_t revision=0; String last_error;
  int64_t pending_step_request=0;
  Dictionary born_state, checkpoint; int single_steps=0; bool skip_tick=false;
@@ -93,6 +106,19 @@ class MjPhysicsServer3D : public PhysicsServer3DExtension {
 protected:
  static void _bind_methods();
 public:
+ mutable RID query_space_rid;
+ std::vector<std::thread> async_threads;
+ bool scene_enable_authoring(const RID &space, const String &xml);
+ bool scene_pause_for_author(const RID &space, bool invalidate = true);
+ bool scene_author_views_ready(const RID &space);
+ bool scene_reset_author_body(const RID &space, const RID &body);
+ void scene_close_authoring(const RID &space);
+ RID scene_stage_author_model(const RID &space, const RID &object, const Dictionary &definition);
+ bool scene_stage_author_remove(const RID &space, const RID &object);
+ Dictionary scene_async_snapshot(const RID &space);
+ bool scene_submit_async(const RID &space, int64_t revision, const Dictionary &result);
+ void scene_async_error(const RID &space, const String &error);
+ void process_async_worlds();
  bool scene_pause(const RID &space, bool paused);
  RID scene_import_g1(const RID &space, const String &path, const String &label, const Transform3D &pose);
  RID scene_add_box(const RID &space, const String &label, const Transform3D &pose, const Vector3 &size, double mass);

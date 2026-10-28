@@ -1,22 +1,21 @@
-# 独立世界摆杆 / Independent-world pendulum
-
-这是原 `demo/` 中的旧版演示工程，现在与其他例程统一放在 `examples/`。
+# 可编辑摆杆 / Editable pendulums
 
 ```bash
 ./boostup.sh
 ./em_run.sh --exp pendulum
 ```
 
-F5 运行 `Main.tscn`。此工程直接创建 `MjWorld`、加载 `models/pendulum.xml` 并推进仿真，
-由关节角驱动摆杆显示；它展示独立仿真接口。其他三个图形例程展示共享 MuJoCo 物理后端。
-也可打开 `ChaosPendulum.tscn`、`VisualDebug.tscn`，用 F6 运行当前场景。
-`HeadlessTest.tscn` 等场景用于诊断与测试。
+F5 运行 Main.tscn；打开 ChaosPendulum.tscn、VisualDebug.tscn 后按 F6。三个演示均使用
+共享 MjRuntimeWorld，已保存 body / geom / joint 作者层级。fromto 胶囊已规范化为等价
+位姿与尺寸，保留材质、相机和灯光。混沌双摆的初始关节位置随场景保存；仿真按世界
+时钟推进，不再每帧手动调用 MjWorld.step。
 
-The former `demo/` project now lives alongside the other examples. Press F5 to run
-the main pendulum scene. It creates an independent `MjWorld`, loads its MJCF and maps
-the simulated hinge angle to the visual rod. The other three graphical examples use
-the shared MuJoCo physics backend. Run the chaos or visual-debug scene with F6.
+VisualDebug 显示接触点、世界坐标下的接触力、body 坐标系、关节锚点/轴和质心。
+在本地场景树或 Inspector 编辑设计，后台验证后 F5；运行中编辑会自动暂停并重建，
+完成后手动继续。Ctrl+D、Undo/Redo、Ctrl+S 使用 Godot 原生操作。
 
-`addons/` 由配置向导链接到根目录插件，`assets/` 链接到根目录原始资产；保留完整仓库结构。
-Both addon and asset links refer to repository-root shared directories. Keep the
-repository layout intact.
+HeadlessTest、ChaosPendulumTest、VisualDebugTest 等诊断场景和独立 MjWorld API 继续保留。
+它们验证独立接口，不承担图形演示的物理推进。
+
+All three visual demos now use the shared backend and persistent editable author nodes.
+Independent MjWorld diagnostic scenes remain available. Keep the repository addon and asset links intact.

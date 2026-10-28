@@ -17,12 +17,12 @@ static bool valid_rigid_transform(const Transform3D &t) {
 }
 
 MjSpace::~MjSpace() { if(data) mj_deleteData(data); if(model) mj_deleteModel(model); if(direct) memdelete(direct); }
-MjBody *MjPhysicsServer3D::body(const RID &r) const { auto i=bodies.find(r.get_id()); return i==bodies.end()?nullptr:i->second.get(); }
+MjBody *MjPhysicsServer3D::body(const RID &r) const { if(query_space_rid.is_valid()){auto*s=space(query_space_rid);if(s&&s->authoring){auto i=s->committed_bodies.find(r.get_id());if(i!=s->committed_bodies.end())return &i->second;}} auto i=bodies.find(r.get_id()); return i==bodies.end()?nullptr:i->second.get(); }
 MjSpace *MjPhysicsServer3D::space(const RID &r) const { auto i=spaces.find(r.get_id()); return i==spaces.end()?nullptr:i->second.get(); }
-MjShape *MjPhysicsServer3D::shape(const RID &r) const { auto i=shapes.find(r.get_id()); return i==shapes.end()?nullptr:i->second.get(); }
-void MjPhysicsServer3D::dirty(const RID &r) { if(auto *s=space(r)) s->dirty=true; for(auto &entry:bodies)if(entry.second->space==r)entry.second->contacts.clear(); }
+MjShape *MjPhysicsServer3D::shape(const RID &r) const { if(query_space_rid.is_valid()){auto*s=space(query_space_rid);if(s&&s->authoring){auto i=s->committed_shapes.find(r.get_id());if(i!=s->committed_shapes.end())return &i->second;}} auto i=shapes.find(r.get_id()); return i==shapes.end()?nullptr:i->second.get(); }
+void MjPhysicsServer3D::dirty(const RID &r) { if(auto *s=space(r)){s->dirty=true;if(s->authoring){s->paused=true;s->design_blocked=true;s->compile_status="pending";++s->design_revision;}} for(auto &entry:bodies)if(entry.second->space==r)entry.second->contacts.clear(); }
 MjPhysicsServer3D::~MjPhysicsServer3D() { _finish(); }
-void MjPhysicsServer3D::_finish() { while(!native_joints.empty()) _free_rid(native_joints.begin()->second.rid); area_commands.clear();area_scratch.reset(); while(!areas.empty()) _free_rid(areas.begin()->second->rid); while(!bodies.empty()) _free_rid(bodies.begin()->second->rid); while(!spaces.empty()) _free_rid(spaces.begin()->second->rid); while(!shapes.empty()) _free_rid(shapes.begin()->second->rid); }
+void MjPhysicsServer3D::_finish() { for(auto&thread:async_threads)if(thread.joinable())thread.join();async_threads.clear(); while(!native_joints.empty()) _free_rid(native_joints.begin()->second.rid); area_commands.clear();area_scratch.reset(); while(!areas.empty()) _free_rid(areas.begin()->second->rid); while(!bodies.empty()) _free_rid(bodies.begin()->second->rid); while(!spaces.empty()) _free_rid(spaces.begin()->second->rid); while(!shapes.empty()) _free_rid(shapes.begin()->second->rid); }
 RID MjPhysicsServer3D::make_shape(ShapeType type,const Variant &data) { RID r=handles.make_rid(0); auto s=std::make_unique<MjShape>(); s->rid=r;s->type=type;s->data=data; shapes.emplace(r.get_id(),std::move(s)); return r; }
 // Packed arrays in a Dictionary are shared Variants; copy the samples as well.
 static Dictionary copy_shape_dictionary(const Variant &value) {
@@ -240,6 +240,7 @@ static Vector3 native_com_offset(const mjModel *model,int body_id,const Transfor
 bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,bool validate_dynamics){
  gmj_load_trace::mark("rebuild.enter",s.imported.size(),s.paused);
  if(!s.dirty)return s.model&&s.data;
+ if(s.authoring&&!s.preparing_source){s.paused=true;return s.model&&s.data;}
  std::ostringstream xml;xml.imbue(std::locale::classic());xml<<std::setprecision(17)<<"<mujoco model=\"GodotPhysicsSpace\"><compiler angle=\"radian\" fusestatic=\"false\"/><option timestep=\"0.002\" gravity=\"";vector_xml(xml,godot_to_mj(s.gravity_direction*s.gravity));xml<<"\"/><worldbody>";
  std::vector<std::pair<RID,int>> owners;
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;
@@ -304,6 +305,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  for(int k=0;k<h.size();++k)xml<<h[k]<<' ';xml<<"\"/>";
  }}
  xml<<"</asset><equality>";for(auto &entry:native_joints)if(native_joint_active(entry.second,s.rid))for(int point=0;point<(entry.second.hinge?2:1);++point)xml<<"<connect name=\"pin_"<<entry.first<<"_"<<point<<"\" site1=\"pin_"<<entry.first<<"_0_"<<point<<"\" site2=\"pin_"<<entry.first<<"_1_"<<point<<"\" solref=\".02 1\"/>";xml<<"</equality></mujoco>";
+ if(s.preparing_source){s.prepared_xml=String::utf8(xml.str().c_str());s.prepared_owners=owners;return true;}
  char error[2048]={};mjSpec *spec=mj_parseXMLString(xml.str().c_str(),nullptr,error,sizeof(error));
  if(!spec){s.last_error=String::utf8(error);return false;}
  mjs_setDeepCopy(spec,1);
@@ -453,6 +455,7 @@ void MjPhysicsServer3D::_sync(){}
 void MjPhysicsServer3D::_end_sync(){}
 bool MjPhysicsServer3D::_is_flushing_queries() const{return flushing;}
 void MjPhysicsServer3D::_step(float dt){
+ process_async_worlds();
  for(auto &entry:bodies)entry.second->contacts.clear();
  process_heightfields();
  process_model_edits();

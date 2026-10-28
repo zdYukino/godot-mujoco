@@ -68,6 +68,11 @@ func request_remove() -> bool:
 
 func _queue(value: MjHeightFieldData,expected: int,snapshot: Dictionary = {}) -> bool:
 	if Engine.is_editor_hint() or not is_inside_tree() or is_queued_for_deletion(): last_error="A live runtime node is required";return false
+	var ancestor := get_parent()
+	while ancestor:
+		if ancestor is MjRuntimeWorld and ancestor.world_design and ancestor.author_started and not get_meta("mujoco_editor_staging",false):
+			last_error = "Design changes must be requested from the connected editor"; return false
+		ancestor = ancestor.get_parent()
 	if pending_request != 0: last_error="Wait for the pending heightfield edit";return false
 	if not PhysicsServer3D.has_method("scene_request_heightfield"): last_error="MuJoCo heightfield backend is required";return false
 	if value:

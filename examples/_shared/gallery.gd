@@ -20,10 +20,12 @@ func _ready() -> void:
 	world=get_parent(); model=world.get_node("Model")
 	if Engine.is_editor_hint():
 		apply_floor_grid(); return
-	var opened: Dictionary=model.model.open_document()
-	if opened.error.is_empty():
-		for geom in opened.document.collision_preview(.33,65):
-			var overlay:=Preview.create([geom],Transform3D.IDENTITY); add_child(overlay); overlays[geom.name]=overlay
+	var geometry: Array = model.design.collision_geometry if model.design else []
+	if not model.design and model.model:
+		var opened: Dictionary = model.model.open_document()
+		if opened.error.is_empty(): geometry = opened.document.collision_preview(.33,65)
+	for geom in geometry:
+		var overlay:=Preview.create([geom],Transform3D.IDENTITY); add_child(overlay); overlays[geom.name]=overlay
 	apply_floor_grid()
 	if Engine.is_editor_hint(): return
 	var layer:=CanvasLayer.new(); add_child(layer)
@@ -98,11 +100,10 @@ func _process(_delta: float) -> void:
 	apply_floor_grid()
 	if Engine.is_editor_hint(): return
 	if not model or not model.model_rid.is_valid(): return
-	for geom in PhysicsServer3D.call("scene_geometry",world.space,model.model_rid):
+	for geom in model.state().get("geoms", []):
 		for name in overlays:
 			if str(geom.name).ends_with(name):
 				for wire in overlays[name].get_children():
 					wire.global_transform=geom.transform
-					if geom.type==4: wire.scale=Vector3(geom.source_size.x,geom.source_size.z,geom.source_size.y)
 	if pause_button: pause_button.text="继续" if world.info().paused else "暂停"
-	if status: status.text="接触数 %d · %s" % [world.info().contact_count if world.info().has("contact_count") else world.info().contact_details.size(),"暂停" if world.info().paused else "运行中"]
+	if status: status.text="接触数 %d · %s · %s" % [world.info().get("ncon",0),"暂停" if world.info().paused else "运行中",world.info().get("compile_status", "")]

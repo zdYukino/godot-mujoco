@@ -7,7 +7,7 @@ extends Node3D
 # code) and toggle what to show. MuJoCo is Z-up; this maps its world frame into
 # Godot's Y-up.
 
-@export var world: MjWorld
+@export var world: Node
 @export var show_body_frames := true
 @export var show_joints := true
 @export var show_com := true
@@ -17,11 +17,12 @@ extends Node3D
 @export var force_scale := 0.008
 
 var _im := ImmediateMesh.new()
-var _mi := MeshInstance3D.new()
+var _mi: MeshInstance3D
 var _mat := StandardMaterial3D.new()
 var _begun := false
 
 func _ready() -> void:
+	_mi = MeshInstance3D.new()
 	_mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
 	_mat.vertex_color_use_as_albedo = true
 	_mat.no_depth_test = true # draw the debug overlay on top of geometry
@@ -36,12 +37,16 @@ func m2g(v: Vector3) -> Vector3:
 func _process(_delta: float) -> void:
 	_im.clear_surfaces()
 	_begun = false
-	if not is_instance_valid(world) or not world.is_ready():
+	if not is_instance_valid(world): return
+	if world is MjRuntimeWorld:
+		_draw_shared()
+		if _begun: _im.surface_end()
 		return
+	if not world.is_ready(): return
 
 	if show_body_frames:
 		for i in range(1, world.get_nbody()):
-			var t := world.body_world_transform(i)
+			var t: Transform3D = world.body_world_transform(i)
 			var o := m2g(t.origin)
 			_line(o, o + m2g(t.basis.x) * axis_length, Color.RED)
 			_line(o, o + m2g(t.basis.y) * axis_length, Color.GREEN)
@@ -85,3 +90,25 @@ func _cross(p: Vector3, s: float, col: Color) -> void:
 	_line(p - Vector3(s, 0, 0), p + Vector3(s, 0, 0), col)
 	_line(p - Vector3(0, s, 0), p + Vector3(0, s, 0), col)
 	_line(p - Vector3(0, 0, s), p + Vector3(0, 0, s), col)
+
+func _draw_shared() -> void:
+	var info: Dictionary = world.info()
+	for node in preload("model/world_layout.gd").nodes(world):
+		if not node is MjModelInstance or not node.model_rid.is_valid(): continue
+		var state: Dictionary = node.state()
+		if show_body_frames:
+			for body in state.get("bodies", {}).values():
+				var t: Transform3D = body.transform
+				_line(t.origin,t.origin+t.basis.x*axis_length,Color.RED)
+				_line(t.origin,t.origin+t.basis.y*axis_length,Color.GREEN)
+				_line(t.origin,t.origin+t.basis.z*axis_length,Color.BLUE)
+		if show_joints:
+			for joint in state.get("joints", {}).values():
+				var a: Vector3 = joint.anchor
+				var axis: Vector3 = joint.axis
+				_line(a-axis*axis_length,a+axis*axis_length,Color.YELLOW)
+	if show_com and info.has("center_of_mass"): _cross(info.center_of_mass,.08,Color.MAGENTA)
+	if show_contacts:
+		for contact in info.get("contact_details", []):
+			_cross(contact.position,.05,Color.AQUA)
+			if show_contact_forces: _line(contact.position,contact.position+contact.force*force_scale,Color.ORANGE)

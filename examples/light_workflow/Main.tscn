@@ -1,4 +1,546 @@
-[gd_scene load_steps=2 format=3]
-[ext_resource type="Script" path="res://LightWorkflow.cs" id="1"]
-[node name="LightWorkflow" type="Node"]
-script = ExtResource("1")
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://LightWorkflow.cs" id="99_workflow"]
+
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/runtime_world.gd" id="1_03owx"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/author_resource.gd" id="2_wkp8b"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/model_instance.gd" id="3_20pc6"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/body_node.gd" id="4_5vvyt"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/joint_node.gd" id="5_c6i3y"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/geom_node.gd" id="6_c2ibq"]
+[ext_resource type="BoxMesh" path="res://mujoco_models/visual_cache/0795eac0a47cd2d312e4d7e1341620920de8936b8337e00d819a0521f2e3c89c.res" id="7_j4qnp"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/static_heightfield.gd" id="8_fpfj3"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/heightfield_data.gd" id="9_sc1dx"]
+
+[sub_resource type="Resource" id="Resource_kjvhd"]
+script = ExtResource("2_wkp8b")
+document_id = "484745f4564d81211f97174824667847"
+tree = {
+"attrs": {},
+"children": [{
+"attrs": {
+"angle": "radian"
+},
+"children": [],
+"id": "5cdfa838148a22899dc78d4f770ff0cc",
+"tag": "compiler"
+}, {
+"attrs": {
+"gravity": "0 0 -9.81",
+"timestep": ".002"
+},
+"children": [],
+"id": "1d7790c8e6d25a1f5fcdcf3f647aeda7",
+"tag": "option"
+}, {
+"attrs": {},
+"children": [],
+"id": "6212cfe631c9aec50cd2e65a27c6ffa5",
+"tag": "worldbody"
+}],
+"id": "2e0a6c6af4c62f0411ae88068c850516",
+"tag": "mujoco"
+}
+
+[sub_resource type="Resource" id="Resource_5tuhn"]
+script = ExtResource("2_wkp8b")
+document_id = "533532322ddf172639a69e5f92d9ed37"
+tree = {
+"attrs": {},
+"children": [{
+"attrs": {
+"angle": "radian"
+},
+"children": [],
+"id": "f523cb77a5940759f09647e548307ccc",
+"tag": "compiler"
+}, {
+"attrs": {
+"timestep": ".002"
+},
+"children": [],
+"id": "cc86f443d1fac82f17c4e5715fad9fa3",
+"tag": "option"
+}, {
+"attrs": {},
+"children": [{
+"attrs": {
+"name": "arm",
+"pos": "0 0 1"
+},
+"children": [{
+"attrs": {
+"axis": "0 1 0",
+"damping": "1",
+"name": "hinge",
+"range": "-1 1"
+},
+"children": [],
+"id": "66062c23fd4b597784957d97ae4cb06e",
+"tag": "joint"
+}, {
+"attrs": {
+"mass": "1",
+"name": "arm_geom",
+"size": ".1 .1 .3",
+"type": "box"
+},
+"children": [],
+"id": "17d8eb23f6cda6be58beb5254dd5b2c3",
+"tag": "geom"
+}],
+"id": "a84b62ccb232065b312f316de4f61644",
+"tag": "body"
+}],
+"id": "85172c1417bbbe48193a9745f9cd9ba3",
+"tag": "worldbody"
+}, {
+"attrs": {},
+"children": [{
+"attrs": {
+"joint": "hinge",
+"kp": "20",
+"name": "drive"
+},
+"children": [],
+"id": "0456d720abcd9758eeb08c353d1e6116",
+"tag": "position"
+}],
+"id": "ad0219423fc4a70953d0a8819cbeeb1b",
+"tag": "actuator"
+}],
+"id": "c59d66fcfcb0a7795eeab30254dcd1f3",
+"tag": "mujoco"
+}
+validated_revision = 0
+cached_entities = [{
+"kind": "body",
+"name": "world",
+"parent": "",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": false,
+"inertia": [0.0, 0.0, 0.0],
+"inertia_mode": "automatic",
+"ipos": [0.0, 0.0, 0.0],
+"iquat": [1.0, 0.0, 0.0, 0.0],
+"mass": 0.0,
+"pos": [0.0, 0.0, 0.0],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "body",
+"name": "arm",
+"parent": "world",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": false,
+"inertia": [0.03333333333333333, 0.03333333333333333, 0.006666666666666668],
+"inertia_mode": "automatic",
+"ipos": [0.0, 0.0, 0.0],
+"iquat": [1.0, 0.0, 0.0, 0.0],
+"mass": 1.0,
+"pos": [0.0, 0.0, 1.0],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "joint",
+"name": "hinge",
+"parent": "arm",
+"properties": {
+"axis": [0.0, 1.0, 0.0],
+"damping": 1.0,
+"damping_coefficients": [1.0, 0.0, 0.0],
+"damping_editable": true,
+"frictionloss": 0.0,
+"limited": true,
+"pos": [0.0, 0.0, 0.0],
+"qpos": [0.0],
+"range": [-1.0, 1.0],
+"type": "hinge",
+"unit": "rad"
+}
+}, {
+"kind": "geom",
+"name": "arm_geom",
+"parent": "arm",
+"properties": {
+"conaffinity": 1,
+"contype": 1,
+"density": 1000.0,
+"friction": [1.0, 0.005, 0.0001],
+"margin": 0.0,
+"mass": 1.0,
+"mesh": "",
+"pos": [0.0, 0.0, 0.0],
+"pose_editable": true,
+"quat": [1.0, 0.0, 0.0, 0.0],
+"size": [0.1, 0.1, 0.3],
+"size_editable": true,
+"type": 6
+}
+}, {
+"kind": "actuator",
+"name": "drive",
+"parent": "",
+"properties": {
+"bias_type": 1,
+"control": 0.0,
+"ctrl_limited": false,
+"ctrl_range": [0.0, 0.0],
+"dynamics_type": 0,
+"gain_type": 0,
+"gear": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"kp": 20.0,
+"kv": 0.0,
+"target_joint": "hinge",
+"transmission_type": 0,
+"type": "position-compatible"
+}
+}]
+cached_geometry = [{
+"color": Color(0.5, 0.5, 0.5, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/0795eac0a47cd2d312e4d7e1341620920de8936b8337e00d819a0521f2e3c89c.res",
+"name": "arm_geom",
+"size": Vector3(0.1, 0.1, 0.3),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0),
+"type": 6
+}]
+collision_geometry = [{
+"color": Color(0.5, 0.5, 0.5, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/0795eac0a47cd2d312e4d7e1341620920de8936b8337e00d819a0521f2e3c89c.res",
+"name": "arm_geom",
+"preview_kind": "analytic_boundary",
+"size": Vector3(0.1, 0.1, 0.3),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0),
+"type": 6
+}]
+compiled_snapshot = {
+"format": 1,
+"source": "",
+"state": {
+"act": [],
+"ctrl": [0.0],
+"integration": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"qpos": [0.0],
+"qvel": [0.0],
+"time": 0.0
+},
+"xml": "<mujoco model=\"MuJoCo Model\">
+  <compiler angle=\"radian\"/>
+
+  <worldbody>
+    <body name=\"arm\" pos=\"0 0 1\">
+      <joint name=\"hinge\" range=\"-1 1\" damping=\"1\" axis=\"0 1 0\"/>
+      <geom name=\"arm_geom\" size=\"0.1 0.1 0.3\" type=\"box\" mass=\"1\"/>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <general name=\"drive\" joint=\"hinge\" input=\"pos\" biastype=\"affine\" gainprm=\"20\" biasprm=\"0 -20\"/>
+  </actuator>
+</mujoco>
+"
+}
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2gh4u"]
+albedo_color = Color(0.5, 0.5, 0.5, 1)
+roughness = 0.85
+
+[sub_resource type="Resource" id="Resource_devvj"]
+script = ExtResource("2_wkp8b")
+document_id = "4fea114a1244281ebdb7ba914152c02b"
+tree = {
+"attrs": {},
+"children": [{
+"attrs": {
+"angle": "radian"
+},
+"children": [],
+"id": "83d70bc7ecc2e28b9f256b7d2e985a43",
+"tag": "compiler"
+}, {
+"attrs": {
+"timestep": ".002"
+},
+"children": [],
+"id": "c87425993bc7d0a68f9725d8a0e341e3",
+"tag": "option"
+}, {
+"attrs": {},
+"children": [{
+"attrs": {
+"name": "arm",
+"pos": "0 0 1"
+},
+"children": [{
+"attrs": {
+"axis": "0 1 0",
+"damping": "1",
+"name": "hinge",
+"range": "-1 1"
+},
+"children": [],
+"id": "164cc79e796197f773836ddfab75afaf",
+"tag": "joint"
+}, {
+"attrs": {
+"mass": "1",
+"name": "arm_geom",
+"size": ".1 .1 .3",
+"type": "box"
+},
+"children": [],
+"id": "26f10c74c730df70fb72f02567434593",
+"tag": "geom"
+}],
+"id": "2b0fca1b818cdfe2d788e400a10292d3",
+"tag": "body"
+}],
+"id": "adc69e90f55f6be04155ee7e3e7bedb8",
+"tag": "worldbody"
+}, {
+"attrs": {},
+"children": [{
+"attrs": {
+"joint": "hinge",
+"kp": "20",
+"name": "drive"
+},
+"children": [],
+"id": "a892a0cb6d2cb5be9c8750f4e02a7a16",
+"tag": "position"
+}],
+"id": "82e187b29313088dd6c986f03fc715e5",
+"tag": "actuator"
+}],
+"id": "efd6ff98f0522f6833e1d8ae66acaced",
+"tag": "mujoco"
+}
+validated_revision = 0
+cached_entities = [{
+"kind": "body",
+"name": "world",
+"parent": "",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": false,
+"inertia": [0.0, 0.0, 0.0],
+"inertia_mode": "automatic",
+"ipos": [0.0, 0.0, 0.0],
+"iquat": [1.0, 0.0, 0.0, 0.0],
+"mass": 0.0,
+"pos": [0.0, 0.0, 0.0],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "body",
+"name": "arm",
+"parent": "world",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": false,
+"inertia": [0.03333333333333333, 0.03333333333333333, 0.006666666666666668],
+"inertia_mode": "automatic",
+"ipos": [0.0, 0.0, 0.0],
+"iquat": [1.0, 0.0, 0.0, 0.0],
+"mass": 1.0,
+"pos": [0.0, 0.0, 1.0],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "joint",
+"name": "hinge",
+"parent": "arm",
+"properties": {
+"axis": [0.0, 1.0, 0.0],
+"damping": 1.0,
+"damping_coefficients": [1.0, 0.0, 0.0],
+"damping_editable": true,
+"frictionloss": 0.0,
+"limited": true,
+"pos": [0.0, 0.0, 0.0],
+"qpos": [0.0],
+"range": [-1.0, 1.0],
+"type": "hinge",
+"unit": "rad"
+}
+}, {
+"kind": "geom",
+"name": "arm_geom",
+"parent": "arm",
+"properties": {
+"conaffinity": 1,
+"contype": 1,
+"density": 1000.0,
+"friction": [1.0, 0.005, 0.0001],
+"margin": 0.0,
+"mass": 1.0,
+"mesh": "",
+"pos": [0.0, 0.0, 0.0],
+"pose_editable": true,
+"quat": [1.0, 0.0, 0.0, 0.0],
+"size": [0.1, 0.1, 0.3],
+"size_editable": true,
+"type": 6
+}
+}, {
+"kind": "actuator",
+"name": "drive",
+"parent": "",
+"properties": {
+"bias_type": 1,
+"control": 0.0,
+"ctrl_limited": false,
+"ctrl_range": [0.0, 0.0],
+"dynamics_type": 0,
+"gain_type": 0,
+"gear": [1.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"kp": 20.0,
+"kv": 0.0,
+"target_joint": "hinge",
+"transmission_type": 0,
+"type": "position-compatible"
+}
+}]
+cached_geometry = [{
+"color": Color(0.5, 0.5, 0.5, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/0795eac0a47cd2d312e4d7e1341620920de8936b8337e00d819a0521f2e3c89c.res",
+"name": "arm_geom",
+"size": Vector3(0.1, 0.1, 0.3),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0),
+"type": 6
+}]
+collision_geometry = [{
+"color": Color(0.5, 0.5, 0.5, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/0795eac0a47cd2d312e4d7e1341620920de8936b8337e00d819a0521f2e3c89c.res",
+"name": "arm_geom",
+"preview_kind": "analytic_boundary",
+"size": Vector3(0.1, 0.1, 0.3),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0),
+"type": 6
+}]
+compiled_snapshot = {
+"format": 1,
+"source": "",
+"state": {
+"act": [],
+"ctrl": [0.0],
+"integration": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"qpos": [0.0],
+"qvel": [0.0],
+"time": 0.0
+},
+"xml": "<mujoco model=\"MuJoCo Model\">
+  <compiler angle=\"radian\"/>
+
+  <worldbody>
+    <body name=\"arm\" pos=\"0 0 1\">
+      <joint name=\"hinge\" range=\"-1 1\" damping=\"1\" axis=\"0 1 0\"/>
+      <geom name=\"arm_geom\" size=\"0.1 0.1 0.3\" type=\"box\" mass=\"1\"/>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <general name=\"drive\" joint=\"hinge\" input=\"pos\" biastype=\"affine\" gainprm=\"20\" biasprm=\"0 -20\"/>
+  </actuator>
+</mujoco>
+"
+}
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3b0ty"]
+albedo_color = Color(0.5, 0.5, 0.5, 1)
+roughness = 0.85
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bg4s2"]
+size = Vector3(0.4, 0.4, 0.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_hhcpw"]
+size = Vector3(0.4, 0.4, 0.4)
+
+[sub_resource type="Resource" id="Resource_mxvw5"]
+script = ExtResource("9_sc1dx")
+width = 11
+depth = 11
+heights = PackedFloat32Array(0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3, 0.3)
+
+[node name="LightWorkflow" type="Node" unique_id=928368519]
+script = ExtResource("99_workflow")
+
+[node name="Environment" type="Node3D" parent="." unique_id=188558109]
+script = ExtResource("1_03owx")
+world_design = SubResource("Resource_kjvhd")
+start_paused = true
+
+[node name="First" type="Node3D" parent="Environment" unique_id=1166217940]
+script = ExtResource("3_20pc6")
+design = SubResource("Resource_5tuhn")
+
+[node name="arm" type="Node3D" parent="Environment/First" unique_id=1221816318]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("4_5vvyt")
+entity_id = "a84b62ccb232065b312f316de4f61644"
+
+[node name="hinge" type="Node3D" parent="Environment/First/arm" unique_id=2017057728]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
+script = ExtResource("5_c6i3y")
+entity_id = "66062c23fd4b597784957d97ae4cb06e"
+
+[node name="arm_geom" type="Node3D" parent="Environment/First/arm" unique_id=1754614802]
+script = ExtResource("6_c2ibq")
+entity_id = "17d8eb23f6cda6be58beb5254dd5b2c3"
+
+[node name="_Visual" type="MeshInstance3D" parent="Environment/First/arm/arm_geom" unique_id=1921058565]
+material_override = SubResource("StandardMaterial3D_2gh4u")
+mesh = ExtResource("7_j4qnp")
+
+[node name="Second" type="Node3D" parent="Environment" unique_id=2136125665]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+script = ExtResource("3_20pc6")
+design = SubResource("Resource_devvj")
+
+[node name="arm" type="Node3D" parent="Environment/Second" unique_id=1968223248]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("4_5vvyt")
+entity_id = "2b0fca1b818cdfe2d788e400a10292d3"
+
+[node name="hinge" type="Node3D" parent="Environment/Second/arm" unique_id=1570530145]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
+script = ExtResource("5_c6i3y")
+entity_id = "164cc79e796197f773836ddfab75afaf"
+
+[node name="arm_geom" type="Node3D" parent="Environment/Second/arm" unique_id=742745257]
+script = ExtResource("6_c2ibq")
+entity_id = "26f10c74c730df70fb72f02567434593"
+
+[node name="_Visual" type="MeshInstance3D" parent="Environment/Second/arm/arm_geom" unique_id=222289238]
+material_override = SubResource("StandardMaterial3D_3b0ty")
+mesh = ExtResource("7_j4qnp")
+
+[node name="Box" type="RigidBody3D" parent="Environment" unique_id=1277143682]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 2, 0)
+
+[node name="Collider" type="CollisionShape3D" parent="Environment/Box" unique_id=963927624]
+shape = SubResource("BoxShape3D_bg4s2")
+
+[node name="Visual" type="MeshInstance3D" parent="Environment/Box" unique_id=2042605470]
+mesh = SubResource("BoxMesh_hhcpw")
+
+[node name="Terrain" type="Node3D" parent="Environment" unique_id=494502060]
+script = ExtResource("8_fpfj3")
+design = SubResource("Resource_mxvw5")
+
+[node name="Camera" type="Camera3D" parent="." unique_id=1493219086]
+transform = Transform3D(0.8436615, -0.25395077, 0.47301614, 0, 0.88105375, 0.47301614, -0.5368755, -0.3990655, 0.7433111, 8, 7, 11)
+current = true
+
+[node name="Sun" type="DirectionalLight3D" parent="." unique_id=550504133]
+transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81915206, 0.42261827, -0.74240386, 0.5198368, 0, 0, 0)

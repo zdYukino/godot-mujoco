@@ -71,12 +71,19 @@ func update_scene() -> void:
 		elif node is Terrain: values.append([node.get_instance_id(),node.global_transform,node.design.snapshot(Transform3D.IDENTITY,node.collision_layer,node.collision_mask) if node.design else {}])
 		elif node.has_meta("map_specs"): values.append([node.get_instance_id(),node.global_transform,node.get("native_collisions")])
 	var next:=str(hash(var_to_bytes(values)))
+	if not collisions:
+		overlay_root.visible = false
+		signature = ""
+		return
 	if next==signature: return
 	signature=next
 	for child in overlay_root.get_children(): child.free()
 	var unsupported:=0
 	for node in nodes:
-		if node is Model and node.model:
+		if node is Model and node.design and node.author_scene:
+			var geometry: Array = node.design.collision_geometry
+			if not geometry.is_empty(): overlay_root.add_child(Preview.create(geometry, node.global_transform))
+		elif node is Model and node.model:
 			var opened: Dictionary=node.model.open_document()
 			if not opened.error.is_empty(): unsupported+=1; continue
 			var overlay:=Preview.create(opened.document.collision_preview(.33,65),node.global_transform)

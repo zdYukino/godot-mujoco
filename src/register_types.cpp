@@ -14,6 +14,8 @@
 #include <godot_cpp/variant/utility_functions.hpp>
 
 #include <mujoco/mujoco.h>
+#include <cstdio>
+namespace godot { extern thread_local bool gmj_background_worker; }
 
 using namespace godot;
 
@@ -23,6 +25,7 @@ static void gmj_log_handler(const mjLogMessage *msg) {
 	if (msg == nullptr) {
 		return;
 	}
+	if(godot::gmj_background_worker){std::fprintf(stderr,"MuJoCo background: %s %s\n",msg->subject?msg->subject:"",msg->body?msg->body:"");return;}
 	String text = String::utf8(msg->subject);
 	if (msg->body != nullptr && msg->body[0] != '\0') {
 		text += "\n";

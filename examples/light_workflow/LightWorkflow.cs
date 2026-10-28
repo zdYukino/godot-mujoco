@@ -13,6 +13,7 @@ public partial class LightWorkflow : Node
     private Node3D environment=null!;
     private Label status=null!;
     private HSlider control=null!;
+    private Button designButton=null!;
     private readonly List<Button> buttons=new();
     private string message="初始化…";
     private bool busy=true;
@@ -36,29 +37,27 @@ public partial class LightWorkflow : Node
     }
     public override async void _Ready() {
         try {
-            environment=GD.Load<PackedScene>("res://Environment.tscn").Instantiate<Node3D>();
-            environment.GetNode("Floor").Free();AddChild(environment);
+            environment=GetNode<Node3D>("Environment");
+            var deadline=Time.GetTicksMsec()+120000;
+            while(!environment.Get("author_started").AsBool() && Time.GetTicksMsec()<deadline)await Frames();
+            if(!environment.Get("author_started").AsBool())throw new TimeoutException("Initial world compilation timeout");
             world=WorldHandle.Bind(environment).Value;
-            first=InstanceHandle.Bind(environment.GetNode("First")).Value;second=InstanceHandle.Bind(environment.GetNode("Second")).Value;
-            for(int i=0;i<600&&world.Read().Value.PendingRequest!=0;i++)await Frames();
-            if(world.Read().Value.PendingRequest!=0)throw new TimeoutException("Initial snapshot timeout");
-            var design=TerrainDesign.Create(11,11,Enumerable.Repeat(.3f,121).ToArray()).Value;
-            var created=TerrainHandle.Create(environment,"Terrain",design);
-            if(!created.Success)throw new InvalidOperationException(created.Error);
-            terrain=created.Value;await Finish(terrain.InitialRequest!);await Finish(world.Capture());
-            var box=environment.GetNode<Node3D>("Box");box.AddChild(new MeshInstance3D{Mesh=new BoxMesh{Size=Vector3.One*.4f}});
-            var camera=new Camera3D{Position=new Vector3(8,7,11),Current=true};AddChild(camera);camera.LookAt(new Vector3(1,0,0));
-            AddChild(new DirectionalLight3D{RotationDegrees=new Vector3(-55,-25,0)});
+            first=InstanceHandle.Bind(environment.GetNode("First")).Value;
+            second=InstanceHandle.Bind(environment.GetNode("Second")).Value;
+            terrain=TerrainHandle.Bind(environment.GetNode("Terrain")).Value;
+            while(world.Read().Value.PendingRequest!=0)await Frames();
             var canvas=new CanvasLayer();AddChild(canvas);var column=new VBoxContainer{Position=new Vector2(16,16)};canvas.AddChild(column);
             status=new Label();column.AddChild(status);
             var row=new HBoxContainer();column.AddChild(row);
             Button(row,"暂停 / 继续",()=>world.Pause(!world.Read().Value.Paused));
             Button(row,"精确步进 100",()=>world.Step(100));Button(row,"记录复位点",()=>world.Capture());
             Button(row,"重置仿真",()=>world.Reset());
-            Button(row,"抬高地形角点",()=>{
-                var state=terrain.Read().Value;var previous=state.CommittedDesign!;var values=previous.Heights.ToArray();values[0]+=.1f;
-                return terrain.Update(TerrainDesign.Create(previous.Width,previous.Depth,values,previous.Pose,previous.Layer,previous.Mask).Value,state.Revision);
-            });
+            designButton=new Button{Text="抬高地形角点"};row.AddChild(designButton);
+            designButton.Pressed+=()=>{
+                var request=environment.Call("request_editor_design",new Godot.Collections.Dictionary{
+                    {"op","terrain_update"},{"path","Terrain"},{"index",0},{"delta",.1}}).AsInt64();
+                message=request==0?"设计修改需要连接对应编辑器场景":"已请求编辑器修改，后台重建后手动继续";
+            };
             column.AddChild(new Label{Text="关节目标（弧度）：两个固定基座轻量模型反向控制；重置不撤销地形设计。"});
             control=new HSlider{MinValue=-.7,MaxValue=.7,Step=.05,CustomMinimumSize=new Vector2(500,24)};column.AddChild(control);
             control.ValueChanged+=value=>SetControl(value);
@@ -75,6 +74,7 @@ public partial class LightWorkflow : Node
         var state=world.Read();if(!state.Success)return;
         status.Text=$"time={state.Value.Time:F3}s paused={state.Value.Paused} contacts={state.Value.Contacts}\n{message}";
         foreach(var button in buttons)button.Disabled=busy;
+        designButton.Disabled=busy||!environment.Get("editor_connected").AsBool()||environment.Call("info").AsGodotDictionary()["design_pending"].AsBool();
         control.Editable=!busy;
         if(!busy && first!=null) { var snapshot=first.Read(); if(snapshot.Success)control.SetValueNoSignal(snapshot.Value.Controls["drive"]); }
     }

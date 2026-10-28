@@ -1,6 +1,6 @@
-[gd_resource type="Resource" script_class="MjModelResource" format=3]
+[gd_resource type="Resource" script_class="MjModelResource" format=3 uid="uid://bto2vd1hquivl"]
 
-[ext_resource type="Script" path="res://addons/godot_mujoco/model/model_resource.gd" id="1_moq2d"]
+[ext_resource type="Script" uid="uid://bujuhe5cpalan" path="res://addons/godot_mujoco/model/model_resource.gd" id="1_moq2d"]
 
 [resource]
 script = ExtResource("1_moq2d")

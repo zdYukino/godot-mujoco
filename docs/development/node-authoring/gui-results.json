@@ -1,0 +1,15 @@
+{
+  "failed": 0,
+  "checks": [
+    "real mouse import dialog",
+    "formal scene hierarchy",
+    "native Ctrl+D and new identities",
+    "native Ctrl+Z / Ctrl+Shift+Z",
+    "actual capsule Gizmo drag; one source revision",
+    "Gizmo Undo and Redo preserve source pose",
+    "Inspector damping field edit",
+    "native Ctrl+S",
+    "independent editor restart restores hierarchy, pose, damping and identity"
+  ],
+  "display": ":98 (isolated real X11 GUI, llvmpipe)"
+}

@@ -15,7 +15,7 @@ jobs:
       - name: Install build tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential git curl unzip python3 python3-pip binutils
+          sudo apt-get install -y build-essential git curl unzip python3 python3-pip binutils xvfb
           python3 -m pip install cmake==3.31.6
       - name: Read pinned .NET SDK version
         id: toolchain
@@ -43,6 +43,8 @@ jobs:
         run: bash scripts/setup.sh check --mujoco-root "$GITHUB_WORKSPACE/build-linux/_deps/mujoco-src" --build-dir "$RUNNER_TEMP/gmj-sdk-check"
       - name: Strict isolated lightweight smoke
         run: bash scripts/setup.sh smoke --out "$GITHUB_WORKSPACE/evidence/smoke"
+      - name: Node authoring and live editor acceptance
+        run: xvfb-run -a python3 tests/node_authoring/run.py --godot "$GODOT_BIN" --out "$GITHUB_WORKSPACE/evidence/node-authoring"
       - name: Preserve outcomes and logs, including initialization failures
         if: always()
         uses: actions/upload-artifact@v4
@@ -51,4 +53,5 @@ jobs:
           path: |
             evidence/
             !evidence/smoke/project/
+            !evidence/node-authoring/project/
           if-no-files-found: warn

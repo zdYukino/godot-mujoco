@@ -1,4 +1,47 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/runtime_world.gd" id="1_uu6xs"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/author_resource.gd" id="2_r0du0"]
+
+[sub_resource type="Resource" id="Resource_cm0pq"]
+script = ExtResource("2_r0du0")
+document_id = "7b254c3b615a75bdd4c25fcdce392bf8"
+tree = {
+"attrs": {},
+"children": [{
+"attrs": {
+"angle": "radian"
+},
+"children": [],
+"id": "d9e800791ada6aa919b81c635503e9d1",
+"tag": "compiler"
+}, {
+"attrs": {
+"gravity": "0 0 -9.81",
+"timestep": ".002"
+},
+"children": [],
+"id": "749993266aaf26797b73ca73ce68a6f6",
+"tag": "option"
+}, {
+"attrs": {},
+"children": [],
+"id": "0f6f3001fa6404ff8eb571c4f2817e06",
+"tag": "worldbody"
+}],
+"id": "801bbdfe876352763c2e05a090f7f6cf",
+"tag": "mujoco"
+}
+
+[sub_resource type="Environment" id="Environment"]
+background_mode = 1
+background_color = Color(0.12, 0.16, 0.22, 1)
+ambient_light_source = 3
+ambient_light_color = Color(0.8, 0.86, 1, 1)
+ambient_light_energy = 0.55
+
+[sub_resource type="PhysicsMaterial" id="ContactMaterial"]
+friction = 0.8
 
 [sub_resource type="StandardMaterial3D" id="GroundMaterial"]
 albedo_color = Color(0.32, 0.38, 0.43, 1)
@@ -17,55 +60,42 @@ roughness = 0.35
 
 [sub_resource type="SphereMesh" id="BallMesh"]
 material = SubResource("BallMaterial")
-radius = 0.5
-height = 1.0
 
 [sub_resource type="SphereShape3D" id="BallShape"]
-radius = 0.5
 
-[sub_resource type="Environment" id="Environment"]
-background_mode = 1
-background_color = Color(0.12, 0.16, 0.22, 1)
-ambient_light_source = 3
-ambient_light_color = Color(0.8, 0.86, 1, 1)
-ambient_light_energy = 0.55
+[node name="Main" type="Node3D" unique_id=1097118013]
+script = ExtResource("1_uu6xs")
+world_design = SubResource("Resource_cm0pq")
 
-[sub_resource type="PhysicsMaterial" id="ContactMaterial"]
-friction = 0.8
-bounce = 0.0
-
-[node name="Main" type="Node3D"]
-
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1652511324]
 environment = SubResource("Environment")
 
-[node name="Ground" type="StaticBody3D" parent="."]
-position = Vector3(0, -0.5, 0)
+[node name="Ground" type="StaticBody3D" parent="." unique_id=968048023]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 physics_material_override = SubResource("ContactMaterial")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground" unique_id=460464351]
 mesh = SubResource("GroundMesh")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground" unique_id=616839062]
 shape = SubResource("GroundShape")
 
-[node name="Ball" type="RigidBody3D" parent="."]
+[node name="Ball" type="RigidBody3D" parent="." unique_id=1044291187]
 position = Vector3(0, 1.5, 0)
 mass = 100.0
 physics_material_override = SubResource("ContactMaterial")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Ball"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ball" unique_id=353717742]
 mesh = SubResource("BallMesh")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ball"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ball" unique_id=145447453]
 shape = SubResource("BallShape")
 
-[node name="Camera3D" type="Camera3D" parent="."]
-position = Vector3(4, 3, 5)
-rotation_degrees = Vector3(-20, 38.66, 0)
+[node name="Camera3D" type="Camera3D" parent="." unique_id=893926465]
+transform = Transform3D(0.7808667, -0.21365918, 0.5870238, 0, 0.9396926, 0.34202012, -0.6246977, -0.2670721, 0.73377466, 4, 3, 5)
 current = true
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-rotation_degrees = Vector3(-55, -30, 0)
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1016905699]
+transform = Transform3D(0.8660254, 0.40957603, -0.28678823, 0, 0.57357645, 0.81915206, 0.5, -0.7094065, 0.49673176, 0, 0, 0)
 light_energy = 1.3
 shadow_enabled = true

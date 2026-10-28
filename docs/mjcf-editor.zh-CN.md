@@ -1,5 +1,7 @@
 # MuJoCo 编辑器使用
 
+> 当前默认编辑器已切换为[正式 MJCF 层级节点工作流](node-authoring.zh-CN.md)。以下草稿 / Apply / 发布流程作为旧路径参考；新场景使用 Inspector、Gizmo 和 Ctrl+S。
+
 安装后在 **项目 → 项目设置 → 插件** 启用 **MuJoCo Model Editor**，打开编辑器**右侧 MuJoCo 页签**，范围选择 **MJCF 文档**。中央使用 Godot 原生 3D 视图；独立草稿与运行实例分别管理。仓库三个图形例程已配置插件，可[从项目管理器直接打开](../README.md)。
 
 ## 导入、选择和视口操作

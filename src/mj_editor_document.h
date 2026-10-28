@@ -28,6 +28,11 @@ public:
  ~MjEditorDocument();
  bool import_file(const String &path);
  bool import_g1(const String &path, bool free_base=false, bool relaxed=false);
+ bool compile_author(const String &xml, const Dictionary &initial_pose=Dictionary());
+ bool save_compiled(const String &path) const;
+ bool restore_compiled(const Dictionary &snapshot, const String &path);
+ bool compose_author_world(const Dictionary &request);
+ bool apply_dynamic_snapshot(const Dictionary &state, const Dictionary &aliases, const Dictionary &reset);
  mjSpec *copy_spec() const { return mj_copySpec(spec); }
  const mjModel *native_model() const { return model; }
  const mjData *native_data() const { return data; }

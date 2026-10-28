@@ -34,6 +34,8 @@ void MjPhysicsServer3D::process_world_commands(){
  for(auto &request:pending){Dictionary result;result["request"]=request.request;result["command"]=request.command;
   auto apply=[&]()->String {
    auto*s=space(request.space);if(!s||!s->authored_options)return "Configured runtime world was removed";
+   if(s->authoring&&(s->dirty||s->design_blocked||!s->model)&&request.command!="pause")return "Wait for the current physical design to compile, or restore the committed design";
+   if(s->authoring&&request.command=="pause"){s->paused=true;s->single_steps=0;return {};}
    if(!rebuild(*s))return s->last_error;
    if(s->pending_step_request)return "Previous simulation step still pending";
    String command=request.command;

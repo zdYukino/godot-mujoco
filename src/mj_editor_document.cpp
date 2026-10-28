@@ -1,6 +1,7 @@
 #include "physics/mj_load_trace.h"
 #include "mj_editor_document.h"
 #include "physics/mj_assets.h"
+#include "physics/mj_options.h"
 #include "physics/mj_g1_import.h"
 #include "physics/mj_physics_server.h"
 #include "physics/mj_state_transfer.h"
@@ -8,6 +9,8 @@
 #include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/variant/packed_float64_array.hpp>
 #include <godot_cpp/variant/packed_vector3_array.hpp>
+#include <godot_cpp/variant/packed_vector2_array.hpp>
+#include <godot_cpp/variant/packed_byte_array.hpp>
 #include <cmath>
 #include <limits>
 #include <vector>
@@ -32,6 +35,11 @@ void assign_names(mjSpec*s){for(auto t:{mjOBJ_BODY,mjOBJ_JOINT,mjOBJ_GEOM,mjOBJ_
 Transform3D pose(const mjtNum*p,const mjtNum*m){Basis b;for(int r=0;r<3;++r)for(int c=0;c<3;++c)b[r][c]=m[3*r+c];return Transform3D(mj_to_godot(b),mj_to_godot(Vector3(p[0],p[1],p[2])));}
 }
 void MjEditorDocument::_bind_methods(){
+ ClassDB::bind_method(D_METHOD("compile_author","xml","initial_pose"),&MjEditorDocument::compile_author,DEFVAL(Dictionary()));
+ ClassDB::bind_method(D_METHOD("save_compiled","path"),&MjEditorDocument::save_compiled);
+ ClassDB::bind_method(D_METHOD("restore_compiled","snapshot","path"),&MjEditorDocument::restore_compiled);
+ ClassDB::bind_method(D_METHOD("compose_author_world","request"),&MjEditorDocument::compose_author_world);
+ ClassDB::bind_method(D_METHOD("apply_dynamic_snapshot","state","aliases","reset"),&MjEditorDocument::apply_dynamic_snapshot);
  ClassDB::bind_method(D_METHOD("import_g1","path","free_base","relaxed"),&MjEditorDocument::import_g1,DEFVAL(false),DEFVAL(false));
  ClassDB::bind_method(D_METHOD("asset_manifest"),&MjEditorDocument::asset_manifest);
  ClassDB::bind_method(D_METHOD("portable_snapshot","mapping"),&MjEditorDocument::portable_snapshot);
@@ -52,6 +60,100 @@ void MjEditorDocument::_bind_methods(){
 }
 MjEditorDocument::MjEditorDocument(){char e[1024]={};commit(mj_parseXMLString("<mujoco><compiler angle='radian'/><option timestep='0.002'/><worldbody><geom name='floor' type='plane' size='5 5 .1'/></worldbody></mujoco>",nullptr,e,sizeof(e)));}
 MjEditorDocument::~MjEditorDocument(){gmj_load_trace::mark("document.destroy_begin");if(data)mj_deleteData(data);if(model)mj_deleteModel(model);if(spec)mj_deleteSpec(spec);gmj_load_trace::mark("document.destroy_end");}
+bool MjEditorDocument::compile_author(const String &text,const Dictionary &initial){
+ char e[2048]={};auto*c=mj_parseXMLString(text.utf8().get_data(),nullptr,e,sizeof(e));
+ if(!c){error=String::utf8(e);return false;}
+ if(!commit(c,Dictionary(),false))return false;
+ for(auto key:initial.keys()){
+  String label=key;int j=mj_name2id(model,mjOBJ_JOINT,label.utf8().get_data());
+  if(j<0){error="Unknown initial-pose joint: "+label;return false;}
+  int count=model->jnt_type[j]==mjJNT_FREE?7:model->jnt_type[j]==mjJNT_BALL?4:1;
+  if(!read_values(initial[key],data->qpos+model->jnt_qposadr[j],count)){error="Invalid initial joint position: "+label;return false;}
+ }
+ mj_normalizeQuat(model,data->qpos);mj_forward(model,data);
+ for(int i=0;i<model->nv;++i)if(!std::isfinite(data->qacc[i])){error="Nonfinite authored initial dynamics";return false;}
+ paused=true;return true;
+}
+bool MjEditorDocument::compose_author_world(const Dictionary &request){
+ char e[2048]={};String text=request.get("base_xml",String());
+ auto*c=mj_parseXMLString(text.utf8().get_data(),nullptr,e,sizeof(e));if(!c){error=String::utf8(e);return false;}
+ auto fail=[&](const String&message){error=message;mj_deleteSpec(c);return false;};
+ PackedByteArray options=request.get("options",PackedByteArray());
+ if(options.size()!=sizeof(mjOption))return fail("Compiler/world option ABI mismatch");
+ std::memcpy(&c->option,options.ptr(),sizeof(mjOption));mjs_setDeepCopy(c,1);
+ Array sources=request.get("sources",Array());
+ for(int i=0;i<sources.size();++i){Dictionary source=sources[i];String xml=source["xml"],prefix=source["prefix"];
+  auto*child=mj_parseXMLString(xml.utf8().get_data(),nullptr,e,sizeof(e));if(!child)return fail(String::utf8(e));
+  if(mjs_firstElement(child,mjOBJ_PLUGIN)){mj_deleteSpec(child);return fail("Plugins are disabled in author worlds");}
+  String conflict=gmj_option_conflict(c->option,child->option);
+  if(!conflict.is_empty()){mj_deleteSpec(child);return fail("World/model option conflict: "+conflict);}
+  bool mocap=false;for(auto*body=mjs_firstElement(child,mjOBJ_BODY);body;body=mjs_nextElement(child,body))mocap=mocap||mjs_asBody(body)->mocap;
+  if(child->nuserdata||child->nkey||mjs_firstElement(child,mjOBJ_KEY)||mocap){mj_deleteSpec(child);return fail("Shared author worlds do not support global userdata, mocap sources or keyframes; author data is preserved");}
+  if(mjs_firstElement(child,mjOBJ_FLEX)||mjs_firstElement(child,mjOBJ_SKIN)){mj_deleteSpec(child);return fail("Flex and skin authoring need a dedicated node adapter; source is preserved");}
+
+  Dictionary mesh_options=source.get("mesh_options",Dictionary());Array mesh_names=mesh_options.keys();
+  for(int k=0;k<mesh_names.size();++k){String name=mesh_names[k];Dictionary fields=mesh_options[name];auto*mesh=mjs_findElement(child,mjOBJ_MESH,name.utf8().get_data());int depth=fields.get("octree_maxdepth",0);if(!mesh||depth<3||depth>8){mj_deleteSpec(child);return fail("Invalid source mesh octree settings");}mjs_asMesh(mesh)->octree_maxdepth=depth;}
+  auto*frame=mjs_addFrame(mjs_findBody(c,"world"),nullptr);Transform3D pose=source.get("pose",Transform3D());
+  Vector3 pos=godot_to_mj(pose.origin);Quaternion q=godot_to_mj(pose.basis).get_rotation_quaternion();
+  for(int k=0;k<3;++k)frame->pos[k]=pos[k];frame->quat[0]=q.w;frame->quat[1]=q.x;frame->quat[2]=q.y;frame->quat[3]=q.z;
+  auto*attached=mjs_attach(frame->element,mjs_findBody(child,"world")->element,prefix.utf8().get_data(),"");
+  if(!attached){String message=String::utf8(mjs_getError(c));mj_deleteSpec(child);return fail(message);}
+  auto*wrapper=mjs_asBody(attached);if(!wrapper||!mjs_bodyToFrame(&wrapper)){mj_deleteSpec(child);return fail("Cannot flatten imported model world");}
+  mj_deleteSpec(child);
+ }
+ if(!commit(c,Dictionary(),false))return false;
+ for(int i=0;i<sources.size();++i){Dictionary source=sources[i],initial=source.get("initial",Dictionary());String prefix=source["prefix"];Transform3D pose=source.get("pose",Transform3D());
+  for(auto key:initial.keys()){String label=key;int j=mj_name2id(model,mjOBJ_JOINT,(prefix+label).utf8().get_data());if(j<0)continue;
+   int count=model->jnt_type[j]==mjJNT_FREE?7:model->jnt_type[j]==mjJNT_BALL?4:1;auto*p=data->qpos+model->jnt_qposadr[j];
+   if(!read_values(initial[key],p,count)){error="Invalid authored initial joint: "+label;return false;}
+   if(model->jnt_type[j]==mjJNT_FREE){Vector3 pos=godot_to_mj(pose.basis).xform(Vector3(p[0],p[1],p[2]))+godot_to_mj(pose.origin);Quaternion q=godot_to_mj(pose.basis).get_rotation_quaternion()*Quaternion(p[4],p[5],p[6],p[3]);for(int k=0;k<3;++k)p[k]=pos[k];p[3]=q.w;p[4]=q.x;p[5]=q.y;p[6]=q.z;}
+  }
+ }
+ return apply_dynamic_snapshot(request.get("state",Dictionary()),request.get("aliases",Dictionary()),request.get("reset",Dictionary()));
+}
+bool MjEditorDocument::apply_dynamic_snapshot(const Dictionary &state,const Dictionary &aliases,const Dictionary &reset){
+ if(!model||!data){error="No candidate world";return false;}
+ Dictionary joints=state.get("joints",Dictionary()),actuators=state.get("actuators",Dictionary());
+ for(int j=0;j<model->njnt;++j){String name=String::utf8(mj_id2name(model,mjOBJ_JOINT,j)),old=aliases.get(name,name);if(reset.has(name)||!joints.has(old))continue;
+  Dictionary values=joints[old];if(int(values.get("type",-1))!=model->jnt_type[j])continue;
+  int nq=model->jnt_type[j]==mjJNT_FREE?7:model->jnt_type[j]==mjJNT_BALL?4:1,nv=model->jnt_type[j]==mjJNT_FREE?6:model->jnt_type[j]==mjJNT_BALL?3:1;
+  if(!read_values(values.get("qpos",Array()),data->qpos+model->jnt_qposadr[j],nq)||!read_values(values.get("qvel",Array()),data->qvel+model->jnt_dofadr[j],nv)){error="Invalid migrated joint state";return false;}
+  if(values.has("warmstart"))read_values(values["warmstart"],data->qacc_warmstart+model->jnt_dofadr[j],nv);
+ }
+ for(int a=0;a<model->nu;++a){String name=String::utf8(mj_id2name(model,mjOBJ_ACTUATOR,a)),old=aliases.get(name,name);bool reset_target=false;
+  if(model->actuator_trntype[a]==mjTRN_JOINT||model->actuator_trntype[a]==mjTRN_JOINTINPARENT){const char*target=mj_id2name(model,mjOBJ_JOINT,model->actuator_trnid[2*a]);reset_target=target&&reset.has(String::utf8(target));}
+  if(reset_target||!actuators.has(old))continue;
+  Dictionary values=actuators[old];double control=0;if(scalar(values.get("ctrl",0.),control))data->ctrl[a]=control;
+  if(int(values.get("type",-1))==model->actuator_dyntype[a])read_values(values.get("act",Array()),data->act+model->actuator_actadr[a],model->actuator_actnum[a]);
+ }
+ double time=0;if(scalar(state.get("time",0.),time)&&time>=0)data->time=time;
+ mj_normalizeQuat(model,data->qpos);mj_forward(model,data);
+ for(int i=0;i<model->nv;++i)if(!std::isfinite(data->qacc[i])||!std::isfinite(data->qvel[i])){error="Nonfinite migrated world dynamics";return false;}
+ return true;
+}
+bool MjEditorDocument::save_compiled(const String &path) const {
+ if(!model)return false;String absolute=ProjectSettings::get_singleton()->globalize_path(path);
+ mj_saveModel(model,absolute.utf8().get_data(),nullptr,0);return FileAccess::file_exists(absolute);
+}
+bool MjEditorDocument::restore_compiled(const Dictionary &snapshot,const String &path){
+ if(!snapshot.has("xml")||!snapshot.has("state")){error="Invalid compiled author artifact";return false;}
+ char e[2048]={};String text=snapshot["xml"];auto*c=mj_parseXMLString(text.utf8().get_data(),nullptr,e,sizeof(e));
+ if(!c){error=String::utf8(e);return false;}
+ // Artifacts are produced by the isolated compiler, never arbitrary plugin code.
+ if(mjs_firstElement(c,mjOBJ_PLUGIN)){mj_deleteSpec(c);error="Compiled plugins are not supported";return false;}
+ String absolute=ProjectSettings::get_singleton()->globalize_path(path);auto*m=mj_loadModel(absolute.utf8().get_data(),nullptr);
+ if(!m){mj_deleteSpec(c);error="Cannot load compiled author model";return false;}
+ auto*d=mj_makeData(m);if(!d){mj_deleteModel(m);mj_deleteSpec(c);error="Cannot allocate compiled author state";return false;}
+ Dictionary state=snapshot["state"];
+ for(auto key:{"qpos","qvel","ctrl","act"}){
+  int n=!strcmp(key,"qpos")?m->nq:!strcmp(key,"qvel")?m->nv:!strcmp(key,"ctrl")?m->nu:m->na;
+  double*p=!strcmp(key,"qpos")?d->qpos:!strcmp(key,"qvel")?d->qvel:!strcmp(key,"ctrl")?d->ctrl:d->act;
+  if(!state.has(key)||!read_values(state[key],p,n)){mj_deleteData(d);mj_deleteModel(m);mj_deleteSpec(c);error="Invalid compiled author state dimensions";return false;}
+ }
+ mj_normalizeQuat(m,d->qpos);mj_forward(m,d);
+ if(data)mj_deleteData(data);if(model)mj_deleteModel(model);if(spec)mj_deleteSpec(spec);
+ spec=c;model=m;data=d;paused=true;error="";source=snapshot.get("source",String());++revision;return true;
+}
 bool MjEditorDocument::commit(mjSpec*c,const Dictionary &state,bool migrate){
  if(!c){error="Invalid MJCF specification";return false;}
  // Reject plugin instances before compilation can invoke registered callbacks.
@@ -265,15 +367,42 @@ bool MjEditorDocument::edit(const Dictionary &cmd){
 Dictionary MjEditorDocument::inspect() const {
  Dictionary out;Array entities;out["revision"]=revision;out["paused"]=paused;out["error"]=error;out["source"]=source;out["version"]=String(mj_versionString());if(!model)return out;out["octree_cells"]=int64_t(model->noct);out["model_buffer_bytes"]=int64_t(model->nbuffer);
  out["time"]=data->time;out["contacts"]=data->ncon;out["tendons_readonly"]=model->ntendon;out["sensors_readonly"]=model->nsensor;
- for(int b=0;b<model->nbody;++b){Dictionary e,props;e["kind"]="body";e["name"]=name(model,mjOBJ_BODY,b);e["parent"]=b?name(model,mjOBJ_BODY,model->body_parentid[b]):String();props["mass"]=model->body_mass[b];props["inertia"]=numbers(model->body_inertia+3*b,3);props["ipos"]=numbers(model->body_ipos+3*b,3);props["iquat"]=numbers(model->body_iquat+4*b,4);props["pos"]=numbers(model->body_pos+3*b,3);props["quat"]=numbers(model->body_quat+4*b,4);auto*sb=mjs_findBody(spec,String(e["name"]).utf8().get_data());props["explicit_inertia"]=sb?bool(sb->explicitinertial):false;props["inertia_mode"]=sb&&sb->explicitinertial?"manual":"automatic";props["compiler_inertia_policy"]=spec->compiler.inertiafromgeom==mjINERTIAFROMGEOM_AUTO?"automatic":spec->compiler.inertiafromgeom==mjINERTIAFROMGEOM_TRUE?"forced geometry":"disabled geometry";props["pose_editable"]=sb&&!mjs_getFrame(sb->element);e["properties"]=props;entities.push_back(e);}
- for(int j=0;j<model->njnt;++j){Dictionary e,p;e["kind"]="joint";e["name"]=name(model,mjOBJ_JOINT,j);e["parent"]=name(model,mjOBJ_BODY,model->jnt_bodyid[j]);const char*types[]={"free","ball","slide","hinge"};int t=model->jnt_type[j];p["type"]=types[t];p["qpos"]=numbers(data->qpos+model->jnt_qposadr[j],t==mjJNT_FREE?7:t==mjJNT_BALL?4:1);auto*sj=mjs_asJoint(mjs_findElement(spec,mjOBJ_JOINT,String(e["name"]).utf8().get_data()));p["damping"]=sj->damping[0];p["damping_coefficients"]=numbers(sj->damping,mjNPOLY+1);bool scalar_damping=true;for(int k=1;k<=mjNPOLY;++k)scalar_damping=scalar_damping&&sj->damping[k]==0;p["damping_editable"]=scalar_damping;p["frictionloss"]=sj->frictionloss;p["limited"]=bool(model->jnt_limited[j]);p["range"]=numbers(model->jnt_range+2*j,2);p["unit"]=t==mjJNT_HINGE?"rad":t==mjJNT_SLIDE?"m":"position / unit quaternion (read-only)";e["properties"]=p;entities.push_back(e);}
- for(int g=0;g<model->ngeom;++g){Dictionary e,p;e["kind"]="geom";e["name"]=name(model,mjOBJ_GEOM,g);e["parent"]=name(model,mjOBJ_BODY,model->geom_bodyid[g]);p["type"]=model->geom_type[g];Array size=numbers(model->geom_size+3*g,3);if(model->geom_type[g]==mjGEOM_SPHERE)size[1]=0.0;if(model->geom_type[g]==mjGEOM_SPHERE||model->geom_type[g]==mjGEOM_CYLINDER)size[2]=0.0;p["size"]=size;p["pos"]=numbers(model->geom_pos+3*g,3);p["quat"]=numbers(model->geom_quat+4*g,4);p["friction"]=numbers(model->geom_friction+3*g,3);p["contype"]=model->geom_contype[g];p["conaffinity"]=model->geom_conaffinity[g];p["margin"]=model->geom_margin[g];auto*sg=mjs_asGeom(mjs_findElement(spec,mjOBJ_GEOM,String(e["name"]).utf8().get_data()));p["pose_editable"]=!mjs_getFrame(sg->element)&&!std::isfinite(sg->fromto[0]);p["size_editable"]=!std::isfinite(sg->fromto[0]);p["density"]=sg->density;p["mass"]=std::isfinite(sg->mass)?Variant(sg->mass):Variant("density-derived");e["properties"]=p;entities.push_back(e);}
+ for(int b=0;b<model->nbody;++b){Dictionary e,props;e["kind"]="body";e["name"]=name(model,mjOBJ_BODY,b);e["parent"]=b?name(model,mjOBJ_BODY,model->body_parentid[b]):String();props["preview_transform"]=pose(data->xpos+3*b,data->xmat+9*b);props["mass"]=model->body_mass[b];props["inertia"]=numbers(model->body_inertia+3*b,3);props["ipos"]=numbers(model->body_ipos+3*b,3);props["iquat"]=numbers(model->body_iquat+4*b,4);props["pos"]=numbers(model->body_pos+3*b,3);props["quat"]=numbers(model->body_quat+4*b,4);auto*sb=mjs_findBody(spec,String(e["name"]).utf8().get_data());props["explicit_inertia"]=sb?bool(sb->explicitinertial):false;props["inertia_mode"]=sb&&sb->explicitinertial?"manual":"automatic";props["compiler_inertia_policy"]=spec->compiler.inertiafromgeom==mjINERTIAFROMGEOM_AUTO?"automatic":spec->compiler.inertiafromgeom==mjINERTIAFROMGEOM_TRUE?"forced geometry":"disabled geometry";props["pose_editable"]=sb&&!mjs_getFrame(sb->element);e["properties"]=props;entities.push_back(e);}
+ for(int j=0;j<model->njnt;++j){Dictionary e,p;e["kind"]="joint";e["name"]=name(model,mjOBJ_JOINT,j);e["parent"]=name(model,mjOBJ_BODY,model->jnt_bodyid[j]);const char*types[]={"free","ball","slide","hinge"};int t=model->jnt_type[j];p["pos"]=numbers(model->jnt_pos+3*j,3);p["axis"]=numbers(model->jnt_axis+3*j,3);p["type"]=types[t];p["qpos"]=numbers(data->qpos+model->jnt_qposadr[j],t==mjJNT_FREE?7:t==mjJNT_BALL?4:1);auto*sj=mjs_asJoint(mjs_findElement(spec,mjOBJ_JOINT,String(e["name"]).utf8().get_data()));p["damping"]=sj->damping[0];p["damping_coefficients"]=numbers(sj->damping,mjNPOLY+1);bool scalar_damping=true;for(int k=1;k<=mjNPOLY;++k)scalar_damping=scalar_damping&&sj->damping[k]==0;p["damping_editable"]=scalar_damping;p["frictionloss"]=sj->frictionloss;p["limited"]=bool(model->jnt_limited[j]);p["range"]=numbers(model->jnt_range+2*j,2);p["unit"]=t==mjJNT_HINGE?"rad":t==mjJNT_SLIDE?"m":"position / unit quaternion (read-only)";e["properties"]=p;entities.push_back(e);}
+ for(int g=0;g<model->ngeom;++g){Dictionary e,p;e["kind"]="geom";e["name"]=name(model,mjOBJ_GEOM,g);e["parent"]=name(model,mjOBJ_BODY,model->geom_bodyid[g]);p["type"]=model->geom_type[g];Array size=numbers(model->geom_size+3*g,3);if(model->geom_type[g]==mjGEOM_SPHERE)size[1]=0.0;if(model->geom_type[g]==mjGEOM_SPHERE||model->geom_type[g]==mjGEOM_CYLINDER)size[2]=0.0;p["size"]=size;p["pos"]=numbers(model->geom_pos+3*g,3);p["quat"]=numbers(model->geom_quat+4*g,4);p["friction"]=numbers(model->geom_friction+3*g,3);p["contype"]=model->geom_contype[g];p["conaffinity"]=model->geom_conaffinity[g];p["margin"]=model->geom_margin[g];auto*sg=mjs_asGeom(mjs_findElement(spec,mjOBJ_GEOM,String(e["name"]).utf8().get_data()));p["pose_editable"]=!mjs_getFrame(sg->element)&&!std::isfinite(sg->fromto[0]);p["size_editable"]=!std::isfinite(sg->fromto[0]);p["mesh"]=String::utf8(mjs_getString(sg->meshname));p["density"]=sg->density;p["mass"]=std::isfinite(sg->mass)?Variant(sg->mass):Variant("density-derived");e["properties"]=p;entities.push_back(e);}
  for(int a=0;a<model->nu;++a){Dictionary e,p;e["kind"]="actuator";e["name"]=name(model,mjOBJ_ACTUATOR,a);e["parent"]="";String type=drive_kind(model,a);p["type"]=type;p["control"]=data->ctrl[a];p["ctrl_limited"]=bool(model->actuator_ctrllimited[a]);p["ctrl_range"]=numbers(model->actuator_ctrlrange+2*a,2);p["gain_type"]=model->actuator_gaintype[a];p["bias_type"]=model->actuator_biastype[a];p["dynamics_type"]=model->actuator_dyntype[a];p["gear"]=numbers(model->actuator_gear+6*a,6);p["transmission_type"]=model->actuator_trntype[a];p["target_joint"]=model->actuator_trntype[a]==mjTRN_JOINT?name(model,mjOBJ_JOINT,model->actuator_trnid[2*a]):String("N/A (non-joint transmission)");p["kp"]=type=="position-compatible"?Variant(model->actuator_gainprm[mjNGAIN*a]):Variant("N/A");p["kv"]=type!="general/non-PD"?Variant(-model->actuator_biasprm[mjNBIAS*a+2]):Variant("N/A");e["properties"]=p;entities.push_back(e);}
  out["entities"]=entities;return out;
 }
 Array MjEditorDocument::geometry() const {
  Array result;if(!model)return result;
  for(int g=0;g<model->ngeom;++g){Dictionary geo;geo["name"]=name(model,mjOBJ_GEOM,g);geo["type"]=model->geom_type[g];geo["transform"]=pose(data->geom_xpos+3*g,data->geom_xmat+9*g);geo["size"]=Vector3(model->geom_size[3*g],model->geom_size[3*g+1],model->geom_size[3*g+2]);geo["color"]=Color(model->geom_rgba[4*g],model->geom_rgba[4*g+1],model->geom_rgba[4*g+2],model->geom_rgba[4*g+3]);
+	// Match MuJoCo's material/geom RGBA precedence, including default classes.
+	int material = model->geom_matid[g];
+	const float *rgba = model->geom_rgba + 4*g;
+	if (material >= 0) {
+		if (rgba[0] == .5f && rgba[1] == .5f && rgba[2] == .5f && rgba[3] == 1.f) {
+			rgba = model->mat_rgba + 4*material;
+		}
+		geo["color"] = Color(rgba[0], rgba[1], rgba[2], rgba[3]);
+		geo["texture_repeat"] = Vector2(model->mat_texrepeat[2*material], model->mat_texrepeat[2*material+1]);
+		geo["texture_uniform"] = bool(model->mat_texuniform[material]);
+		int texture = model->mat_texid[material*mjNTEXROLE + mjTEXROLE_RGBA];
+		if (texture < 0) texture = model->mat_texid[material*mjNTEXROLE + mjTEXROLE_RGB];
+		if (texture >= 0 && model->tex_type[texture] == mjTEXTURE_2D) {
+			int width = model->tex_width[texture], height = model->tex_height[texture];
+			int channels = model->tex_nchannel[texture];
+			int64_t count = int64_t(width)*height*channels;
+			mjtSize address = model->tex_adr[texture];
+			if (count > 0 && address <= model->ntexdata && mjtSize(count) <= model->ntexdata-address) {
+				PackedByteArray pixels;
+				pixels.resize(count);
+				std::memcpy(pixels.ptrw(), model->tex_data+address, count);
+				Dictionary image;
+				image["width"] = width; image["height"] = height; image["channels"] = channels; image["pixels"] = pixels;
+				geo["texture_image"] = image;
+			}
+		}
+	}
 
  if(model->geom_type[g]==mjGEOM_HFIELD){int h=model->geom_dataid[g],rows=model->hfield_nrow[h],cols=model->hfield_ncol[h];auto*size=model->hfield_size+4*h;PackedVector3Array vertices,normals;
   auto point=[&](int x,int y){return mj_to_godot(Vector3(-size[0]+2*size[0]*x/(cols-1),-size[1]+2*size[1]*y/(rows-1),size[2]*model->hfield_data[model->hfield_adr[h]+y*cols+x]));};
@@ -285,7 +414,25 @@ Array MjEditorDocument::geometry() const {
   Vector3 a(-size[0],-size[3],size[1]),b(size[0],-size[3],size[1]),c(-size[0],-size[3],-size[1]),d(size[0],-size[3],-size[1]);triangle(a,d,b);triangle(a,c,d);
   geo["vertices"]=vertices;geo["normals"]=normals;
  }
- if(model->geom_type[g]==mjGEOM_MESH||model->geom_type[g]==mjGEOM_SDF){int mesh=model->geom_dataid[g];PackedVector3Array vertices,normals;for(int f=0;f<model->mesh_facenum[mesh];++f){Vector3 tri[3];for(int k=0;k<3;++k){int v=model->mesh_vertadr[mesh]+model->mesh_face[3*(model->mesh_faceadr[mesh]+f)+k];auto*p=model->mesh_vert+3*v;tri[k]=mj_to_godot(Vector3(p[0],p[1],p[2]));}Vector3 normal=(tri[1]-tri[0]).cross(tri[2]-tri[0]).normalized();for(int k:{0,2,1}){vertices.push_back(tri[k]);normals.push_back(normal);}}geo["vertices"]=vertices;geo["normals"]=normals;}
+ if(model->geom_type[g]==mjGEOM_MESH||model->geom_type[g]==mjGEOM_SDF){
+	int mesh=model->geom_dataid[g];PackedVector3Array vertices,normals;PackedVector2Array uvs;
+	bool has_uv = model->mesh_texcoordadr[mesh] >= 0;
+	for(int f=0;f<model->mesh_facenum[mesh];++f){
+		Vector3 tri[3];
+		for(int k=0;k<3;++k){int v=model->mesh_vertadr[mesh]+model->mesh_face[3*(model->mesh_faceadr[mesh]+f)+k];auto*p=model->mesh_vert+3*v;tri[k]=mj_to_godot(Vector3(p[0],p[1],p[2]));}
+		Vector3 normal=(tri[1]-tri[0]).cross(tri[2]-tri[0]).normalized();
+		for(int k:{0,2,1}){
+			vertices.push_back(tri[k]);normals.push_back(normal);
+			if(has_uv){
+				int uv=model->mesh_facetexcoord[3*(model->mesh_faceadr[mesh]+f)+k];
+				if(uv<0 || uv>=model->mesh_texcoordnum[mesh]){has_uv=false;uvs.clear();}
+				else{auto*p=model->mesh_texcoord+2*(model->mesh_texcoordadr[mesh]+uv);uvs.push_back(Vector2(p[0],1-p[1]));}
+			}
+		}
+	}
+	geo["vertices"]=vertices;geo["normals"]=normals;
+	if(has_uv)geo["uvs"]=uvs;
+ }
  result.push_back(geo);
  }return result;
 }
@@ -297,6 +444,7 @@ Array MjEditorDocument::collision_preview(double slice_fraction, int resolution)
   Dictionary geo=result[g];int kind=model->geom_type[g];
   geo["preview_kind"]="analytic_boundary";
   if(kind!=mjGEOM_MESH&&kind!=mjGEOM_SDF){result[g]=geo;continue;}
+	geo.erase("uvs"); // Convex hull/slice vertices do not share the source surface UVs.
   int mesh=model->geom_dataid[g];
   if(kind==mjGEOM_MESH){
    PackedVector3Array vertices,normals;

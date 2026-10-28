@@ -42,6 +42,16 @@ void MjPhysicsServer3D::process_heightfields(){
  bool remove=e.design.is_empty();if(remove&&!b)return "No heightfield to remove";
  if(!remove){String error=validate(e.design);if(!error.is_empty())return error;
  if(b){Dictionary old=shape(b->shapes[0].shape)->data;if(old["width"]!=e.design["width"]||old["depth"]!=e.design["depth"])return "Resolution is fixed; remove before adding a different grid";}}
+ if(s->authoring){
+  RID id=e.body;
+  if(remove){b->space=RID();result["body"]=RID();heightfield_revisions.erase(id.get_id());}
+  else{
+   if(!b){id=_body_create();b=body(id);b->heightfield=true;b->mode=BODY_MODE_STATIC;b->object_id=e.owner;b->space=e.space;b->shapes.push_back({make_shape(SHAPE_HEIGHTMAP,e.design),Transform3D(),false});}
+   shape(b->shapes[0].shape)->data=e.design.duplicate(true);b->transform=e.design["pose"];b->layer=e.design.get("layer",1);b->mask=e.design.get("mask",1);b->params[BODY_PARAM_FRICTION]=e.design.get("friction",1.0);
+   heightfield_revisions[id.get_id()]=rev+1;result["body"]=id;
+  }
+  result["revision"]=rev+1;dirty(e.space);return {};
+ }
  if(!rebuild(*s))return s->last_error;
  bool was_paused=s->paused;s->paused=true;
  RID id=e.body;bool added=!b;Dictionary old;Transform3D old_pose;uint32_t old_layer=1,old_mask=1;double old_friction=b?double(_body_get_param(id,BODY_PARAM_FRICTION)):1.0;

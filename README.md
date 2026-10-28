@@ -76,10 +76,10 @@ godot-mujoco/
 │   ├── shape_gallery/            # 形状下落与碰撞
 │   ├── g1_passive/               # 无控制 G1 机器人
 │   ├── sdf_terrain/              # SDF 台阶、洼地和崎岖地形
-│   ├── pendulum/                 # 原 demo/ 的独立 MjWorld 摆杆与诊断工程
+│   ├── pendulum/                 # 共享后端摆杆与独立 API 诊断
 │   ├── light_workflow/           # C# 控制与地形开发例程
 │   ├── templates/new_project/   # --new 使用的工程模板：project.godot、Main.tscn、README、.gitignore
-│   └── <四个可直接打开的例程>/
+│   └── <五个可直接打开的例程>/
 │       ├── addons -> ../../addons  # [生成·忽略] 向导建立的共享插件链接
 │       ├── .godot/               # [生成·忽略] 首次打开后生成的缓存
 │       └── bin/ / obj/           # [按需·生成·忽略] .NET 构建产物
@@ -103,7 +103,7 @@ godot-mujoco/
 │       └── .godot/               # [按需] 打开工程后的导入缓存
 ├── tests/                        # 环境入口、例程、物理后端、编辑器等验收
 │   ├── setup/                    # 配置向导和启动脚本隔离测试
-│   ├── example_projects/         # 四个可直接打开例程的验收
+│   ├── example_projects/         # 五个例程和模板的验收
 │   └── native_*/ / spatial_queries/ / …
 ├── docs/                         # 安装、功能说明、已知问题与验收证据
 │   └── pics/                     # 文件、Godot 集成和运行时架构图及源文件
@@ -122,19 +122,19 @@ godot-mujoco/
 | [形状下落与碰撞](examples/shape_gallery/README.md) | `examples/shape_gallery/project.godot` | `Main.tscn` |
 | [无控制 G1](examples/g1_passive/README.md) | `examples/g1_passive/project.godot` | `G1.tscn` |
 | [SDF 地形](examples/sdf_terrain/README.md) | `examples/sdf_terrain/project.godot` | `Main.tscn` |
-| [独立世界摆杆](examples/pendulum/README.md) | `examples/pendulum/project.godot` | `Main.tscn` |
+| [可编辑摆杆](examples/pendulum/README.md) | `examples/pendulum/project.godot` | `Main.tscn` |
+| [轻量 C# 综合例程](examples/light_workflow/README.zh-CN.md) | `examples/light_workflow/project.godot` | `Main.tscn` |
 
-保持仓库目录结构完整，以便例程使用共享插件和素材。前三个例程使用共享 MuJoCo 物理后端，摆杆使用独立 MjWorld。G1 没有站立或行走控制，倒地是预期行为；多机器人热添加仍有[已知限制](examples/g1_passive/README.md)。
+保持仓库目录结构完整，以便例程使用共享插件和素材。五个图形例程均使用共享 MuJoCo 物理后端和可保存的作者场景；轻量例程需要正常构建 C#。独立 MjWorld 保留为 API 与诊断入口。G1 没有站立或行走控制，倒地是预期行为；多机器人热添加仍有[已知限制](examples/g1_passive/README.md)。
 
 ## 导入模型并运行
 
-1. 打开 3D 场景，在右侧 **MuJoCo** 面板选择 **MJCF 文档**，展开 **文档 / 导入 / 发布**，勾选 **显示 MJCF 草稿（独立于正式场景）**。
-2. 点击 **Import MJCF**，选择模型的 `.xml`，并保留配套的 include、网格和纹理。点击 **聚焦模型** 查看。
-3. 在模型树或视图中选择对象并修改参数，点击 **Apply** 或 **Discard**；使用 **Run / Pause** 控制草稿预览。
-4. 点击 **Save project model** 保存模型包，再点击 **Create simulation playground** 保存仿真场景。
-5. 打开生成的场景，按 F6 运行当前场景，再点击 **恢复仿真 / Resume**。
+1. 打开并保存 3D 场景，在右侧 **MuJoCo → MJCF 层级模型** 点击 **载入 MJCF / 模型包**，选择 `.xml`。
+2. 模型自动成为正式场景树中的 body / geom / joint 层级。选择节点，在 Godot Inspector 修改参数，用原生 Gizmo 移动、旋转；Ctrl+D 复制，Ctrl+Z 撤销。
+3. Ctrl+S 保存场景。后台验证成功后按 F5；未完成模型也可保存，当前无效设计禁止运行。
+4. F5 期间编辑本地设计会自动暂停实际物理，后台编译整个世界并原子提交；成功后手动继续。游戏设计按钮也修改同一个编辑器场景，可以撤销和保存。
 
-G1 可使用 **Import fixed G1** 或 **Import free G1 (relaxed)** 选择 URDF。**Create runtime scene** 生成适合继续搭建的世界和模型节点；保存的模型包可用 **Open project model** 打开。详见 [MJCF 编辑器指南](docs/mjcf-editor.zh-CN.md)和[模型包说明](docs/portable-models.zh-CN.md)。
+原始 MJCF 及依赖只读，项目保存副本和完整 XML 作者树。旧 `.tres` / `.gmj.json` 可导入；已有模型根可升级为层级节点。详见 [层级节点编辑指南](docs/node-authoring.zh-CN.md)。
 
 ## 导入地图并设置碰撞
 
@@ -150,8 +150,8 @@ G1 可使用 **Import fixed G1** 或 **Import free G1 (relaxed)** 选择 URDF。
 
 | 内容 | 保存 / 打开方式 |
 |---|---|
-| MJCF 编辑文档 | **Save document / Open document**：`.gmj.json`，源素材仍在原位置 |
-| 可搬迁模型 | **Save project model / Open project model**：`model.tres`，搬迁时复制整个模型包 |
+| MJCF 作者层级及参数 | Ctrl+S 保存正式 `.tscn`，依赖位于项目 `mujoco_models/` |
+| 旧模型包兼容 | 载入 `model.tres` / `.gmj.json` 后转为作者节点；显式导出 MJCF 与依赖 |
 | 静态地图 | **保存独立地图包 / 打开地图包**：`manifest.json`，保留整个地图包 |
 | 场景布局 | Godot **保存场景**：`.tscn` |
 

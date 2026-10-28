@@ -1,10 +1,1979 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dyla2tgs8r8ex"]
 
-[ext_resource type="Script" path="res://addons/godot_mujoco/model/runtime_world.gd" id="1_fos0i"]
-[ext_resource type="Resource" path="res://models/dynamic_shapes_aa8e678647f1d0db35e094d6c80e0fef960e45506ff7603b7f59fe8be811d749/model.tres" id="2_3dxm6"]
-[ext_resource type="Script" path="res://addons/godot_mujoco/model/model_instance.gd" id="3_lgr22"]
-[ext_resource type="Texture2D" path="res://assets/kloofendal_43d_clear_puresky_4k.hdr" id="4_trn2v"]
-[ext_resource type="Script" path="res://gallery.gd" id="5_03owx"]
+[ext_resource type="Script" uid="uid://bdfc73w5oq5aa" path="res://addons/godot_mujoco/model/runtime_world.gd" id="1_fos0i"]
+[ext_resource type="Script" uid="uid://d00syq2rox1kc" path="res://addons/godot_mujoco/model/author_resource.gd" id="2_fpfj3"]
+[ext_resource type="Script" uid="uid://ccgoiad3e21f3" path="res://addons/godot_mujoco/model/model_instance.gd" id="3_lgr22"]
+[ext_resource type="Script" uid="uid://cn164jrs1pwv1" path="res://addons/godot_mujoco/model/geom_node.gd" id="4_sc1dx"]
+[ext_resource type="Texture2D" uid="uid://pkxaajk682h5" path="res://assets/kloofendal_43d_clear_puresky_4k.hdr" id="4_trn2v"]
+[ext_resource type="Script" uid="uid://8pvoojotjv15" path="res://gallery.gd" id="5_03owx"]
+[ext_resource type="Shader" uid="uid://w1jbwljh4c3f" path="res://floor_grid.gdshader" id="5_sc1dx"]
+[ext_resource type="BoxMesh" uid="uid://guvpa6f0ky6v" path="res://mujoco_models/visual_cache/66f792a3454b0d3b46d58b2b7a3baef165eacae07516f63edb92138b710ed951.res" id="6_2gh4u"]
+[ext_resource type="Script" uid="uid://cu3wps2oqb8hh" path="res://addons/godot_mujoco/model/body_node.gd" id="6_5tuhn"]
+[ext_resource type="Script" uid="uid://cdavqb5aoukob" path="res://addons/godot_mujoco/model/joint_node.gd" id="7_2gh4u"]
+[ext_resource type="SphereMesh" uid="uid://ld23fdhbg6g4" path="res://mujoco_models/visual_cache/ad2f9869393ca45d46c68ff18413b7a06e0f145b94e15ea5c71c0090ef1a1b9b.res" id="9_devvj"]
+[ext_resource type="BoxMesh" uid="uid://gbcnkvvc35p" path="res://mujoco_models/visual_cache/02c3c598fe00c7bd5c29a3948f525c285059f4f6dc2d2642dfd708182cbe4314.res" id="10_3b0ty"]
+[ext_resource type="CylinderMesh" uid="uid://iraxbybui2b5" path="res://mujoco_models/visual_cache/847b6adf1ebfb4cb1cd71f90ba64e339fe968e1903746dd38c97087ebd848d4b.res" id="11_bg4s2"]
+[ext_resource type="ArrayMesh" uid="uid://brshexfaxp8n" path="res://mujoco_models/visual_cache/179f82831b40cc3359e51ba9ac9e01ffcb49b19213ef2a72367db6e12bc0ddbb.res" id="12_hhcpw"]
+[ext_resource type="CapsuleMesh" uid="uid://ighmv6gdcklx" path="res://mujoco_models/visual_cache/7f87b627347eef54cdc6334a9e2c16bb20d5bf4d69c85eddd5b1c718d5fe5e66.res" id="13_mxvw5"]
+[ext_resource type="SphereMesh" uid="uid://kxqbpvrhe06l" path="res://mujoco_models/visual_cache/a69c12b06c0dd7dc028da3e25e2d6f3ce9bc11099be7a84e7bcaa6124d9c2bf9.res" id="14_xrxkg"]
+[ext_resource type="SphereMesh" uid="uid://e24x17b0pod0" path="res://mujoco_models/visual_cache/4b1df3283cc905f0abbbb26e2308e4c332181c5324d2be32296eb3b6b325e6b6.res" id="15_sqvbp"]
+[ext_resource type="BoxMesh" uid="uid://cg4ni6c54gng" path="res://mujoco_models/visual_cache/22510fa75da5220e4786ee4d0fc32735340270171bff4cd52c3d2fe3609395bd.res" id="16_hri7i"]
+[ext_resource type="CylinderMesh" uid="uid://b8v4hah7jx2p" path="res://mujoco_models/visual_cache/1f01a50b6f958a9d7c01c4df29627c7527671be49da033391ec733a77c850d88.res" id="17_w3rk5"]
+
+[sub_resource type="Resource" id="Resource_hri7i"]
+script = ExtResource("2_fpfj3")
+document_id = "227c19300dcb7825e58d233d979b9ce8"
+tree = {
+"attrs": {
+"model": "DynamicShapeGallery"
+},
+"children": [{
+"tag": "#text",
+"text": "
+  "
+}, {
+"attrs": {
+"angle": "radian"
+},
+"children": [],
+"id": "9a55ca0c4de49740da7c8090b9d7d89c",
+"tag": "compiler"
+}, {
+"tag": "#text",
+"text": "
+
+  "
+}, {
+"attrs": {
+"integrator": "implicitfast"
+},
+"children": [],
+"id": "08b6780452b3f52c6831d87bf0d826a6",
+"tag": "option"
+}, {
+"tag": "#text",
+"text": "
+
+  "
+}, {
+"attrs": {},
+"children": [{
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"friction": "0.9"
+},
+"children": [],
+"id": "4664b386f4e286fb1efc62a62e59142a",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+  "
+}],
+"id": "75606309edc5d248cfe25eb666f0e017",
+"tag": "default"
+}, {
+"tag": "#text",
+"text": "
+
+  "
+}, {
+"attrs": {},
+"children": [{
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"face": "0 1 32 1 2 32 2 3 32 3 4 32 4 5 32 5 6 32 6 7 32 7 8 32 8 9 32 9 10 32 10 11 32 11 12 32 12 13 32 13 14 32 14 15 32 15 16 32 16 17 32 17 18 32 18 19 32 19 20 32 20 21 32 21 22 32 22 23 32 23 24 32 24 25 32 25 26 32 26 27 32 27 28 32 28 29 32 29 30 32 30 31 32 31 0 32 0 2 1 0 3 2 0 4 3 0 5 4 0 6 5 0 7 6 0 8 7 0 9 8 0 10 9 0 11 10 0 12 11 0 13 12 0 14 13 0 15 14 0 16 15 0 17 16 0 18 17 0 19 18 0 20 19 0 21 20 0 22 21 0 23 22 0 24 23 0 25 24 0 26 25 0 27 26 0 28 27 0 29 28 0 30 29 0 31 30",
+"name": "cone_mesh",
+"vertex": "0.38 0 -0.45 0.372698 0.0741343 -0.45 0.351074 0.14542 -0.45 0.315958 0.211117 -0.45 0.268701 0.268701 -0.45 0.211117 0.315958 -0.45 0.14542 0.351074 -0.45 0.0741343 0.372698 -0.45 0 0.38 -0.45 -0.0741343 0.372698 -0.45 -0.14542 0.351074 -0.45 -0.211117 0.315958 -0.45 -0.268701 0.268701 -0.45 -0.315958 0.211117 -0.45 -0.351074 0.14542 -0.45 -0.372698 0.0741343 -0.45 -0.38 0 -0.45 -0.372698 -0.0741343 -0.45 -0.351074 -0.14542 -0.45 -0.315958 -0.211117 -0.45 -0.268701 -0.268701 -0.45 -0.211117 -0.315958 -0.45 -0.14542 -0.351074 -0.45 -0.0741343 -0.372698 -0.45 0 -0.38 -0.45 0.0741343 -0.372698 -0.45 0.14542 -0.351074 -0.45 0.211117 -0.315958 -0.45 0.268701 -0.268701 -0.45 0.315958 -0.211117 -0.45 0.351074 -0.14542 -0.45 0.372698 -0.0741343 -0.45 0 0 0.45"
+},
+"children": [],
+"id": "282c9bede0e381b428b41bd369f3370e",
+"tag": "mesh"
+}, {
+"tag": "#text",
+"text": "
+  "
+}],
+"id": "96b9811c648013cecab3f2d1bf00e067",
+"tag": "asset"
+}, {
+"tag": "#text",
+"text": "
+
+  "
+}, {
+"attrs": {},
+"children": [{
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "floor_geom",
+"pos": "0 0 -0.1",
+"rgba": "0.25 0.28 0.32 1",
+"size": "6 4 0.1",
+"type": "box"
+},
+"children": [],
+"id": "8cff1724e643e897518ee6aa07166e61",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "sphere",
+"pos": "-2.5 0 2"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"name": "sphere_free",
+"type": "free"
+},
+"children": [],
+"id": "0e0383ffd802a06fca39dcac3c59925a",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"mass": "1",
+"name": "sphere_geom",
+"rgba": "0.9 0.25 0.18 1",
+"size": "0.35"
+},
+"children": [],
+"id": "9e948eb4664b7c0ee8e9c30a32029fca",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}],
+"id": "1a40eb2a3485cbadbf49d7b2ba9fd199",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "box",
+"pos": "-1.2 0 2.6"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"name": "box_free",
+"type": "free"
+},
+"children": [],
+"id": "10ae3ca776f91889ca6beff5d99a0c69",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"mass": "1",
+"name": "box_geom",
+"rgba": "0.2 0.55 0.95 1",
+"size": "0.35 0.35 0.35",
+"type": "box"
+},
+"children": [],
+"id": "126519bd787b3debffa08ca0d1e23451",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}],
+"id": "317966258bb3e7b9844b537096d85a4c",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "cylinder",
+"pos": "0 0 3.2"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"name": "cylinder_free",
+"type": "free"
+},
+"children": [],
+"id": "52a8c5d5e3d4a75377f1c91eebfa2100",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"mass": "1",
+"name": "cylinder_geom",
+"rgba": "0.25 0.8 0.4 1",
+"size": "0.32 0.45",
+"type": "cylinder"
+},
+"children": [],
+"id": "c63b821c19499a8a78a020492bbe3c0b",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}],
+"id": "e1053a0e193b4e29d653f722bdb128a7",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "cone",
+"pos": "1.3 0 3.8"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"name": "cone_free",
+"type": "free"
+},
+"children": [],
+"id": "be106616afee754644f096a2553acf09",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"mass": "1",
+"mesh": "cone_mesh",
+"name": "cone_geom",
+"rgba": "0.95 0.6 0.12 1",
+"type": "mesh"
+},
+"children": [],
+"id": "077805a2521db6410ac193539f0082d2",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}],
+"id": "60b99087918dc1415360dce4015e78b4",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "capsule",
+"pos": "2.6 0 4.4"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"name": "capsule_free",
+"type": "free"
+},
+"children": [],
+"id": "02b062cddb581fb8c0ccf927af654ef4",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"mass": "1",
+"name": "capsule_geom",
+"rgba": "0.65 0.3 0.9 1",
+"size": "0.24 0.25",
+"type": "capsule"
+},
+"children": [],
+"id": "0435d51cb7f62d9959c58b3ab401d26e",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}],
+"id": "cf2bada24a5c435309250d0df235ff22",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "ellipsoid",
+"pos": "3.8 0 3"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"name": "ellipsoid_free",
+"type": "free"
+},
+"children": [],
+"id": "c6c383b447b5210885c92ffe45622883",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"mass": "1",
+"name": "ellipsoid_geom",
+"rgba": "0.15 0.8 0.8 1",
+"size": "0.4 0.28 0.22",
+"type": "ellipsoid"
+},
+"children": [],
+"id": "6a202fb3aaed994ce3535df3c7713b23",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}],
+"id": "8f0ca992a26120b5032b2ecf5314136c",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "probe",
+"pos": "-1.2 0 4.8"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"name": "probe_free",
+"type": "free"
+},
+"children": [],
+"id": "cfb57d0860d94441b5a077db990c8c55",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"mass": "0.25",
+"name": "probe_geom",
+"rgba": "1 0.8 0.65 1",
+"size": "0.22"
+},
+"children": [],
+"id": "34b745da64c2f0d1fd320ff44c27c58f",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}],
+"id": "3d256b9a52dbed33a552d59abee867ee",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+  "
+}],
+"id": "6f1caddb77295e9a55c15a4b699ef3d9",
+"tag": "worldbody"
+}],
+"id": "19e128b0fa962cb60ab8716f5ccf801f",
+"tag": "mujoco"
+}
+initial_pose = {
+"02b062cddb581fb8c0ccf927af654ef4": [2.6, 0.0, 4.4, 1.0, 0.0, 0.0, 0.0],
+"0e0383ffd802a06fca39dcac3c59925a": [-2.5, 0.0, 2.0, 1.0, 0.0, 0.0, 0.0],
+"10ae3ca776f91889ca6beff5d99a0c69": [-1.2, 0.0, 2.6, 1.0, 0.0, 0.0, 0.0],
+"52a8c5d5e3d4a75377f1c91eebfa2100": [0.0, 0.0, 3.2, 1.0, 0.0, 0.0, 0.0],
+"be106616afee754644f096a2553acf09": [1.3, 0.0, 3.8, 1.0, 0.0, 0.0, 0.0],
+"c6c383b447b5210885c92ffe45622883": [3.8, 0.0, 3.0, 1.0, 0.0, 0.0, 0.0],
+"cfb57d0860d94441b5a077db990c8c55": [-1.2, 0.0, 4.8, 1.0, 0.0, 0.0, 0.0]
+}
+provenance = {
+"assets": {},
+"source": "res://assets/gallery.xml",
+"sources": {
+"res://assets/gallery.xml": "f10235d819d42eccc40928a4223e1ca8af7075bc76a55925179579855a45b2ea"
+}
+}
+legacy_snapshot = {
+"format": 1,
+"source": "res://assets/gallery.xml",
+"state": {
+"act": [],
+"ctrl": [],
+"integration": [0.0, -2.5, 0.0, 2.0, 1.0, 0.0, 0.0, 0.0, -1.2, 0.0, 2.6, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.2, 1.0, 0.0, 0.0, 0.0, 1.3, 0.0, 3.8, 1.0, 0.0, 0.0, 0.0, 2.6, 0.0, 4.4, 1.0, 0.0, 0.0, 0.0, 3.8, 0.0, 3.0, 1.0, 0.0, 0.0, 0.0, -1.2, 0.0, 4.8, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"qpos": [-2.5, 0.0, 2.0, 1.0, 0.0, 0.0, 0.0, -1.2, 0.0, 2.6, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.2, 1.0, 0.0, 0.0, 0.0, 1.3, 0.0, 3.8, 1.0, 0.0, 0.0, 0.0, 2.6, 0.0, 4.4, 1.0, 0.0, 0.0, 0.0, 3.8, 0.0, 3.0, 1.0, 0.0, 0.0, 0.0, -1.2, 0.0, 4.8, 1.0, 0.0, 0.0, 0.0],
+"qvel": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"time": 0.0
+},
+"xml": "<mujoco model=\"DynamicShapeGallery\">
+  <compiler angle=\"radian\"/>
+
+  <option integrator=\"implicitfast\"/>
+
+  <default>
+    <geom friction=\"0.9\"/>
+  </default>
+
+  <asset>
+    <mesh name=\"cone_mesh\" vertex=\"0.38 0 -0.45 0.372698 0.0741343 -0.45 0.351074 0.14542 -0.45 0.315958 0.211117 -0.45 0.268701 0.268701 -0.45 0.211117 0.315958 -0.45 0.14542 0.351074 -0.45 0.0741343 0.372698 -0.45 0 0.38 -0.45 -0.0741343 0.372698 -0.45 -0.14542 0.351074 -0.45 -0.211117 0.315958 -0.45 -0.268701 0.268701 -0.45 -0.315958 0.211117 -0.45 -0.351074 0.14542 -0.45 -0.372698 0.0741343 -0.45 -0.38 0 -0.45 -0.372698 -0.0741343 -0.45 -0.351074 -0.14542 -0.45 -0.315958 -0.211117 -0.45 -0.268701 -0.268701 -0.45 -0.211117 -0.315958 -0.45 -0.14542 -0.351074 -0.45 -0.0741343 -0.372698 -0.45 0 -0.38 -0.45 0.0741343 -0.372698 -0.45 0.14542 -0.351074 -0.45 0.211117 -0.315958 -0.45 0.268701 -0.268701 -0.45 0.315958 -0.211117 -0.45 0.351074 -0.14542 -0.45 0.372698 -0.0741343 -0.45 0 0 0.45\" face=\"0 1 32 1 2 32 2 3 32 3 4 32 4 5 32 5 6 32 6 7 32 7 8 32 8 9 32 9 10 32 10 11 32 11 12 32 12 13 32 13 14 32 14 15 32 15 16 32 16 17 32 17 18 32 18 19 32 19 20 32 20 21 32 21 22 32 22 23 32 23 24 32 24 25 32 25 26 32 26 27 32 27 28 32 28 29 32 29 30 32 30 31 32 31 0 32 0 2 1 0 3 2 0 4 3 0 5 4 0 6 5 0 7 6 0 8 7 0 9 8 0 10 9 0 11 10 0 12 11 0 13 12 0 14 13 0 15 14 0 16 15 0 17 16 0 18 17 0 19 18 0 20 19 0 21 20 0 22 21 0 23 22 0 24 23 0 25 24 0 26 25 0 27 26 0 28 27 0 29 28 0 30 29 0 31 30\"/>
+  </asset>
+
+  <worldbody>
+    <geom name=\"floor_geom\" size=\"6 4 0.1\" pos=\"0 0 -0.1\" type=\"box\" rgba=\"0.25 0.28 0.32 1\"/>
+    <body name=\"sphere\" pos=\"-2.5 0 2\">
+      <joint name=\"sphere_free\" type=\"free\"/>
+      <geom name=\"sphere_geom\" size=\"0.35\" rgba=\"0.9 0.25 0.18 1\" mass=\"1\"/>
+    </body>
+    <body name=\"box\" pos=\"-1.2 0 2.6\">
+      <joint name=\"box_free\" type=\"free\"/>
+      <geom name=\"box_geom\" size=\"0.35 0.35 0.35\" type=\"box\" rgba=\"0.2 0.55 0.95 1\" mass=\"1\"/>
+    </body>
+    <body name=\"cylinder\" pos=\"0 0 3.2\">
+      <joint name=\"cylinder_free\" type=\"free\"/>
+      <geom name=\"cylinder_geom\" size=\"0.32 0.45\" type=\"cylinder\" rgba=\"0.25 0.8 0.4 1\" mass=\"1\"/>
+    </body>
+    <body name=\"cone\" pos=\"1.3 0 3.8\">
+      <joint name=\"cone_free\" type=\"free\"/>
+      <geom name=\"cone_geom\" type=\"mesh\" rgba=\"0.95 0.6 0.12 1\" mass=\"1\" mesh=\"cone_mesh\"/>
+    </body>
+    <body name=\"capsule\" pos=\"2.6 0 4.4\">
+      <joint name=\"capsule_free\" type=\"free\"/>
+      <geom name=\"capsule_geom\" size=\"0.24 0.25\" type=\"capsule\" rgba=\"0.65 0.3 0.9 1\" mass=\"1\"/>
+    </body>
+    <body name=\"ellipsoid\" pos=\"3.8 0 3\">
+      <joint name=\"ellipsoid_free\" type=\"free\"/>
+      <geom name=\"ellipsoid_geom\" size=\"0.4 0.28 0.22\" type=\"ellipsoid\" rgba=\"0.15 0.8 0.8 1\" mass=\"1\"/>
+    </body>
+    <body name=\"probe\" pos=\"-1.2 0 4.8\">
+      <joint name=\"probe_free\" type=\"free\"/>
+      <geom name=\"probe_geom\" size=\"0.22\" rgba=\"1 0.8 0.65 1\" mass=\"0.25\"/>
+    </body>
+  </worldbody></mujoco>"
+}
+
+[sub_resource type="Resource" id="Resource_w3rk5"]
+script = ExtResource("2_fpfj3")
+document_id = "7ec2603a687629baa6bbd6e185e72a7f"
+tree = {
+"attrs": {
+"model": "DynamicShapeGallery"
+},
+"children": [{
+"tag": "#text",
+"text": "
+  "
+}, {
+"attrs": {
+"angle": "radian"
+},
+"children": [],
+"id": "0f85ecf608add24b6d255165bdbfcfc2",
+"tag": "compiler"
+}, {
+"tag": "#text",
+"text": "
+
+  "
+}, {
+"attrs": {
+"integrator": "implicitfast"
+},
+"children": [],
+"id": "b6f089b927e073806487ffa59c41268b",
+"tag": "option"
+}, {
+"tag": "#text",
+"text": "
+
+  "
+}, {
+"attrs": {},
+"children": [{
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"friction": "0.9"
+},
+"children": [],
+"id": "27b404ec593c3234aaa2895a89e435c3",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+  "
+}],
+"id": "ef6ed478e1641327408c5bc62b10af61",
+"tag": "default"
+}, {
+"tag": "#text",
+"text": "
+
+  "
+}, {
+"attrs": {},
+"children": [{
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"face": "0 1 32 1 2 32 2 3 32 3 4 32 4 5 32 5 6 32 6 7 32 7 8 32 8 9 32 9 10 32 10 11 32 11 12 32 12 13 32 13 14 32 14 15 32 15 16 32 16 17 32 17 18 32 18 19 32 19 20 32 20 21 32 21 22 32 22 23 32 23 24 32 24 25 32 25 26 32 26 27 32 27 28 32 28 29 32 29 30 32 30 31 32 31 0 32 0 2 1 0 3 2 0 4 3 0 5 4 0 6 5 0 7 6 0 8 7 0 9 8 0 10 9 0 11 10 0 12 11 0 13 12 0 14 13 0 15 14 0 16 15 0 17 16 0 18 17 0 19 18 0 20 19 0 21 20 0 22 21 0 23 22 0 24 23 0 25 24 0 26 25 0 27 26 0 28 27 0 29 28 0 30 29 0 31 30",
+"name": "cone_mesh",
+"vertex": "0.38 0 -0.45 0.372698 0.0741343 -0.45 0.351074 0.14542 -0.45 0.315958 0.211117 -0.45 0.268701 0.268701 -0.45 0.211117 0.315958 -0.45 0.14542 0.351074 -0.45 0.0741343 0.372698 -0.45 0 0.38 -0.45 -0.0741343 0.372698 -0.45 -0.14542 0.351074 -0.45 -0.211117 0.315958 -0.45 -0.268701 0.268701 -0.45 -0.315958 0.211117 -0.45 -0.351074 0.14542 -0.45 -0.372698 0.0741343 -0.45 -0.38 0 -0.45 -0.372698 -0.0741343 -0.45 -0.351074 -0.14542 -0.45 -0.315958 -0.211117 -0.45 -0.268701 -0.268701 -0.45 -0.211117 -0.315958 -0.45 -0.14542 -0.351074 -0.45 -0.0741343 -0.372698 -0.45 0 -0.38 -0.45 0.0741343 -0.372698 -0.45 0.14542 -0.351074 -0.45 0.211117 -0.315958 -0.45 0.268701 -0.268701 -0.45 0.315958 -0.211117 -0.45 0.351074 -0.14542 -0.45 0.372698 -0.0741343 -0.45 0 0 0.45"
+},
+"children": [],
+"id": "5ce0e133fdbe2f71bfaa8151032e10fd",
+"tag": "mesh"
+}, {
+"tag": "#text",
+"text": "
+  "
+}, {
+&"appearance_owner": "d8c5c82148520cc3e05052b308ffd85f",
+"attrs": {
+&"name": "geom_2_material",
+&"rgba": "0.25245919823646545 0.325445294380188 0.4955422282218933 1.0"
+},
+"children": [],
+&"id": "39a712d0e8e052550082a0eebbcb6640",
+"tag": "material"
+}],
+"id": "fd8fec3718817d4f3e951fe131144dfd",
+"tag": "asset"
+}, {
+"tag": "#text",
+"text": "
+
+  "
+}, {
+"attrs": {},
+"children": [{
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "floor_geom",
+"pos": "0 0 -0.1",
+"rgba": "0.25 0.28 0.32 1",
+"size": "6 4 0.1",
+"type": "box"
+},
+"children": [],
+"id": "5cd3503202a80c8a694d32ea5ca77b71",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "sphere",
+"pos": "-2.5 0 2"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+&"axis": "0.0 0.0 1.0",
+"name": "sphere_free",
+&"pos": "0.0 0.0 0.0",
+"type": "hinge"
+},
+"children": [],
+"id": "9bffaff985920b73fadd2bb4d392c1c5",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"mass": "1",
+"name": "sphere_geom",
+&"pos": "0.0 -0.5629862546920776 0.0",
+&"quat": "1.0 0.0 0.0 0.0",
+"rgba": "0.9 0.25 0.18 1",
+"size": "0.35"
+},
+"children": [],
+"id": "824b4464e6cd7f6f77d764c017317221",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+&"diaginertia": "0.05999999865889549 0.05999999865889549 0.05999999865889549",
+&"mass": "1.0",
+&"pos": "0.0 0.0 0.0",
+&"quat": "1.0 0.0 0.0 0.0"
+},
+"children": [],
+"id": "18e5442d1743b885e227c69c206fb0d3",
+"tag": "inertial"
+}],
+"id": "07a0b63f6cc56bb5f57189f50797b40e",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "box",
+"pos": "-1.2000000476837158 -1.3312273025512695 2.5999999046325684",
+&"quat": "1.0 0.0 0.0 0.0"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"name": "box_free",
+"type": "free"
+},
+"children": [],
+"id": "963c669fe7932a2f257a42c4c0c16028",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"mass": "1",
+"name": "box_geom",
+&"pos": "0.0 2.1874897480010986 0.0",
+&"quat": "1.0 0.0 0.0 0.0",
+"rgba": "0.2 0.55 0.95 1",
+"size": "0.35 0.35 0.35",
+"type": "box"
+},
+"children": [],
+"id": "523600d1d6011c04bac78fe27bdbc2f9",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}],
+"id": "2bca0a6c15f4372fddcfbd832a38f596",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "cylinder",
+"pos": "0 0 3.2"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"name": "cylinder_free",
+"type": "free"
+},
+"children": [],
+"id": "69bd0586f3c734ba8a41598e9ff992a9",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"mass": "1",
+"name": "cylinder_geom",
+&"pos": "-0.3748807907104492 -1.80460524559021 0.0",
+&"quat": "0.8607405424118042 0.0 -0.5090439319610596 0.0",
+"rgba": "0.25 0.8 0.4 1",
+"size": "0.32 0.45",
+"type": "cylinder"
+},
+"children": [],
+"id": "47d1c35320528cf2dd47153624fab36a",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"mass": "1",
+"name": "cylinder_geom_copy",
+&"pos": "-0.3748807907104492 0.0 0.0",
+&"quat": "0.8607405424118042 0.0 -0.5090439319610596 0.0",
+"rgba": "0.25 0.8 0.4 1",
+"size": "0.32 0.45",
+"type": "cylinder"
+},
+"children": [],
+"id": "8a62b7909ff2b3017d9a73d3b8a5e698",
+"tag": "geom"
+}],
+"id": "07ad54d8faba5cd5045dece051efc958",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "cone",
+"pos": "1.3 0 3.8"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"name": "cone_free",
+"type": "free"
+},
+"children": [],
+"id": "4505b907046581f575d80edc86bd0f13",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"mass": "1",
+"mesh": "cone_mesh",
+"name": "cone_geom",
+"rgba": "0.95 0.6 0.12 1",
+"type": "mesh"
+},
+"children": [],
+"id": "17496b5181434c2a8ed4d02213669f69",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}],
+"id": "277f1355d93450085190b350d802e15b",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "capsule",
+"pos": "2.6 0 4.4"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"name": "capsule_free",
+"type": "free"
+},
+"children": [],
+"id": "183bd71ed3ad286b90b80d76684bb4ca",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"mass": "1",
+"name": "capsule_geom",
+"rgba": "0.65 0.3 0.9 1",
+"size": "0.24 0.25",
+"type": "capsule"
+},
+"children": [],
+"id": "6f8cde46b3d620837b6924cd6e8f02bf",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}],
+"id": "ed87578753bf4988fb31408ae045c04b",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "ellipsoid",
+"pos": "3.8 0 3"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"name": "ellipsoid_free",
+"type": "free"
+},
+"children": [],
+"id": "3dd60139ed729f5d928a277ca819d449",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"mass": "1",
+"name": "ellipsoid_geom",
+&"pos": "-1.5454578399658203 0.0 0.0",
+&"quat": "1.0 0.0 0.0 0.0",
+"rgba": "0.15 0.8 0.8 1",
+"size": "0.4 0.28 0.22",
+"type": "ellipsoid"
+},
+"children": [],
+"id": "05e1a14c5bc97fcb792dacea8cc0cedc",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}],
+"id": "6ac82f3e12abadbd17d2bf3dc1990f47",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "probe",
+"pos": "-1.2 0 4.8"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"name": "probe_free",
+"type": "free"
+},
+"children": [],
+"id": "a2f9103d375333de8458b19e5d5063b6",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"mass": "0.25",
+"name": "probe_geom",
+&"pos": "2.0 0.3894922733306885 0.0",
+&"quat": "1.0 0.0 0.0 0.0",
+"rgba": "1 0.8 0.65 1",
+"size": "0.22"
+},
+"children": [],
+"id": "7a7fc0557f099c17cb2fe805280e0d34",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}],
+"id": "3c85183c5479ea584f2d1d8f95036b95",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+  "
+}, {
+"attrs": {
+"name": "body",
+&"pos": "-4.34016752243042 0.0 2.676131248474121",
+&"quat": "1.0 0.0 0.0 0.0"
+},
+"children": [{
+"attrs": {
+&"contype": "1",
+&"density": "1000",
+"margin": "0.0",
+"name": "ageom",
+&"pos": "0.0 0.0 0.0",
+&"quat": "1.0 0.0 0.0 0.0",
+&"size": ".25 .25 .25",
+&"type": "box"
+},
+"children": [],
+"id": "0b9d80c2cca398f6f4eb661bc3a9fbea",
+"tag": "geom"
+}, {
+"attrs": {
+"name": "joint",
+&"type": "free"
+},
+"children": [],
+"id": "38bd466545080ba6bce1767875593922",
+"tag": "joint"
+}, {
+"attrs": {
+"name": "body_2"
+},
+"children": [{
+"attrs": {
+&"density": "1000",
+"name": "geom",
+&"pos": "0.9870623350143433 0.0 1.0111806392669678",
+&"quat": "1.0 0.0 0.0 0.0",
+&"size": ".25 .25",
+&"type": "cylinder"
+},
+"children": [],
+"id": "4afce7a375290eeea4e826a16b8420f8",
+"tag": "geom"
+}, {
+"attrs": {
+&"axis": "0.0 0.0 1.0",
+"name": "joint_2",
+&"pos": "0.0 0.0 0.0",
+&"type": "hinge"
+},
+"children": [],
+"id": "142507360c4a0938df0ab63b879d0bd6",
+"tag": "joint"
+}],
+"id": "cdc876fb6c0c14fd1cba9ff4ca514ebb",
+"tag": "body"
+}],
+"id": "7936dd4a38ee5487e54b358dc5ee9fd5",
+"tag": "body"
+}, {
+"attrs": {
+&"density": "1000",
+&"material": "geom_2_material",
+"name": "geom_2",
+&"pos": "1.391755223274231 0.0 1.663541555404663",
+&"quat": "1.0 0.0 0.0 0.0",
+&"rgba": "0.25245919823646545 0.325445294380188 0.4955422282218933 1.0",
+&"size": ".25 .25 .25",
+&"type": "box"
+},
+"children": [],
+"id": "d8c5c82148520cc3e05052b308ffd85f",
+"tag": "geom"
+}],
+"id": "a5b926f83559c404680fc73b9049fa88",
+"tag": "worldbody"
+}],
+"id": "652956598a08abe14fa79222f70b76b1",
+"tag": "mujoco"
+}
+initial_pose = {
+"183bd71ed3ad286b90b80d76684bb4ca": [2.6, 0.0, 4.4, 1.0, 0.0, 0.0, 0.0],
+"3dd60139ed729f5d928a277ca819d449": [3.8, 0.0, 3.0, 1.0, 0.0, 0.0, 0.0],
+"4505b907046581f575d80edc86bd0f13": [1.3, 0.0, 3.8, 1.0, 0.0, 0.0, 0.0],
+"69bd0586f3c734ba8a41598e9ff992a9": [0.0, 0.0, 3.2, 1.0, 0.0, 0.0, 0.0],
+"963c669fe7932a2f257a42c4c0c16028": [-1.2, -1.3312273, 2.6, 1.0, 0.0, 0.0, 0.0],
+"a2f9103d375333de8458b19e5d5063b6": [-1.2, 0.0, 4.8, 1.0, 0.0, 0.0, 0.0]
+}
+provenance = {
+"assets": {},
+"source": "res://assets/gallery.xml",
+"sources": {
+"res://assets/gallery.xml": "f10235d819d42eccc40928a4223e1ca8af7075bc76a55925179579855a45b2ea"
+}
+}
+revision = 294
+validated_revision = 294
+cached_entities = [{
+"kind": "body",
+"name": "world",
+"parent": "",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": false,
+"inertia": [0.0, 0.0, 0.0],
+"inertia_mode": "automatic",
+"ipos": [0.0, 0.0, 0.0],
+"iquat": [1.0, 0.0, 0.0, 0.0],
+"mass": 0.0,
+"pos": [0.0, 0.0, 0.0],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "body",
+"name": "sphere",
+"parent": "world",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": true,
+"inertia": [0.06, 0.06, 0.06],
+"inertia_mode": "manual",
+"ipos": [0.0, 0.0, 0.0],
+"iquat": [1.0, 0.0, 0.0, 0.0],
+"mass": 1.0,
+"pos": [-2.5, 0.0, 2.0],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 2, 0),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "body",
+"name": "box",
+"parent": "world",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": false,
+"inertia": [0.08166666666666665, 0.08166666666666665, 0.08166666666666665],
+"inertia_mode": "automatic",
+"ipos": [0.0, 2.1874897, 0.0],
+"iquat": [1.0, 0.0, 0.0, 0.0],
+"mass": 1.0,
+"pos": [-1.2, -1.3312273, 2.6],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 2.6, 1.3312273),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "body",
+"name": "cylinder",
+"parent": "world",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": false,
+"inertia": [1.8145000462058505, 1.7307000462058504, 0.18619999999999995],
+"inertia_mode": "automatic",
+"ipos": [-0.3748808, -0.9023026, 0.0],
+"iquat": [0.6086354725502688, 0.6086354725502688, -0.35994841512849085, 0.35994841512849085],
+"mass": 2.0,
+"pos": [0.0, 0.0, 3.2],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "body",
+"name": "cone",
+"parent": "world",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": false,
+"inertia": [0.05189625681014445, 0.05189625681014445, 0.04304251683893969],
+"inertia_mode": "automatic",
+"ipos": [-1.3780947168979895e-19, -6.232746560515908e-19, -0.22499999403953558],
+"iquat": [1.0, 0.0, 0.0, 0.0],
+"mass": 1.0,
+"pos": [1.3, 0.0, 3.8],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3, 3.8, 0),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "body",
+"name": "capsule",
+"parent": "world",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": false,
+"inertia": [0.07242617886178862, 0.07242617886178862, 0.026552195121951217],
+"inertia_mode": "automatic",
+"ipos": [0.0, 0.0, 0.0],
+"iquat": [1.0, 0.0, 0.0, 0.0],
+"mass": 1.0,
+"pos": [2.6, 0.0, 4.4],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 4.4, 0),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "body",
+"name": "ellipsoid",
+"parent": "world",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": false,
+"inertia": [0.025360000000000004, 0.04168000000000001, 0.047680000000000014],
+"inertia_mode": "automatic",
+"ipos": [-1.5454578, 0.0, 0.0],
+"iquat": [1.0, 0.0, 0.0, 0.0],
+"mass": 1.0,
+"pos": [3.8, 0.0, 3.0],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 3, 0),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "body",
+"name": "probe",
+"parent": "world",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": false,
+"inertia": [0.00484, 0.00484, 0.00484],
+"inertia_mode": "automatic",
+"ipos": [2.0, 0.38949227, 0.0],
+"iquat": [1.0, 0.0, 0.0, 0.0],
+"mass": 0.25,
+"pos": [-1.2, 0.0, 4.8],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 4.8, 0),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "body",
+"name": "body",
+"parent": "world",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": false,
+"inertia": [5.208333333333333, 5.208333333333333, 5.208333333333333],
+"inertia_mode": "automatic",
+"ipos": [0.0, 0.0, 0.0],
+"iquat": [1.0, 0.0, 0.0, 0.0],
+"mass": 125.0,
+"pos": [-4.3401675, 0.0, 2.6761312],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3401675, 2.6761312, 0),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "body",
+"name": "body_2",
+"parent": "body",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": false,
+"inertia": [3.5792885050664958, 3.5792885050664958, 3.067961575771282],
+"inertia_mode": "automatic",
+"ipos": [0.98706234, 0.0, 1.0111806],
+"iquat": [1.0, 0.0, 0.0, 0.0],
+"mass": 98.17477042468103,
+"pos": [0.0, 0.0, 0.0],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3401675, 2.6761312, 0),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "joint",
+"name": "sphere_free",
+"parent": "sphere",
+"properties": {
+"axis": [0.0, 0.0, 1.0],
+"damping": 0.0,
+"damping_coefficients": [0.0, 0.0, 0.0],
+"damping_editable": true,
+"frictionloss": 0.0,
+"limited": false,
+"pos": [0.0, 0.0, 0.0],
+"qpos": [0.0],
+"range": [0.0, 0.0],
+"type": "hinge",
+"unit": "rad"
+}
+}, {
+"kind": "joint",
+"name": "box_free",
+"parent": "box",
+"properties": {
+"axis": [0.0, 0.0, 1.0],
+"damping": 0.0,
+"damping_coefficients": [0.0, 0.0, 0.0],
+"damping_editable": true,
+"frictionloss": 0.0,
+"limited": false,
+"pos": [0.0, 0.0, 0.0],
+"qpos": [-1.2, -1.3312273, 2.6, 1.0, 0.0, 0.0, 0.0],
+"range": [0.0, 0.0],
+"type": "free",
+"unit": "position / unit quaternion (read-only)"
+}
+}, {
+"kind": "joint",
+"name": "cylinder_free",
+"parent": "cylinder",
+"properties": {
+"axis": [0.0, 0.0, 1.0],
+"damping": 0.0,
+"damping_coefficients": [0.0, 0.0, 0.0],
+"damping_editable": true,
+"frictionloss": 0.0,
+"limited": false,
+"pos": [0.0, 0.0, 0.0],
+"qpos": [0.0, 0.0, 3.2, 1.0, 0.0, 0.0, 0.0],
+"range": [0.0, 0.0],
+"type": "free",
+"unit": "position / unit quaternion (read-only)"
+}
+}, {
+"kind": "joint",
+"name": "cone_free",
+"parent": "cone",
+"properties": {
+"axis": [0.0, 0.0, 1.0],
+"damping": 0.0,
+"damping_coefficients": [0.0, 0.0, 0.0],
+"damping_editable": true,
+"frictionloss": 0.0,
+"limited": false,
+"pos": [0.0, 0.0, 0.0],
+"qpos": [1.3, 0.0, 3.8, 1.0, 0.0, 0.0, 0.0],
+"range": [0.0, 0.0],
+"type": "free",
+"unit": "position / unit quaternion (read-only)"
+}
+}, {
+"kind": "joint",
+"name": "capsule_free",
+"parent": "capsule",
+"properties": {
+"axis": [0.0, 0.0, 1.0],
+"damping": 0.0,
+"damping_coefficients": [0.0, 0.0, 0.0],
+"damping_editable": true,
+"frictionloss": 0.0,
+"limited": false,
+"pos": [0.0, 0.0, 0.0],
+"qpos": [2.6, 0.0, 4.4, 1.0, 0.0, 0.0, 0.0],
+"range": [0.0, 0.0],
+"type": "free",
+"unit": "position / unit quaternion (read-only)"
+}
+}, {
+"kind": "joint",
+"name": "ellipsoid_free",
+"parent": "ellipsoid",
+"properties": {
+"axis": [0.0, 0.0, 1.0],
+"damping": 0.0,
+"damping_coefficients": [0.0, 0.0, 0.0],
+"damping_editable": true,
+"frictionloss": 0.0,
+"limited": false,
+"pos": [0.0, 0.0, 0.0],
+"qpos": [3.8, 0.0, 3.0, 1.0, 0.0, 0.0, 0.0],
+"range": [0.0, 0.0],
+"type": "free",
+"unit": "position / unit quaternion (read-only)"
+}
+}, {
+"kind": "joint",
+"name": "probe_free",
+"parent": "probe",
+"properties": {
+"axis": [0.0, 0.0, 1.0],
+"damping": 0.0,
+"damping_coefficients": [0.0, 0.0, 0.0],
+"damping_editable": true,
+"frictionloss": 0.0,
+"limited": false,
+"pos": [0.0, 0.0, 0.0],
+"qpos": [-1.2, 0.0, 4.8, 1.0, 0.0, 0.0, 0.0],
+"range": [0.0, 0.0],
+"type": "free",
+"unit": "position / unit quaternion (read-only)"
+}
+}, {
+"kind": "joint",
+"name": "joint",
+"parent": "body",
+"properties": {
+"axis": [0.0, 0.0, 1.0],
+"damping": 0.0,
+"damping_coefficients": [0.0, 0.0, 0.0],
+"damping_editable": true,
+"frictionloss": 0.0,
+"limited": false,
+"pos": [0.0, 0.0, 0.0],
+"qpos": [-4.3401675, 0.0, 2.6761312, 1.0, 0.0, 0.0, 0.0],
+"range": [0.0, 0.0],
+"type": "free",
+"unit": "position / unit quaternion (read-only)"
+}
+}, {
+"kind": "joint",
+"name": "joint_2",
+"parent": "body_2",
+"properties": {
+"axis": [0.0, 0.0, 1.0],
+"damping": 0.0,
+"damping_coefficients": [0.0, 0.0, 0.0],
+"damping_editable": true,
+"frictionloss": 0.0,
+"limited": false,
+"pos": [0.0, 0.0, 0.0],
+"qpos": [0.0],
+"range": [0.0, 0.0],
+"type": "hinge",
+"unit": "rad"
+}
+}, {
+"kind": "geom",
+"name": "floor_geom",
+"parent": "world",
+"properties": {
+"conaffinity": 1,
+"contype": 1,
+"density": 1000.0,
+"friction": [0.9, 0.005, 0.0001],
+"margin": 0.0,
+"mass": "density-derived",
+"mesh": "",
+"pos": [0.0, 0.0, -0.1],
+"pose_editable": true,
+"quat": [1.0, 0.0, 0.0, 0.0],
+"size": [6.0, 4.0, 0.1],
+"size_editable": true,
+"type": 6
+}
+}, {
+"kind": "geom",
+"name": "geom_2",
+"parent": "world",
+"properties": {
+"conaffinity": 1,
+"contype": 1,
+"density": 1000.0,
+"friction": [0.9, 0.005, 0.0001],
+"margin": 0.0,
+"mass": "density-derived",
+"mesh": "",
+"pos": [1.3917552, 0.0, 1.6635416],
+"pose_editable": true,
+"quat": [1.0, 0.0, 0.0, 0.0],
+"size": [0.25, 0.25, 0.25],
+"size_editable": true,
+"type": 6
+}
+}, {
+"kind": "geom",
+"name": "sphere_geom",
+"parent": "sphere",
+"properties": {
+"conaffinity": 1,
+"contype": 1,
+"density": 1000.0,
+"friction": [0.9, 0.005, 0.0001],
+"margin": 0.0,
+"mass": 1.0,
+"mesh": "",
+"pos": [0.0, -0.56298625, 0.0],
+"pose_editable": true,
+"quat": [1.0, 0.0, 0.0, 0.0],
+"size": [0.35, 0.0, 0.0],
+"size_editable": true,
+"type": 2
+}
+}, {
+"kind": "geom",
+"name": "box_geom",
+"parent": "box",
+"properties": {
+"conaffinity": 1,
+"contype": 1,
+"density": 1000.0,
+"friction": [0.9, 0.005, 0.0001],
+"margin": 0.0,
+"mass": 1.0,
+"mesh": "",
+"pos": [0.0, 2.1874897, 0.0],
+"pose_editable": true,
+"quat": [1.0, 0.0, 0.0, 0.0],
+"size": [0.35, 0.35, 0.35],
+"size_editable": true,
+"type": 6
+}
+}, {
+"kind": "geom",
+"name": "cylinder_geom",
+"parent": "cylinder",
+"properties": {
+"conaffinity": 1,
+"contype": 1,
+"density": 1000.0,
+"friction": [0.9, 0.005, 0.0001],
+"margin": 0.0,
+"mass": 1.0,
+"mesh": "",
+"pos": [-0.3748808, -1.8046052, 0.0],
+"pose_editable": true,
+"quat": [0.8607405398219466, 0.0, -0.5090439304294119, 0.0],
+"size": [0.32, 0.45, 0.0],
+"size_editable": true,
+"type": 5
+}
+}, {
+"kind": "geom",
+"name": "cylinder_geom_copy",
+"parent": "cylinder",
+"properties": {
+"conaffinity": 1,
+"contype": 1,
+"density": 1000.0,
+"friction": [0.9, 0.005, 0.0001],
+"margin": 0.0,
+"mass": 1.0,
+"mesh": "",
+"pos": [-0.3748808, 0.0, 0.0],
+"pose_editable": true,
+"quat": [0.8607405398219466, 0.0, -0.5090439304294119, 0.0],
+"size": [0.32, 0.45, 0.0],
+"size_editable": true,
+"type": 5
+}
+}, {
+"kind": "geom",
+"name": "cone_geom",
+"parent": "cone",
+"properties": {
+"conaffinity": 1,
+"contype": 1,
+"density": 1000.0,
+"friction": [0.9, 0.005, 0.0001],
+"margin": 0.0,
+"mass": 1.0,
+"mesh": "cone_mesh",
+"pos": [-1.3780947168979895e-19, -6.232746560515908e-19, -0.22499999403953558],
+"pose_editable": true,
+"quat": [1.0, 0.0, 0.0, 0.0],
+"size": [0.38, 0.38, 0.6749999821186066],
+"size_editable": true,
+"type": 7
+}
+}, {
+"kind": "geom",
+"name": "capsule_geom",
+"parent": "capsule",
+"properties": {
+"conaffinity": 1,
+"contype": 1,
+"density": 1000.0,
+"friction": [0.9, 0.005, 0.0001],
+"margin": 0.0,
+"mass": 1.0,
+"mesh": "",
+"pos": [0.0, 0.0, 0.0],
+"pose_editable": true,
+"quat": [1.0, 0.0, 0.0, 0.0],
+"size": [0.24, 0.25, 0.0],
+"size_editable": true,
+"type": 3
+}
+}, {
+"kind": "geom",
+"name": "ellipsoid_geom",
+"parent": "ellipsoid",
+"properties": {
+"conaffinity": 1,
+"contype": 1,
+"density": 1000.0,
+"friction": [0.9, 0.005, 0.0001],
+"margin": 0.0,
+"mass": 1.0,
+"mesh": "",
+"pos": [-1.5454578, 0.0, 0.0],
+"pose_editable": true,
+"quat": [1.0, 0.0, 0.0, 0.0],
+"size": [0.4, 0.28, 0.22],
+"size_editable": true,
+"type": 4
+}
+}, {
+"kind": "geom",
+"name": "probe_geom",
+"parent": "probe",
+"properties": {
+"conaffinity": 1,
+"contype": 1,
+"density": 1000.0,
+"friction": [0.9, 0.005, 0.0001],
+"margin": 0.0,
+"mass": 0.25,
+"mesh": "",
+"pos": [2.0, 0.38949227, 0.0],
+"pose_editable": true,
+"quat": [1.0, 0.0, 0.0, 0.0],
+"size": [0.22, 0.0, 0.0],
+"size_editable": true,
+"type": 2
+}
+}, {
+"kind": "geom",
+"name": "ageom",
+"parent": "body",
+"properties": {
+"conaffinity": 1,
+"contype": 1,
+"density": 1000.0,
+"friction": [0.9, 0.005, 0.0001],
+"margin": 0.0,
+"mass": "density-derived",
+"mesh": "",
+"pos": [0.0, 0.0, 0.0],
+"pose_editable": true,
+"quat": [1.0, 0.0, 0.0, 0.0],
+"size": [0.25, 0.25, 0.25],
+"size_editable": true,
+"type": 6
+}
+}, {
+"kind": "geom",
+"name": "geom",
+"parent": "body_2",
+"properties": {
+"conaffinity": 1,
+"contype": 1,
+"density": 1000.0,
+"friction": [0.9, 0.005, 0.0001],
+"margin": 0.0,
+"mass": "density-derived",
+"mesh": "",
+"pos": [0.98706234, 0.0, 1.0111806],
+"pose_editable": true,
+"quat": [1.0, 0.0, 0.0, 0.0],
+"size": [0.25, 0.25, 0.0],
+"size_editable": true,
+"type": 5
+}
+}]
+cached_geometry = [{
+"color": Color(0.25, 0.28, 0.32, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/66f792a3454b0d3b46d58b2b7a3baef165eacae07516f63edb92138b710ed951.res",
+"name": "floor_geom",
+"size": Vector3(6, 4, 0.1),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0),
+"type": 6
+}, {
+"color": Color(0.2524592, 0.3254453, 0.49554223, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/22510fa75da5220e4786ee4d0fc32735340270171bff4cd52c3d2fe3609395bd.res",
+"name": "geom_2",
+"size": Vector3(0.25, 0.25, 0.25),
+"texture_repeat": Vector2(1, 1),
+"texture_uniform": false,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3917552, 1.6635416, 0),
+"type": 6
+}, {
+"color": Color(0.9, 0.25, 0.18, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/ad2f9869393ca45d46c68ff18413b7a06e0f145b94e15ea5c71c0090ef1a1b9b.res",
+"name": "sphere_geom",
+"size": Vector3(0.35, 0, 0),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 2, 0.56298625),
+"type": 2
+}, {
+"color": Color(0.2, 0.55, 0.95, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/02c3c598fe00c7bd5c29a3948f525c285059f4f6dc2d2642dfd708182cbe4314.res",
+"name": "box_geom",
+"size": Vector3(0.35, 0.35, 0.35),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 2.6, -0.85626245),
+"type": 6
+}, {
+"color": Color(0.25, 0.8, 0.4, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/847b6adf1ebfb4cb1cd71f90ba64e339fe968e1903746dd38c97087ebd848d4b.res",
+"name": "cylinder_geom",
+"size": Vector3(0.32, 0.45, 0),
+"transform": Transform3D(0.48174855, -0.8763095, 0, 0.8763095, 0.48174855, 0, 0, 0, 1, -0.3748808, 3.2, 1.8046052),
+"type": 5
+}, {
+"color": Color(0.25, 0.8, 0.4, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/847b6adf1ebfb4cb1cd71f90ba64e339fe968e1903746dd38c97087ebd848d4b.res",
+"name": "cylinder_geom_copy",
+"size": Vector3(0.32, 0.45, 0),
+"transform": Transform3D(0.48174855, -0.8763095, 0, 0.8763095, 0.48174855, 0, 0, 0, 1, -0.3748808, 3.2, 0),
+"type": 5
+}, {
+"color": Color(0.95, 0.6, 0.12, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/179f82831b40cc3359e51ba9ac9e01ffcb49b19213ef2a72367db6e12bc0ddbb.res",
+"name": "cone_geom",
+"size": Vector3(0.38, 0.38, 0.67499995),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3, 3.575, 6.2327465e-19),
+"type": 7
+}, {
+"color": Color(0.65, 0.3, 0.9, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/7f87b627347eef54cdc6334a9e2c16bb20d5bf4d69c85eddd5b1c718d5fe5e66.res",
+"name": "capsule_geom",
+"size": Vector3(0.24, 0.25, 0),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 4.4, 0),
+"type": 3
+}, {
+"color": Color(0.15, 0.8, 0.8, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/a69c12b06c0dd7dc028da3e25e2d6f3ce9bc11099be7a84e7bcaa6124d9c2bf9.res",
+"name": "ellipsoid_geom",
+"size": Vector3(0.4, 0.28, 0.22),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.254542, 3, 0),
+"type": 4
+}, {
+"color": Color(1, 0.8, 0.65, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/4b1df3283cc905f0abbbb26e2308e4c332181c5324d2be32296eb3b6b325e6b6.res",
+"name": "probe_geom",
+"size": Vector3(0.22, 0, 0),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 4.8, -0.38949227),
+"type": 2
+}, {
+"color": Color(0.5, 0.5, 0.5, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/22510fa75da5220e4786ee4d0fc32735340270171bff4cd52c3d2fe3609395bd.res",
+"name": "ageom",
+"size": Vector3(0.25, 0.25, 0.25),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3401675, 2.6761312, 0),
+"type": 6
+}, {
+"color": Color(0.5, 0.5, 0.5, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/1f01a50b6f958a9d7c01c4df29627c7527671be49da033391ec733a77c850d88.res",
+"name": "geom",
+"size": Vector3(0.25, 0.25, 0),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.353105, 3.687312, 0),
+"type": 5
+}]
+collision_geometry = [{
+"color": Color(0.25, 0.28, 0.32, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/66f792a3454b0d3b46d58b2b7a3baef165eacae07516f63edb92138b710ed951.res",
+"name": "floor_geom",
+"preview_kind": "analytic_boundary",
+"size": Vector3(6, 4, 0.1),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0),
+"type": 6
+}, {
+"color": Color(0.2524592, 0.3254453, 0.49554223, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/22510fa75da5220e4786ee4d0fc32735340270171bff4cd52c3d2fe3609395bd.res",
+"name": "geom_2",
+"preview_kind": "analytic_boundary",
+"size": Vector3(0.25, 0.25, 0.25),
+"texture_repeat": Vector2(1, 1),
+"texture_uniform": false,
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3917552, 1.6635416, 0),
+"type": 6
+}, {
+"color": Color(0.9, 0.25, 0.18, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/ad2f9869393ca45d46c68ff18413b7a06e0f145b94e15ea5c71c0090ef1a1b9b.res",
+"name": "sphere_geom",
+"preview_kind": "analytic_boundary",
+"size": Vector3(0.35, 0, 0),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 2, 0.56298625),
+"type": 2
+}, {
+"color": Color(0.2, 0.55, 0.95, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/02c3c598fe00c7bd5c29a3948f525c285059f4f6dc2d2642dfd708182cbe4314.res",
+"name": "box_geom",
+"preview_kind": "analytic_boundary",
+"size": Vector3(0.35, 0.35, 0.35),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 2.6, -0.85626245),
+"type": 6
+}, {
+"color": Color(0.25, 0.8, 0.4, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/847b6adf1ebfb4cb1cd71f90ba64e339fe968e1903746dd38c97087ebd848d4b.res",
+"name": "cylinder_geom",
+"preview_kind": "analytic_boundary",
+"size": Vector3(0.32, 0.45, 0),
+"transform": Transform3D(0.48174855, -0.8763095, 0, 0.8763095, 0.48174855, 0, 0, 0, 1, -0.3748808, 3.2, 1.8046052),
+"type": 5
+}, {
+"color": Color(0.25, 0.8, 0.4, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/847b6adf1ebfb4cb1cd71f90ba64e339fe968e1903746dd38c97087ebd848d4b.res",
+"name": "cylinder_geom_copy",
+"preview_kind": "analytic_boundary",
+"size": Vector3(0.32, 0.45, 0),
+"transform": Transform3D(0.48174855, -0.8763095, 0, 0.8763095, 0.48174855, 0, 0, 0, 1, -0.3748808, 3.2, 0),
+"type": 5
+}, {
+"color": Color(0.95, 0.6, 0.12, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/c2a1993b2af51c43daaea9287670ec9b9df07bb1561fabada66abbd5ca787f67.res",
+"name": "cone_geom",
+"preview_kind": "compiled_convex_hull",
+"size": Vector3(0.38, 0.38, 0.67499995),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3, 3.575, 6.2327465e-19),
+"type": 7
+}, {
+"color": Color(0.65, 0.3, 0.9, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/7f87b627347eef54cdc6334a9e2c16bb20d5bf4d69c85eddd5b1c718d5fe5e66.res",
+"name": "capsule_geom",
+"preview_kind": "analytic_boundary",
+"size": Vector3(0.24, 0.25, 0),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 4.4, 0),
+"type": 3
+}, {
+"color": Color(0.15, 0.8, 0.8, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/a69c12b06c0dd7dc028da3e25e2d6f3ce9bc11099be7a84e7bcaa6124d9c2bf9.res",
+"name": "ellipsoid_geom",
+"preview_kind": "analytic_boundary",
+"size": Vector3(0.4, 0.28, 0.22),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.254542, 3, 0),
+"type": 4
+}, {
+"color": Color(1, 0.8, 0.65, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/4b1df3283cc905f0abbbb26e2308e4c332181c5324d2be32296eb3b6b325e6b6.res",
+"name": "probe_geom",
+"preview_kind": "analytic_boundary",
+"size": Vector3(0.22, 0, 0),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 4.8, -0.38949227),
+"type": 2
+}, {
+"color": Color(0.5, 0.5, 0.5, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/22510fa75da5220e4786ee4d0fc32735340270171bff4cd52c3d2fe3609395bd.res",
+"name": "ageom",
+"preview_kind": "analytic_boundary",
+"size": Vector3(0.25, 0.25, 0.25),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3401675, 2.6761312, 0),
+"type": 6
+}, {
+"color": Color(0.5, 0.5, 0.5, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/1f01a50b6f958a9d7c01c4df29627c7527671be49da033391ec733a77c850d88.res",
+"name": "geom",
+"preview_kind": "analytic_boundary",
+"size": Vector3(0.25, 0.25, 0),
+"transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.353105, 3.687312, 0),
+"type": 5
+}]
+cache_path = "/home/zdyukino/.local/share/godot/app_userdata/MuJoCo 动态形状示例/mujoco_compile/dac7f808fc6cfa840d60f049/34/result.bin"
+legacy_snapshot = {
+"format": 1,
+"source": "res://assets/gallery.xml",
+"state": {
+"act": [],
+"ctrl": [],
+"integration": [0.0, -2.5, 0.0, 2.0, 1.0, 0.0, 0.0, 0.0, -1.2, 0.0, 2.6, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.2, 1.0, 0.0, 0.0, 0.0, 1.3, 0.0, 3.8, 1.0, 0.0, 0.0, 0.0, 2.6, 0.0, 4.4, 1.0, 0.0, 0.0, 0.0, 3.8, 0.0, 3.0, 1.0, 0.0, 0.0, 0.0, -1.2, 0.0, 4.8, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"qpos": [-2.5, 0.0, 2.0, 1.0, 0.0, 0.0, 0.0, -1.2, 0.0, 2.6, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.2, 1.0, 0.0, 0.0, 0.0, 1.3, 0.0, 3.8, 1.0, 0.0, 0.0, 0.0, 2.6, 0.0, 4.4, 1.0, 0.0, 0.0, 0.0, 3.8, 0.0, 3.0, 1.0, 0.0, 0.0, 0.0, -1.2, 0.0, 4.8, 1.0, 0.0, 0.0, 0.0],
+"qvel": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"time": 0.0
+},
+"xml": "<mujoco model=\"DynamicShapeGallery\">
+  <compiler angle=\"radian\"/>
+
+  <option integrator=\"implicitfast\"/>
+
+  <default>
+    <geom friction=\"0.9\"/>
+  </default>
+
+  <asset>
+    <mesh name=\"cone_mesh\" vertex=\"0.38 0 -0.45 0.372698 0.0741343 -0.45 0.351074 0.14542 -0.45 0.315958 0.211117 -0.45 0.268701 0.268701 -0.45 0.211117 0.315958 -0.45 0.14542 0.351074 -0.45 0.0741343 0.372698 -0.45 0 0.38 -0.45 -0.0741343 0.372698 -0.45 -0.14542 0.351074 -0.45 -0.211117 0.315958 -0.45 -0.268701 0.268701 -0.45 -0.315958 0.211117 -0.45 -0.351074 0.14542 -0.45 -0.372698 0.0741343 -0.45 -0.38 0 -0.45 -0.372698 -0.0741343 -0.45 -0.351074 -0.14542 -0.45 -0.315958 -0.211117 -0.45 -0.268701 -0.268701 -0.45 -0.211117 -0.315958 -0.45 -0.14542 -0.351074 -0.45 -0.0741343 -0.372698 -0.45 0 -0.38 -0.45 0.0741343 -0.372698 -0.45 0.14542 -0.351074 -0.45 0.211117 -0.315958 -0.45 0.268701 -0.268701 -0.45 0.315958 -0.211117 -0.45 0.351074 -0.14542 -0.45 0.372698 -0.0741343 -0.45 0 0 0.45\" face=\"0 1 32 1 2 32 2 3 32 3 4 32 4 5 32 5 6 32 6 7 32 7 8 32 8 9 32 9 10 32 10 11 32 11 12 32 12 13 32 13 14 32 14 15 32 15 16 32 16 17 32 17 18 32 18 19 32 19 20 32 20 21 32 21 22 32 22 23 32 23 24 32 24 25 32 25 26 32 26 27 32 27 28 32 28 29 32 29 30 32 30 31 32 31 0 32 0 2 1 0 3 2 0 4 3 0 5 4 0 6 5 0 7 6 0 8 7 0 9 8 0 10 9 0 11 10 0 12 11 0 13 12 0 14 13 0 15 14 0 16 15 0 17 16 0 18 17 0 19 18 0 20 19 0 21 20 0 22 21 0 23 22 0 24 23 0 25 24 0 26 25 0 27 26 0 28 27 0 29 28 0 30 29 0 31 30\"/>
+  </asset>
+
+  <worldbody>
+    <geom name=\"floor_geom\" size=\"6 4 0.1\" pos=\"0 0 -0.1\" type=\"box\" rgba=\"0.25 0.28 0.32 1\"/>
+    <body name=\"sphere\" pos=\"-2.5 0 2\">
+      <joint name=\"sphere_free\" type=\"free\"/>
+      <geom name=\"sphere_geom\" size=\"0.35\" rgba=\"0.9 0.25 0.18 1\" mass=\"1\"/>
+    </body>
+    <body name=\"box\" pos=\"-1.2 0 2.6\">
+      <joint name=\"box_free\" type=\"free\"/>
+      <geom name=\"box_geom\" size=\"0.35 0.35 0.35\" type=\"box\" rgba=\"0.2 0.55 0.95 1\" mass=\"1\"/>
+    </body>
+    <body name=\"cylinder\" pos=\"0 0 3.2\">
+      <joint name=\"cylinder_free\" type=\"free\"/>
+      <geom name=\"cylinder_geom\" size=\"0.32 0.45\" type=\"cylinder\" rgba=\"0.25 0.8 0.4 1\" mass=\"1\"/>
+    </body>
+    <body name=\"cone\" pos=\"1.3 0 3.8\">
+      <joint name=\"cone_free\" type=\"free\"/>
+      <geom name=\"cone_geom\" type=\"mesh\" rgba=\"0.95 0.6 0.12 1\" mass=\"1\" mesh=\"cone_mesh\"/>
+    </body>
+    <body name=\"capsule\" pos=\"2.6 0 4.4\">
+      <joint name=\"capsule_free\" type=\"free\"/>
+      <geom name=\"capsule_geom\" size=\"0.24 0.25\" type=\"capsule\" rgba=\"0.65 0.3 0.9 1\" mass=\"1\"/>
+    </body>
+    <body name=\"ellipsoid\" pos=\"3.8 0 3\">
+      <joint name=\"ellipsoid_free\" type=\"free\"/>
+      <geom name=\"ellipsoid_geom\" size=\"0.4 0.28 0.22\" type=\"ellipsoid\" rgba=\"0.15 0.8 0.8 1\" mass=\"1\"/>
+    </body>
+    <body name=\"probe\" pos=\"-1.2 0 4.8\">
+      <joint name=\"probe_free\" type=\"free\"/>
+      <geom name=\"probe_geom\" size=\"0.22\" rgba=\"1 0.8 0.65 1\" mass=\"0.25\"/>
+    </body>
+  </worldbody></mujoco>"
+}
+compiled_snapshot = {
+"format": 1,
+"source": "",
+"state": {
+"act": [],
+"ctrl": [],
+"integration": [0.0, 0.0, -1.2, -1.3312273, 2.6, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.2, 1.0, 0.0, 0.0, 0.0, 1.3, 0.0, 3.8, 1.0, 0.0, 0.0, 0.0, 2.6, 0.0, 4.4, 1.0, 0.0, 0.0, 0.0, 3.8, 0.0, 3.0, 1.0, 0.0, 0.0, 0.0, -1.2, 0.0, 4.8, 1.0, 0.0, 0.0, 0.0, -4.3401675, 0.0, 2.6761312, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"qpos": [0.0, -1.2, -1.3312273, 2.6, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 3.2, 1.0, 0.0, 0.0, 0.0, 1.3, 0.0, 3.8, 1.0, 0.0, 0.0, 0.0, 2.6, 0.0, 4.4, 1.0, 0.0, 0.0, 0.0, 3.8, 0.0, 3.0, 1.0, 0.0, 0.0, 0.0, -1.2, 0.0, 4.8, 1.0, 0.0, 0.0, 0.0, -4.3401675, 0.0, 2.6761312, 1.0, 0.0, 0.0, 0.0, 0.0],
+"qvel": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"time": 0.0
+},
+"xml": "<mujoco model=\"DynamicShapeGallery\">
+  <compiler angle=\"radian\"/>
+
+  <option integrator=\"implicitfast\"/>
+
+  <default>
+    <geom friction=\"0.9\"/>
+  </default>
+
+  <asset>
+    <material name=\"geom_2_material\" rgba=\"0.252459 0.325445 0.495542 1\"/>
+    <mesh name=\"cone_mesh\" vertex=\"0.38 0 -0.45 0.372698 0.0741343 -0.45 0.351074 0.14542 -0.45 0.315958 0.211117 -0.45 0.268701 0.268701 -0.45 0.211117 0.315958 -0.45 0.14542 0.351074 -0.45 0.0741343 0.372698 -0.45 0 0.38 -0.45 -0.0741343 0.372698 -0.45 -0.14542 0.351074 -0.45 -0.211117 0.315958 -0.45 -0.268701 0.268701 -0.45 -0.315958 0.211117 -0.45 -0.351074 0.14542 -0.45 -0.372698 0.0741343 -0.45 -0.38 0 -0.45 -0.372698 -0.0741343 -0.45 -0.351074 -0.14542 -0.45 -0.315958 -0.211117 -0.45 -0.268701 -0.268701 -0.45 -0.211117 -0.315958 -0.45 -0.14542 -0.351074 -0.45 -0.0741343 -0.372698 -0.45 0 -0.38 -0.45 0.0741343 -0.372698 -0.45 0.14542 -0.351074 -0.45 0.211117 -0.315958 -0.45 0.268701 -0.268701 -0.45 0.315958 -0.211117 -0.45 0.351074 -0.14542 -0.45 0.372698 -0.0741343 -0.45 0 0 0.45\" face=\"0 1 32 1 2 32 2 3 32 3 4 32 4 5 32 5 6 32 6 7 32 7 8 32 8 9 32 9 10 32 10 11 32 11 12 32 12 13 32 13 14 32 14 15 32 15 16 32 16 17 32 17 18 32 18 19 32 19 20 32 20 21 32 21 22 32 22 23 32 23 24 32 24 25 32 25 26 32 26 27 32 27 28 32 28 29 32 29 30 32 30 31 32 31 0 32 0 2 1 0 3 2 0 4 3 0 5 4 0 6 5 0 7 6 0 8 7 0 9 8 0 10 9 0 11 10 0 12 11 0 13 12 0 14 13 0 15 14 0 16 15 0 17 16 0 18 17 0 19 18 0 20 19 0 21 20 0 22 21 0 23 22 0 24 23 0 25 24 0 26 25 0 27 26 0 28 27 0 29 28 0 30 29 0 31 30\"/>
+  </asset>
+
+  <worldbody>
+    <geom name=\"floor_geom\" size=\"6 4 0.1\" pos=\"0 0 -0.1\" type=\"box\" rgba=\"0.25 0.28 0.32 1\"/>
+    <geom name=\"geom_2\" size=\"0.25 0.25 0.25\" pos=\"1.39176 0 1.66354\" type=\"box\" rgba=\"0.252459 0.325445 0.495542 1\" material=\"geom_2_material\"/>
+    <body name=\"sphere\" pos=\"-2.5 0 2\">
+      <inertial pos=\"0 0 0\" mass=\"1\" diaginertia=\"0.06 0.06 0.06\"/>
+      <joint name=\"sphere_free\"/>
+      <geom name=\"sphere_geom\" size=\"0.35\" pos=\"0 -0.562986 0\" rgba=\"0.9 0.25 0.18 1\" mass=\"0\"/>
+    </body>
+    <body name=\"box\" pos=\"-1.2 -1.33123 2.6\">
+      <joint name=\"box_free\" type=\"free\"/>
+      <geom name=\"box_geom\" size=\"0.35 0.35 0.35\" pos=\"0 2.18749 0\" type=\"box\" rgba=\"0.2 0.55 0.95 1\" mass=\"1\"/>
+    </body>
+    <body name=\"cylinder\" pos=\"0 0 3.2\">
+      <joint name=\"cylinder_free\" type=\"free\"/>
+      <geom name=\"cylinder_geom\" size=\"0.32 0.45\" pos=\"-0.374881 -1.80461 0\" quat=\"0.860741 0 -0.509044 0\" type=\"cylinder\" rgba=\"0.25 0.8 0.4 1\" mass=\"1\"/>
+      <geom name=\"cylinder_geom_copy\" size=\"0.32 0.45\" pos=\"-0.374881 0 0\" quat=\"0.860741 0 -0.509044 0\" type=\"cylinder\" rgba=\"0.25 0.8 0.4 1\" mass=\"1\"/>
+    </body>
+    <body name=\"cone\" pos=\"1.3 0 3.8\">
+      <joint name=\"cone_free\" type=\"free\"/>
+      <geom name=\"cone_geom\" type=\"mesh\" rgba=\"0.95 0.6 0.12 1\" mass=\"1\" mesh=\"cone_mesh\"/>
+    </body>
+    <body name=\"capsule\" pos=\"2.6 0 4.4\">
+      <joint name=\"capsule_free\" type=\"free\"/>
+      <geom name=\"capsule_geom\" size=\"0.24 0.25\" type=\"capsule\" rgba=\"0.65 0.3 0.9 1\" mass=\"1\"/>
+    </body>
+    <body name=\"ellipsoid\" pos=\"3.8 0 3\">
+      <joint name=\"ellipsoid_free\" type=\"free\"/>
+      <geom name=\"ellipsoid_geom\" size=\"0.4 0.28 0.22\" pos=\"-1.54546 0 0\" type=\"ellipsoid\" rgba=\"0.15 0.8 0.8 1\" mass=\"1\"/>
+    </body>
+    <body name=\"probe\" pos=\"-1.2 0 4.8\">
+      <joint name=\"probe_free\" type=\"free\"/>
+      <geom name=\"probe_geom\" size=\"0.22\" pos=\"2 0.389492 0\" rgba=\"1 0.8 0.65 1\" mass=\"0.25\"/>
+    </body>
+    <body name=\"body\" pos=\"-4.34017 0 2.67613\">
+      <joint name=\"joint\" type=\"free\"/>
+      <geom name=\"ageom\" size=\"0.25 0.25 0.25\" type=\"box\"/>
+      <body name=\"body_2\">
+        <joint name=\"joint_2\"/>
+        <geom name=\"geom\" size=\"0.25 0.25\" pos=\"0.987062 0 1.01118\" type=\"cylinder\"/>
+      </body>
+    </body>
+  </worldbody>
+</mujoco>
+"
+}
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5tuhn"]
+render_priority = 0
+shader = ExtResource("5_sc1dx")
+shader_parameter/base_color = Color(0.25, 0.28, 0.32, 1)
+shader_parameter/line_color = Color(0.34, 0.37, 0.41, 1)
+shader_parameter/spacing_m = 1.0
+shader_parameter/line_width_m = 0.015
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5tuhn"]
+albedo_color = Color(0.9, 0.25, 0.18, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2gh4u"]
+albedo_color = Color(0.2, 0.55, 0.95, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_devvj"]
+albedo_color = Color(0.25, 0.8, 0.4, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3b0ty"]
+albedo_color = Color(0.25, 0.8, 0.4, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bg4s2"]
+albedo_color = Color(0.95, 0.6, 0.12, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hhcpw"]
+albedo_color = Color(0.65, 0.3, 0.9, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mxvw5"]
+albedo_color = Color(0.15, 0.8, 0.8, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xrxkg"]
+albedo_color = Color(1, 0.8, 0.65, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sqvbp"]
+albedo_color = Color(0.5, 0.5, 0.5, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hri7i"]
+albedo_color = Color(0.5, 0.5, 0.5, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w3rk5"]
+albedo_color = Color(0.2524592, 0.3254453, 0.49554223, 1)
+roughness = 0.85
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_wkp8b"]
 panorama = ExtResource("4_trn2v")
@@ -20,12 +1989,203 @@ ambient_light_energy = 0.65
 
 [node name="ShapeGallery" type="Node3D" unique_id=522929155]
 script = ExtResource("1_fos0i")
-world_model = ExtResource("2_3dxm6")
+world_design = SubResource("Resource_hri7i")
 metadata/example = "One shared MuJoCo space; 7 freejoint rigid bodies. Cone = compiled convex mesh, not native cone or SDF."
 
 [node name="Model" type="Node3D" parent="." unique_id=334945183]
 script = ExtResource("3_lgr22")
-model = ExtResource("2_3dxm6")
+design = SubResource("Resource_w3rk5")
+design_instance_id = "7484f06a39a917a6afbc820deb640af3"
+
+[node name="floor_geom" type="Node3D" parent="Model" unique_id=613615939]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
+script = ExtResource("4_sc1dx")
+entity_id = "5cd3503202a80c8a694d32ea5ca77b71"
+
+[node name="_Visual" type="MeshInstance3D" parent="Model/floor_geom" unique_id=1702523057]
+material_override = SubResource("ShaderMaterial_5tuhn")
+mesh = ExtResource("6_2gh4u")
+
+[node name="sphere" type="Node3D" parent="Model" unique_id=1355337365]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 2, 0)
+script = ExtResource("6_5tuhn")
+entity_id = "07a0b63f6cc56bb5f57189f50797b40e"
+
+[node name="sphere_free" type="Node3D" parent="Model/sphere" unique_id=1598517610]
+script = ExtResource("7_2gh4u")
+entity_id = "9bffaff985920b73fadd2bb4d392c1c5"
+
+[node name="sphere_geom" type="Node3D" parent="Model/sphere" unique_id=9430026]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.56298625)
+script = ExtResource("4_sc1dx")
+entity_id = "824b4464e6cd7f6f77d764c017317221"
+
+[node name="_Visual" type="MeshInstance3D" parent="Model/sphere/sphere_geom" unique_id=1260870825]
+material_override = SubResource("StandardMaterial3D_5tuhn")
+mesh = ExtResource("9_devvj")
+
+[node name="box" type="Node3D" parent="Model" unique_id=667754698]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 2.6, 1.3312273)
+script = ExtResource("6_5tuhn")
+entity_id = "2bca0a6c15f4372fddcfbd832a38f596"
+
+[node name="box_free" type="Node3D" parent="Model/box" unique_id=526272654]
+script = ExtResource("7_2gh4u")
+entity_id = "963c669fe7932a2f257a42c4c0c16028"
+
+[node name="box_geom" type="Node3D" parent="Model/box" unique_id=1784656454]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.1874897)
+script = ExtResource("4_sc1dx")
+entity_id = "523600d1d6011c04bac78fe27bdbc2f9"
+
+[node name="_Visual" type="MeshInstance3D" parent="Model/box/box_geom" unique_id=579872920]
+material_override = SubResource("StandardMaterial3D_2gh4u")
+mesh = ExtResource("10_3b0ty")
+
+[node name="cylinder" type="Node3D" parent="Model" unique_id=663692153]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
+script = ExtResource("6_5tuhn")
+entity_id = "07ad54d8faba5cd5045dece051efc958"
+
+[node name="cylinder_free" type="Node3D" parent="Model/cylinder" unique_id=1386302844]
+script = ExtResource("7_2gh4u")
+entity_id = "69bd0586f3c734ba8a41598e9ff992a9"
+
+[node name="cylinder_geom" type="Node3D" parent="Model/cylinder" unique_id=38892428]
+transform = Transform3D(0.48174852, -0.8763095, 0, 0.8763095, 0.48174852, 0, 0, 0, 1, -0.3748808, 0, 1.8046052)
+script = ExtResource("4_sc1dx")
+entity_id = "47d1c35320528cf2dd47153624fab36a"
+
+[node name="_Visual" type="MeshInstance3D" parent="Model/cylinder/cylinder_geom" unique_id=1360458975]
+transform = Transform3D(1, 2.9802322e-08, 0, -2.9802322e-08, 1, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_devvj")
+mesh = ExtResource("11_bg4s2")
+
+[node name="cylinder_geom_copy" type="Node3D" parent="Model/cylinder" unique_id=621092214]
+transform = Transform3D(0.48174852, -0.8763095, 0, 0.8763095, 0.48174852, 0, 0, 0, 1, -0.3748808, 0, 0)
+script = ExtResource("4_sc1dx")
+entity_id = "8a62b7909ff2b3017d9a73d3b8a5e698"
+
+[node name="_Visual" type="MeshInstance3D" parent="Model/cylinder/cylinder_geom_copy" unique_id=178061535]
+transform = Transform3D(1, 2.9802322e-08, 0, -2.9802322e-08, 1, 0, 0, 0, 1, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_3b0ty")
+mesh = ExtResource("11_bg4s2")
+
+[node name="cone" type="Node3D" parent="Model" unique_id=1954788214]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3, 3.8, 0)
+script = ExtResource("6_5tuhn")
+entity_id = "277f1355d93450085190b350d802e15b"
+
+[node name="cone_free" type="Node3D" parent="Model/cone" unique_id=517645533]
+script = ExtResource("7_2gh4u")
+entity_id = "4505b907046581f575d80edc86bd0f13"
+
+[node name="cone_geom" type="Node3D" parent="Model/cone" unique_id=1538353712]
+script = ExtResource("4_sc1dx")
+entity_id = "17496b5181434c2a8ed4d02213669f69"
+
+[node name="_Visual" type="MeshInstance3D" parent="Model/cone/cone_geom" unique_id=464946398]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2249999, 6.2327465e-19)
+material_override = SubResource("StandardMaterial3D_bg4s2")
+mesh = ExtResource("12_hhcpw")
+
+[node name="capsule" type="Node3D" parent="Model" unique_id=1441721871]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 4.4, 0)
+script = ExtResource("6_5tuhn")
+entity_id = "ed87578753bf4988fb31408ae045c04b"
+
+[node name="capsule_free" type="Node3D" parent="Model/capsule" unique_id=423015083]
+script = ExtResource("7_2gh4u")
+entity_id = "183bd71ed3ad286b90b80d76684bb4ca"
+
+[node name="capsule_geom" type="Node3D" parent="Model/capsule" unique_id=1809852405]
+script = ExtResource("4_sc1dx")
+entity_id = "6f8cde46b3d620837b6924cd6e8f02bf"
+
+[node name="_Visual" type="MeshInstance3D" parent="Model/capsule/capsule_geom" unique_id=1564950194]
+material_override = SubResource("StandardMaterial3D_hhcpw")
+mesh = ExtResource("13_mxvw5")
+
+[node name="ellipsoid" type="Node3D" parent="Model" unique_id=1227975478]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 3, 0)
+script = ExtResource("6_5tuhn")
+entity_id = "6ac82f3e12abadbd17d2bf3dc1990f47"
+
+[node name="ellipsoid_free" type="Node3D" parent="Model/ellipsoid" unique_id=1309856687]
+script = ExtResource("7_2gh4u")
+entity_id = "3dd60139ed729f5d928a277ca819d449"
+
+[node name="ellipsoid_geom" type="Node3D" parent="Model/ellipsoid" unique_id=1448869213]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5454578, 0, 0)
+script = ExtResource("4_sc1dx")
+entity_id = "05e1a14c5bc97fcb792dacea8cc0cedc"
+
+[node name="_Visual" type="MeshInstance3D" parent="Model/ellipsoid/ellipsoid_geom" unique_id=2047111526]
+transform = Transform3D(0.4, 0, 0, 0, 0.22, 0, 0, 0, 0.28, 0, 0, 0)
+material_override = SubResource("StandardMaterial3D_mxvw5")
+mesh = ExtResource("14_xrxkg")
+
+[node name="probe" type="Node3D" parent="Model" unique_id=350647359]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 4.8, 0)
+script = ExtResource("6_5tuhn")
+entity_id = "3c85183c5479ea584f2d1d8f95036b95"
+
+[node name="probe_free" type="Node3D" parent="Model/probe" unique_id=798946604]
+script = ExtResource("7_2gh4u")
+entity_id = "a2f9103d375333de8458b19e5d5063b6"
+
+[node name="probe_geom" type="Node3D" parent="Model/probe" unique_id=207214928]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -0.38949227)
+script = ExtResource("4_sc1dx")
+entity_id = "7a7fc0557f099c17cb2fe805280e0d34"
+
+[node name="_Visual" type="MeshInstance3D" parent="Model/probe/probe_geom" unique_id=1669857381]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9604645e-08, 0, 0)
+material_override = SubResource("StandardMaterial3D_xrxkg")
+mesh = ExtResource("15_sqvbp")
+
+[node name="body" type="Node3D" parent="Model" unique_id=1714979065]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3401675, 2.6761312, 0)
+script = ExtResource("6_5tuhn")
+entity_id = "7936dd4a38ee5487e54b358dc5ee9fd5"
+
+[node name="joint" type="Node3D" parent="Model/body" unique_id=958617628]
+script = ExtResource("7_2gh4u")
+entity_id = "38bd466545080ba6bce1767875593922"
+
+[node name="ageom" type="Node3D" parent="Model/body" unique_id=2007193519]
+script = ExtResource("4_sc1dx")
+entity_id = "0b9d80c2cca398f6f4eb661bc3a9fbea"
+
+[node name="_Visual" type="MeshInstance3D" parent="Model/body/ageom" unique_id=1063763172]
+material_override = SubResource("StandardMaterial3D_sqvbp")
+mesh = ExtResource("16_hri7i")
+
+[node name="body_2" type="Node3D" parent="Model/body" unique_id=808569201]
+script = ExtResource("6_5tuhn")
+entity_id = "cdc876fb6c0c14fd1cba9ff4ca514ebb"
+
+[node name="joint_2" type="Node3D" parent="Model/body/body_2" unique_id=10473284]
+script = ExtResource("7_2gh4u")
+entity_id = "142507360c4a0938df0ab63b879d0bd6"
+
+[node name="geom" type="Node3D" parent="Model/body/body_2" unique_id=2123035102]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98706234, 1.0111806, 0)
+script = ExtResource("4_sc1dx")
+entity_id = "4afce7a375290eeea4e826a16b8420f8"
+
+[node name="_Visual" type="MeshInstance3D" parent="Model/body/body_2/geom" unique_id=1532451127]
+material_override = SubResource("StandardMaterial3D_hri7i")
+mesh = ExtResource("17_w3rk5")
+
+[node name="geom_2" type="Node3D" parent="Model" unique_id=2115346227]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3917552, 1.6635416, 0)
+script = ExtResource("4_sc1dx")
+entity_id = "d8c5c82148520cc3e05052b308ffd85f"
+
+[node name="_Visual" type="MeshInstance3D" parent="Model/geom_2" unique_id=648737604]
+material_override = SubResource("StandardMaterial3D_w3rk5")
+mesh = ExtResource("16_hri7i")
 
 [node name="Camera" type="Camera3D" parent="." unique_id=1717046568]
 transform = Transform3D(0.8, -0.22283442, 0.55708605, 0, 0.9284767, 0.3713907, -0.6, -0.29711255, 0.74278134, 8, 6, 10)

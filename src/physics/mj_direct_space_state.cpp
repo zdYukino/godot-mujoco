@@ -22,8 +22,9 @@ namespace {
 thread_local const MjDirectSpaceState *active_query=nullptr;
 struct QueryScope {
  const MjDirectSpaceState &state; const MjDirectSpaceState *previous;
- QueryScope(const MjDirectSpaceState &s,const char *kind):state(s),previous(active_query){active_query=&s;s.query_error="";s.query_kind=kind;s.query_details.clear();++s.query_sequence;}
- ~QueryScope(){active_query=previous;}
+ RID previous_space;
+ QueryScope(const MjDirectSpaceState &s,const char *kind):state(s),previous(active_query){if(s.server){previous_space=s.server->query_space_rid;s.server->query_space_rid=s.rid;}active_query=&s;s.query_error="";s.query_kind=kind;s.query_details.clear();++s.query_sequence;}
+ ~QueryScope(){active_query=previous;if(state.server)state.server->query_space_rid=previous_space;}
 };
 void query_problem(const String &reason){if(active_query&&active_query->query_error.is_empty())active_query->query_error=reason;mj_unsupported(reason.utf8().get_data());}
 
@@ -111,7 +112,11 @@ struct AreaQueryGeom {
 };
 std::vector<AreaQueryGeom> area_query_geometries(MjDirectSpaceState &state,uint32_t mask,bool pick,bool &valid){
  valid=true;std::vector<AreaQueryGeom> result;
- for(const auto &entry:state.server->areas){const auto &area=*entry.second;
+ auto*query_space_value=state.server->space(state.rid);
+ std::vector<const MjArea*> accepted_areas;
+ if(query_space_value&&query_space_value->authoring){for(const auto&entry:query_space_value->committed_areas)accepted_areas.push_back(&entry.second);}
+ else for(const auto&entry:state.server->areas)accepted_areas.push_back(entry.second.get());
+ for(const auto *accepted:accepted_areas){const auto &area=*accepted;
   if(area.space!=state.rid||state.server->pending_free.count(area.rid.get_id())||!(area.layer&mask)||(pick&&!area.ray_pickable)||state.is_body_excluded_from_query(area.rid))continue;
   for(size_t index=0;index<area.shapes.size();++index){const auto &instance=area.shapes[index];auto*shape=state.server->shape(instance.shape);
    if(instance.disabled||!shape||state.server->pending_free.count(instance.shape.get_id()))continue;

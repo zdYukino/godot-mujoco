@@ -1,5 +1,7 @@
 > [中文使用指南](mjcf-editor.zh-CN.md) · [当前范围与验证](freebase-clock-validation.zh-CN.md)。本文保留原阶段的英文说明；版本和支持范围以当前入口为准。
 
+> The default editor now uses persistent body/geom/joint scene nodes, native Inspector/Gizmo editing and Ctrl+S. See the [node authoring guide](node-authoring.zh-CN.md). The draft/Apply/publish workflow below documents the legacy path.
+
 # MuJoCo editor milestone
 
 Development baseline: `ccaa10a1ff7e27428e00797dfcc612d2a2a632ae`.

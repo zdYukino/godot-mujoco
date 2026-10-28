@@ -1,0 +1,44 @@
+{
+  "author": {
+    "checks": 42,
+    "failed": 0,
+    "failures": []
+  },
+  "appearance": {
+    "checks": 38,
+    "failed": 0,
+    "failures": []
+  },
+  "runtime": {
+    "checks": 33,
+    "failed": 0,
+    "failures": []
+  },
+  "editor": {
+    "checks": 32,
+    "failed": 0,
+    "failures": []
+  },
+  "live": {
+    "checks": 18,
+    "failed": 0,
+    "failures": []
+  },
+  "gui": {
+    "failed": 0,
+    "fields": [
+      "mjcf/color",
+      "mjcf/opacity",
+      "mjcf/texture_file"
+    ],
+    "color": [
+      0.400000005960464,
+      0.800000011920929,
+      1.0,
+      0.550000011920929
+    ],
+    "texture_managed": true,
+    "sibling_unchanged": true,
+    "saved_and_reopened_in_new_editor_process": true
+  }
+}

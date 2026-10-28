@@ -1,0 +1,80 @@
+{
+  "author": {
+    "checks": 42,
+    "failed": 0,
+    "failures": []
+  },
+  "runtime": {
+    "checks": 33,
+    "failed": 0,
+    "failures": []
+  },
+  "editor": {
+    "checks": 15,
+    "failed": 0,
+    "failures": []
+  },
+  "live": {
+    "checks": 16,
+    "failed": 0,
+    "failures": []
+  },
+  "examples": {
+    "shape_gallery": {
+      "failed": 0,
+      "passed": 15
+    },
+    "g1_passive": {
+      "failed": 0,
+      "passed": 21
+    },
+    "sdf_terrain": {
+      "failed": 0,
+      "passed": 15
+    },
+    "pendulum": {
+      "failed": 0,
+      "passed": 38
+    },
+    "light_workflow": {
+      "passed": 9,
+      "failed": 0
+    },
+    "new_project": {
+      "failed": 0,
+      "passed": 11
+    }
+  },
+  "native": {
+    "passed": 149,
+    "failed": 0
+  },
+  "clock": {
+    "passed": 118,
+    "failed": 0,
+    "csharp_binding": "passed"
+  },
+  "setup": {
+    "tests": 42,
+    "failed": 0
+  },
+  "independent_mjworld": {
+    "status": "passed"
+  },
+  "gui": {
+    "failed": 0,
+    "checks": [
+      "real mouse import dialog",
+      "formal scene hierarchy",
+      "native Ctrl+D and new identities",
+      "native Ctrl+Z / Ctrl+Shift+Z",
+      "actual capsule Gizmo drag; one source revision",
+      "Gizmo Undo and Redo preserve source pose",
+      "Inspector damping field edit",
+      "native Ctrl+S",
+      "independent editor restart restores hierarchy, pose, damping and identity"
+    ],
+    "display": ":98 (isolated real X11 GUI, llvmpipe)"
+  },
+  "native_sha256": "20ef4e842b9216f1f36d586f255a47c5b9f8c2ab060a63cc026b4dbe77124796"
+}

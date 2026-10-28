@@ -1,57 +1,505 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/mj_pendulum_demo.gd" id="1"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/author_resource.gd" id="2_lgr22"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/model_instance.gd" id="3_trn2v"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/body_node.gd" id="4_03owx"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/joint_node.gd" id="5_wkp8b"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/model/geom_node.gd" id="6_20pc6"]
+[ext_resource type="CapsuleMesh" path="res://mujoco_models/visual_cache/d1ca746726d89e9976750f6fef7a43f4d994b4476cb8e934ced9d2e8298984e2.res" id="7_5vvyt"]
+
+[sub_resource type="Resource" id="Resource_c6i3y"]
+script = ExtResource("2_lgr22")
+document_id = "8ec64aa5d178a59cf76e7f4e8b458e56"
+tree = {
+"attrs": {
+"model": "pendulum"
+},
+"children": [{
+"tag": "#text",
+"text": "
+  "
+}, {
+"attrs": {
+"gravity": "0 0 -9.81",
+"timestep": "0.01"
+},
+"children": [],
+"id": "e72f45f77d409a96c79be645a80481fb",
+"tag": "option"
+}, {
+"tag": "#text",
+"text": "
+  "
+}, {
+"attrs": {},
+"children": [{
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "pendulum",
+"pos": "0 0 1"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"axis": "0 1 0",
+"name": "hinge",
+"type": "hinge"
+},
+"children": [],
+"id": "f0c49a83be4494e27ab149b77468bb4c",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"density": "600",
+&"name": "geom_37a485da38",
+&"pos": "0.0 0.0 -0.30000001192092896",
+&"quat": "0.0 0.0 1.0 0.0",
+"size": "0.04 0.30000001192092896",
+"type": "capsule"
+},
+"children": [],
+"id": "37a485da38a70f7c8a2f2dda449eb3ed",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}],
+"id": "9b7fb3396f95a6ae5df893c30ff3c19a",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+  "
+}],
+"id": "840cc207254b3864d9c34b52fe5c253d",
+"tag": "worldbody"
+}, {
+"tag": "#text",
+"text": "
+  "
+}, {
+"attrs": {},
+"children": [{
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"gear": "50",
+"joint": "hinge",
+"name": "hinge_motor"
+},
+"children": [],
+"id": "fe93ee26b5c0572811c9ed2e24bdaadb",
+"tag": "motor"
+}, {
+"tag": "#text",
+"text": "
+  "
+}],
+"id": "231b5b9f9863a99033fa99e5e57f67d6",
+"tag": "actuator"
+}, {
+"tag": "#text",
+"text": "
+  "
+}, {
+"attrs": {},
+"children": [{
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"joint": "hinge",
+"name": "hinge_pos"
+},
+"children": [],
+"id": "3eb950b4c20cb5bedfcc9bfb89c8fa46",
+"tag": "jointpos"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"joint": "hinge",
+"name": "hinge_vel"
+},
+"children": [],
+"id": "0c97489631d14dbbd33d88f643615f13",
+"tag": "jointvel"
+}, {
+"tag": "#text",
+"text": "
+  "
+}],
+"id": "9444414813e7552841fd370a78dba544",
+"tag": "sensor"
+}],
+"id": "d8082690e98702f091b8389784b0be82",
+"tag": "mujoco"
+}
 
 [sub_resource type="PlaneMesh" id="Plane1"]
 size = Vector2(10, 10)
 
-[sub_resource type="CapsuleMesh" id="Cap1"]
-radius = 0.04
-height = 0.6
+[sub_resource type="Resource" id="Resource_c2ibq"]
+script = ExtResource("2_lgr22")
+document_id = "ed687e1725a6880a25e7d115fffd3378"
+tree = {
+"attrs": {
+"model": "pendulum"
+},
+"children": [{
+"tag": "#text",
+"text": "
+  "
+}, {
+"attrs": {
+"gravity": "0 0 -9.81",
+"timestep": "0.01"
+},
+"children": [],
+"id": "e72f45f77d409a96c79be645a80481fb",
+"tag": "option"
+}, {
+"tag": "#text",
+"text": "
+  "
+}, {
+"attrs": {},
+"children": [{
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"name": "pendulum",
+"pos": "0 0 1"
+},
+"children": [{
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"axis": "0 1 0",
+"name": "hinge",
+"type": "hinge"
+},
+"children": [],
+"id": "f0c49a83be4494e27ab149b77468bb4c",
+"tag": "joint"
+}, {
+"tag": "#text",
+"text": "
+      "
+}, {
+"attrs": {
+"density": "600",
+&"name": "geom_37a485da38",
+&"pos": "0.0 0.0 -0.30000001192092896",
+&"quat": "0.0 0.0 1.0 0.0",
+"size": "0.04 0.30000001192092896",
+"type": "capsule"
+},
+"children": [],
+"id": "37a485da38a70f7c8a2f2dda449eb3ed",
+"tag": "geom"
+}, {
+"tag": "#text",
+"text": "
+    "
+}],
+"id": "9b7fb3396f95a6ae5df893c30ff3c19a",
+"tag": "body"
+}, {
+"tag": "#text",
+"text": "
+  "
+}],
+"id": "840cc207254b3864d9c34b52fe5c253d",
+"tag": "worldbody"
+}, {
+"tag": "#text",
+"text": "
+  "
+}, {
+"attrs": {},
+"children": [{
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"gear": "50",
+"joint": "hinge",
+"name": "hinge_motor"
+},
+"children": [],
+"id": "fe93ee26b5c0572811c9ed2e24bdaadb",
+"tag": "motor"
+}, {
+"tag": "#text",
+"text": "
+  "
+}],
+"id": "231b5b9f9863a99033fa99e5e57f67d6",
+"tag": "actuator"
+}, {
+"tag": "#text",
+"text": "
+  "
+}, {
+"attrs": {},
+"children": [{
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"joint": "hinge",
+"name": "hinge_pos"
+},
+"children": [],
+"id": "3eb950b4c20cb5bedfcc9bfb89c8fa46",
+"tag": "jointpos"
+}, {
+"tag": "#text",
+"text": "
+    "
+}, {
+"attrs": {
+"joint": "hinge",
+"name": "hinge_vel"
+},
+"children": [],
+"id": "0c97489631d14dbbd33d88f643615f13",
+"tag": "jointvel"
+}, {
+"tag": "#text",
+"text": "
+  "
+}],
+"id": "9444414813e7552841fd370a78dba544",
+"tag": "sensor"
+}],
+"id": "d8082690e98702f091b8389784b0be82",
+"tag": "mujoco"
+}
+validated_revision = 0
+cached_entities = [{
+"kind": "body",
+"name": "world",
+"parent": "",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": false,
+"inertia": [0.0, 0.0, 0.0],
+"inertia_mode": "automatic",
+"ipos": [0.0, 0.0, 0.0],
+"iquat": [1.0, 0.0, 0.0, 0.0],
+"mass": 0.0,
+"pos": [0.0, 0.0, 0.0],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "body",
+"name": "pendulum",
+"parent": "world",
+"properties": {
+"compiler_inertia_policy": "automatic",
+"explicit_inertia": false,
+"inertia": [0.07103760026026124, 0.07103760026026124, 0.0015505896603712867],
+"inertia_mode": "automatic",
+"ipos": [0.0, 0.0, -0.3],
+"iquat": [0.0, 0.0, 1.0, 0.0],
+"mass": 1.9704069842368677,
+"pos": [0.0, 0.0, 1.0],
+"pose_editable": true,
+"preview_transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0),
+"quat": [1.0, 0.0, 0.0, 0.0]
+}
+}, {
+"kind": "joint",
+"name": "hinge",
+"parent": "pendulum",
+"properties": {
+"axis": [0.0, 1.0, 0.0],
+"damping": 0.0,
+"damping_coefficients": [0.0, 0.0, 0.0],
+"damping_editable": true,
+"frictionloss": 0.0,
+"limited": false,
+"pos": [0.0, 0.0, 0.0],
+"qpos": [0.0],
+"range": [0.0, 0.0],
+"type": "hinge",
+"unit": "rad"
+}
+}, {
+"kind": "geom",
+"name": "geom_37a485da38",
+"parent": "pendulum",
+"properties": {
+"conaffinity": 1,
+"contype": 1,
+"density": 600.0,
+"friction": [1.0, 0.005, 0.0001],
+"margin": 0.0,
+"mass": "density-derived",
+"mesh": "",
+"pos": [0.0, 0.0, -0.3],
+"pose_editable": true,
+"quat": [0.0, 0.0, 1.0, 0.0],
+"size": [0.04, 0.3, 0.0],
+"size_editable": true,
+"type": 3
+}
+}, {
+"kind": "actuator",
+"name": "hinge_motor",
+"parent": "",
+"properties": {
+"bias_type": 0,
+"control": 0.0,
+"ctrl_limited": false,
+"ctrl_range": [0.0, 0.0],
+"dynamics_type": 0,
+"gain_type": 0,
+"gear": [50.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"kp": "N/A",
+"kv": "N/A",
+"target_joint": "hinge",
+"transmission_type": 0,
+"type": "general/non-PD"
+}
+}]
+cached_geometry = [{
+"color": Color(0.5, 0.5, 0.5, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/d1ca746726d89e9976750f6fef7a43f4d994b4476cb8e934ced9d2e8298984e2.res",
+"name": "geom_37a485da38",
+"size": Vector3(0.04, 0.3, 0),
+"transform": Transform3D(-1, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0.7, 0),
+"type": 3
+}]
+collision_geometry = [{
+"color": Color(0.5, 0.5, 0.5, 1),
+&"mesh_path": "res://mujoco_models/visual_cache/d1ca746726d89e9976750f6fef7a43f4d994b4476cb8e934ced9d2e8298984e2.res",
+"name": "geom_37a485da38",
+"preview_kind": "analytic_boundary",
+"size": Vector3(0.04, 0.3, 0),
+"transform": Transform3D(-1, 0, 0, 0, -1, 0, 0, 0, 1, 0, 0.7, 0),
+"type": 3
+}]
+compiled_snapshot = {
+"format": 1,
+"source": "",
+"state": {
+"act": [],
+"ctrl": [0.0],
+"integration": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+"qpos": [0.0],
+"qvel": [0.0],
+"time": 0.0
+},
+"xml": "<mujoco model=\"pendulum\">
+  <compiler angle=\"radian\"/>
+
+  <option timestep=\"0.01\"/>
+
+  <worldbody>
+    <body name=\"pendulum\" pos=\"0 0 1\">
+      <joint name=\"hinge\" axis=\"0 1 0\"/>
+      <geom name=\"geom_37a485da38\" size=\"0.04 0.3\" pos=\"0 0 -0.3\" quat=\"0 0 1 0\" type=\"capsule\" density=\"600\"/>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <general name=\"hinge_motor\" joint=\"hinge\" gear=\"50\"/>
+  </actuator>
+
+  <sensor>
+    <jointpos joint=\"hinge\" name=\"hinge_pos\"/>
+    <jointvel joint=\"hinge\" name=\"hinge_vel\"/>
+  </sensor>
+</mujoco>
+"
+}
 
 [sub_resource type="StandardMaterial3D" id="Mat1"]
 albedo_color = Color(0.2, 0.6, 1, 1)
-
-[sub_resource type="SphereMesh" id="Sph1"]
-radius = 0.07
-height = 0.14
 
 [sub_resource type="StandardMaterial3D" id="Mat2"]
 albedo_color = Color(1, 0.3, 0.2, 1)
 emission_enabled = true
 emission = Color(0.3, 0.05, 0.02, 1)
 
-[node name="Main" type="Node3D"]
-script = ExtResource("1")
+[sub_resource type="SphereMesh" id="Sph1"]
+radius = 0.07
+height = 0.14
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Main" type="Node3D" unique_id=800249550]
+script = ExtResource("1")
+world_design = SubResource("Resource_c6i3y")
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=756301683]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 3)
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1138651433]
 transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 3, 0)
 shadow_enabled = true
 
-[node name="Ground" type="MeshInstance3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+[node name="Ground" type="MeshInstance3D" parent="." unique_id=1878586393]
 mesh = SubResource("Plane1")
 
-[node name="Pendulum" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+[node name="UI" type="CanvasLayer" parent="." unique_id=1638041875]
 
-[node name="Rod" type="MeshInstance3D" parent="Pendulum"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.3, 0)
-mesh = SubResource("Cap1")
-material_override = SubResource("Mat1")
-
-[node name="Pivot" type="MeshInstance3D" parent="Pendulum"]
-mesh = SubResource("Sph1")
-material_override = SubResource("Mat2")
-
-[node name="UI" type="CanvasLayer" parent="."]
-
-[node name="Status" type="Label" parent="UI"]
+[node name="Status" type="Label" parent="UI" unique_id=1897765592]
 offset_left = 16.0
 offset_top = 12.0
 offset_right = 640.0
 offset_bottom = 40.0
 text = "Starting..."
+
+[node name="Model" type="Node3D" parent="." unique_id=1079502163]
+script = ExtResource("3_trn2v")
+design = SubResource("Resource_c2ibq")
+
+[node name="pendulum" type="Node3D" parent="Model" unique_id=756357600]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("4_03owx")
+entity_id = "9b7fb3396f95a6ae5df893c30ff3c19a"
+
+[node name="hinge" type="Node3D" parent="Model/pendulum" unique_id=667947534]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
+script = ExtResource("5_wkp8b")
+entity_id = "f0c49a83be4494e27ab149b77468bb4c"
+
+[node name="geom_37a485da38" type="Node3D" parent="Model/pendulum" unique_id=445494412]
+transform = Transform3D(-1, 0, 0, 0, -1, 0, 0, 0, 1, 0, -0.3, 0)
+script = ExtResource("6_20pc6")
+entity_id = "37a485da38a70f7c8a2f2dda449eb3ed"
+
+[node name="_Visual" type="MeshInstance3D" parent="Model/pendulum/geom_37a485da38" unique_id=898604528]
+material_override = SubResource("Mat1")
+mesh = ExtResource("7_5vvyt")
+
+[node name="Pivot" type="MeshInstance3D" parent="Model/pendulum" unique_id=1903066282]
+material_override = SubResource("Mat2")
+mesh = SubResource("Sph1")

@@ -5,7 +5,12 @@ ROOT=$(cd "$(dirname "$0")/../.." && pwd)
 : "${OUT:=$(mktemp -d /tmp/gmj-light-workflow.XXXXXX)}"
 [[ ! -e "$OUT/project" ]] || exit 2
 mkdir -p "$OUT/project"
-cp "$ROOT/examples/light_workflow/"{prepare.gd,project.godot,Main.tscn,LightWorkflow.cs,LightWorkflow.csproj} "$OUT/project/"
+python3 - "$ROOT" "$OUT/project" <<'PY_COPY'
+import pathlib,shutil,sys
+shutil.copytree(pathlib.Path(sys.argv[1])/'examples/light_workflow',sys.argv[2],dirs_exist_ok=True,
+                ignore=shutil.ignore_patterns('addons','.godot','bin','obj'))
+PY_COPY
+cp "$ROOT/global.json" "$OUT/project/global.json"
 cp -a "$ROOT/addons" "$OUT/project/"
 run_stage() {
  local stage="$1" code; shift
@@ -16,23 +21,18 @@ run_stage() {
  printf '%s\t%s\n' "$stage" "$code" >> "$OUT/executions.tsv"
  [[ "$code" == 0 ]] || { echo "$stage failed ($code): $OUT/$stage.log" >&2; return "$code"; }
 }
-run_stage import bash "$ROOT/scripts/import_headless.sh" "$OUT/project"
-run_stage prepare "$GODOT_BIN" --headless --path "$OUT/project" --script res://prepare.gd
 run_stage build dotnet build "$OUT/project/LightWorkflow.csproj" -c Debug
+run_stage import bash "$ROOT/scripts/import_headless.sh" "$OUT/project"
 run_stage runtime "$GODOT_BIN" --headless --path "$OUT/project" -- --self-test
 python3 - "$OUT" <<'PY'
-import pathlib,json,sys,xml.etree.ElementTree as ET
+import pathlib,json,sys
 p=pathlib.Path(sys.argv[1])
 for f in p.glob('*.log'):
  s=f.read_text();assert 'ERROR:' not in s and 'leak' not in s.lower(),f
 rows=[x.split(' ',1)[1] for x in (p/'runtime.log').read_text().splitlines() if x.startswith('LIGHT_WORKFLOW_RESULT ')];assert len(rows)==1
 r=json.loads(rows[0]);assert r['failed']==0
-models=list((p/'project/models').glob('typed*/model.xml'));assert models
-for model in models:
- root=ET.parse(model).getroot()
- assert root.find('compiler').get('angle')=='radian'
- joint=root.find(".//joint[@name='hinge']")
- assert [float(x) for x in joint.get('range').split()]==[-1.0,1.0],model
-r['packaged_radian_limits_verified']=True
+s=(p/'project/Main.tscn').read_text()
+assert 'world_design =' in s and 'entity_id =' in s and '"range": "-1 1"' in s
+r['saved_author_scene_verified']=True
 (p/'results.json').write_text(json.dumps(r,indent=2)+'\n');print('LIGHT WORKFLOW PASS',r)
 PY

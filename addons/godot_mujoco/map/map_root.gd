@@ -39,7 +39,24 @@ func _exit_tree() -> void:
 	owns_world = false
 
 func load_collisions() -> void:
+	var ancestor := get_parent()
+	while ancestor:
+		if ancestor is MjRuntimeWorld and ancestor.world_design and ancestor.author_started and not get_meta("mujoco_editor_staging",false):
+			last_error = "Design changes must be requested from the connected editor"; return
+		ancestor = ancestor.get_parent()
 	var space := get_world_3d().space
+	if PhysicsServer3D.call("scene_info",space).get("authoring",false):
+		var updated: Array[RID] = []
+		for index in native_collisions.size():
+			var entry: Dictionary = native_collisions[index]
+			var previous: RID = native_rids[index] if index < native_rids.size() else RID()
+			var definition := {"xml":entry.snapshot.xml, "mesh_options":entry.snapshot.get("mesh_options",{}), "initial":{}, "entities":[], "pose":global_transform*entry.pose, "label":str(get_instance_id())+"_map_"+str(index), "owner":get_instance_id()}
+			var id: RID = PhysicsServer3D.call("scene_stage_author_model",space,previous,definition)
+			if not id.is_valid(): last_error=PhysicsServer3D.call("scene_info",space).last_error; return
+			updated.append(id)
+		for index in range(native_collisions.size(),native_rids.size()): PhysicsServer3D.call("scene_stage_author_remove",space,native_rids[index])
+		native_rids=updated
+		return
 	var paused: bool = PhysicsServer3D.call("scene_info",space).get("paused",false)
 	if not PhysicsServer3D.call("scene_pause",space,true): last_error = "无法暂停以装载地图"; return
 	for entry in native_collisions:

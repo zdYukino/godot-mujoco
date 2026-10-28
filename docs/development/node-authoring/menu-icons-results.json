@@ -1,0 +1,34 @@
+{
+  "author": {
+    "checks": 42,
+    "failed": 0,
+    "failures": []
+  },
+  "runtime": {
+    "checks": 33,
+    "failed": 0,
+    "failures": []
+  },
+  "editor": {
+    "checks": 20,
+    "failed": 0,
+    "failures": []
+  },
+  "live": {
+    "checks": 16,
+    "failed": 0,
+    "failures": []
+  },
+  "gui": {
+    "failed": 0,
+    "joint_buttons": [
+      "新增 joint"
+    ],
+    "scene_tree_icons": {
+      "body": "res://addons/godot_mujoco/icons/mj_body.svg",
+      "joint": "res://addons/godot_mujoco/icons/mj_joint.svg",
+      "geom": "res://addons/godot_mujoco/icons/mj_geom.svg"
+    },
+    "display": ":98"
+  }
+}

@@ -13,7 +13,7 @@ STATE = THIRD_PARTY / 'environment.json'
 PINS = json.loads((ROOT / 'scripts/ci/toolchain.json').read_text())
 ADDONS = ROOT / 'addons'
 NATIVE = 'libgodot_mujoco.linux.template_debug.x86_64.so'
-EXAMPLES = ('shape_gallery', 'g1_passive', 'sdf_terrain', 'pendulum')
+EXAMPLES = ('shape_gallery', 'g1_passive', 'sdf_terrain', 'pendulum', 'light_workflow')
 
 
 class ToolError(Exception):

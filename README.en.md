@@ -76,10 +76,10 @@ godot-mujoco/
 │   ├── shape_gallery/            # Falling shapes and collisions
 │   ├── g1_passive/               # Uncontrolled G1 robot
 │   ├── sdf_terrain/              # SDF stairs, depression and rough terrain
-│   ├── pendulum/                 # Former demo/: independent MjWorld and diagnostics
+│   ├── pendulum/                 # Shared-backend pendulums and independent API diagnostics
 │   ├── light_workflow/           # C# control and terrain developer example
 │   ├── templates/new_project/   # --new template: project.godot, Main.tscn, README, .gitignore
-│   └── <each of the four ready examples>/
+│   └── <each of the five ready examples>/
 │       ├── addons -> ../../addons  # [generated, ignored] Shared addon link from setup
 │       ├── .godot/               # [generated, ignored] Cache created on opening
 │       └── bin/ / obj/           # [optional, generated, ignored] .NET build output
@@ -103,7 +103,7 @@ godot-mujoco/
 │       └── .godot/               # [optional] Import cache created on opening
 ├── tests/                        # Setup, examples, physics backend and editor acceptance
 │   ├── setup/                    # Isolated bootstrap and launcher tests
-│   ├── example_projects/         # Acceptance for the four directly openable examples
+│   ├── example_projects/         # Acceptance for five examples and the project template
 │   └── native_*/ / spatial_queries/ / …
 ├── docs/                         # Installation, features, known issues and validation evidence
 │   └── pics/                     # Architecture diagrams and their sources
@@ -122,19 +122,19 @@ After the one-time [addon build](docs/linux-install.zh-CN.md), run `./em_run.sh 
 | [Shape gallery](examples/shape_gallery/README.md) | `examples/shape_gallery/project.godot` | `Main.tscn` |
 | [Passive G1](examples/g1_passive/README.md) | `examples/g1_passive/project.godot` | `G1.tscn` |
 | [SDF terrain](examples/sdf_terrain/README.md) | `examples/sdf_terrain/project.godot` | `Main.tscn` |
-| [Independent pendulum](examples/pendulum/README.md) | `examples/pendulum/project.godot` | `Main.tscn` |
+| [Editable pendulums](examples/pendulum/README.md) | `examples/pendulum/project.godot` | `Main.tscn` |
+| [Light C# workflow](examples/light_workflow/README.zh-CN.md) | `examples/light_workflow/project.godot` | `Main.tscn` |
 
-Keep the repository layout intact so examples can use shared addons and assets. The first three use the shared MuJoCo physics backend; the pendulum uses independent MjWorld. G1 has no standing or walking controller and is expected to fall; multi-robot hot-add has [known limitations](examples/g1_passive/README.md).
+Keep the repository layout intact so examples can use shared addons and assets. All five visual examples use the shared MuJoCo backend and persistent author nodes. The light C# example needs an ordinary .NET build. Independent MjWorld remains available for API and diagnostic tests. G1 has no standing or walking controller and is expected to fall; multi-robot hot-add has [known limitations](examples/g1_passive/README.md).
 
 ## Import and run a model
 
-1. Open a 3D scene. In the **MuJoCo** dock, select **MJCF 文档**, expand **文档 / 导入 / 发布** and enable **显示 MJCF 草稿（独立于正式场景）**.
-2. Click **Import MJCF** and choose the model's `.xml`, keeping its includes, meshes and textures available. Click **聚焦模型** to frame it.
-3. Select an object in the model tree or viewport, edit its fields and click **Apply** or **Discard**. Use **Run / Pause** to control the draft preview.
-4. Click **Save project model** to save the model package, then **Create simulation playground** to save a simulation scene.
-5. Open the generated scene, press F6 to run it and click **恢复仿真 / Resume**.
+1. Open a saved 3D scene. In the right **MuJoCo → MJCF 层级模型** panel choose **载入 MJCF / 模型包**.
+2. Import creates persistent body / geom / joint scene nodes. Edit typed Inspector fields and native Gizmos; Ctrl+D duplicates, and native Undo/Redo and Ctrl+S apply.
+3. The isolated compiler is cancellable and has a configurable 120-second timeout. Incomplete designs can be saved; F5 requires validation of the current model.
+4. Editing the local author scene during F5 pauses actual physics, compiles the combined world and commits atomically. Resume manually after success. Game design buttons send undoable, saveable commands to that same editor scene.
 
-For G1, use **Import fixed G1** or **Import free G1 (relaxed)** to select a URDF. **Create runtime scene** creates world and model nodes for further scene authoring; use **Open project model** to reopen a saved package. See the [MJCF editor guide](docs/mjcf-editor.md) and [portable models guide](docs/portable-models.md).
+Legacy .tres / .gmj.json models can be imported or upgraded. See the [node authoring guide (Chinese)](docs/node-authoring.zh-CN.md).
 
 ## Import a map and configure collisions
 
