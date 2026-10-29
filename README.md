@@ -129,12 +129,14 @@ godot-mujoco/
 
 ## 导入模型并运行
 
-1. 打开并保存 3D 场景，在右侧 **MuJoCo → MJCF 层级模型** 点击 **载入 MJCF / 模型包**，选择 `.xml`。
+1. 打开并保存 3D 场景，在右侧 **MuJoCo → MJCF 层级模型** 点击 **载入 MJCF**，选择 `.xml`。
 2. 模型自动成为正式场景树中的 body / geom / joint 层级。选择节点，在 Godot Inspector 修改参数，用原生 Gizmo 移动、旋转；Ctrl+D 复制，Ctrl+Z 撤销。
 3. Ctrl+S 保存场景。后台验证成功后按 F5；未完成模型也可保存，当前无效设计禁止运行。
 4. F5 期间编辑本地设计会自动暂停实际物理，后台编译整个世界并原子提交；成功后手动继续。游戏设计按钮也修改同一个编辑器场景，可以撤销和保存。
 
-原始 MJCF 及依赖只读，项目保存副本和完整 XML 作者树。旧 `.tres` / `.gmj.json` 可导入；已有模型根可升级为层级节点。详见 [层级节点编辑指南](docs/node-authoring.zh-CN.md)。
+原始 MJCF 及依赖只读，项目保存副本和完整 XML 作者树。模型导入仅接受 MJCF XML；旧模型包、自动转换和升级入口已移除。详见 [层级节点编辑指南](docs/node-authoring.zh-CN.md)。
+
+选中 geom，可在 **MJCF 碰撞** 中选择网格凸包或 SDF、设置凸包顶点上限或 SDF 深度。SDF 深度只保存在 Godot 工程，导出 XML 使用引擎默认深度，详见[碰撞设置](docs/geom-collision.zh-CN.md)。
 
 ## 导入地图并设置碰撞
 
@@ -151,7 +153,7 @@ godot-mujoco/
 | 内容 | 保存 / 打开方式 |
 |---|---|
 | MJCF 作者层级及参数 | Ctrl+S 保存正式 `.tscn`，依赖位于项目 `mujoco_models/` |
-| 旧模型包兼容 | 载入 `model.tres` / `.gmj.json` 后转为作者节点；显式导出 MJCF 与依赖 |
+| 碰撞设置 | geom Inspector 的 **MJCF 碰撞**；World 管理六项全局检测参数 |
 | 静态地图 | **保存独立地图包 / 打开地图包**：`manifest.json`，保留整个地图包 |
 | 场景布局 | Godot **保存场景**：`.tscn` |
 

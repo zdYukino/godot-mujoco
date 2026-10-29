@@ -4,7 +4,7 @@ extends Node3D
 const AuthorBridge = preload("author_live_bridge.gd")
 const Layout = preload("world_layout.gd")
 const Author = preload("author_resource.gd")
-@export var world_model: MjModelResource
+const Collision = preload("collision_settings.gd")
 @export var world_design: MjAuthorResource
 @export var start_paused := false
 var space := RID()
@@ -18,6 +18,7 @@ var author_compiler: Node
 var queued_design_revision := -1
 var author_started := false
 var resume_after_capture := false
+var manual_resume_required := false
 signal world_ready
 signal editor_connection_changed(connected: bool)
 signal design_request_finished(result: Dictionary)
@@ -27,33 +28,27 @@ var source_layout: Dictionary = {}
 var pending_author_views := {}
 var retiring_nodes: Array[Node] = []
 var views_pending := false
-
-func upgrade_author_world() -> String:
-	if not world_design:
-		var parsed := Author.from_legacy(world_model)
-		if not parsed.error.is_empty(): return str(parsed.error)
-		world_design = parsed.design
-	# A shared world must use one composition path. Upgrade all legacy models
-	# together so adding an author model cannot leave its neighbours on old caches.
-	for node in Layout.nodes(self):
-		if node == self or not node.has_method("upgrade_author_model") or node.design: continue
-		var error: String = node.upgrade_author_model()
-		if not error.is_empty(): return error
-	return ""
+var publish_at := 0
 
 func _enter_tree() -> void:
 	if Engine.is_editor_hint(): return
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	last_error = ""
+	author_started = false
+	editor_connected = false
+	manual_resume_required = false
+	queued_design_revision = -1
+	views_pending = false
 	if ProjectSettings.get_setting("physics/3d/run_on_separate_thread", false):
 		last_error = "MjRuntimeWorld currently requires the default main-thread physics mode"
 		push_error(last_error)
 		return
-	if not PhysicsServer3D.has_method("scene_configure_model"):
+	if not PhysicsServer3D.has_method("scene_enable_authoring"):
 		last_error = "Select MuJoCo as the project's 3D physics engine and restart"
 		push_error(last_error)
 		return
-	if not world_model and not world_design:
-		last_error = "Assign a world_model resource to define all global MuJoCo options"
+	if not world_design:
+		last_error = "Assign a world_design author resource to define global MuJoCo options"
 		push_error(last_error)
 		return
 	var world := get_world_3d()
@@ -61,26 +56,10 @@ func _enter_tree() -> void:
 		last_error = "Only one MjRuntimeWorld may own a World3D; use a separate SubViewport for another world"
 		push_error(last_error)
 		return
-	if not world_design:
-		last_error = world_model.validate_package()
-		if not last_error.is_empty(): push_error(last_error); return
 	space = world.space
-	if world_design:
-		if not PhysicsServer3D.call("scene_enable_authoring", space, world_design.worker_xml()):
-			last_error = PhysicsServer3D.call("scene_info", space).last_error
-			push_error(last_error)
-			return
-		world.set_meta("mj_runtime_owner", weakref(self))
-		ready_for_models = true
-		return
-	if not PhysicsServer3D.call("scene_pause", space, true):
-		last_error = "Cannot pause world outside physics callbacks"
-		return
-	if not PhysicsServer3D.call("scene_configure_model", space, world_model.snapshot, world_model.resource_path.get_base_dir()):
-		last_error = PhysicsServer3D.call("scene_info", space).last_error
-		push_error(last_error)
-		return
-	world.set_meta("mj_runtime_owner", weakref(self))
+	if not PhysicsServer3D.call("scene_enable_authoring",space,world_design.worker_xml()):
+		last_error = PhysicsServer3D.call("scene_info",space).last_error; push_error(last_error); return
+	world.set_meta("mj_runtime_owner",weakref(self))
 	ready_for_models = true
 
 func _ready() -> void:
@@ -91,14 +70,12 @@ func _ready() -> void:
 		source_layout = Layout.capture(self)
 		AuthorBridge.attach(self)
 		return
-	if not Engine.is_editor_hint() and ready_for_models:
-		set_paused(start_paused)
-		capture_snapshot()
 
 func _exit_tree() -> void:
 	if Engine.is_editor_hint(): return
 	if not author_live_id.is_empty(): AuthorBridge.detach(self)
-	if author_compiler: author_compiler.cancel()
+	if author_compiler:
+		author_compiler.cancel(); author_compiler.queue_free(); author_compiler = null
 	if world_design and ready_for_models: PhysicsServer3D.call("scene_close_authoring", space)
 	if command_request != 0: PhysicsServer3D.call("scene_cancel_world_command",command_request)
 	command_request = 0
@@ -120,7 +97,7 @@ func info() -> Dictionary:
 
 # These APIs enqueue work; model/data mutation occurs only at the native step boundary.
 func request_command(command: String, count: int = 1) -> bool:
-	if not ready_for_models or command_request != 0:
+	if not ready_for_models or command_request != 0 or (command in ["resume","step","reset","capture"] and not author_started):
 		last_error = "Wait for the pending simulation command"
 		return false
 	command_request = PhysicsServer3D.call("scene_request_world_command",space,command,count)
@@ -146,6 +123,9 @@ func reset_simulation() -> bool:
 func _process(delta: float) -> void:
 	if Engine.is_editor_hint(): return
 	game_elapsed += delta
+	if Time.get_ticks_msec() > publish_at:
+		publish_at = Time.get_ticks_msec() + 250
+		AuthorBridge.publish_instances(self)
 	if world_design: poll_author_world()
 	if command_request == 0: return
 	var result: Dictionary = PhysicsServer3D.call("scene_world_command_result",command_request)
@@ -173,11 +153,12 @@ func poll_author_world() -> void:
 			if snapshot.has("error"):
 				PhysicsServer3D.call("scene_async_error", space, snapshot.error)
 			else:
+				snapshot.limits = Collision.limits()
 				snapshot.generation = str(space.get_id())
 				author_compiler.submit(snapshot)
-	if not author_started and state.get("compile_status") == "ready":
+	if state.get("compile_status") == "ready" and command_request==0 and (not author_started or not state.get("has_checkpoint",false)):
 		author_started = true
-		resume_after_capture = not start_paused
+		resume_after_capture = not start_paused and not manual_resume_required
 		capture_snapshot()
 		world_ready.emit()
 
@@ -204,11 +185,18 @@ func cancel_author_compile() -> void:
 
 func stage_editor_layout(layout: Dictionary) -> void:
 	if not editor_connected: return
+	manual_resume_required = true
+	resume_after_capture = false
 	PhysicsServer3D.call("scene_pause_for_author", space)
 	if not str(layout.get("world_xml", "")).is_empty():
 		if not PhysicsServer3D.call("scene_enable_authoring", space, layout.world_xml):
 			last_error = info().get("last_error", "Invalid world options")
 			return
+	if layout.has("world_author"):
+		var updated_world := Author.new()
+		var world_error: String = updated_world.restore_author(layout.world_author)
+		if not world_error.is_empty(): PhysicsServer3D.call("scene_async_error", space, world_error); return
+		world_design = updated_world
 	var existing := {}
 	for node in Layout.nodes(self):
 		if node.has_method("author_definition") and node.design: existing[node.design_instance_id] = node
@@ -224,6 +212,8 @@ func stage_editor_layout(layout: Dictionary) -> void:
 		design_resource.cached_entities = value.get("cached_entities", []).duplicate(true)
 		design_resource.cached_geometry = value.get("cached_geometry", []).duplicate(true)
 		design_resource.collision_geometry = value.get("collision_geometry", []).duplicate(true)
+		design_resource.collision_stats = value.get("collision_stats", []).duplicate(true)
+		design_resource.validated_context = value.get("validated_context", "")
 		design_resource.validated_revision = design_resource.revision
 		var node: Node3D = existing.get(instance_id)
 		if not node:
@@ -235,7 +225,7 @@ func stage_editor_layout(layout: Dictionary) -> void:
 			node.visible = false
 			add_child(node)
 			node.space = space
-		var definition := {"xml":design_resource.runtime_xml(), "initial":design_resource.native_initial_pose(), "entities":design_resource.entities(), "pose":value.pose, "label":str(node.get_path()), "owner":node.get_instance_id(), "instance_id":instance_id, "revision":design_resource.revision}
+		var definition := {"xml":design_resource.runtime_xml(Collision.world_values(world_design.tree)), "mesh_options":design_resource.native_mesh_options(), "initial":design_resource.native_initial_pose(), "initial_controls":design_resource.native_initial_controls(), "entities":design_resource.entities(), "pose":value.pose, "label":str(node.get_path()), "owner":node.get_instance_id(), "instance_id":instance_id, "revision":design_resource.revision}
 		node.model_rid = PhysicsServer3D.call("scene_stage_author_model", space, node.model_rid, definition)
 		pending_author_views[instance_id] = {"node":node, "design":design_resource, "pose":value.pose}
 	for key in existing:
@@ -256,7 +246,7 @@ func commit_author_views() -> void:
 		node.global_transform = value.pose
 		if node.author_scene: node.author_scene.shutdown()
 		node.author_scene = load("res://addons/godot_mujoco/model/author_scene.gd").new()
-		node.author_scene.initialize(node)
+		node.author_scene.initialize(node, false)
 		node.visible = true
 	pending_author_views.clear()
 	for node in retiring_nodes:
@@ -322,3 +312,38 @@ func apply_physical_layout(values: Array) -> void:
 			if node is PhysicsBody3D: PhysicsServer3D.body_set_space(node.get_rid(), RID())
 			elif node is Area3D: PhysicsServer3D.area_set_space(node.get_rid(), RID())
 			retiring_nodes.append(node)
+
+func _get_property_list() -> Array[Dictionary]:
+	var fields: Array[Dictionary] = [{"name":"MJCF 碰撞", "type":TYPE_NIL, "usage":PROPERTY_USAGE_GROUP, "hint_string":"mjcf/collision_"}]
+	if not world_design: return []
+	for key in Collision.WORLD_DEFAULTS:
+		var field := {"name":"mjcf/collision_" + key,"type":TYPE_BOOL if key in ["nativeccd","multiccd"] else TYPE_FLOAT if key == "ccd_tolerance" else TYPE_INT,"usage":PROPERTY_USAGE_EDITOR}
+		if key not in ["nativeccd","multiccd"]:
+			field.hint = PROPERTY_HINT_RANGE
+			field.hint_string = "0,100,0.000001" if key == "ccd_tolerance" else "0,1000,1"
+		fields.append(field)
+	return fields
+
+func _get(property_name: StringName) -> Variant:
+	var key := String(property_name).trim_prefix("mjcf/collision_")
+	if world_design and Collision.WORLD_DEFAULTS.has(key): return Collision.world_values(world_design.tree)[key]
+	return null
+
+func _set(property_name: StringName, value: Variant) -> bool:
+	var key := String(property_name).trim_prefix("mjcf/collision_")
+	if not world_design or not Collision.WORLD_DEFAULTS.has(key): return false
+	var snapshot: Dictionary = world_design.author_snapshot()
+	last_error = Collision.write_world(snapshot.tree,{key:value})
+	if not last_error.is_empty(): return false
+	snapshot.revision += 1
+	restore_world_snapshot(snapshot)
+	return true
+
+func restore_world_snapshot(snapshot: Dictionary) -> void:
+	last_error = world_design.restore_author(snapshot)
+	if not last_error.is_empty(): return
+	if Engine.is_editor_hint():
+		var plugin: Node = (EditorInterface.get_base_control().get_meta("mujoco_author_plugin") if EditorInterface.get_base_control().has_meta("mujoco_author_plugin") else null)
+		if plugin and plugin.author_debugger: plugin.author_debugger.pause_world(self)
+		for node in Layout.nodes(self):
+			if node.has_method("author_definition") and node.author_scene: node.author_scene.queue_compile()

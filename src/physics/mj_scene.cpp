@@ -1,3 +1,4 @@
+#include "mj_collision_stats.h"
 #include "mj_load_trace.h"
 #include "mj_g1_import.h"
 #include "mj_options.h"
@@ -34,14 +35,13 @@ void MjPhysicsServer3D::_bind_methods(){
  ClassDB::bind_method(D_METHOD("scene_request_world_command","space","command","count"),&MjPhysicsServer3D::scene_request_world_command,DEFVAL(1));
  ClassDB::bind_method(D_METHOD("scene_world_command_result","request"),&MjPhysicsServer3D::scene_world_command_result);
  ClassDB::bind_method(D_METHOD("scene_cancel_world_command","request"),&MjPhysicsServer3D::scene_cancel_world_command);
- ClassDB::bind_method(D_METHOD("scene_request_model_edit","space","object","snapshot","directory","expected_revision"),&MjPhysicsServer3D::scene_request_model_edit);
- ClassDB::bind_method(D_METHOD("scene_cancel_model_edit","request"),&MjPhysicsServer3D::scene_cancel_model_edit);
- ClassDB::bind_method(D_METHOD("scene_request_preset","space","object","preset","revision"),&MjPhysicsServer3D::scene_request_preset);
- ClassDB::bind_method(D_METHOD("scene_cancel_preset","request"),&MjPhysicsServer3D::scene_cancel_preset);
- ClassDB::bind_method(D_METHOD("scene_edit_result","request"),&MjPhysicsServer3D::scene_edit_result);
- ClassDB::bind_method(D_METHOD("scene_configure_model","space","snapshot","directory"),&MjPhysicsServer3D::scene_configure_model);
+ ClassDB::bind_method(D_METHOD("scene_discard_control_commit","request"),&MjPhysicsServer3D::scene_discard_control_commit);
+ ClassDB::bind_method(D_METHOD("scene_request_control_commit","space","object","preset","revision"),&MjPhysicsServer3D::scene_request_control_commit);
+ ClassDB::bind_method(D_METHOD("scene_cancel_control_commit","request"),&MjPhysicsServer3D::scene_cancel_control_commit);
+ ClassDB::bind_method(D_METHOD("scene_control_result","request"),&MjPhysicsServer3D::scene_control_result);
+ ClassDB::bind_method(D_METHOD("scene_configure_world","space","xml"),&MjPhysicsServer3D::scene_configure_world);
  ClassDB::bind_method(D_METHOD("scene_set_query_owner","space","object","object_id","ray_pickable"),&MjPhysicsServer3D::scene_set_query_owner);
- ClassDB::bind_method(D_METHOD("scene_load_model","space","snapshot","directory","label","pose"),&MjPhysicsServer3D::scene_load_model);
+ ClassDB::bind_method(D_METHOD("scene_load_xml","space","xml","state","mesh_options","label","pose"),&MjPhysicsServer3D::scene_load_xml);
  ClassDB::bind_method(D_METHOD("scene_set_actuator","space","object","name","value"),&MjPhysicsServer3D::scene_set_actuator);
  ClassDB::bind_method(D_METHOD("scene_release_model","space","object"),&MjPhysicsServer3D::scene_release_model);
  ClassDB::bind_method(D_METHOD("scene_pause","space","paused"),&MjPhysicsServer3D::scene_pause);
@@ -49,6 +49,10 @@ void MjPhysicsServer3D::_bind_methods(){
  ClassDB::bind_method(D_METHOD("scene_add_box","space","label","pose","size","mass"),&MjPhysicsServer3D::scene_add_box);
  ClassDB::bind_method(D_METHOD("scene_remove","space","object"),&MjPhysicsServer3D::scene_remove);
  ClassDB::bind_method(D_METHOD("scene_info","space"),&MjPhysicsServer3D::scene_info);
+ ClassDB::bind_method(D_METHOD("scene_collision_stats","space"),&MjPhysicsServer3D::scene_collision_stats);
+#ifdef GMJ_VIEWER_BENCHMARK
+ ClassDB::bind_method(D_METHOD("scene_benchmark","space","action","payload"),&MjPhysicsServer3D::scene_benchmark);
+#endif
  ClassDB::bind_method(D_METHOD("scene_state","space","object"),&MjPhysicsServer3D::scene_state);
  ClassDB::bind_method(D_METHOD("scene_geometry","space","object"),&MjPhysicsServer3D::scene_geometry);
  ClassDB::bind_method(D_METHOD("scene_set_control","space","object","joint","target"),&MjPhysicsServer3D::scene_set_control);
@@ -91,8 +95,12 @@ bool MjPhysicsServer3D::scene_remove(const RID &r,const RID &id){
  if(!rebuild(*s)){s->imported[id.get_id()]=std::move(saved);s->dirty=was_dirty;return false;}
  handles.free(id);return true;
 }
+Array MjPhysicsServer3D::scene_collision_stats(const RID&r) const {auto*s=space(r);return gmj_collision_stats(s?s->model:nullptr);}
 Dictionary MjPhysicsServer3D::scene_info(const RID &r) const {
- Dictionary result;result["time"]=0.;result["nbody"]=0;result["ngeom"]=0;result["ncon"]=0;result["njnt"]=0;result["nu"]=0;result["warning_count"]=0;auto*s=space(r);if(!s)return result;result["authoring"]=s->authoring;result["design_pending"]=s->design_blocked;result["design_revision"]=int64_t(s->design_revision);result["committed_design_revision"]=int64_t(s->committed_design_revision);result["compile_status"]=s->compile_status;result["authored_options"]=s->authored_options;if(s->authored_options){result["options"]=gmj_options(s->options);result["authored_option_values"]=gmj_options(s->options);}result["options_source"]="authored_cache_legacy_alias";result["paused"]=s->paused;result["has_checkpoint"]=!s->checkpoint.is_empty();result["timestep"]=s->model?s->model->opt.timestep:0.0;result["revision"]=int64_t(s->revision);result["last_error"]=s->last_error;
+#ifdef GMJ_VIEWER_BENCHMARK
+ GmjBenchmarkTimer benchmark_timer{gmj_benchmark_info_us};
+#endif
+ Dictionary result;result["time"]=0.;result["nbody"]=0;result["ngeom"]=0;result["ncon"]=0;result["njnt"]=0;result["nu"]=0;result["warning_count"]=0;auto*s=space(r);if(!s)return result;result["authoring"]=s->authoring;result["design_pending"]=s->design_blocked;result["design_revision"]=int64_t(s->design_revision);result["committed_design_revision"]=int64_t(s->committed_design_revision);result["compile_status"]=s->compile_status;result["authored_options"]=s->authored_options;if(s->authored_options){result["options"]=gmj_options(s->options);result["authored_option_values"]=gmj_options(s->options);}result["options_source"]="authored";result["paused"]=s->paused;result["has_checkpoint"]=!s->checkpoint.is_empty();result["timestep"]=s->model?s->model->opt.timestep:0.0;result["revision"]=int64_t(s->revision);result["last_error"]=s->last_error;
  Array objects;for(auto &e:s->imported){Dictionary o;o["rid"]=e.second->rid;o["label"]=e.second->label;o["prefix"]=String(e.second->prefix.c_str());objects.push_back(o);}result["objects"]=objects;
  if(!s->model)return result;auto*m=s->model;auto*d=s->data;result["runtime_options"]=gmj_options(m->opt);result["nbody"]=m->nbody;result["ngeom"]=m->ngeom;result["npair"]=m->npair;result["nexclude"]=m->nexclude;result["njnt"]=m->njnt;result["nu"]=m->nu;result["ncon"]=d->ncon;result["time"]=d->time;result["version"]=String(mj_versionString());
  int warnings=0;for(int i=0;i<mjNWARNING;++i)warnings+=d->warning[i].number;result["warning_count"]=warnings;double force_norm=0,warmstart_norm=0;for(int i=0;i<m->nv;++i){force_norm+=std::abs(d->qfrc_applied[i]);warmstart_norm+=std::abs(d->qacc_warmstart[i]);}for(int i=0;i<6*m->nbody;++i)force_norm+=std::abs(d->xfrc_applied[i]);result["applied_force_norm"]=force_norm;result["warmstart_norm"]=warmstart_norm;
@@ -100,6 +108,9 @@ Dictionary MjPhysicsServer3D::scene_info(const RID &r) const {
  Array details;for(int i=0;i<d->ncon;++i){Dictionary c;auto &contact=d->contact[i];c["distance"]=contact.dist;c["position"]=mj_to_godot(Vector3(contact.pos[0],contact.pos[1],contact.pos[2]));c["friction"]=contact.friction[0];c["condim"]=contact.dim;Array solref,solimp;for(int k=0;k<mjNREF;++k)solref.push_back(contact.solref[k]);for(int k=0;k<mjNIMP;++k)solimp.push_back(contact.solimp[k]);c["solref"]=solref;c["solimp"]=solimp;mjtNum contact_force[6]{};mj_contactForce(m,d,i,contact_force);Array force;for(int k=0;k<6;++k)force.push_back(contact_force[k]);c["force_contact_frame"]=force;mjtNum world_force[3]{};mju_mulMatTVec(world_force,contact.frame,contact_force,3,3);c["force"]=mj_to_godot(Vector3(world_force[0],world_force[1],world_force[2]));c["normal"]=mj_to_godot(Vector3(contact.frame[0],contact.frame[1],contact.frame[2]));Array friction_components;for(int k=0;k<5;++k)friction_components.push_back(contact.friction[k]);c["friction_components"]=friction_components;Array names;for(int side=0;side<2;++side){const char *n=mj_id2name(m,mjOBJ_GEOM,contact.geom[side]);names.push_back(n?String(n):String());}c["geoms"]=names;Array body_names;for(int side=0;side<2;++side){int g=contact.geom[side];const char *n=g>=0?mj_id2name(m,mjOBJ_BODY,m->geom_bodyid[g]):nullptr;body_names.push_back(n?String(n):String());}c["bodies"]=body_names;details.push_back(c);}result["contact_details"]=details;result["center_of_mass"]=mj_to_godot(Vector3(d->subtree_com[0],d->subtree_com[1],d->subtree_com[2]));return result;
 }
 Dictionary MjPhysicsServer3D::scene_state(const RID &r,const RID &id) const {
+#ifdef GMJ_VIEWER_BENCHMARK
+ GmjBenchmarkTimer benchmark_timer{gmj_benchmark_state_us};
+#endif
  Dictionary result;auto*s=space(r);if(!s||!s->model)return result;auto it=s->imported.find(id.get_id());if(it==s->imported.end())return result;
  auto&m=*s->model;auto&d=*s->data;auto &prefix=it->second->prefix;result["property_revision"]=int64_t(it->second->property_revision);result["rid"]=id;result["label"]=it->second->label;
  Dictionary joints,controls,parameters,body_parameters;Array geoms;int body_count=0;

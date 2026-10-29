@@ -13,7 +13,12 @@ public partial class ClockBinding : Node
     public override async void _Ready() {
         try {
             var world=GD.Load<PackedScene>("res://Environment.tscn").Instantiate();
-            world.Set("start_paused",true);AddChild(world);await Complete(world);
+            world.Set("start_paused",true);AddChild(world);
+            var deadline=Godot.Time.GetTicksMsec()+120000;
+            while(!world.Get("author_started").AsBool()&&Godot.Time.GetTicksMsec()<deadline)
+                await ToSignal(GetTree(),SceneTree.SignalName.ProcessFrame);
+            if(!world.Get("author_started").AsBool())throw new Exception("World compilation timeout");
+            await Complete(world);
             if (!world.Call("step_simulation",7).AsBool()) throw new Exception("Step request rejected");
             await Complete(world);
             if (Math.Abs(Time(world)-.014)>1e-10) throw new Exception("Incorrect step time");

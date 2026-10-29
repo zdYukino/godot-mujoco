@@ -40,7 +40,7 @@ static func capture(world: Node3D) -> Dictionary:
 	for node in nodes(world):
 		if node == world: continue
 		if node is Model and node.design:
-			models.append({"instance_id":node.design_instance_id, "name":str(node.name), "author":node.design.author_snapshot(), "compiled_snapshot":node.design.compiled_snapshot, "cache_path":node.design.cache_path, "cached_entities":node.design.cached_entities, "cached_geometry":node.design.cached_geometry, "collision_geometry":node.design.collision_geometry, "pose":node.global_transform})
+			models.append({"instance_id":node.design_instance_id, "name":str(node.name), "author":node.design.author_snapshot(), "compiled_snapshot":node.design.compiled_snapshot, "cache_path":node.design.cache_path, "cached_entities":node.design.cached_entities, "cached_geometry":node.design.cached_geometry, "collision_geometry":node.design.collision_geometry, "collision_stats":node.design.collision_stats, "validated_context":node.design.validated_context, "pose":node.global_transform})
 		elif node is Terrain and node.design:
 			physical.append({"path":str(world.get_path_to(node)), "kind":"terrain", "pose":node.global_transform, "design":node.design.snapshot(Transform3D.IDENTITY, node.collision_layer, node.collision_mask)})
 		elif node.has_meta("map_specs") and node.get("native_collisions") is Array:
@@ -57,4 +57,29 @@ static func capture(world: Node3D) -> Dictionary:
 			physical.append({"path":str(world.get_path_to(node)), "kind":node.get_class(), "pose":node.global_transform, "properties":properties})
 		elif node is CollisionShape3D and node.shape:
 			physical.append({"path":str(world.get_path_to(node)), "kind":"shape", "pose":node.transform, "disabled":node.disabled, "shape":shape_data(node.shape)})
-	return {"models":models, "physical":physical, "world_xml":world.world_design.worker_xml() if world.get("world_design") else ""}
+	return {"models":models, "physical":physical, "world_xml":world.world_design.worker_xml() if world.get("world_design") else "", "world_author":world.world_design.author_snapshot() if world.get("world_design") else {}}
+
+static func signature(layout: Dictionary) -> String:
+	var lean := layout.duplicate()
+	# world_xml is derived from the author tree and can differ only in attribute
+	# order after a Godot resource round trip.
+	lean.erase("world_xml")
+	var models := []
+	for model in layout.get("models", []):
+		var item: Dictionary = model.duplicate()
+		for key in ["cache_path","compiled_snapshot","cached_entities","cached_geometry","collision_geometry","collision_stats","validated_context"]: item.erase(key)
+		models.append(item)
+	lean.models = models
+	return var_to_bytes(canonical(lean)).hex_encode().sha256_text()
+
+static func canonical(value: Variant) -> Variant:
+	if value is Dictionary:
+		var result := {}
+		var keys: Array = value.keys();keys.sort_custom(func(a,b):return str(a)<str(b))
+		for key in keys: result[str(key)]=canonical(value[key])
+		return result
+	if value is Array:
+		var result := []
+		for item in value: result.append(canonical(item))
+		return result
+	return value

@@ -21,9 +21,6 @@ func _ready() -> void:
 	if Engine.is_editor_hint():
 		apply_floor_grid(); return
 	var geometry: Array = model.design.collision_geometry if model.design else []
-	if not model.design and model.model:
-		var opened: Dictionary = model.model.open_document()
-		if opened.error.is_empty(): geometry = opened.document.collision_preview(.33,65)
 	for geom in geometry:
 		var overlay:=Preview.create([geom],Transform3D.IDENTITY); add_child(overlay); overlays[geom.name]=overlay
 	apply_floor_grid()

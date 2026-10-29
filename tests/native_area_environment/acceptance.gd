@@ -44,7 +44,7 @@ func run():
  space=PhysicsServer3D.space_create();owned.append(space);PhysicsServer3D.space_set_active(space,true);PhysicsServer3D.call("scene_pause",space,true)
  var file=FileAccess.open("res://environment.xml",FileAccess.WRITE);file.store_string('<mujoco><option timestep=".01" gravity="0 0 -10" integrator="Euler"/><worldbody/></mujoco>');file.close()
  var doc:RefCounted=ClassDB.instantiate("MjEditorDocument");check(doc.import_file("res://environment.xml"),"import lightweight authored world")
- check(PhysicsServer3D.call("scene_configure_model",space,doc.snapshot(),"res://"),"configure .01 single steps")
+ check(PhysicsServer3D.call("scene_configure_world",space,(doc.snapshot()).xml),"configure .01 single steps")
  ap(space,PhysicsServer3D.AREA_PARAM_LINEAR_DAMP,1.0);ap(space,PhysicsServer3D.AREA_PARAM_ANGULAR_DAMP,2.0)
  field_shape=PhysicsServer3D.box_shape_create();owned.append(field_shape);PhysicsServer3D.shape_set_data(field_shape,Vector3.ONE*5)
  var ball=PhysicsServer3D.sphere_shape_create();owned.append(ball);PhysicsServer3D.shape_set_data(ball,.25)

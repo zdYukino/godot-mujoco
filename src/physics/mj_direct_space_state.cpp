@@ -677,6 +677,10 @@ bool MjDirectSpaceState::_intersect_ray(const Vector3 &p_from, const Vector3 &p_
 		uint32_t p_collision_mask, bool p_collide_with_bodies, bool p_collide_with_areas,
 		bool p_hit_from_inside, bool p_hit_back_faces, bool p_pick_ray,
 		PhysicsServer3DExtensionRayResult *p_result) {
+#ifdef GMJ_VIEWER_BENCHMARK
+ GmjBenchmarkTimer benchmark_timer{gmj_benchmark_ray_us};
+ ++gmj_benchmark_ray_count;
+#endif
  QueryScope query_scope(*this,"ray");
 	if (!p_result) {
 		return false;

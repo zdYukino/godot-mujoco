@@ -6,7 +6,7 @@
 #include <cstring>
 #include <functional>
 #include <thread>
-// Opt-in diagnostics scoped to synchronous scene_load_model only. Use stderr
+// Opt-in diagnostics scoped to synchronous scene_load_xml only. Use stderr
 // directly and flush each boundary; do not acquire Godot logging/physics locks.
 namespace gmj_load_trace {
 inline std::atomic<unsigned long long> sequence{0};

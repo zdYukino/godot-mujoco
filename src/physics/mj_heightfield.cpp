@@ -20,18 +20,18 @@ String validate(const Dictionary &v){
 }
 }
 int64_t MjPhysicsServer3D::scene_request_heightfield(const RID&s,const RID&b,const Dictionary&v,uint64_t owner,int64_t revision){
- std::lock_guard<std::mutex> lock(edits_mutex);
+ std::lock_guard<std::mutex> lock(requests_mutex);
  if(heightfield_edits.size()>=64||heightfield_results.size()>=256)return 0;
  for(auto &e:heightfield_edits)if(e.owner==owner)return 0;
- int64_t id=next_edit_request++;heightfield_edits.push_back({id,revision,s,b,v.duplicate(true),owner});return id;
+ int64_t id=next_request_id++;heightfield_edits.push_back({id,revision,s,b,v.duplicate(true),owner});return id;
 }
-Dictionary MjPhysicsServer3D::scene_heightfield_result(int64_t id){std::lock_guard<std::mutex> lock(edits_mutex);auto it=heightfield_results.find(id);if(it==heightfield_results.end())return {};Dictionary v=it->second;heightfield_results.erase(it);return v;}
-void MjPhysicsServer3D::scene_cancel_heightfield(int64_t id){std::lock_guard<std::mutex> lock(edits_mutex);for(auto it=heightfield_edits.begin();it!=heightfield_edits.end();++it)if(it->request==id){heightfield_edits.erase(it);break;}
+Dictionary MjPhysicsServer3D::scene_heightfield_result(int64_t id){std::lock_guard<std::mutex> lock(requests_mutex);auto it=heightfield_results.find(id);if(it==heightfield_results.end())return {};Dictionary v=it->second;heightfield_results.erase(it);return v;}
+void MjPhysicsServer3D::scene_cancel_heightfield(int64_t id){std::lock_guard<std::mutex> lock(requests_mutex);for(auto it=heightfield_edits.begin();it!=heightfield_edits.end();++it)if(it->request==id){heightfield_edits.erase(it);break;}
  // A completed add can outlive its node's polling callback. Free its owned body
  // when the observer exits, including results not yet consumed.
  auto it=heightfield_results.find(id);if(it!=heightfield_results.end()){RID b=it->second.get("body",RID());if(bool(it->second.get("success",false))&&b.is_valid())_free_rid(b);heightfield_results.erase(it);}}
 void MjPhysicsServer3D::process_heightfields(){
- std::deque<HeightfieldEdit> pending;{std::lock_guard<std::mutex> lock(edits_mutex);pending.swap(heightfield_edits);}
+ std::deque<HeightfieldEdit> pending;{std::lock_guard<std::mutex> lock(requests_mutex);pending.swap(heightfield_edits);}
  for(auto &e:pending){Dictionary result;result["request"]=e.request;result["body"]=e.body;
  auto apply=[&]()->String{
  auto*s=space(e.space);if(!s||!s->authored_options)return "Configured runtime world was removed";
@@ -65,7 +65,7 @@ void MjPhysicsServer3D::process_heightfields(){
  s->paused=was_paused;
  return ok?String():error;
  };String error=apply();result["success"]=error.is_empty();result["error"]=error;
- std::lock_guard<std::mutex> lock(edits_mutex);heightfield_results[e.request]=result;
+ std::lock_guard<std::mutex> lock(requests_mutex);heightfield_results[e.request]=result;
  }
 }
 }

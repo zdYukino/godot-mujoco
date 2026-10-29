@@ -32,6 +32,7 @@ for name in ['XDG_DATA_HOME', 'XDG_CONFIG_HOME', 'XDG_CACHE_HOME']:
 for stage, flags in [('import', ['--editor', '--import', '--frame-delay', '1000']),
                      ('author', ['--script', 'res://acceptance.gd']),
                      ('appearance', ['--script', 'res://appearance_acceptance.gd']),
+                     ('collision', ['--script', 'res://collision_acceptance.gd']),
                      ('runtime', ['--script', 'res://runtime_acceptance.gd']),
                      ('editor', ['--editor', '--', '--mj-author-test']),
                      ('live', ['--editor', '--', '--mj-live-test'])]:

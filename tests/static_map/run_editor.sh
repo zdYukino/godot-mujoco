@@ -11,7 +11,7 @@ timeout --kill-after=5 120 bash "$ROOT/scripts/import_headless.sh" "$OUT/project
 python3 "$ROOT/tests/static_map/fixtures.py" "$OUT/project/fixtures"
 # GUI=1 uses the actual display, otherwise this is editor integration self-test only.
 args=(--headless); [[ "${GUI:-0}" == 1 ]] && args=()
-timeout --kill-after=5 120 "$GODOT_BIN" "${args[@]}" --audio-driver Dummy --editor --path "$OUT/project" -- --static-map-test > "$OUT/editor.log" 2>&1
+timeout --kill-after=5 120 "$GODOT_BIN" "${args[@]}" --audio-driver Dummy --editor --path "$OUT/project" -- --mj-tool-test=res://map_editor_test.gd > "$OUT/editor.log" 2>&1
 python3 - "$OUT" <<'PY'
 import pathlib,json,sys
 p=pathlib.Path(sys.argv[1]);s=(p/'editor.log').read_text();rows=[x.split(' ',1)[1] for x in s.splitlines() if x.startswith('STATIC_MAP_EDITOR ')];assert len(rows)==1,s

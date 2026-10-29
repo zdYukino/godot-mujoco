@@ -1,5 +1,5 @@
 extends SceneTree
-const Package = preload("res://addons/godot_mujoco/model/package_builder.gd")
+const Package = preload("res://addons/godot_mujoco/model/author_builder.gd")
 const Builder = preload("res://addons/godot_mujoco/model/scene_builder.gd")
 func _initialize() -> void: call_deferred("run")
 func run() -> void:
@@ -7,7 +7,7 @@ func run() -> void:
 	if not doc.import_file("res://assets/gallery.xml"): printerr(doc.get_error()); quit(1); return
 	var snapshot: Dictionary=doc.snapshot(); snapshot.source="res://assets/gallery.xml"
 	if not doc.restore(snapshot): printerr(doc.get_error()); quit(1); return
-	var packed: Dictionary=Package.pack(doc,"res://models","dynamic_shapes")
+	var packed: Dictionary=await Package.save_document(doc,"res://models","dynamic_shapes")
 	if not packed.error.is_empty(): printerr(packed.error); quit(1); return
 	var model: Resource=load(packed.path)
 	var world:=Builder.create(model); world.name="ShapeGallery"
@@ -21,6 +21,7 @@ func run() -> void:
 	var sun:=DirectionalLight3D.new(); sun.name="Sun"; sun.rotation_degrees=Vector3(-50,-35,0); sun.light_energy=1.3; sun.shadow_enabled=true; world.add_child(sun); sun.owner=world
 	var controls:=Node.new(); controls.name="DisplayControls"; controls.set_script(preload("gallery.gd")); world.add_child(controls); controls.owner=world
 	var scene:=PackedScene.new()
+	assert((await preload("res://addons/godot_mujoco/model/scene_builder.gd").prepare_tree(world)).is_empty())
 	var error:=scene.pack(world)
 	if error==OK: error=ResourceSaver.save(scene,"res://Main.tscn")
 	world.free()

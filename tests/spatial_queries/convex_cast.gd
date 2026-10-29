@@ -49,9 +49,9 @@ func run() -> void:
 	area_query.exclude=[]
 	check(state.cast_motion(area_query)==PackedFloat32Array([1,1]),"Area sweep lifecycle release")
 	var empty:={"format":1,"xml":"<mujoco><option timestep='.002'/><worldbody/></mujoco>","state":{},"source":""}
-	check(PhysicsServer3D.call("scene_configure_model",space,empty,""),"configure independent authored query world")
+	check(PhysicsServer3D.call("scene_configure_world",space,(empty).xml),"configure independent authored query world")
 	var snapshot:={"format":1,"xml":"<mujoco><option timestep='.002'/><worldbody><body name='target' pos='3 0 0'><joint name='hinge' type='hinge' axis='0 0 1'/><geom name='ell' type='ellipsoid' size='.4 .7 .5' contype='8' conaffinity='0' mass='1'/></body></worldbody><actuator><motor name='motor' joint='hinge'/></actuator></mujoco>","state":{},"source":""}
-	var model_rid: RID=PhysicsServer3D.call("scene_load_model",space,snapshot,"","query_target",Transform3D.IDENTITY)
+	var model_rid: RID=PhysicsServer3D.call("scene_load_xml",space,(snapshot).xml,(snapshot).get("state",{}),(snapshot).get("mesh_options",{}),"query_target",Transform3D.IDENTITY)
 	check(model_rid.is_valid(),"MJCF ellipsoid query target loads")
 	if model_rid.is_valid():
 		PhysicsServer3D.call("scene_set_query_owner",space,model_rid,world.get_instance_id(),true)

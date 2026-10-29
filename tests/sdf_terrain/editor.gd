@@ -65,5 +65,5 @@ func run(plugin) -> void:
 	var saved:=PackedScene.new()
 	check(saved.pack(edited)==OK and ResourceSaver.save(saved,"res://TerrainHost.tscn")==OK,"save applied editable scene headless without fake thumbnail")
 	print("SDF_EDITOR_RESULT ",JSON.stringify({"passed":passed,"failed":failed,"resolutions":resolutions,"gui":"headless editor logic only"}))
-	panel.session.dirty=false;plugin.state.dirty=false
+	panel.session.dirty=false
 	panel.get_tree().quit(0 if failed==0 else 1)

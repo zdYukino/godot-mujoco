@@ -12,7 +12,7 @@ func capture(path: String, dependencies: Array = []) -> bool:
 	files.append(path)
 	if path.get_extension().to_lower() == "xml":
 		var visited := {}
-		error = preload("../model/package_builder.gd").source_files(path, visited)
+		error = preload("../model/asset_files.gd").source_files(path, visited)
 		if not error.is_empty(): return false
 		files.append_array(visited.keys())
 	for file in files:

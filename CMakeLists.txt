@@ -211,6 +211,24 @@ endif()
 target_link_libraries(godot_mujoco PRIVATE godot-cpp "${MUJOCO_LINK_LIB}")
 target_include_directories(godot_mujoco PRIVATE "${MUJOCO_INCLUDE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/src/physics/query_ccd")
 
+# Test-only access to the active shared world. Normal plugin builds expose none
+# of these methods and do not pay for their timers.
+option(GMJ_VIEWER_BENCHMARK "Build the isolated viewer performance harness (Linux)" OFF)
+if(GMJ_VIEWER_BENCHMARK)
+    if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        message(FATAL_ERROR "The viewer benchmark currently requires Linux/GLX")
+    endif()
+    target_compile_definitions(godot_mujoco PRIVATE GMJ_VIEWER_BENCHMARK)
+    target_sources(godot_mujoco PRIVATE tests/viewer_performance/bridge.cpp)
+    target_link_libraries(godot_mujoco PRIVATE ${CMAKE_DL_LIBS})
+    find_package(X11 REQUIRED)
+    find_package(OpenGL REQUIRED)
+    add_executable(gmj_viewer_native tests/viewer_performance/native.cpp)
+    target_include_directories(gmj_viewer_native PRIVATE "${MUJOCO_INCLUDE_DIR}")
+    target_link_libraries(gmj_viewer_native PRIVATE "${MUJOCO_LINK_LIB}" X11::X11 OpenGL::GL ${CMAKE_DL_LIBS})
+    target_compile_features(gmj_viewer_native PRIVATE cxx_std_17)
+endif()
+
 # godot-cpp statically links libstdc++ on Linux. Its locale facets and the
 # engine's C++ runtime must not interpose on one another: floating-point
 # ostream formatting otherwise crashes during the first space rebuild.

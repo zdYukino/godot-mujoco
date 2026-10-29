@@ -124,7 +124,7 @@ func run():
  var viewport=SubViewport.new();viewport.own_world_3d=true;root.add_child(viewport)
  var previous_space=space;space=viewport.find_world_3d().space;PhysicsServer3D.call("scene_pause",space,true)
  var doc:RefCounted=ClassDB.instantiate("MjEditorDocument");doc.import_file("res://world.xml")
- check(PhysicsServer3D.call("scene_configure_model",space,doc.snapshot(),"res://"),"configure saved drive world")
+ check(PhysicsServer3D.call("scene_configure_world",space,(doc.snapshot()).xml),"configure saved drive world")
  var reopened=load("res://SavedDrivenHinge.tscn").instantiate();viewport.add_child(reopened);await ticks(2)
  bob=reopened.get_node("Bob");node=reopened.get_node("DrivenHinge")
  check(PhysicsServer3D.hinge_joint_get_flag(node.get_rid(),PhysicsServer3D.HINGE_JOINT_FLAG_USE_LIMIT) and PhysicsServer3D.hinge_joint_get_flag(node.get_rid(),PhysicsServer3D.HINGE_JOINT_FLAG_ENABLE_MOTOR),"reopened native flags match saved design")

@@ -24,14 +24,6 @@ func appearance_editor(property_name: String) -> EditorProperty:
 
 func run(editor: EditorPlugin) -> void:
 	plugin = editor
-	var legacy_world := preload("res://addons/godot_mujoco/model/runtime_world.gd").new()
-	var legacy_package := preload("res://addons/godot_mujoco/model/model_resource.gd").new()
-	legacy_package.snapshot={"format":1,"xml":'<mujoco><compiler angle="radian"/><worldbody><body name="legacy"><joint name="j"/><geom name="g" size=".1"/></body></worldbody></mujoco>',"state":{"qpos":[.1]}}
-	legacy_world.world_model=legacy_package
-	var first := Model.new();first.model=legacy_package;legacy_world.add_child(first)
-	var second := Model.new();second.model=legacy_package;legacy_world.add_child(second)
-	check(first.upgrade_author_model().is_empty() and legacy_world.world_design!=null and second.design!=null,"legacy upgrade converts the entire shared world without old-cache neighbours")
-	legacy_world.free()
 	var root := Node3D.new(); root.name = "AuthorTest"
 	var model := Model.new(); model.name = "Model"
 	model.design = Author.from_xml('<mujoco><compiler angle="radian"/><worldbody><body name="arm" pos="0 0 1"><joint name="hinge" axis="0 1 0"/><geom name="rod" type="capsule" fromto="0 0 0 0 0 -.6" size=".04"/></body></worldbody><actuator><motor name="motor" joint="hinge"/></actuator></mujoco>').design

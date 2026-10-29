@@ -1,0 +1,307 @@
+{
+  "date": "2026-10-29",
+  "godot": "4.7.2.stable.mono.official.ed1daf0bf",
+  "mujoco": "3.16.0",
+  "extension_sha256": "cdb647a1469af9b9f5639b900b79e25e16617d02adcb7dc5c3b1633eeabf5b3f",
+  "authoring": {
+    "author": {
+      "passed": 40,
+      "failed": 0
+    },
+    "appearance": {
+      "passed": 38,
+      "failed": 0
+    },
+    "collision-final": {
+      "passed": 49,
+      "failed": 0
+    },
+    "runtime": {
+      "passed": 33,
+      "failed": 0
+    },
+    "editor": {
+      "passed": 36,
+      "failed": 0
+    },
+    "live": {
+      "passed": 18,
+      "failed": 0
+    }
+  },
+  "same_file_sdf": {
+    "model": [
+      {
+        "cells": 329,
+        "depth": 3,
+        "mesh": "first_mesh",
+        "query_valid": true,
+        "triangles": 4
+      },
+      {
+        "cells": 7513,
+        "depth": 5,
+        "mesh": "second_mesh",
+        "query_valid": true,
+        "triangles": 4
+      }
+    ],
+    "runtime_mjb": [
+      {
+        "cells": 329,
+        "depth": 3,
+        "mesh": "import_98784247809_static_sdf_mesh",
+        "query_valid": true,
+        "triangles": 4
+      },
+      {
+        "cells": 7513,
+        "depth": 5,
+        "mesh": "import_98784247809_dynamic_sdf_mesh",
+        "query_valid": true,
+        "triangles": 4
+      }
+    ]
+  },
+  "examples": {
+    "shape_gallery": {
+      "failed": 0,
+      "passed": 16
+    },
+    "g1_passive": {
+      "failed": 0,
+      "passed": 23
+    },
+    "sdf_terrain": {
+      "failed": 0,
+      "passed": 15
+    },
+    "pendulum": {
+      "failed": 0,
+      "passed": 41
+    },
+    "light_workflow": {
+      "passed": 9,
+      "failed": 0
+    },
+    "new_project": {
+      "failed": 0,
+      "passed": 11
+    }
+  },
+  "generators": {
+    "generated_g1-Main": {
+      "failed": 0,
+      "passed": 8
+    },
+    "generated_g1-G1": {
+      "failed": 0,
+      "passed": 13
+    },
+    "generated_terrain-Main": {
+      "failed": 0,
+      "passed": 3
+    }
+  },
+  "gui": {
+    "appearance": {
+      "continuous_colors": [
+        [
+          0.547411978244781,
+          0.704738914966583,
+          0.804353773593903,
+          1.0
+        ],
+        [
+          0.648945927619934,
+          0.678695976734161,
+          0.762061536312103,
+          1.0
+        ],
+        [
+          0.756120443344116,
+          0.647331416606903,
+          0.676411867141724,
+          1.0
+        ]
+      ],
+      "stable_popup": true,
+      "undo_redo": true,
+      "color": [
+        0.756120443344116,
+        0.647331416606903,
+        0.676411867141724,
+        1.0
+      ]
+    },
+    "collision": {
+      "native_read_only": true,
+      "depth": 5,
+      "warning_tooltip": "此深度仅保存在 Godot 工程中，不随 MJCF 导出。独立加载导出的 XML 时，MuJoCo 使用引擎默认深度（当前为 6）。",
+      "undo_redo": true,
+      "independent_hull": 8
+    },
+    "world": {
+      "ccd_iterations": 35,
+      "ccd_tolerance": 1e-06,
+      "multiccd": true,
+      "nativeccd": false,
+      "sdf_initpoints": 40,
+      "sdf_iterations": 17
+    },
+    "export": {
+      "standard_xml": true,
+      "depth_sidecar": false,
+      "world_controls": true,
+      "standalone_depth": 6
+    },
+    "saved_instance": "ff57c4b00da42aafad5f6538c979944b",
+    "reopen": true
+  },
+  "gui_output": "gui_final16",
+  "regressions": {
+    "native_collision_v4": {
+      "failed": 0,
+      "passed": 51,
+      "extended": {
+        "failed": 0,
+        "passed": 72
+      },
+      "attributes": {
+        "failed": 0,
+        "passed": 53
+      },
+      "relation_transactions": {
+        "failed": 0,
+        "passed": 68
+      },
+      "layout": {
+        "failed": 0,
+        "passed": 150
+      },
+      "map_gizmo_runtime": {
+        "failed": 0,
+        "passed": 6
+      },
+      "extension_sha256": "cdb647a1469af9b9f5639b900b79e25e16617d02adcb7dc5c3b1633eeabf5b3f"
+    },
+    "typed_final": {
+      "passed": 70,
+      "failed": 0,
+      "extension_sha256": "cdb647a1469af9b9f5639b900b79e25e16617d02adcb7dc5c3b1633eeabf5b3f"
+    },
+    "presets_final": {
+      "failed": 0,
+      "passed": 53,
+      "extension_sha256": "cdb647a1469af9b9f5639b900b79e25e16617d02adcb7dc5c3b1633eeabf5b3f"
+    },
+    "preset_editor_final": {
+      "failed": 0,
+      "passed": 7,
+      "extension_sha256": "cdb647a1469af9b9f5639b900b79e25e16617d02adcb7dc5c3b1633eeabf5b3f"
+    },
+    "control_presets_final": {
+      "failed": 0,
+      "passed": 36,
+      "extension_sha256": "cdb647a1469af9b9f5639b900b79e25e16617d02adcb7dc5c3b1633eeabf5b3f"
+    },
+    "terrain_panel_v3": {
+      "failed": 0,
+      "passed": 67,
+      "material_runtime": {
+        "failed": 0,
+        "passed": 9
+      },
+      "extension_sha256": "cdb647a1469af9b9f5639b900b79e25e16617d02adcb7dc5c3b1633eeabf5b3f"
+    },
+    "objects_final": {
+      "failed": 0,
+      "passed": 23,
+      "extension_sha256": "cdb647a1469af9b9f5639b900b79e25e16617d02adcb7dc5c3b1633eeabf5b3f"
+    },
+    "map_editor": {
+      "failed": 0,
+      "passed": 26,
+      "extension_sha256": "39161f2c1f33fc77891b0b13ce923aa3cb849945bbbe5274942bdd09d931b99b"
+    },
+    "semantics_final": {
+      "failed": 0,
+      "passed": 98,
+      "negative": {
+        "failed": 0,
+        "passed": 31
+      },
+      "expected_errors": 21,
+      "extension_sha256": "cdb647a1469af9b9f5639b900b79e25e16617d02adcb7dc5c3b1633eeabf5b3f"
+    },
+    "pin_final": {
+      "failed": 0,
+      "passed": 49,
+      "negative": {
+        "failed": 0,
+        "passed": 22
+      },
+      "expected_rejections": 12,
+      "input_smoke": {
+        "failed": 0,
+        "passed": 11
+      },
+      "extension_sha256": "cdb647a1469af9b9f5639b900b79e25e16617d02adcb7dc5c3b1633eeabf5b3f"
+    },
+    "clock_final": {
+      "failed": 0,
+      "passed": 133,
+      "extension_sha256": "39161f2c1f33fc77891b0b13ce923aa3cb849945bbbe5274942bdd09d931b99b"
+    },
+    "portable_v4": {
+      "runtime": {
+        "failed": 0,
+        "passed": 25
+      },
+      "relocated-runtime": {
+        "failed": 0,
+        "passed": 25
+      },
+      "recovery-integrity": {
+        "failed": 0,
+        "passed": 36
+      },
+      "extension_sha256": "39161f2c1f33fc77891b0b13ce923aa3cb849945bbbe5274942bdd09d931b99b"
+    }
+  },
+  "known_failures": [
+    {
+      "scope": "fresh headless editor import",
+      "exit": -11,
+      "shell_equivalent": 139,
+      "log": "projects/collision_validation_20261028/queries_final/import.log",
+      "status": "cold import returned -11; no native stack captured in this run; existing shutdown issue remains unresolved and this import is not counted as a pass"
+    }
+  ],
+  "query_runtime": {
+    "convex_cast": {
+      "failed": 0,
+      "passed": 36
+    },
+    "asset_pair_matrix": {
+      "failed": 0
+    },
+    "sdf_thin": {
+      "failed": 0,
+      "passed": 17
+    }
+  },
+  "export_reload": {
+    "failed": 0,
+    "passed": 4,
+    "stats": [
+      {
+        "cells": 30873,
+        "depth": 6,
+        "mesh": "mesh_a_mesh",
+        "query_valid": true,
+        "triangles": 4
+      }
+    ]
+  }
+}

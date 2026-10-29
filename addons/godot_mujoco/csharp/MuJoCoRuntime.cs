@@ -17,9 +17,10 @@ public sealed record WorldState(double Time, double Timestep, bool Paused, bool 
     int Contacts, long PendingRequest, string LastError);
 public sealed record JointState(IReadOnlyList<double> Position, IReadOnlyList<double> Velocity);
 public sealed record BodyState(double Mass, Transform3D Transform);
+public sealed record ActuatorState(double Gain, double PositionBias, double VelocityBias);
 public sealed record InstanceState(string Identity, long Revision, long PendingRequest,
     IReadOnlyDictionary<string, JointState> Joints, IReadOnlyDictionary<string, double> Controls,
-    IReadOnlyDictionary<string, BodyState> Bodies);
+    IReadOnlyDictionary<string, BodyState> Bodies, IReadOnlyDictionary<string, ActuatorState> Actuators);
 public sealed record Completion(long RequestId, bool Success, string Error, long? Revision,
     double? Time, bool? Paused);
 /// <summary>Accepted means queued, never completed. Await Finished for the actual outcome.</summary>
@@ -40,9 +41,9 @@ public sealed class ModelDesign
             return Access<ModelDesign>.Fail("Load designs on the Godot main thread");
         if (string.IsNullOrWhiteSpace(path) || !FileAccess.FileExists(path)) return Access<ModelDesign>.Fail("Saved design does not exist");
         var resource = ResourceLoader.Load<Resource>(path, cacheMode: ResourceLoader.CacheMode.Ignore);
-        if (resource == null || !resource.HasMethod("validate_package"))
-            return Access<ModelDesign>.Fail("Expected a saved MjModelResource");
-        string error = resource.Call("validate_package").AsString();
+        if (resource == null || !resource.HasMethod("validate_dependencies"))
+            return Access<ModelDesign>.Fail("Expected a saved MjAuthorResource");
+        string error = resource.Call("validate_dependencies").AsString();
         return error.Length == 0 ? Access<ModelDesign>.Ok(new ModelDesign(resource)) : Access<ModelDesign>.Fail(error);
     }
 }
@@ -176,6 +177,7 @@ public sealed class InstanceHandle : RuntimeHandle
     {
         if (!IsAlive) return Access<InstanceState>.Fail(Unavailable);
         var data = Node.Call("state").AsGodotDictionary();
+        if (!data.ContainsKey("joints")) return Access<InstanceState>.Fail("Model is still compiling; wait for the world to become ready");
         var joints = new Dictionary<string, JointState>();
         foreach (var entry in data["joints"].AsGodotDictionary())
         {
@@ -190,9 +192,15 @@ public sealed class InstanceHandle : RuntimeHandle
             var body = entry.Value.AsGodotDictionary();
             bodies.Add(entry.Key.AsString(), new BodyState(body["mass"].AsDouble(), body["transform"].AsTransform3D()));
         }
+        var actuators = new Dictionary<string, ActuatorState>();
+        foreach (var entry in data["actuator_parameters"].AsGodotDictionary())
+        {
+            var actuator = entry.Value.AsGodotDictionary();
+            actuators.Add(entry.Key.AsString(), new ActuatorState(actuator["gain"].AsDouble(), actuator["position_bias"].AsDouble(), actuator["velocity_bias"].AsDouble()));
+        }
         return Access<InstanceState>.Ok(new InstanceState(identity, data["property_revision"].AsInt64(),
             Node.Get(PendingProperty).AsInt64(), new ReadOnlyDictionary<string,JointState>(joints),
-            new ReadOnlyDictionary<string,double>(controls), new ReadOnlyDictionary<string,BodyState>(bodies)));
+            new ReadOnlyDictionary<string,double>(controls), new ReadOnlyDictionary<string,BodyState>(bodies), new ReadOnlyDictionary<string,ActuatorState>(actuators)));
     }
     public Operation SetControl(string actuator, double value)
     {
@@ -203,9 +211,9 @@ public sealed class InstanceHandle : RuntimeHandle
         return Node.Call("set_control", actuator, value).AsBool()
             ? new Operation(true, "") : new Operation(false, "Control rejected by the runtime");
     }
-    public Request Apply(ModelDesign design, long expectedRevision = -1)
+    public Request ApplyControlPreset(GDictionary preset, long expectedRevision)
     {
-        if (design == null) return Request.Rejected("Choose a saved design");
-        return Queue("request_model_edit", design.Native, expectedRevision);
+        if (preset == null) return Request.Rejected("Choose a control preset");
+        return Queue("request_control_preset", preset, expectedRevision);
     }
 }

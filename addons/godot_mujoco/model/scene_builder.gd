@@ -3,20 +3,44 @@ extends RefCounted
 const WorldScript = preload("runtime_world.gd")
 const InstanceScript = preload("model_instance.gd")
 
-static func create(model: MjModelResource) -> Node3D:
+static func create(model: MjAuthorResource) -> Node3D:
 	var world := WorldScript.new()
 	world.name = "MuJoCoWorld"
-	world.world_model = model
+	world.world_design = model.fork()
 	var instance := InstanceScript.new()
 	instance.name = "Model"
-	instance.model = model
+	instance.design = model
 	world.add_child(instance)
 	instance.owner = world
+	instance.author_scene = preload("author_scene.gd").new()
+	instance.author_scene.initialize(instance)
+	while not instance.author_scene.geometry_queue.is_empty(): instance.author_scene.build_geometry_step()
 	return world
 
-static func save(model: MjModelResource, path: String) -> Error:
+static func prepare_tree(root: Node) -> String:
+	if root is MjModelInstance and root.design:
+		var compiled := false
+		if root.design_instance_id.is_empty(): root.design_instance_id = Crypto.new().generate_random_bytes(16).hex_encode()
+		if root.design.validated_revision != root.design.revision or root.design.validated_context != root.compilation_signature():
+			var error: String = await preload("author_builder.gd").compile_design(root.design,root.compilation_context())
+			if not error.is_empty(): return error
+			compiled = true
+		if not root.author_scene:
+			root.author_scene = preload("author_scene.gd").new()
+			root.author_scene.initialize(root)
+		if compiled:
+			root.author_scene.apply_compiled({"entities":root.design.cached_entities,"geometry":root.design.cached_geometry,"collision_geometry":root.design.collision_geometry,"collision_stats":root.design.collision_stats,"context":root.design.validated_context,"snapshot":root.design.compiled_snapshot})
+		while not root.author_scene.geometry_queue.is_empty(): root.author_scene.build_geometry_step()
+	for child in root.get_children():
+		var error := await prepare_tree(child)
+		if not error.is_empty(): return error
+	return ""
+
+static func save(model: MjAuthorResource, path: String) -> Error:
 	if not path.begins_with("res://") or path.contains("..") or path.get_extension() != "tscn": return ERR_INVALID_PARAMETER
 	var world := create(model)
+	var prepared := await prepare_tree(world)
+	if not prepared.is_empty(): world.free(); return ERR_INVALID_DATA
 	var scene := PackedScene.new()
 	var error := scene.pack(world)
 	world.free()
@@ -41,7 +65,7 @@ static func playground(environment: PackedScene) -> Control:
 	root.add_child(controls);controls.owner=root
 	return root
 
-static func save_playground(model: MjModelResource,path: String) -> Error:
+static func save_playground(model: MjAuthorResource,path: String) -> Error:
 	if not path.begins_with("res://") or path.contains("..") or path.get_extension()!="tscn": return ERR_INVALID_PARAMETER
 	var world := create(model)
 	world.start_paused=true
@@ -51,6 +75,7 @@ static func save_playground(model: MjModelResource,path: String) -> Error:
 	var light := DirectionalLight3D.new()
 	light.rotation_degrees=Vector3(-50,-30,0)
 	world.add_child(light);light.owner=world
+	if not (await prepare_tree(world)).is_empty(): world.free(); return ERR_INVALID_DATA
 	var environment := PackedScene.new()
 	var error := environment.pack(world)
 	world.free()

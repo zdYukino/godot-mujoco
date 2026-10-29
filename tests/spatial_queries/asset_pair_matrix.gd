@@ -11,7 +11,7 @@ func run() -> void:
 	var space: RID=world.get_world_3d().space
 	PhysicsServer3D.call("scene_pause",space,true)
 	var empty:={"format":1,"xml":"<mujoco><option timestep='.002'/><worldbody/></mujoco>","state":{},"source":""}
-	if not PhysicsServer3D.call("scene_configure_model",space,empty,""):quit(2);return
+	if not PhysicsServer3D.call("scene_configure_world",space,(empty).xml):quit(2);return
 	var state: PhysicsDirectSpaceState3D=world.get_world_3d().direct_space_state
 	var vertices:="-1 -1 -.4 1 -1 -.4 1 1 -.4 -1 1 -.4 -1 -1 .4 1 -1 .4 1 1 .4 -1 1 .4"
 	var faces:="0 2 1 0 3 2 4 5 6 4 6 7 0 1 5 0 5 4 1 2 6 1 6 5 2 3 7 2 7 6 3 0 4 3 4 7"
@@ -32,7 +32,7 @@ func run() -> void:
 				asset="<asset><hfield name='height' nrow='3' ncol='3' size='2 2 1 1' elevation='0 0 0 0 0 0 0 0 0'/></asset>"
 				geom="type='hfield' hfield='height' pos='0 0 .4'"
 			var snapshot:={"format":1,"xml":"<mujoco><option timestep='.002'/>"+asset+"<worldbody><geom name='target' "+geom+" contype='32' conaffinity='0'/></worldbody></mujoco>","state":{},"source":""}
-			var rid: RID=PhysicsServer3D.call("scene_load_model",space,snapshot,"","pair_"+target,target_pose)
+			var rid: RID=PhysicsServer3D.call("scene_load_xml",space,(snapshot).xml,(snapshot).get("state",{}),(snapshot).get("mesh_options",{}),"pair_"+target,target_pose)
 			if not rid.is_valid():failed+=1;continue
 			PhysicsServer3D.call("scene_set_query_owner",space,rid,world.get_instance_id(),true)
 			for index in shapes.size():

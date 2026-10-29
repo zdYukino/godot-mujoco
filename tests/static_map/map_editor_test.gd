@@ -64,14 +64,8 @@ func run(plugin):
 		var saved := PackedScene.new(); check(saved.pack(edited)==OK and ResourceSaver.save(saved,"res://MapHost.tscn")==OK,"P3 headless scene save without thumbnail")
 	else:
 		check(EditorInterface.save_scene()==OK,"P3 GUI editor scene save")
-	# MJCF tracker sees main/include and keeps old compiled state on failed reimport.
-	check(plugin.panel.import_mjcf("res://fixtures/main.xml"),"P0 MJCF panel import tracked")
-	check(plugin.panel.source_watch.hashes.size() == 2,"P0 main/include captured in UI")
-	var snapshot: Dictionary = plugin.state.document.snapshot()
-	var file := FileAccess.open("res://fixtures/include.xml",FileAccess.WRITE); file.store_string('<mujoco><geom type="invalid"/></mujoco>'); file.close()
-	check(not plugin.panel.reimport_source() and plugin.state.document.snapshot()==snapshot,"P0 UI bad source atomic rollback")
 	var source_result = preload("res://source_transaction_test.gd").new().run(plugin)
 	passed += source_result.passed; failed += source_result.failed
 	print("STATIC_MAP_EDITOR ",JSON.stringify({"passed":passed,"failed":failed}))
-	panel.session.dirty = false; plugin.state.dirty = false
+	panel.session.dirty = false
 	panel.get_tree().quit(1 if failed else 0)

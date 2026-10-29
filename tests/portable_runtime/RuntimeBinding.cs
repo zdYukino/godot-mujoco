@@ -8,7 +8,10 @@ public partial class RuntimeBinding : Node
             var world = GD.Load<PackedScene>("res://RuntimeScene.tscn").Instantiate<Node3D>();
             world.Set("start_paused", true);
             AddChild(world);
-            await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame);
+            var deadline=Time.GetTicksMsec()+120000;
+            while(!world.Get("author_started").AsBool() && Time.GetTicksMsec()<deadline)
+                await ToSignal(GetTree(),SceneTree.SignalName.ProcessFrame);
+            if(!world.Get("author_started").AsBool())throw new Exception("Author world compilation timeout");
             var robot = world.GetNode<Node>("Model");
             var second = world.GetNode<Node>("SecondModel");
             if (!robot.Get("model_rid").AsRid().IsValid || !robot.Call("set_control", "left_elbow_joint_position", 0.7).AsBool())
@@ -21,7 +24,7 @@ public partial class RuntimeBinding : Node
             for (int i=0;i<120;i++) await ToSignal(GetTree(), SceneTree.SignalName.PhysicsFrame);
             world.Call("set_paused", true);
             var joint = robot.Call("state").AsGodotDictionary()["joints"].AsGodotDictionary()["left_elbow_joint"].AsGodotDictionary();
-            if (Math.Abs(joint["qpos"].AsGodotArray()[0].AsDouble()-0.7)>0.03) throw new Exception("C# drive did not reach target");
+            if (Math.Abs(joint["qpos"].AsFloat64Array()[0]-0.7)>0.03) throw new Exception("C# drive did not reach target");
             world.Free();
             GD.Print("PORTABLE CSHARP PASS: saved scene, independent control, actual motion");
             GetTree().Quit(0);

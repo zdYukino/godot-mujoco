@@ -4,7 +4,7 @@
 
 ## 日常操作
 
-1. 打开并保存一个 3D 场景，在右侧 **MuJoCo → MJCF 层级模型** 点击 **载入 MJCF / 模型包**，选择 `.xml`。旧 `model.tres` 和 `.gmj.json` 也可导入；旧场景可选择模型根并点击“升级选中模型为层级节点”。
+1. 打开并保存一个 3D 场景，在右侧 **MuJoCo → MJCF 层级模型** 点击 **载入 MJCF**，选择 `.xml`。仅接受 MJCF XML；旧模型包和升级入口已移除。
 2. 场景中生成 `MjRuntimeWorld → MjModelInstance → MjBody3D / MjGeom3D / MjJoint3D`。body 按源层级嵌套，geom/joint 属于对应 body；`_Visual` 是视觉子节点，选择它会转到语义节点。
 3. 在场景树中选择部件，在 Godot **检查器 / Inspector** 的 `Mjcf` 参数组修改物理量。用原生移动、旋转 Gizmo 修改初始设计位姿。关节黄色轴线表示其局部轴。需要查看 Inspector 时点击右侧检查器标签。
 4. 在 MuJoCo 面板新增 body、常见几何，或点击“新增 joint”（默认 free，其他类型在 Inspector 的 Type 中选择）；可导入 OBJ/STL mesh。使用场景树 F2、Ctrl+D、删除与重新挂载；Ctrl+Z / Ctrl+Shift+Z 撤销和重做。
@@ -12,7 +12,7 @@
 
 左侧场景树通过不同颜色和形状的图标区分节点：body 为蓝色立方体，joint 为橙色关节，geom 为绿色几何图标。
 
-球只允许均匀缩放；圆柱和胶囊两个径向比例必须相同；缩放会写回物理尺寸并把 Node3D scale 恢复为 1，保持形状种类。body、joint 和模型摆放必须是刚性变换。plane 的尺寸仅控制显示范围，碰撞仍为无限平面。普通 frame 坐标会映射回源数据，复杂 frame 缩放/继承不支持直接移动，Inspector 会标明只读。SDF、heightfield 继续使用专用地图/地形编辑入口。
+球只允许均匀缩放；圆柱和胶囊两个径向比例必须相同；缩放会写回物理尺寸并把 Node3D scale 恢复为 1，保持形状种类。body、joint 和模型摆放必须是刚性变换。plane 的尺寸仅控制显示范围，碰撞仍为无限平面。普通 frame 坐标会映射回源数据，复杂 frame 缩放/继承不支持直接移动，Inspector 会标明只读。mesh geom 支持凸包与 SDF 切换；heightfield 使用专用地形编辑入口。
 
 Inspector 包括 body 的自动/显式惯量、质量、主惯量、惯性坐标朝向和质心；几何的尺寸、密度、摩擦、碰撞过滤与 margin；关节的类型、锚点/轴、限位、阻尼和初始位置；position/velocity actuator 的增益。角度在 Inspector 中以度显示，仿真控制与原生 qpos 使用弧度。
 
@@ -47,3 +47,5 @@ Inspector 包括 body 的自动/显式惯量、质量、主惯量、惯性坐标
 - `tests/node_authoring/run.py`：XML/依赖闭包、无效保存、强制超时/取消/恢复、版本隔离、原子重建、状态迁移、Editor Undo/保存和实际编辑器到游戏的 debugger 连接。
 - `tests/example_projects/run.py`：五个项目和新工程模板的独立导入/运行；摆杆覆盖 Main、ChaosPendulum、VisualDebug；轻量例程正常构建 .NET 后运行九项控制与接触断言。
 - `tests/node_authoring/gui_probe.gd`、`gui_actions.py`：真实桌面鼠标/键盘验收用观测与驱动工具。headless 断言不能替代 Gizmo、Ctrl+D、Ctrl+S 和独立进程重开的 GUI 证据。
+
+geom 的凸包/SDF 精度、World 六项检测参数、资源预算及导出行为见[逐 geom 碰撞设置](geom-collision.zh-CN.md)。

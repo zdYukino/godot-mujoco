@@ -1,5 +1,5 @@
 extends SceneTree
-const Builder=preload("res://addons/godot_mujoco/model/package_builder.gd")
+const Builder=preload("res://addons/godot_mujoco/model/author_builder.gd")
 const World=preload("res://addons/godot_mujoco/model/runtime_world.gd")
 const Instance=preload("res://addons/godot_mujoco/model/model_instance.gd")
 func _initialize(): call_deferred("run")
@@ -8,18 +8,24 @@ func run():
  f.store_string('<mujoco><option timestep=".002"/><worldbody><body name="arm" pos="0 0 1"><joint name="hinge" axis="0 1 0" damping="1" range="-1 1"/><geom name="arm_geom" type="box" size=".1 .1 .3" mass="1"/></body></worldbody><actuator><position name="drive" joint="hinge" kp="20"/></actuator></mujoco>');f.close()
  var doc:RefCounted=ClassDB.instantiate("MjEditorDocument")
  assert(doc.import_file("res://fixture.xml"))
- var package=Builder.pack(doc,"res://models","typed");assert(package.error.is_empty())
+ var package=await Builder.save_document(doc,"res://models","typed");assert(package.error.is_empty())
  var model=load(package.path)
- var world=World.new();world.name="Environment";world.world_model=model;world.start_paused=true
+ var world=World.new();world.name="Environment";world.world_design=model.fork();world.start_paused=true
  for n in 2:
-  var instance=Instance.new();instance.name="First" if n==0 else "Second";instance.model=model;instance.position.x=n*2.0
+  var instance=Instance.new();instance.name="First" if n==0 else "Second";instance.design=model;instance.position.x=n*2.0
   world.add_child(instance);instance.owner=world
  var box=RigidBody3D.new();box.name="Box";box.position=Vector3(4,2,0)
  var shape=CollisionShape3D.new();shape.shape=BoxShape3D.new();shape.shape.size=Vector3.ONE*.4;box.add_child(shape)
  world.add_child(box);box.owner=world;shape.owner=world
  var floor=StaticBody3D.new();floor.name="Floor";shape=CollisionShape3D.new();shape.shape=WorldBoundaryShape3D.new();floor.add_child(shape);world.add_child(floor);floor.owner=world;shape.owner=world
+ assert((await preload("res://addons/godot_mujoco/model/scene_builder.gd").prepare_tree(world)).is_empty())
  var scene=PackedScene.new();assert(scene.pack(world)==OK);assert(ResourceSaver.save(scene,"res://Environment.tscn")==OK);world.free()
  assert(doc.edit({"op":"set","kind":"body","name":"arm","values":{"mass":2.0}}))
- package=Builder.pack(doc,"res://models","edited");assert(package.error.is_empty())
+ package=await Builder.save_document(doc,"res://models","edited");assert(package.error.is_empty())
  f=FileAccess.open("res://edited.txt",FileAccess.WRITE);f.store_string(package.path);f.close()
+ var preset_doc:RefCounted=ClassDB.instantiate("MjEditorDocument")
+ assert(preset_doc.compile_author(model.worker_xml(),model.native_initial_pose(),model.native_mesh_options()))
+ var preset=load("res://addons/mujoco_editor/control_presets.gd").capture(preset_doc)
+ preset.drives.drive.kp=35;preset.drives.drive.kv=3;preset.drives.drive.control=.3
+ f=FileAccess.open("res://preset.json",FileAccess.WRITE);f.store_string(JSON.stringify(preset));f.close()
  print("TYPED_PREPARE_PASS");quit()

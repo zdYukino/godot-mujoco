@@ -21,7 +21,13 @@ func run() -> void:
 	var built:=session.build_scene()
 	if not built.error.is_empty(): push_error(built.error); session.close(); quit(1); return
 	var scene: Node3D=built.scene
-	scene.name="SdfTerrain"
+	scene.name="Map"
+	var world := preload("res://addons/godot_mujoco/model/runtime_world.gd").new()
+	world.name="SdfTerrainWorld"
+	var options := Native.options(session.world_settings)
+	if not options.error.is_empty(): printerr(options.error); quit(1); return
+	world.world_design=preload("res://addons/godot_mujoco/model/author_resource.gd").from_xml("<mujoco><compiler angle='radian'/>"+options.xml+"<worldbody/></mujoco>").design
+	world.add_child(scene)
 	var overlays:=Node3D.new(); overlays.name="CollisionPreview"; overlays.visible=false; scene.add_child(overlays)
 	for mesh in session.meshes():
 		var path:=str(session.visual.get_path_to(mesh))
@@ -46,9 +52,9 @@ func run() -> void:
 		var shape:=CollisionShape3D.new(); var sphere:=SphereShape3D.new(); sphere.radius=.12; shape.shape=sphere; ball.add_child(shape)
 		var visual:=MeshInstance3D.new(); var sphere_mesh:=SphereMesh.new(); sphere_mesh.radius=.12; sphere_mesh.height=.24; visual.mesh=sphere_mesh
 		var material:=StandardMaterial3D.new(); material.albedo_color=Color(.95,.65,.12); visual.material_override=material; ball.add_child(visual); scene.add_child(ball)
-	for child in scene.get_children(): session.own_scene(child,scene)
+	session.own_scene(scene,world)
 	var packed:=PackedScene.new()
-	if packed.pack(scene)!=OK or ResourceSaver.save(packed,"res://Main.tscn")!=OK: push_error("Failed to save terrain example"); scene.free(); session.close(); quit(1); return
+	if packed.pack(world)!=OK or ResourceSaver.save(packed,"res://Main.tscn")!=OK: push_error("Failed to save terrain example"); world.free(); session.close(); quit(1); return
 	var report:=FileAccess.open("res://assets/sdf_manifest.json",FileAccess.WRITE); report.store_string(JSON.stringify({"chunks":manifest,"package":packaged.path,"default_collision":"sdf","octree_maxdepth":6},"\t")); report.close()
 	print("SDF_TERRAIN_PREPARED ",JSON.stringify({"chunks":manifest.size(),"package":packaged.path}))
-	scene.free(); session.close(); quit(0)
+	world.free(); session.close(); quit(0)

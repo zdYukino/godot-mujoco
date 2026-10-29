@@ -1,5 +1,5 @@
 extends SceneTree
-const Builder=preload("res://addons/godot_mujoco/model/package_builder.gd")
+const Builder=preload("res://addons/godot_mujoco/model/author_builder.gd")
 const SceneBuilder=preload("res://addons/godot_mujoco/model/scene_builder.gd")
 func _initialize() -> void: call_deferred("run")
 func add_visual_body(world: Node,body: PhysicsBody3D,shape: Shape3D,color: Color) -> void:
@@ -14,7 +14,7 @@ func add_visual_body(world: Node,body: PhysicsBody3D,shape: Shape3D,color: Color
 func run() -> void:
 	var doc: RefCounted=ClassDB.instantiate("MjEditorDocument")
 	if not doc.import_g1("res://assets/robots/unitree_g1/g1_29dof_mode_18/g1_29dof_mode_18.urdf",true,true):printerr(doc.get_error());quit(1);return
-	var package: Dictionary=Builder.pack(doc,"res://models","freebase_playground")
+	var package: Dictionary=await Builder.save_document(doc,"res://models","freebase_playground")
 	if not package.error.is_empty():printerr(package.error);quit(1);return
 	var resource=load(package.path)
 	var world=SceneBuilder.create(resource);world.start_paused=true

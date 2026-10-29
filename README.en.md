@@ -129,12 +129,12 @@ Keep the repository layout intact so examples can use shared addons and assets. 
 
 ## Import and run a model
 
-1. Open a saved 3D scene. In the right **MuJoCo → MJCF 层级模型** panel choose **载入 MJCF / 模型包**.
+1. Open a saved 3D scene. In the right **MuJoCo → MJCF 层级模型** panel choose **载入 MJCF**.
 2. Import creates persistent body / geom / joint scene nodes. Edit typed Inspector fields and native Gizmos; Ctrl+D duplicates, and native Undo/Redo and Ctrl+S apply.
 3. The isolated compiler is cancellable and has a configurable 120-second timeout. Incomplete designs can be saved; F5 requires validation of the current model.
 4. Editing the local author scene during F5 pauses actual physics, compiles the combined world and commits atomically. Resume manually after success. Game design buttons send undoable, saveable commands to that same editor scene.
 
-Legacy .tres / .gmj.json models can be imported or upgraded. See the [node authoring guide (Chinese)](docs/node-authoring.zh-CN.md).
+MJCF import accepts XML only. Legacy model packages and upgrade paths have been removed. See the [node authoring guide (Chinese)](docs/node-authoring.zh-CN.md).
 
 ## Import a map and configure collisions
 
@@ -150,8 +150,8 @@ Reopen a saved map package using **打开地图包** and its `manifest.json`. Se
 
 | Content | Save / open action |
 |---|---|
-| Editable MJCF document | **Save document / Open document**: `.gmj.json`; source assets remain in place |
-| Portable model | **Save project model / Open project model**: `model.tres`; copy the entire package when moving it |
+| Author hierarchy and parameters | Ctrl+S saves `.tscn`; project dependencies live under `mujoco_models/` |
+| Collision settings | Per-geom hull/SDF settings and six world-wide collision controls; see [details (Chinese)](docs/geom-collision.zh-CN.md) |
 | Static map | **保存独立地图包 / 打开地图包**: `manifest.json`; keep the entire package |
 | Scene layout | Godot **Save Scene**: `.tscn` |
 

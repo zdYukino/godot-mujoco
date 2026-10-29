@@ -82,7 +82,7 @@ func run() -> void:
 		visual.free()
 		# Exercise the saved author-data path used by standalone game startup.
 		design.cached_entities = output.entities; design.cached_geometry = output.geometry
-		design.compiled_snapshot = output.snapshot; design.validated_revision = design.revision
+		design.compiled_snapshot = output.snapshot; design.validated_revision = design.revision; design.validated_context = output.context
 		var world := World.new(); world.name = "AppearanceWorld"; world.world_design = design.fork(); world.start_paused = true
 		var model := Model.new(); model.name = "AppearanceModel"; model.design = design
 		world.add_child(model); root.add_child(world)

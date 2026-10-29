@@ -1,32 +1,13 @@
-# 模型资源、场景和搬迁
+# 作者资源、场景与搬迁
 
-[返回中文索引](README.zh-CN.md)
+右侧 **载入 MJCF** 只接受 XML。导入会展开 include，将依赖副本及来源归档写入项目 `mujoco_models/`，建立 `MjAuthorResource` 和正式 body/joint/geom 节点。旧模型包及转换流程已移除。
 
-## 模型包
+Ctrl+S 保存 `.tscn`；自动化生成器使用 `author_builder.gd` 的 `import_file` / `save_document` 和 `scene_builder.gd`。作者资源可存为 `.tres`，其中包含完整作者树、稳定 UUID、初始关节/控制值和网格深度。它不是 MJCF 导入格式。
 
-Save project model 发布 `res://mujoco_models/model_<内容哈希>/`：
+`MjRuntimeWorld.world_design` 决定全局选项；每个 `MjModelInstance.design` 持有作者数据。各实例的原生 RID、控制和动态状态独立。普通 Godot 刚体可以处于同一 space 并真实接触。六项碰撞选项由 World 覆盖，其他全局选项冲突仍明确拒绝。
 
-- `model.tres`：MjModelResource、规范化 MJCF、保存的初始状态与来源信息。
-- `model.xml`：可读的规范化 MJCF；include 已展开。
-- `assets/<sha256>.<扩展名>`：网格/纹理的字节相同副本。
-- `sources/<sha256>.xml`：原始 XML/include 的溯源副本。
+搬迁时复制整个项目、addon 运行库和 `mujoco_models/`；运行不再依赖原始 XML、include 或外部网格路径。依赖缺失、哈希变化、未跟踪文件、目录重定向或未展开 include 会被诊断。原始文件路径只用于溯源。
 
-包内运行依赖是相对路径；原路径只作为来源信息，不能成为搬迁后的隐式依赖。保存先验证完整候选，再原子发布；失败保留旧文档和已发布包。同内容去重，同名不同内容使用不同哈希。已发布包不可变；编辑后保存新包，再明确更新场景引用。
+`MjEnvironmentHost` 在独立 World3D 中后台编译候选，成功后替换旧环境，失败保留旧世界和游戏 UI。状态重置保留当前设计；环境重建恢复保存场景并明确丢弃运行时增删。
 
-旧 `.gmj.json` 编辑文档仍可能依赖原绝对路径，改文件名不能让它自动变 portable；必须先成功 Save project model。
-
-## 场景结构
-
-`MjRuntimeWorld` 持有 world_model 资源来确定全局 MuJoCo options；它的后代 `MjModelInstance` 各自持有 model 资源、实例 RID、独立状态和 property revision。多个实例可共享不可变资源，但不会共享正在推进的 mjData 状态。普通支持的 Godot 刚体与这些模型处于同一 PhysicsServer space，可发生真实接触。
-
-同一 World3D 只能有一个 MjRuntimeWorld。第二个世界使用 own_world_3d 的 SubViewport。world/model options 冲突、缺失资源、损坏依赖或不支持的全局 userdata/mocap/keyframe 会明确拒绝；不要通过删除参数让模型“看起来加载成功”。
-
-Create runtime scene 生成基础世界和实例。Create simulation playground 在游戏 UI 外层加入 MjEnvironmentHost、MjSimulationControls 和相机，初始暂停。环境 host 使用独立 World3D，使重建候选能与旧环境隔离。
-
-模型实例节点的初始 transform 必须是无缩放的刚体变换。自由 G1 运行后根节点跟随真实 pelvis；编辑器里修改 scale 不是修改物理尺寸的受支持方式，应编辑模型几何并保存新资源。
-
-## 搬迁验证
-
-复制整个项目，包括 addon bin、模型包及 assets；先让原路径不可用，再导入/运行新位置，检查两实例、普通刚体接触和 C#。本仓库 `tests/portable_runtime/run_runtime.sh` 自动覆盖该流程，并把缺模型/重复 world owner 的故意错误放入隔离子进程。
-
-文件系统项目是当前支持路径；PCK/ZIP 内依赖提取未验证。详见 [英文资源格式细节](portable-models.md) 和 [最新报告](freebase-clock-validation.zh-CN.md)。
+`tests/portable_runtime/run_assets.sh` 验证源文件与旧项目不可用后的重编译；`run_runtime.sh` 验证共享世界、控制隔离、接触、错误恢复、搬迁与 C#。PCK/ZIP 内依赖提取尚未验收。

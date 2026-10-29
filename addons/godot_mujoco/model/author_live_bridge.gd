@@ -5,7 +5,7 @@ static var worlds := {}
 static var next_request := 0
 
 static func attach(world: Node) -> void:
-	world.author_live_id = str(world.get_path()) + "#" + str(world.get_instance_id())
+	world.author_live_id = str(world.get_path()) + "#" + str(world.get_instance_id()) + "#" + Crypto.new().generate_random_bytes(8).hex_encode()
 	worlds[world.author_live_id] = weakref(world)
 	if EngineDebugger.is_active():
 		if not EngineDebugger.has_capture("mujoco_author"): EngineDebugger.register_message_capture("mujoco_author", receive)
@@ -22,7 +22,17 @@ static func publish(world: Node) -> void:
 	var source: Node = world
 	while source.owner: source = source.owner
 	var path := str(source.get_path_to(world))
-	EngineDebugger.send_message("mujoco_author:world", [{"id":world.author_live_id, "scene":source.scene_file_path, "path":path, "status":world.info().get("compile_status", ""), "revision":world.info().get("design_revision", 0)}])
+	EngineDebugger.send_message("mujoco_author:world", [{"id":world.author_live_id, "scene":source.scene_file_path, "path":path, "status":world.info().get("compile_status", ""), "revision":world.info().get("design_revision", 0), "source_signature":preload("world_layout.gd").signature(world.source_layout)}])
+
+static func publish_instances(world: Node) -> void:
+	if not world or not EngineDebugger.is_active(): return
+	var instances := []
+	for node in preload("world_layout.gd").nodes(world):
+		if not node is MjModelInstance or not node.model_rid.is_valid(): continue
+		var outcome: Dictionary = node.last_preset_result.duplicate(true)
+		outcome.erase("state")
+		instances.append({"id":node.live_id, "instance_id":node.design_instance_id, "label":str(node.get_path()), "revision":node.state().get("property_revision", 0), "pending":node.edit_request!=0, "error":node.last_error, "preset":outcome})
+	EngineDebugger.send_message("mujoco_author:instances", [{"id":world.author_live_id, "instances":instances}])
 
 static func request(world: Node, command: Dictionary) -> int:
 	if not world or not world.editor_connected: return 0
@@ -38,10 +48,19 @@ static func receive(message: String, data: Array) -> bool:
 	var world: Node = reference.get_ref()
 	if not world: return true
 	match message:
+		"preset", "cancel_preset", "control":
+			for node in preload("world_layout.gd").nodes(world):
+				if not node is MjModelInstance or node.live_id != value.get("instance", ""): continue
+				if message == "preset": node.request_control_preset(value.get("preset", {}), int(value.get("revision", -1)))
+				elif message == "cancel_preset": node.cancel_control_preset()
+				else: node.set_control(value.get("actuator", ""), value.get("value", NAN))
 		"hello":
+			publish_instances(world)
 			world.editor_connected = true
 			world.editor_connection_changed.emit(true)
 		"pause":
+			world.manual_resume_required = true
+			world.resume_after_capture = false
 			if PhysicsServer3D.call("scene_pause_for_author", world.space): EngineDebugger.send_message("mujoco_author:paused", [{"id":world.author_live_id, "epoch":value.epoch}])
 		"patch":
 			world.stage_editor_layout(value.layout)

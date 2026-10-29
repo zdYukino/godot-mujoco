@@ -1,5 +1,7 @@
 # Independent acceptance findings and repairs — 2026-10-18
 
+Historical report: the model-package API described below has been removed. Current usage and dependency validation are documented in [portable-models.md](portable-models.md). The engine shutdown evidence remains historical evidence, not a current compatibility path.
+
 Base: `bedc0965b35395cc4faf222ded12aa709a8cba9c`, branch
 `codex/portable-model-runtime`. Main is not changed. This follow-up supersedes
 any inference that earlier cloud passes established reliable first import on dot.

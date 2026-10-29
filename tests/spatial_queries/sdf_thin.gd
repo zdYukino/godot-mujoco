@@ -4,12 +4,12 @@ func run() -> void:
 	var state: PhysicsDirectSpaceState3D=PhysicsServer3D.space_get_direct_state(space)
 	state.call("set_sdf_query_precision_m",0.);state.call("set_sdf_upper_refinement",false) # Preserve strict legacy regression independently.
 	var empty:={"format":1,"xml":"<mujoco><worldbody/></mujoco>","state":{},"source":""}
-	check(PhysicsServer3D.call("scene_configure_model",space,empty,""),"thin SDF isolated world")
+	check(PhysicsServer3D.call("scene_configure_world",space,(empty).xml),"thin SDF isolated world")
 	var vertex:="-1 -1 -.0001 1 -1 -.0001 1 1 -.0001 -1 1 -.0001 -1 -1 .0001 1 -1 .0001 1 1 .0001 -1 1 .0001"
 	var face:="0 2 1 0 3 2 4 5 6 4 6 7 0 1 5 0 5 4 1 2 6 1 6 5 2 3 7 2 7 6 3 0 4 3 4 7"
 	var snapshot:={"format":2,"xml":"<mujoco><asset><mesh name='thin' vertex='%s' face='%s'/></asset><worldbody><geom name='obstacle' type='sdf' mesh='thin' contype='8' conaffinity='0' rgba='1 1 1 0'/></worldbody></mujoco>" % [vertex,face],"state":{},"source":"","mesh_options":{"thin":{"octree_maxdepth":6}}}
 	var document:=MjEditorDocument.new();check(document.restore(snapshot),"closed thin volume compiles as native SDF")
-	var rid: RID=PhysicsServer3D.call("scene_load_model",space,snapshot,"","thin",Transform3D.IDENTITY)
+	var rid: RID=PhysicsServer3D.call("scene_load_xml",space,(snapshot).xml,(snapshot).get("state",{}),(snapshot).get("mesh_options",{}),"thin",Transform3D.IDENTITY)
 	check(rid.is_valid(),"actual thin SDF loads")
 	var geometry: Array=PhysicsServer3D.call("scene_geometry",space,rid)
 	check(geometry.size()==1 and geometry[0].type==8,"thin obstacle actual mjGEOM_SDF type8")

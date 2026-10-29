@@ -41,7 +41,7 @@ func setup():
  check(PhysicsServer3D.call("scene_pause",space,true),"pause isolated world")
  var file=FileAccess.open("res://world.xml",FileAccess.WRITE);file.store_string('<mujoco><option timestep=".01" gravity="0 0 -10"/><worldbody/></mujoco>');file.close()
  var doc:RefCounted=ClassDB.instantiate("MjEditorDocument")
- check(doc.import_file("res://world.xml") and PhysicsServer3D.call("scene_configure_model",space,doc.snapshot(),"res://"),"configure lightweight exact-step world")
+ check(doc.import_file("res://world.xml") and PhysicsServer3D.call("scene_configure_world",space,(doc.snapshot()).xml),"configure lightweight exact-step world")
 func finish(prefix:String="PIN_RESULT"):
  for joint in joints:PhysicsServer3D.free_rid(joint)
  joints.clear();resources.reverse()
@@ -123,7 +123,7 @@ func run():
  var previous_space=space;space=viewport.find_world_3d().space
  PhysicsServer3D.call("scene_pause",space,true)
  var saved_doc:RefCounted=ClassDB.instantiate("MjEditorDocument");saved_doc.import_file("res://world.xml")
- check(PhysicsServer3D.call("scene_configure_model",space,saved_doc.snapshot(),"res://"),"configure reopened scene world")
+ check(PhysicsServer3D.call("scene_configure_world",space,(saved_doc.snapshot()).xml),"configure reopened scene world")
  var reopened=load("res://SavedPin.tscn").instantiate();viewport.add_child(reopened);await ticks(2)
  saved_bob=reopened.get_node("SavedBob");saved_pin=reopened.get_node("SavedPin")
  check(saved_pin.node_a==NodePath("../SavedBob") and PhysicsServer3D.joint_get_type(saved_pin.get_rid())==PhysicsServer3D.JOINT_TYPE_PIN,"reopened node paths create real Pin")

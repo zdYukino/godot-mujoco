@@ -9,7 +9,7 @@ var owns_world := false
 var last_error := ""
 func _enter_tree() -> void:
 	if Engine.is_editor_hint(): return
-	if not PhysicsServer3D.has_method("scene_configure_model"):
+	if not PhysicsServer3D.has_method("scene_configure_world"):
 		last_error = "地图需要 MuJoCo 物理后端"; push_error(last_error); return
 	var world := get_world_3d()
 	if world.has_meta("mj_runtime_owner") and is_instance_valid(world.get_meta("mj_runtime_owner").get_ref()):
@@ -22,7 +22,7 @@ func _enter_tree() -> void:
 	if not options.error.is_empty():
 		last_error = options.error; PhysicsServer3D.call("scene_pause",space,paused); push_error(last_error); return
 	var snapshot := {"format":1,"xml":"<mujoco><compiler angle='radian'/>"+options.xml+"<worldbody/></mujoco>","state":{},"source":""}
-	if not PhysicsServer3D.call("scene_configure_model",space,snapshot,""):
+	if not PhysicsServer3D.call("scene_configure_world",space,(snapshot).xml):
 		last_error = PhysicsServer3D.call("scene_info",space).last_error
 	else:
 		world.set_meta("mj_runtime_owner",weakref(self)); owns_world = true
@@ -60,7 +60,7 @@ func load_collisions() -> void:
 	var paused: bool = PhysicsServer3D.call("scene_info",space).get("paused",false)
 	if not PhysicsServer3D.call("scene_pause",space,true): last_error = "无法暂停以装载地图"; return
 	for entry in native_collisions:
-		var id: RID = PhysicsServer3D.call("scene_load_model",space,entry.snapshot,"",str(get_instance_id())+"_map_"+str(native_rids.size()),global_transform*entry.pose)
+		var id: RID = PhysicsServer3D.call("scene_load_xml",space,(entry.snapshot).xml,{},(entry.snapshot).get("mesh_options",{}),str(get_instance_id())+"_map_"+str(native_rids.size()),global_transform*entry.pose)
 		if not id.is_valid():
 			last_error = PhysicsServer3D.call("scene_info",space).last_error
 			for old in native_rids: PhysicsServer3D.free_rid(old)

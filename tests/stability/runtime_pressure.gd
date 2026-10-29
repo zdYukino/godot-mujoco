@@ -6,16 +6,25 @@ func check(ok: bool, label: String) -> void:
 	checks += 1
 	if not ok: failures.append(label);printerr("FAIL ",label)
 func _initialize() -> void: call_deferred("run")
+func settled(world: Node) -> void:
+	var deadline := Time.get_ticks_msec()+120000
+	await process_frame;await process_frame
+	while Time.get_ticks_msec()<deadline:
+		if world.author_started and world.info().get("compile_status")=="ready" and world.command_request==0:return
+		if world.info().get("compile_status")=="failed":break
+		await process_frame
+	check(false,"world compilation settles: "+str(world.info().get("last_error","timeout")))
 func run() -> void:
 	var world=load("res://RuntimeScene.tscn").instantiate()
 	world.start_paused=true;root.add_child(world)
+	await settled(world)
 	var robot=world.get_node("Model")
 	var second=world.get_node("SecondModel")
 	check(robot.model_rid.is_valid() and second.model_rid.is_valid(),"initial models loaded")
 	if not robot.model_rid.is_valid():quit(1);return
-	var resource=robot.model
+	var resource=robot.design
 	var relative:String=resource.dependencies.keys()[0]
-	var path:String=resource.resource_path.get_base_dir().path_join(relative)
+	var path:String=relative
 	for cycle in range(30):
 		var target:=.45+.1*float(cycle%4)
 		check(robot.set_control("left_elbow_joint_position",target),"control "+str(cycle))
@@ -26,16 +35,18 @@ func run() -> void:
 		var other_before:Dictionary=second.state()
 		var revision:int=world.info().revision
 		check(DirAccess.rename_absolute(path,path+".temporarily_missing")==OK,"hide dependency "+str(cycle))
-		var missing=Instance.new();missing.model=resource;world.add_child(missing)
+		var missing=Instance.new();missing.design=resource;world.add_child(missing)
 		check(not missing.model_rid.is_valid() and missing.last_error.contains("Missing"),"missing dependency refused "+str(cycle))
 		check(robot.state()==before and second.state()==other_before and world.info().revision==revision,"rejection preserves world "+str(cycle))
 		check(DirAccess.rename_absolute(path+".temporarily_missing",path)==OK,"restore dependency "+str(cycle))
 		missing.position=Vector3(-2,1.1,0)
 		check(missing.load_model(),"same failed instance recovers "+str(cycle))
+		await settled(world)
 		check(robot.state().joints==before.joints and robot.state().controls==before.controls,"insertion preserves state "+str(cycle))
 		check(second.state().joints==other_before.joints and second.state().controls==other_before.controls,"second model independent "+str(cycle))
 		var removed:RID=missing.model_rid
 		missing.free()
+		await settled(world)
 		check(PhysicsServer3D.call("scene_state",world.space,removed).is_empty(),"removed RID absent "+str(cycle))
 		check(robot.state().joints==before.joints and robot.state().controls==before.controls,"removal preserves state "+str(cycle))
 		check(world.info().warning_count==0,"no MuJoCo warnings "+str(cycle))
@@ -46,6 +57,7 @@ func run() -> void:
 			root.remove_child(world)
 			await process_frame
 			root.add_child(world)
+			await settled(world)
 			check(world.ready_for_models and world.info().paused,"world reentry configured "+str(cycle))
 			check(robot.model_rid.is_valid() and robot.model_rid!=old,"fresh instance RID on reentry "+str(cycle))
 			check(abs(robot.state().joints.left_elbow_joint.qpos[0]-.4)<1e-8,"reentry restores authored state "+str(cycle))

@@ -22,8 +22,9 @@ var compiled_status := "未验证"
 var artifact: Dictionary = {}
 var scan_due := 0
 var compile_token := ""
+var compilation_context := ""
 
-func initialize(model: Node3D) -> void:
+func initialize(model: Node3D, reuse_existing := true) -> void:
 	host = model
 	if not host.design: return
 	_collect_nodes(host)
@@ -37,17 +38,20 @@ func initialize(model: Node3D) -> void:
 	if not host.design.cache_path.is_empty() and FileAccess.file_exists(host.design.cache_path):
 		var input := FileAccess.open(host.design.cache_path, FileAccess.READ)
 		var cached: Variant = input.get_var(false) if input else null
-		if cached is Dictionary and cached.get("success", false) and cached.get("author", {}) == host.design.author_snapshot(): apply_compiled(cached)
-	if artifact.is_empty() and host.design.validated_revision == host.design.revision:
-		geometry_queue = host.design.cached_geometry.duplicate(true)
+		if cached is Dictionary and cached.get("success", false) and cached.get("author", {}) == host.design.author_snapshot() and cached.get("context", "") == host.compilation_signature(): apply_compiled(cached, reuse_existing)
+	if artifact.is_empty() and host.design.validated_revision == host.design.revision and host.design.validated_context == host.compilation_signature():
+		geometry_queue = host.design.cached_geometry.filter(func(geom): return not reuse_existing or not host.visuals.has(geom.name)).duplicate(true)
 		for geometry in geometry_queue: geometry_by_name[geometry.name] = geometry
-	if Engine.is_editor_hint():
-		compiler = Service.new()
-		compiler.name = "_MjCompiler"
-		host.add_child(compiler, false, Node.INTERNAL_MODE_BACK)
-		compiler.completed.connect(compilation_finished)
-		compiler.status_changed.connect(func(text): compiled_status = text; changed())
-		queue_compile()
+	if Engine.is_editor_hint(): ensure_compiler()
+
+func ensure_compiler() -> void:
+	if compiler or not EditorInterface.get_base_control().has_meta("mujoco_author_plugin"): return
+	compiler = Service.new()
+	compiler.name = "_MjCompiler"
+	host.add_child(compiler, false, Node.INTERNAL_MODE_BACK)
+	compiler.completed.connect(compilation_finished)
+	compiler.status_changed.connect(func(text): compiled_status = text; changed())
+	queue_compile()
 
 func _collect_nodes(parent: Node) -> void:
 	for child in parent.get_children():
@@ -156,7 +160,7 @@ func apply_scale(node: Node3D, scale: Vector3) -> String:
 		size[0] *= scale.x
 		size[1] *= scale.z
 		size[2] *= scale.y
-	elif shape == "mesh":
+	elif shape in ["mesh","sdf"]:
 		var previous: Vector3 = node.get("mjcf/mesh_scale")
 		var result: Dictionary = host.apply_author_command({"op":"mesh_scale", "id":node.entity_id, "value":previous * scale}, false)
 		return str(result.get("error", ""))
@@ -166,15 +170,16 @@ func apply_scale(node: Node3D, scale: Vector3) -> String:
 
 func request_pause() -> void:
 	if not Engine.is_editor_hint(): return
-	var plugin: Node = EditorInterface.get_base_control().get_meta("mujoco_author_plugin", null)
+	var plugin: Node = (EditorInterface.get_base_control().get_meta("mujoco_author_plugin") if EditorInterface.get_base_control().has_meta("mujoco_author_plugin") else null)
 	if plugin and plugin.has_method("author_changed"): plugin.author_changed(host, true)
 
 func changed() -> void:
 	if Engine.is_editor_hint():
-		var plugin: Node = EditorInterface.get_base_control().get_meta("mujoco_author_plugin", null)
+		var plugin: Node = (EditorInterface.get_base_control().get_meta("mujoco_author_plugin") if EditorInterface.get_base_control().has_meta("mujoco_author_plugin") else null)
 		if plugin and plugin.has_method("author_status_changed"): plugin.author_status_changed(host)
 
 func queue_compile() -> void:
+	compilation_context = host.compilation_signature()
 	compile_token = Xml.uuid()
 	due_ms = Time.get_ticks_msec() + 300
 	compiled_status = "等待后台验证"
@@ -183,14 +188,17 @@ func queue_compile() -> void:
 
 func poll() -> void:
 	if not host or not host.design: return
+	ensure_compiler()
+	if compilation_context != host.compilation_signature(): queue_compile()
 	if not Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT): flush_transforms()
 	if pending_transforms.is_empty() and due_ms > 0 and Time.get_ticks_msec() >= due_ms and compiler:
 		due_ms = 0
-		compiler.submit({"author":host.design.author_snapshot(), "revision":host.design.revision, "generation":compile_token})
+		compiler.submit({"author":host.design.author_snapshot(), "revision":host.design.revision, "generation":compile_token, "context":host.compilation_context()})
 	build_geometry_step()
 
 func compilation_finished(result: Dictionary) -> void:
 	if result.generation != compile_token or int(result.revision) != host.design.revision: return
+	if host.compilation_signature() != compilation_context: return
 	if not result.get("success", false):
 		host.design.validation_error = result.get("error", "Compilation failed")
 		host.last_error = host.design.validation_error
@@ -199,10 +207,10 @@ func compilation_finished(result: Dictionary) -> void:
 	host.design.cache_path = str(result.directory).path_join("result.bin")
 	apply_compiled(result)
 	if Engine.is_editor_hint():
-		var plugin: Node = EditorInterface.get_base_control().get_meta("mujoco_author_plugin", null)
+		var plugin: Node = (EditorInterface.get_base_control().get_meta("mujoco_author_plugin") if EditorInterface.get_base_control().has_meta("mujoco_author_plugin") else null)
 		if plugin and plugin.has_method("author_compiled"): plugin.author_compiled(host, result)
 
-func apply_compiled(result: Dictionary) -> void:
+func apply_compiled(result: Dictionary, initial := false) -> void:
 	artifact = result
 	host.last_error = ""
 	host.design.validated_revision = host.design.revision
@@ -210,12 +218,14 @@ func apply_compiled(result: Dictionary) -> void:
 	host.design.cached_entities = result.get("entities", []).duplicate(true)
 	host.design.cached_geometry = result.get("geometry", []).duplicate(true)
 	host.design.collision_geometry = result.get("collision_geometry", []).duplicate(true)
+	host.design.collision_stats = result.get("collision_stats", []).duplicate(true)
+	host.design.validated_context = result.get("context", "")
 	host.design.compiled_snapshot = result.get("snapshot", {}).duplicate(true)
 	body_world.clear()
 	for entity in host.design.cached_entities:
 		if entity.kind == "body": body_world[entity.name] = entity.properties.get("preview_transform", Transform3D.IDENTITY)
 	geometry_by_name.clear()
-	geometry_queue = result.get("geometry", []).duplicate()
+	geometry_queue = result.get("geometry", []).filter(func(geom): return not initial or not host.visuals.has(geom.name)).duplicate()
 	for geometry in geometry_queue: geometry_by_name[geometry.name] = geometry
 	last_valid = host.design.author_snapshot()
 	refresh_nodes()

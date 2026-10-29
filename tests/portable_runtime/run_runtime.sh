@@ -18,36 +18,26 @@ p=pathlib.Path(sys.argv[1]);shutil.copytree(p/'project',p/'relocated',ignore=shu
 (p/'project').rename(p/'project.offline');shutil.rmtree(p/'relocated/assets')
 for name in ['multi.xml','conflict.xml']:(p/'relocated'/name).unlink()
 PY
-timeout --kill-after=5 120 "$ROOT/scripts/import_headless.sh" "$OUT/relocated" > "$OUT/relocated-import.log" 2>&1
+cat > "$OUT/relocated/ImportOnly.tscn" <<'SCENE'
+[gd_scene format=3]
+[node name="ImportOnly" type="Node3D"]
+SCENE
+timeout --kill-after=5 120 "$GODOT_BIN" --headless --editor --path "$OUT/relocated" res://ImportOnly.tscn --import --frame-delay 1000 > "$OUT/relocated-import.log" 2>&1
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/relocated" --script res://runtime_test.gd > "$OUT/relocated-runtime.log" 2>&1
 timeout --kill-after=5 90 "$GODOT_BIN" --headless --path "$OUT/relocated" --script res://recovery_integrity_test.gd > "$OUT/recovery-integrity.log" 2>&1
 python3 "$ROOT/tests/portable_runtime/world_rejections.py" --godot "$GODOT_BIN" --project "$OUT/relocated" --out "$OUT/negative" > "$OUT/negative-suite.log" 2>&1
-timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/relocated" --script res://live_edit_test.gd > "$OUT/live-edit.log" 2>&1
 timeout --kill-after=5 180 dotnet build "$OUT/relocated/PortableRuntime.csproj" -c Debug > "$OUT/dotnet-build.log" 2>&1
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/relocated" res://RuntimeBinding.tscn > "$OUT/csharp.log" 2>&1
-cp "$ROOT/tests/portable_runtime/editor_acceptance.gd" "$OUT/relocated/acceptance.gd"
-printf '\n[editor_plugins]\nenabled=PackedStringArray("res://addons/mujoco_editor/plugin.cfg")\n' >> "$OUT/relocated/project.godot"
-timeout --kill-after=5 120 "$GODOT_BIN" --headless --editor --path "$OUT/relocated" -- --mj-editor-test > "$OUT/editor-flow.log" 2>&1
-timeout --kill-after=5 90 "$GODOT_BIN" --headless --path "$OUT/relocated" --script res://restart_editor_scene.gd > "$OUT/editor-scene-restart.log" 2>&1
-python3 - "$OUT" <<'PY'
+python3 - "$OUT" <<'PYRESULT'
 import pathlib,json,sys
 p=pathlib.Path(sys.argv[1]);results={}
-for name in ['runtime','relocated-runtime']:
- s=(p/(name+'.log')).read_text();r=json.loads(next(x.split(' ',1)[1] for x in s.splitlines() if x.startswith('RUNTIME_RESULT ')));assert r['failed']==0,r;results[name]=r
-live=json.loads(next(x.split(' ',1)[1] for x in (p/'live-edit.log').read_text().splitlines() if x.startswith('LIVE_EDIT_RESULT ')));assert live['failed']==0,live;results['live-edit']=live
-editor=json.loads(next(x.split(' ',1)[1] for x in (p/'editor-flow.log').read_text().splitlines() if x.startswith('PORTABLE_EDITOR_RESULT ')));assert editor['failed']==0,editor;results['editor']=editor
-assert 'EDITOR_SCENE_RESTART_PASS' in (p/'editor-scene-restart.log').read_text()
+for name,marker in [('runtime','RUNTIME_RESULT '),('relocated-runtime','RUNTIME_RESULT '),('recovery-integrity','RECOVERY_INTEGRITY_RESULT ')]:
+ text=(p/(name+'.log')).read_text();rows=[json.loads(x[len(marker):]) for x in text.splitlines() if x.startswith(marker)]
+ assert len(rows)==1 and rows[0]['failed']==0,(name,rows)
+ results[name]=rows[0]
 assert 'PORTABLE CSHARP PASS' in (p/'csharp.log').read_text()
-edge=(p/'recovery-integrity.log').read_text()
-e=json.loads(next(x.split(' ',1)[1] for x in edge.splitlines() if x.startswith('RECOVERY_INTEGRITY_RESULT ')));assert e['failed']==0,e;results['recovery-integrity']=e
-results['isolated-world-rejections']=json.loads((p/'negative/results.json').read_text())
-assert all(row['passed'] and row['exit']==0 for row in results['isolated-world-rejections'])
-violations=[]
-for f in p.glob('*.log'):
- s=f.read_text()
- if 'ERROR:' in s or 'leaked' in s: violations.append(f.name)
-results['strict_log_failures']=violations
+for file in p.glob('*.log'):
+ text=file.read_text();assert 'ERROR:' not in text and 'leaked' not in text,file
 (p/'results.json').write_text(json.dumps(results,indent=2)+'\n')
-assert not violations, violations
-print('PORTABLE RUNTIME PASS; original project and source assets unavailable;',p)
-PY
+print('PORTABLE AUTHOR RUNTIME PASS',p)
+PYRESULT

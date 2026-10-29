@@ -16,8 +16,23 @@
 #include <functional>
 #include <tuple>
 #include <thread>
+#ifdef GMJ_VIEWER_BENCHMARK
+#include <chrono>
+#endif
 namespace gmj_sdf {class Field;}
 namespace godot {
+#ifdef GMJ_VIEWER_BENCHMARK
+extern double gmj_benchmark_step_us;
+extern double gmj_benchmark_state_us;
+extern double gmj_benchmark_info_us;
+extern double gmj_benchmark_ray_us;
+extern uint64_t gmj_benchmark_ray_count;
+struct GmjBenchmarkTimer {
+ double &total;
+ std::chrono::steady_clock::time_point start = std::chrono::steady_clock::now();
+ ~GmjBenchmarkTimer() { total += std::chrono::duration<double,std::micro>(std::chrono::steady_clock::now()-start).count(); }
+};
+#endif
 struct MjAsyncCandidate;
 class MjPhysicsServer3D;
 class MjDirectBodyState;
@@ -35,7 +50,7 @@ struct MjImported {
  RID rid; String label; Transform3D pose; mjSpec *spec=nullptr;
  uint64_t query_object_id=0; bool query_ray_pickable=true;
  bool whole_model=false; Dictionary initial; uint64_t property_revision=0;
- String author_xml; Dictionary author_definition, committed_definition;
+ String author_xml; Dictionary author_definition, committed_definition, runtime_drives;
  Transform3D committed_pose; bool has_committed_pose=false;
  std::string prefix;
  ~MjImported() { if(spec) mj_deleteSpec(spec); }
@@ -123,22 +138,25 @@ public:
  RID scene_import_g1(const RID &space, const String &path, const String &label, const Transform3D &pose);
  RID scene_add_box(const RID &space, const String &label, const Transform3D &pose, const Vector3 &size, double mass);
  bool scene_remove(const RID &space, const RID &object);
+ Array scene_collision_stats(const RID &space) const;
  Dictionary scene_info(const RID &space) const;
+#ifdef GMJ_VIEWER_BENCHMARK
+ Dictionary scene_benchmark(const RID &space, const String &action, const Dictionary &payload);
+#endif
  Dictionary scene_state(const RID &space, const RID &object) const;
  Array scene_geometry(const RID &space, const RID &object) const;
  bool scene_set_control(const RID &space, const RID &object, const String &joint, double target);
  RID scene_insert(MjSpace &space, mjSpec *spec, const String &label, const Transform3D &pose, bool whole_model=false, const Dictionary &initial=Dictionary());
- bool scene_configure_model(const RID &space, const Dictionary &snapshot, const String &directory);
- RID scene_load_model(const RID &space, const Dictionary &snapshot, const String &directory, const String &label, const Transform3D &pose);
+ bool scene_configure_world(const RID &space, const String &xml);
+ RID scene_load_xml(const RID &space, const String &xml, const Dictionary &initial, const Dictionary &mesh_options, const String &label, const Transform3D &pose);
  bool scene_set_actuator(const RID &space, const RID &object, const String &name, double value);
  bool scene_release_model(const RID &space, const RID &object);
  bool scene_set_query_owner(const RID &space,const RID &object,uint64_t object_id,bool ray_pickable=true);
- int64_t scene_request_model_edit(const RID &space, const RID &object, const Dictionary &snapshot, const String &directory, int64_t expected_revision);
- int64_t scene_request_preset(const RID &space,const RID &object,const Dictionary &preset,int64_t revision);
- bool scene_cancel_preset(int64_t request);
- Dictionary scene_edit_result(int64_t request);
- void scene_cancel_model_edit(int64_t request);
- void process_model_edits();
+ int64_t scene_request_control_commit(const RID &space,const RID &object,const Dictionary &preset,int64_t revision);
+ bool scene_cancel_control_commit(int64_t request);
+ Dictionary scene_control_result(int64_t request);
+ void scene_discard_control_commit(int64_t request);
+ void process_control_commits();
  int64_t scene_request_world_command(const RID &space,const String &command,int count);
  Dictionary scene_world_command_result(int64_t request);
  void scene_cancel_world_command(int64_t request);
@@ -155,11 +173,11 @@ public:
  struct WorldCommand {int64_t request;RID space;String command;int count;};
  std::deque<WorldCommand> world_commands;
  std::map<int64_t,Dictionary> world_command_results;
- struct ModelEdit {int64_t request, expected_revision; RID space, object; Dictionary snapshot; String directory; bool preset=false;};
- std::mutex edits_mutex;
- std::deque<ModelEdit> model_edits;
- std::map<int64_t,Dictionary> edit_results;
- int64_t next_edit_request=1;
+ struct ControlCommit {int64_t request, expected_revision; RID space, object; Dictionary snapshot;};
+ std::mutex requests_mutex;
+ std::deque<ControlCommit> control_commits;
+ std::map<int64_t,Dictionary> control_results;
+ int64_t next_request_id=1;
 
  std::shared_ptr<MjAreaScratch> area_scratch;
  std::map<uint64_t,std::unique_ptr<MjArea>> areas;

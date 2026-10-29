@@ -62,13 +62,13 @@ func _get_property_list() -> Array[Dictionary]:
 			fields.append(property("center_of_mass", TYPE_VECTOR3))
 			fields.append(property("inertial_orientation", TYPE_QUATERNION))
 		"geom":
-			fields.append(property("shape", TYPE_STRING, PROPERTY_HINT_ENUM, "plane,sphere,box,cylinder,capsule,ellipsoid,mesh", true))
+			fields.append(property("shape", TYPE_STRING, PROPERTY_HINT_ENUM, "plane,sphere,box,cylinder,capsule,ellipsoid,mesh,sdf,hfield", true))
 			var shape: String = entity.attrs.get("type", "sphere")
 			if shape in ["sphere", "cylinder", "capsule"]: fields.append(property("radius", TYPE_FLOAT, PROPERTY_HINT_RANGE, ".000001,100,0.001,or_greater,suffix:m"))
 			if shape in ["cylinder", "capsule"]: fields.append(property("height", TYPE_FLOAT, PROPERTY_HINT_RANGE, ".000001,100,0.001,or_greater,suffix:m"))
 			if shape in ["box", "ellipsoid"]: fields.append(property("dimensions", TYPE_VECTOR3))
 			if shape == "plane": fields.append(property("display_extent", TYPE_VECTOR2))
-			if shape == "mesh":
+			if shape in ["mesh","sdf"]:
 				var assets := []
 				for asset in Xml.section(author_model().design.tree,"asset").get("children",[]):
 					if asset.tag=="mesh": assets.append(str(asset.attrs.get("name","")))
@@ -218,7 +218,7 @@ func _set(property_name: StringName, value: Variant) -> bool:
 		"inertia_mode": command = {"op":"inertia_mode", "id":entity_id, "value":value}
 		"mesh": command.values.mesh=value
 		"mesh_file":
-			var plugin: Node=EditorInterface.get_base_control().get_meta("mujoco_author_plugin",null)
+			var plugin: Node=(EditorInterface.get_base_control().get_meta("mujoco_author_plugin") if EditorInterface.get_base_control().has_meta("mujoco_author_plugin") else null)
 			if plugin: plugin.add_mesh_asset(model,item().parent_id,str(value),entity_id)
 			return true
 		"mesh_scale": command = {"op":"mesh_scale", "id":entity_id, "value":value}

@@ -13,7 +13,6 @@ var map_panel: Control
 var object_panel: Control
 var heightfield_panel: Control
 var heightfield_debugger: EditorDebuggerPlugin
-var live_debugger: EditorDebuggerPlugin
 var author_debugger: EditorDebuggerPlugin
 var author_gizmo: EditorNode3DGizmoPlugin
 var scene_inspector: EditorInspectorPlugin
@@ -33,6 +32,8 @@ var last_scene: Node
 
 func _enter_tree() -> void:
 	if not ClassDB.class_exists("MjEditorDocument"): return
+	preload("res://addons/godot_mujoco/model/collision_settings.gd").register_project_settings()
+	set_input_event_forwarding_always_enabled()
 	EditorInterface.get_base_control().set_meta("mujoco_author_plugin", self)
 	author_gizmo = preload("author_gizmo.gd").new(); add_node_3d_gizmo_plugin(author_gizmo)
 	dock = VBoxContainer.new(); dock.name = "MuJoCo"; dock.custom_minimum_size.x = 280
@@ -47,7 +48,6 @@ func _enter_tree() -> void:
 	map_panel = preload("map_panel.gd").new(); map_panel.plugin = self
 	object_panel = preload("object_panel.gd").new(); object_panel.plugin = self
 	heightfield_panel = preload("heightfield_panel.gd").new(); heightfield_panel.plugin = self
-	live_debugger = preload("live_debugger.gd").new(); add_debugger_plugin(live_debugger)
 	heightfield_debugger = preload("heightfield_debugger.gd").new(); add_debugger_plugin(heightfield_debugger)
 	heightfield_panel.debugger = heightfield_debugger
 	author_debugger = preload("author_debugger.gd").new(); author_debugger.plugin = self; add_debugger_plugin(author_debugger)
@@ -66,8 +66,16 @@ func _enter_tree() -> void:
 	view_controls = preload("view_controls.gd").new(); view_controls.plugin = self
 	add_control_to_container(CONTAINER_SPATIAL_EDITOR_MENU, view_controls)
 	show_scope(0); selection_changed()
+	# A lifecycle test may disable and re-enable this plugin in the same editor.
+	# Keep its runner on the editor root and launch the command-line hook once.
+	var base := EditorInterface.get_base_control()
+	if base.has_meta("mujoco_test_started"): return
+	base.set_meta("mujoco_test_started",true)
 	if "--mj-author-test" in OS.get_cmdline_user_args(): call_deferred("run_author_test")
 	if "--mj-author-gui" in OS.get_cmdline_user_args(): call_deferred("run_author_gui")
+	if "--mj-author-presets-test" in OS.get_cmdline_user_args(): call_deferred("run_presets_test")
+	for argument in OS.get_cmdline_user_args():
+		if argument.begins_with("--mj-tool-test="): call_deferred("run_tool_test",argument.trim_prefix("--mj-tool-test="))
 	if "--mj-live-test" in OS.get_cmdline_user_args(): call_deferred("run_live_test")
 
 func _exit_tree() -> void:
@@ -78,7 +86,7 @@ func _exit_tree() -> void:
 	if EditorInterface.get_selection().selection_changed.is_connected(selection_changed): EditorInterface.get_selection().selection_changed.disconnect(selection_changed)
 	if get_undo_redo().history_changed.is_connected(history_changed): get_undo_redo().history_changed.disconnect(history_changed)
 	if scene_changed.is_connected(scene_switched): scene_changed.disconnect(scene_switched)
-	for debugger in [live_debugger, heightfield_debugger, author_debugger]:
+	for debugger in [heightfield_debugger, author_debugger]:
 		if debugger:
 			if debugger.has_method("shutdown"): debugger.shutdown()
 			remove_debugger_plugin(debugger)
@@ -89,7 +97,7 @@ func _exit_tree() -> void:
 	preview_roots.clear()
 	if is_instance_valid(editor_dock): remove_dock(editor_dock); editor_dock.free()
 	var base := EditorInterface.get_base_control()
-	if base.get_meta("mujoco_author_plugin", null) == self: base.remove_meta("mujoco_author_plugin")
+	if base.has_meta("mujoco_author_plugin") and base.get_meta("mujoco_author_plugin") == self: base.remove_meta("mujoco_author_plugin")
 
 func _get_plugin_name() -> String:
 	return "MuJoCo"
@@ -105,6 +113,21 @@ func reveal_scope(index: int) -> void:
 func selection_changed() -> void:
 	if syncing: return
 	var selected := EditorInterface.get_selection().get_selected_nodes()
+	if selected.size() != 1:
+		var targets: Array[Node] = []
+		var redirect := false
+		for item in selected:
+			var ancestor: Node = item
+			while ancestor and not ancestor.has_meta("map_specs"): ancestor = ancestor.get_parent()
+			var target: Node = ancestor if ancestor else item
+			redirect = redirect or target != item
+			if not targets.has(target): targets.append(target)
+		if redirect:
+			syncing = true
+			EditorInterface.get_selection().clear()
+			for target in targets: EditorInterface.get_selection().add_node(target)
+			syncing = false
+		return
 	var node: Node = selected[0] if selected.size() == 1 else null
 	if node is MeshInstance3D and node.get_parent() and node.get_parent().has_method("author_kind"):
 		node = node.get_parent(); syncing = true
@@ -118,6 +141,19 @@ func selection_changed() -> void:
 			while inspector and not inspector is EditorDock: inspector=inspector.get_parent()
 			if inspector: inspector.make_visible()
 	elif node is Terrain: heightfield_panel.select_target(node); reveal_scope(2)
+	var map_root: Node = node
+	while map_root and not map_root.has_meta("map_specs"): map_root=map_root.get_parent()
+	var root := EditorInterface.get_edited_scene_root()
+	if map_root and root and not map_panel.scene_map_path.is_empty() and root.get_node_or_null(map_panel.scene_map_path)==map_root:
+		var visual := map_root.get_node_or_null("Visual")
+		if visual and (node==visual or visual.is_ancestor_of(node)):
+			var path := str(visual.get_path_to(node))
+			if map_panel.items.has(path): map_panel.items[path].select(0); map_panel.select_tree(); show_scope(1)
+		var terrain_node: Node = node
+		while terrain_node and terrain_node.get_parent() != map_root: terrain_node = terrain_node.get_parent()
+		if terrain_node is Terrain and map_panel.items.has(str(terrain_node.name)):
+			map_panel.items[str(terrain_node.name)].select(0); map_panel.select_tree(); show_scope(1)
+	if map_root and node!=map_root: select_scene_target(map_root)
 
 func attach_author_node(parent: Node, node: Node) -> void:
 	parent.add_child(node, true)
@@ -159,6 +195,8 @@ func author_status_changed(model: Node) -> void:
 func scene_switched(root: Node) -> void:
 	last_scene = root; last_history_version = -1; history_states.clear(); selected_models.clear()
 	selection_changed()
+	if map_panel: map_panel.clear_preview(); map_panel.reset_independent_preview(); map_panel.call_deferred("rebuild")
+	if heightfield_panel: heightfield_panel._clear_preview()
 
 func history_changed() -> void:
 	var root := EditorInterface.get_edited_scene_root()
@@ -199,6 +237,9 @@ func _process(_delta: float) -> void:
 	var version := int(history.get_version()) if history else 0
 	var current_models := {}; var instance_ids := {}
 	for node in all_nodes(root):
+		if node is World and node.world_design:
+			current_models["world:" + str(node.get_path())] = node
+			continue
 		if not node is Model or not node.design: continue
 		if node.design_instance_id.is_empty(): node.design_instance_id = Xml.uuid()
 		if instance_ids.has(node.design_instance_id):
@@ -209,13 +250,17 @@ func _process(_delta: float) -> void:
 	if version != last_history_version and history_states.has(version):
 		syncing = true
 		for key in current_models:
-			if history_states[version].has(key): current_models[key].restore_author_snapshot(history_states[version][key])
+			if history_states[version].has(key):
+				if current_models[key] is World: current_models[key].restore_world_snapshot(history_states[version][key])
+				else: current_models[key].restore_author_snapshot(history_states[version][key])
 		syncing = false
 	else:
-		for model in current_models.values(): reconcile_nodes(model)
+		for model in current_models.values():
+			if model is Model: reconcile_nodes(model)
 	if version != last_history_version or not history_states.has(version):
 		var snapshots := {}
-		for key in current_models: snapshots[key] = current_models[key].design.author_snapshot()
+		for key in current_models:
+			snapshots[key] = current_models[key].world_design.author_snapshot() if current_models[key] is World else current_models[key].design.author_snapshot()
 		history_states[version] = snapshots; last_history_version = version
 	selected_models = current_models
 
@@ -262,17 +307,21 @@ func reconcile_nodes(model: Node) -> void:
 
 func _apply_changes() -> void:
 	for model in selected_models.values():
-		if is_instance_valid(model) and model.author_scene: model.author_scene.flush_transforms()
+		if is_instance_valid(model) and model is Model and model.author_scene: model.author_scene.flush_transforms()
 
 func _build() -> bool:
 	_apply_changes()
 	var root := EditorInterface.get_edited_scene_root()
 	if not root: return true
 	for node in all_nodes(root):
+		if node is Model and not node.design:
+			push_warning("MuJoCo 模型缺少 author design：" + str(node.name)); return false
+		if node is World and not node.world_design:
+			push_warning("MuJoCo 世界缺少 world_design"); return false
 		if node is Model and node.design:
 			if not node.global_transform.is_finite() or not node.global_basis.orthonormalized().is_equal_approx(node.global_basis) or not node.global_basis.get_scale().is_equal_approx(Vector3.ONE) or node.global_basis.determinant() <= 0:
 				push_warning("MuJoCo 模型摆放必须为刚性变换："+str(node.name)); return false
-			if node.design.validated_revision != node.design.revision or not node.design.validation_error.is_empty() or (node.author_scene and (node.author_scene.due_ms > 0 or node.author_scene.compiler.busy())):
+			if node.design.validated_revision != node.design.revision or node.design.validated_context != node.compilation_signature() or not node.design.validation_error.is_empty() or (node.author_scene and (node.author_scene.due_ms > 0 or node.author_scene.compiler.busy())):
 				push_warning("MuJoCo 设计未通过当前版本验证：" + str(node.name)); return false
 	return true
 
@@ -281,12 +330,55 @@ func create_preview_root(title: String) -> Node3D:
 	EditorInterface.get_editor_viewport_3d(0).add_child(root); preview_roots.append(root)
 	return root
 
-func frame_preview(_center: Vector3, _distance: float) -> bool:
+func frame_preview(center: Vector3, distance: float) -> bool:
 	EditorInterface.set_main_screen_editor("3D")
+	var viewport := EditorInterface.get_editor_viewport_3d(0)
+	var surface: Control
+	for child in viewport.get_parent().get_parent().get_children():
+		if child.get_class()=="Control" and child.focus_mode==Control.FOCUS_ALL and not child.get_signal_connection_list("gui_input").is_empty(): surface=child; break
+	if not surface: return false
+	var event := InputEventKey.new(); event.keycode=KEY_F; event.pressed=true
+	var shortcuts: Variant=EditorInterface.get_editor_settings().get("shortcuts")
+	if shortcuts is Array:
+		for entry in shortcuts:
+			if entry is Dictionary and entry.get("name")=="spatial_editor/focus_aabb":
+				var shortcut: Shortcut=entry.get("shortcut")
+				if shortcut and not shortcut.events.is_empty() and shortcut.events[0] is InputEventKey: event=shortcut.events[0].duplicate(); event.pressed=true
+	var proxy := MeshInstance3D.new(); proxy.name="MuJoCoFrameBounds"
+	var mesh := BoxMesh.new(); mesh.size=Vector3.ONE*maxf(distance/(1.5*sqrt(3.0)),.01)
+	proxy.mesh=mesh; proxy.visible=false; viewport.add_child(proxy); proxy.global_position=center
+	var selection := EditorInterface.get_selection()
+	var previous := selection.get_selected_nodes(); var blocked := selection.is_blocking_signals()
+	selection.set_block_signals(true); selection.clear(); selection.add_node(proxy)
+	surface.gui_input.emit(event)
+	selection.clear()
+	for node in previous:
+		if is_instance_valid(node) and node.is_inside_tree(): selection.add_node(node)
+	selection.set_block_signals(blocked); proxy.free()
 	return true
 
-func select_preview_target(_path := "") -> void:
-	pass
+func select_preview_target(path := "") -> void:
+	if syncing: return
+	var root := EditorInterface.get_edited_scene_root()
+	var target: Node = root.get_node_or_null(map_panel.scene_map_path) if root and not path.is_empty() and not map_panel.scene_map_path.is_empty() else null
+	select_scene_target(target)
+
+func select_scene_target(target: Node) -> void:
+	if syncing: return
+	syncing=true
+	var selection := EditorInterface.get_selection()
+	selection.clear()
+	if target: selection.add_node(target)
+	syncing=false
+
+func _has_main_screen() -> bool:
+	return false
+
+func _forward_3d_gui_input(camera: Camera3D, event: InputEvent) -> int:
+	if scope.selected==1 and event is InputEventMouseButton and event.button_index==MOUSE_BUTTON_LEFT and event.pressed and not event.alt_pressed:
+		map_panel.camera=camera
+		if map_panel.pick(event.position): return AFTER_GUI_INPUT_STOP
+	return AFTER_GUI_INPUT_PASS
 
 func add_mesh_asset(model: Node, parent_id: String, path: String, geom_id := "") -> void:
 	var service := preload("res://addons/godot_mujoco/model/compile_service.gd").new()
@@ -314,8 +406,9 @@ func finish_mesh_asset(model: Node, parent_id: String, source_path: String, asse
 
 func export_author(model: Node, directory: String) -> String:
 	if not model.design: return "Select a node author model"
-	if model.design.validated_revision != model.design.revision: return "请先修复模型并等待后台验证完成。"
+	if model.design.validated_revision != model.design.revision or model.design.validated_context != model.compilation_signature(): return "请先修复模型并等待后台验证完成。"
 	var copy: Dictionary = model.design.tree.duplicate(true)
+	preload("res://addons/godot_mujoco/model/collision_settings.gd").write_world(copy,model.compilation_context().collision_options)
 	DirAccess.make_dir_recursive_absolute(directory.path_join("assets"))
 	for element in Xml.walk(copy):
 		for key in element.get("attrs", {}):
@@ -389,3 +482,11 @@ func run_live_test() -> void:
 	var runner = load("res://live_editor_acceptance.gd").new()
 	EditorInterface.get_base_control().set_meta("mj_live_test",runner)
 	runner.run(self)
+
+func run_presets_test() -> void:
+	await load("res://acceptance.gd").new().run(self)
+
+func run_tool_test(path: String) -> void:
+	var runner = load(path).new()
+	EditorInterface.get_base_control().set_meta("mj_tool_test",runner)
+	await runner.run(self)

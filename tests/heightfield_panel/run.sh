@@ -18,7 +18,7 @@ run_stage() {
  [[ "$code" == 0 ]] || { echo "$stage failed ($code): $OUT/$stage.log" >&2; return "$code"; }
 }
 run_stage import bash "$ROOT/scripts/import_headless.sh" "$OUT/project"
-run_stage runtime "$GODOT_BIN" --headless --editor --path "$OUT/project" -- --mj-editor-test --report="$OUT/results.json"
+run_stage runtime "$GODOT_BIN" --headless --editor --path "$OUT/project" -- --mj-tool-test=res://acceptance.gd --report="$OUT/results.json"
 run_stage prepare "$GODOT_BIN" --headless --path "$OUT/project" --script res://prepare.gd
 run_stage material-runtime "$GODOT_BIN" --headless --path "$OUT/project" --script res://runtime_material.gd
 python3 - "$OUT" <<'PY'

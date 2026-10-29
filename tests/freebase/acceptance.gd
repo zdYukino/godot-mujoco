@@ -1,5 +1,5 @@
 extends SceneTree
-const Builder = preload("res://addons/godot_mujoco/model/package_builder.gd")
+const Builder = preload("res://addons/godot_mujoco/model/author_builder.gd")
 const World = preload("res://addons/godot_mujoco/model/runtime_world.gd")
 const Instance = preload("res://addons/godot_mujoco/model/model_instance.gd")
 var checks := []
@@ -15,15 +15,15 @@ func run() -> void:
 	var doc: RefCounted = ClassDB.instantiate("MjEditorDocument")
 	check(doc.import_g1("res://assets/robots/unitree_g1/g1_29dof_mode_18/g1_29dof_mode_18.urdf",true,true),"import explicit free-base relaxed G1")
 	if not checks[-1].passed: printerr(doc.get_error());quit(1);return
-	var packed: Dictionary = Builder.pack(doc,"res://models","free_g1")
+	var packed: Dictionary = await Builder.save_document(doc,"res://models","free_g1")
 	check(packed.error.is_empty(),"portable derived model preserves source assets")
 	if not packed.error.is_empty(): printerr(packed.error);quit(1);return
 	var resource = load(packed.path)
 	var world = World.new()
-	world.world_model = resource
+	world.world_design = resource
 	world.start_paused = true
 	var robot = Instance.new()
-	robot.model = resource
+	robot.design = resource
 	robot.position.y = 4
 	world.add_child(robot)
 	root.add_child(world)
@@ -105,14 +105,14 @@ func contact_trial(source: RefCounted, friction: float, obstacle: bool) -> Dicti
 	candidate.state.qpos[2]=.001-lowest
 	candidate.state.qvel[0]=1.5
 	check(doc.restore(candidate),"author sole height and initial horizontal velocity")
-	var package: Dictionary = Builder.pack(doc,"res://models","contact")
+	var package: Dictionary = await Builder.save_document(doc,"res://models","contact")
 	check(package.error.is_empty(),"pack friction contact trial")
 	var resource=load(package.path)
 	var world=World.new()
-	world.world_model=resource
+	world.world_design=resource
 	world.start_paused=true
 	var robot=Instance.new()
-	robot.model=resource
+	robot.design=resource
 	world.add_child(robot)
 	add_box(world,Vector3(20,.1,20),Vector3(0,-.05,0),friction)
 	var barrier: StaticBody3D

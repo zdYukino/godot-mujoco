@@ -1,6 +1,7 @@
 extends SceneTree
 const Xml = preload("author_xml.gd")
 const Author = preload("author_resource.gd")
+const Collision = preload("collision_settings.gd")
 var request: Dictionary
 var source_files := {}
 
@@ -43,26 +44,44 @@ func compile_request() -> Dictionary:
 	else:
 		var error: String = design.restore_author(request.get("author", {}))
 		if not error.is_empty(): return {"success":false, "error":error}
-	if request.get("op","")=="import_author":
+	if request.get("op","")=="import_design":
 		var source_path: String=request.source
 		if not FileAccess.file_exists(source_path) or FileAccess.get_sha256(source_path)!=request.get("source_sha256",""): return {"success":false,"error":"Source package changed while importing"}
-		source_files[source_path]=request.source_sha256
+		var source_error: String = preload("asset_files.gd").source_files(source_path, source_files)
+		if not source_error.is_empty(): return {"success":false,"error":source_error}
+		for file in source_files: source_files[file] = FileAccess.get_sha256(file)
 		var copied := copy_project_dependencies(design,source_path)
 		if not copied.error.is_empty(): return {"success":false,"error":copied.error}
 	var document: RefCounted = ClassDB.instantiate("MjEditorDocument")
-	if not document.compile_author(design.worker_xml(), design.native_initial_pose()):
+	var context: Dictionary = request.get("context",Collision.context(null,design))
+	if not document.compile_author(design.worker_xml(context.collision_options), design.native_initial_pose(), design.native_mesh_options(), design.native_initial_controls()):
 		return {"success":false, "error":document.get_error(), "author":design.author_snapshot()}
+	if request.get("op") == "capture_preset":
+		var value: Dictionary = preload("res://addons/mujoco_editor/control_presets.gd").capture(document)
+		return {"success":not value.has("error"), "error":value.get("error", ""), "preset":value}
+	if request.get("op") == "preset":
+		var candidate: Dictionary = document.preset_candidate(request.get("preset", {}))
+		if not candidate.get("error", "").is_empty(): return {"success":false, "error":candidate.error}
+		var kinds := {}
+		for entity in document.inspect().entities:
+			if entity.kind == "actuator": kinds[entity.name] = entity.properties.type
+		return {"success":true, "error":"", "drives":request.preset.drives.duplicate(true), "kinds":kinds}
+	var stats: Array = document.collision_stats()
+	var error := Collision.validate_stats(stats,context.limits)
+	if not error.is_empty(): return {"success":false,"error":error,"author":design.author_snapshot()}
 	var path: String = request.directory.path_join("model.mjb")
 	if not document.save_compiled(path): return {"success":false, "error":"Cannot write compiled model"}
 	var description: Dictionary = document.inspect()
 	var geometry: Array = document.geometry()
+	error = Collision.validate_geometry(geometry,description.entities,context.limits)
+	if not error.is_empty(): return {"success":false,"error":error,"author":design.author_snapshot()}
 	var geometry_error := cache_visual_meshes(geometry)
 	if not geometry_error.is_empty(): return {"success":false, "error":geometry_error}
 	var collision_geometry: Array = document.collision_preview(.33,65)
 	var boundaries := collision_geometry.filter(func(g): return g.get("preview_kind", "") in ["compiled_convex_hull", "analytic_boundary"])
 	geometry_error = cache_visual_meshes(boundaries)
 	if not geometry_error.is_empty(): return {"success":false, "error":geometry_error}
-	return {"success":true, "error":"", "author":design.author_snapshot(), "snapshot":document.snapshot(), "entities":description.entities, "geometry":geometry, "collision_geometry":collision_geometry, "compiled_path":path, "mujoco_version":description.version}
+	return {"success":true, "error":"", "author":design.author_snapshot(), "context":Collision.signature(context), "snapshot":document.snapshot(), "entities":description.entities, "geometry":geometry, "collision_geometry":collision_geometry, "collision_stats":stats, "compiled_path":path, "mujoco_version":description.version}
 
 func copy_mesh_asset() -> Dictionary:
 	var path: String = request.source
@@ -117,9 +136,16 @@ func cache_visual_meshes(geometry: Array) -> String:
 func compile_world() -> Dictionary:
 	var document: RefCounted = ClassDB.instantiate("MjEditorDocument")
 	if not document.compose_author_world(request): return {"success":false, "error":document.get_error()}
+	var stats: Array = document.collision_stats()
+	var budget: Dictionary = request.get("limits",Collision.limits())
+	var error := Collision.validate_stats(stats,budget)
+	if not error.is_empty(): return {"success":false,"error":error}
+	if not stats.is_empty():
+		error = Collision.validate_geometry(document.geometry(),document.inspect().entities,budget)
+		if not error.is_empty(): return {"success":false,"error":error}
 	var path: String = request.directory.path_join("world.mjb")
 	if not document.save_compiled(path): return {"success":false, "error":"Cannot write compiled world"}
-	return {"success":true, "error":"", "snapshot":document.snapshot(), "compiled_path":path, "aliases":request.get("aliases", {}), "reset":request.get("reset", {})}
+	return {"success":true, "error":"", "snapshot":document.snapshot(), "collision_stats":stats, "compiled_path":path, "aliases":request.get("aliases", {}), "reset":request.get("reset", {})}
 
 func expand_includes(tree: Dictionary, directory: String, visited: Dictionary) -> String:
 	for child in tree.get("children", []).duplicate():

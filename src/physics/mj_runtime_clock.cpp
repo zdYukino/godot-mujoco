@@ -22,15 +22,15 @@ void MjPhysicsServer3D::remember_initial_state(MjSpace&s){
  for(const char*key:{"joints","actuators"}){Dictionary old=s.born_state[key],now=current[key],retained;Array names=now.keys();for(int i=0;i<names.size();++i){Variant name=names[i];retained[name]=old.has(name)?old[name]:now[name];}s.born_state[key]=retained;}
 }
 int64_t MjPhysicsServer3D::scene_request_world_command(const RID&r,const String&command,int count){
- std::lock_guard<std::mutex> lock(edits_mutex);
+ std::lock_guard<std::mutex> lock(requests_mutex);
  if(world_commands.size()>=64||world_command_results.size()>=256)return 0;
  for(auto &pending:world_commands)if(pending.space==r)return 0;
- int64_t id=next_edit_request++;world_commands.push_back({id,r,command,count});return id;
+ int64_t id=next_request_id++;world_commands.push_back({id,r,command,count});return id;
 }
-Dictionary MjPhysicsServer3D::scene_world_command_result(int64_t request){std::lock_guard<std::mutex> lock(edits_mutex);auto it=world_command_results.find(request);if(it==world_command_results.end())return {};Dictionary result=it->second;world_command_results.erase(it);return result;}
-void MjPhysicsServer3D::scene_cancel_world_command(int64_t request){std::lock_guard<std::mutex> lock(edits_mutex);for(auto it=world_commands.begin();it!=world_commands.end();++it)if(it->request==request){world_commands.erase(it);break;}world_command_results.erase(request);}
+Dictionary MjPhysicsServer3D::scene_world_command_result(int64_t request){std::lock_guard<std::mutex> lock(requests_mutex);auto it=world_command_results.find(request);if(it==world_command_results.end())return {};Dictionary result=it->second;world_command_results.erase(it);return result;}
+void MjPhysicsServer3D::scene_cancel_world_command(int64_t request){std::lock_guard<std::mutex> lock(requests_mutex);for(auto it=world_commands.begin();it!=world_commands.end();++it)if(it->request==request){world_commands.erase(it);break;}world_command_results.erase(request);}
 void MjPhysicsServer3D::process_world_commands(){
- std::deque<WorldCommand> pending;{std::lock_guard<std::mutex> lock(edits_mutex);pending.swap(world_commands);}
+ std::deque<WorldCommand> pending;{std::lock_guard<std::mutex> lock(requests_mutex);pending.swap(world_commands);}
  for(auto &request:pending){Dictionary result;result["request"]=request.request;result["command"]=request.command;
   auto apply=[&]()->String {
    auto*s=space(request.space);if(!s||!s->authored_options)return "Configured runtime world was removed";
@@ -71,14 +71,14 @@ void MjPhysicsServer3D::process_world_commands(){
   String error=apply();result["success"]=error.is_empty();result["error"]=error;
   if(request.command=="step"&&error.is_empty())continue; // Complete only after real integration.
   auto*s=space(request.space);if(s&&s->data){result["time"]=s->data->time;result["paused"]=s->paused;}
-  std::lock_guard<std::mutex> lock(edits_mutex);world_command_results[request.request]=result;
+  std::lock_guard<std::mutex> lock(requests_mutex);world_command_results[request.request]=result;
  }
 }
 void MjPhysicsServer3D::complete_world_step(MjSpace&s,const String&error){
  if(!s.pending_step_request)return;
  Dictionary result;result["request"]=s.pending_step_request;result["command"]="step";
  result["success"]=error.is_empty();result["error"]=error;result["time"]=s.data?s.data->time:0;result["paused"]=s.paused;
- std::lock_guard<std::mutex> lock(edits_mutex);world_command_results[s.pending_step_request]=result;s.pending_step_request=0;
+ std::lock_guard<std::mutex> lock(requests_mutex);world_command_results[s.pending_step_request]=result;s.pending_step_request=0;
 }
 
 }

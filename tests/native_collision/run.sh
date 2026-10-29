@@ -15,7 +15,7 @@ timeout 150 "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 --scrip
 timeout 150 "$GODOT_BIN" --headless --path "$OUT/project" --fixed-fps 60 --script res://attributes.gd > "$OUT/attributes.log" 2>&1
 timeout 120 "$GODOT_BIN" --headless --path "$OUT/project" --script res://relations_transaction.gd > "$OUT/relations_transaction.log" 2>&1
 printf '\n[editor_plugins]\nenabled=PackedStringArray("res://addons/mujoco_editor/plugin.cfg")\n' >> "$OUT/project/project.godot"
-timeout 120 "$GODOT_BIN" --headless --editor --path "$OUT/project" -- --ui-layout-test > "$OUT/layout.log" 2>&1
+timeout 120 "$GODOT_BIN" --headless --editor --path "$OUT/project" -- --mj-tool-test=res://layout.gd > "$OUT/layout.log" 2>&1
 timeout 120 "$GODOT_BIN" --headless --path "$OUT/project" --script res://map_gizmo_runtime.gd > "$OUT/map_gizmo_runtime.log" 2>&1
 python3 - "$OUT/project" <<'PY'
 import pathlib,shutil,sys

@@ -1,6 +1,6 @@
 extends SceneTree
 const Presets=preload("res://addons/mujoco_editor/control_presets.gd")
-const Bridge=preload("res://addons/godot_mujoco/model/live_bridge.gd")
+const Bridge=preload("res://addons/godot_mujoco/model/author_live_bridge.gd")
 var passed:=0
 var failed:=0
 func _initialize():call_deferred("run")
@@ -10,16 +10,25 @@ func check(ok:bool,label:String):
 func frames(n:int=1):
  for i in n:await process_frame
 func finished(node:Node)->Dictionary:
- for i in 300:
+ var deadline=Time.get_ticks_msec()+30000
+ while Time.get_ticks_msec()<deadline:
   if node.edit_request==0:return node.last_preset_result
   await process_frame
  check(false,"bounded completion");return {}
+func ready(world:Node):
+ var deadline=Time.get_ticks_msec()+30000
+ await frames(2)
+ while Time.get_ticks_msec()<deadline:
+  if world.info().get("compile_status")=="ready" and world.command_request==0:return
+  await process_frame
+ check(false,"world becomes ready: "+str(world.info()))
 func run():
- var world=load("res://Environment.tscn").instantiate();root.add_child(world);await frames(5)
+ var world=load("res://Environment.tscn").instantiate();root.add_child(world);await ready(world)
  var a=world.get_node("First");var b=world.get_node("Second")
- var document=a.model.open_document().document
+ var document:RefCounted=ClassDB.instantiate("MjEditorDocument")
+ check(document.compile_author(a.design.worker_xml(),a.design.native_initial_pose(),a.design.native_mesh_options()),"open current author design")
  var preset=Presets.capture(document);preset.drives.drive.control=.4;preset.drives.drive.kp=35;preset.drives.drive.kv=3;preset.drives.velocity.control=.2;preset.drives.velocity.kv=4
- var a_before=a.state();var b_before=b.state();var design=a.model.snapshot.duplicate(true)
+ var a_before=a.state();var b_before=b.state();var design=a.design.author_snapshot()
  # Force transfer of an older compiled mocap pose into a validated candidate.
  var kine_shape:=PhysicsServer3D.capsule_shape_create()
  PhysicsServer3D.shape_set_data(kine_shape,{"radius":.5,"height":2.0})
@@ -28,11 +37,13 @@ func run():
  PhysicsServer3D.body_add_shape(kine,kine_shape)
  PhysicsServer3D.body_set_space(kine,root.world_3d.space)
  PhysicsServer3D.body_set_state(kine,PhysicsServer3D.BODY_STATE_TRANSFORM,Transform3D(Basis.IDENTITY,Vector3(10,2,0)))
+ await ready(world)
  var ds:=PhysicsServer3D.space_get_direct_state(root.world_3d.space)
  var probe:=PhysicsPointQueryParameters3D.new();probe.position=Vector3(10,2,0)
  check(ds.intersect_point(probe).any(func(hit):return hit.rid==kine),"mocap original pose compiled before transaction")
  PhysicsServer3D.shape_set_data(kine_shape,{"radius":.5,"height":2.4})
  PhysicsServer3D.body_set_state(kine,PhysicsServer3D.BODY_STATE_TRANSFORM,Transform3D(Basis.IDENTITY,Vector3(14,2,0)))
+ await ready(world)
  check(a.request_control_preset(preset,0) and a.edit_request!=0 and a.last_preset_result.status=="accepted","accepted is queued not completed")
  check(a.state()==a_before and not a.set_control("drive",-.1),"no early writes and pending single control rejected")
  check(not a.request_control_preset(preset,0),"repeat request rejected")
@@ -43,11 +54,12 @@ func run():
  probe.position=Vector3(14,2,0)
  check(ds.intersect_point(probe).any(func(hit):return hit.rid==kine),"validated rebuild preserves current dirty mocap pose")
  PhysicsServer3D.free_rid(kine);PhysicsServer3D.free_rid(kine_shape)
+ await ready(world)
  var state=a.state()
  check(state.controls.drive==.4 and state.controls.velocity==.2 and state.actuator_parameters.drive.gain==35 and state.actuator_parameters.drive.velocity_bias==-3 and state.actuator_parameters.velocity.gain==4,"all targets and PD committed together")
  check(result.state.controls==state.controls and result.state.property_revision==1,"completion snapshot coherent with revision")
  check(state.joints==a_before.joints and b.state()==b_before,"paused compatible joint state and other instance unchanged")
- check(a.model.snapshot==design,"runtime preset leaves design resource untouched")
+ check(a.design.author_snapshot()==design,"runtime preset leaves design resource untouched")
  check(not a.cancel_control_preset(),"completed request cannot be cancelled as if uncommitted")
  # Subsequent presets validate against current native design, not stale resource cache.
  preset.drives.drive.control=.1
@@ -83,20 +95,23 @@ func run():
  world.set_paused(true);await frames(2)
  var old_id=a.live_id;var old_rid=a.model_rid
  check(a.request_control_preset(preset,4),"queue before unload")
- a.unload_model();check(a.load_model(),"reloaded node has new instance lifetime");await frames(3)
+ a.unload_model();check(a.load_model(),"reloaded node has new instance lifetime");await ready(world)
  var fresh=a.state()
- Bridge.receive("preset",[{"id":old_id,"revision":0,"preset":preset}]);await frames(3)
+ Bridge.receive("preset",[{"id":world.author_live_id,"instance":old_id,"revision":0,"preset":preset}]);await frames(3)
  check(a.live_id!=old_id and a.model_rid!=old_rid and a.state()==fresh,"old live id cannot affect reloaded instance")
  # Actual bridge dispatch target isolation, including cancellation.
- Bridge.receive("preset",[{"id":a.live_id,"revision":0,"preset":preset}])
+ Bridge.receive("preset",[{"id":world.author_live_id,"instance":a.live_id,"revision":0,"preset":preset}])
  check(a.edit_request!=0 and b.edit_request==0,"bridge targets only selected identity")
- Bridge.receive("cancel_preset",[{"id":a.live_id,"revision":0}]);result=await finished(a)
+ Bridge.receive("cancel_preset",[{"id":world.author_live_id,"instance":a.live_id,"revision":0}]);result=await finished(a)
  check(result.status=="cancelled" and a.state()==fresh,"bridge cancellation remains scoped")
  world.queue_free();await frames(4)
  # Default-state compilation is safe at q=0; the migrated live q=2 is not.
- world=load("res://Dynamics.tscn").instantiate();root.add_child(world);await frames(5)
+ world=load("res://Dynamics.tscn").instantiate();root.add_child(world);await ready(world)
  a=world.get_node("First");b=world.get_node("Second")
- var numerical=Presets.capture(a.model.open_document().document)
+ document=ClassDB.instantiate("MjEditorDocument")
+ check(document.compile_author(a.design.worker_xml(),a.design.native_initial_pose(),a.design.native_mesh_options()),"open numerical author design")
+ var numerical=Presets.capture(document)
+ a.set_control("drive",2.0);b.set_control("drive",2.0)
  var numerical_before=a.state();var other_before=b.state();var clock_before=world.info()
  check(numerical_before.joints.slide.qpos[0]==2 and clock_before.paused,"slide reproducer starts paused at live qpos2")
  for gain in [1e308,1e12]:

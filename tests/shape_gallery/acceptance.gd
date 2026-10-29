@@ -32,7 +32,8 @@ func run() -> void:
 				check(material_color(model.visuals[geom.name].material_override).is_equal_approx(colors[name]),"runtime material preserves authored RGBA "+name)
 	check(actual==expected,"actual mjModel types match native primitives and convex mesh cone")
 	check(model.state().joints.size()==7,"seven independent freejoint dynamic rigid bodies")
-	var opened: Dictionary=model.model.open_document()
+	var opened: Dictionary={"error":"", "document":ClassDB.instantiate("MjEditorDocument")}
+	opened.document.compile_author(model.design.worker_xml(),model.design.native_initial_pose(),model.design.native_mesh_options())
 	var cone_hull:=false
 	for geom in opened.document.collision_preview(.33,65):
 		if geom.name=="cone_geom": cone_hull=geom.preview_kind=="compiled_convex_hull" and not geom.vertices.is_empty()
@@ -119,7 +120,7 @@ func run() -> void:
 	check(world.info().warning_count==0,"no MuJoCo instability warnings")
 	# Non-unit alpha guards all four channels through the actual shared backend API.
 	var tint={"format":1,"xml":"<mujoco><compiler angle='radian'/><option timestep='0.002' gravity='0 0 -9.81' integrator='implicitfast' solver='Newton'><flag nativeccd='enable'/></option><worldbody><geom name='rgba_probe' type='sphere' size='.1' pos='20 0 0' rgba='.13 .27 .61 .37'/></worldbody></mujoco>","source":"","state":{}}
-	var tint_rid: RID=PhysicsServer3D.call("scene_load_model",world.space,tint,"","rgba_test",Transform3D.IDENTITY)
+	var tint_rid: RID=PhysicsServer3D.call("scene_load_xml",world.space,(tint).xml,(tint).get("state",{}),(tint).get("mesh_options",{}),"rgba_test",Transform3D.IDENTITY)
 	check(tint_rid.is_valid(),"RGBA probe loads into real shared runtime: "+str(world.info().last_error))
 	if tint_rid.is_valid():
 		var tint_geoms: Array=PhysicsServer3D.call("scene_geometry",world.space,tint_rid)

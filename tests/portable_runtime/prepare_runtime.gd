@@ -1,5 +1,5 @@
 extends SceneTree
-const Builder = preload("res://addons/godot_mujoco/model/package_builder.gd")
+const Builder = preload("res://addons/godot_mujoco/model/author_builder.gd")
 const SceneBuilder = preload("res://addons/godot_mujoco/model/scene_builder.gd")
 const Instance = preload("res://addons/godot_mujoco/model/model_instance.gd")
 func _initialize() -> void:
@@ -15,7 +15,7 @@ func run() -> void:
 		{"op":"set","kind":"body","name":"left_elbow_link","values":{"mass":.8}}
 	]:
 		if not doc.edit(command): printerr(doc.get_error()); quit(1); return
-	var packaged: Dictionary = Builder.pack(doc,"res://models","g1")
+	var packaged: Dictionary = await Builder.save_document(doc,"res://models","g1")
 	if not packaged.error.is_empty(): printerr(packaged.error); quit(1); return
 	var model = ResourceLoader.load(packaged.path,"",ResourceLoader.CACHE_MODE_IGNORE)
 	var world = SceneBuilder.create(model)
@@ -23,7 +23,7 @@ func run() -> void:
 	world.get_node("Model").position.y = 1.1
 	var second = Instance.new()
 	second.name = "SecondModel"
-	second.model = model
+	second.design = model
 	second.position = Vector3(2.0,1.1,0)
 	world.add_child(second)
 	second.owner = world
@@ -51,6 +51,7 @@ func run() -> void:
 	light.rotation_degrees = Vector3(-50,-30,0)
 	world.add_child(light); light.owner=world
 	var scene := PackedScene.new()
+	assert((await preload("res://addons/godot_mujoco/model/scene_builder.gd").prepare_tree(world)).is_empty())
 	if scene.pack(world)!=OK or ResourceSaver.save(scene,"res://RuntimeScene.tscn")!=OK:
 		printerr("Could not save runtime scene");quit(1);return
 	world.free()
@@ -61,7 +62,7 @@ func run() -> void:
 	f.store_string("<mujoco><worldbody><geom name='base' type='plane' size='4 4 .1'/><body name='a' pos='0 0 1'><freejoint name='a_free'/><geom name='a_geom' type='sphere' size='.2' mass='2'/></body><body name='b' pos='1 0 1'><freejoint name='b_free'/><geom name='b_geom' type='cylinder' size='.2 .3' mass='3'/></body></worldbody></mujoco>")
 	f.close()
 	if not doc.import_file("res://multi.xml"):printerr(doc.get_error());quit(1);return
-	var multi: Dictionary = Builder.pack(doc,"res://models","multi")
+	var multi: Dictionary = await Builder.save_document(doc,"res://models","multi")
 	if not multi.error.is_empty():printerr(multi.error);quit(1);return
 	f=FileAccess.open("res://multi-resource-path.txt",FileAccess.WRITE);f.store_string(multi.path);f.close()
 	var conflicts := {}
@@ -73,7 +74,7 @@ func run() -> void:
 		f=FileAccess.open("res://conflict.xml",FileAccess.WRITE)
 		f.store_string("<mujoco><option "+attrs+"/><worldbody><body name='object'><geom type='box' size='.1 .1 .1'/></body></worldbody></mujoco>");f.close()
 		if not doc.import_file("res://conflict.xml"): printerr(doc.get_error());quit(1);return
-		var result: Dictionary = Builder.pack(doc,"res://models",key)
+		var result: Dictionary = await Builder.save_document(doc,"res://models",key)
 		if not result.error.is_empty():printerr(result.error);quit(1);return
 		conflicts[key] = result.path
 	f=FileAccess.open("res://conflict-resources.json",FileAccess.WRITE);f.store_string(JSON.stringify(conflicts));f.close()

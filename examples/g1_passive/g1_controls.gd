@@ -1,7 +1,6 @@
 @tool
 extends "res://gallery.gd"
 const Instance = preload("res://addons/godot_mujoco/model/model_instance.gd")
-@export var robot_model: Resource # Legacy package kept as an import fixture.
 @export var collision_definitions: Resource
 var robots: Array[Node3D] = []
 var robot_overlays := {}

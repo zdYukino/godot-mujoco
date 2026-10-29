@@ -7,7 +7,7 @@ func run() -> void:
  var fixture := FileAccess.open("res://negative.xml", FileAccess.WRITE)
  fixture.store_string('<mujoco><option timestep=".01" gravity="0 0 0"/><worldbody/></mujoco>');fixture.close()
  var document: RefCounted = ClassDB.instantiate("MjEditorDocument")
- check(document.import_file("res://negative.xml") and PhysicsServer3D.call("scene_configure_model", space, document.snapshot(), "res://"), "negative fixture configured")
+ check(document.import_file("res://negative.xml") and PhysicsServer3D.call("scene_configure_world",space,(document.snapshot()).xml), "negative fixture configured")
  var body := make_body(space)
  for pair in [[PhysicsServer3D.BODY_PARAM_MASS, 0.0, "value <= 0"], [PhysicsServer3D.BODY_PARAM_GRAVITY_SCALE, NAN, "!std::isfinite(value)"], [PhysicsServer3D.BODY_PARAM_FRICTION, INF, "!std::isfinite(value)"], [PhysicsServer3D.BODY_PARAM_LINEAR_DAMP, -1.0, "value < 0"], [PhysicsServer3D.BODY_PARAM_ANGULAR_DAMP, -1.0, "value < 0"], [PhysicsServer3D.BODY_PARAM_LINEAR_DAMP_MODE, 2, "value != 0 && value != 1"]]:
   var previous: Variant = PhysicsServer3D.body_get_param(body,pair[0])

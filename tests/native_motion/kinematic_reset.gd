@@ -19,7 +19,7 @@ func run():
  var mover:=PhysicsServer3D.body_create();PhysicsServer3D.body_set_mode(mover,PhysicsServer3D.BODY_MODE_KINEMATIC);PhysicsServer3D.body_add_shape(mover,shape);PhysicsServer3D.body_set_state(mover,PhysicsServer3D.BODY_STATE_TRANSFORM,Transform3D(Basis.IDENTITY,Vector3(-10,0,0)));PhysicsServer3D.body_set_space(mover,space)
  var file:=FileAccess.open("res://world.xml",FileAccess.WRITE);file.store_string('<mujoco><option timestep=".01" gravity="0 0 0"/><worldbody/></mujoco>');file.close()
  var doc:RefCounted=ClassDB.instantiate("MjEditorDocument");check(doc.import_file("res://world.xml"),"import empty world")
- check(PhysicsServer3D.call("scene_configure_model",space,doc.snapshot(),"res://"),"configure world")
+ check(PhysicsServer3D.call("scene_configure_world",space,(doc.snapshot()).xml),"configure world")
  ds=PhysicsServer3D.space_get_direct_state(space)
  check(ray(0).get("rid")==target,"compile original mocap pose")
  await cmd("capture")

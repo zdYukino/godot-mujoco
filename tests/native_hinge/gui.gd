@@ -18,7 +18,7 @@ func setup():
  PhysicsServer3D.call("scene_pause",world,true)
  var file=FileAccess.open("res://gui_world.xml",FileAccess.WRITE);file.store_string('<mujoco><option timestep=".01"/><worldbody/></mujoco>');file.close()
  var doc:RefCounted=ClassDB.instantiate("MjEditorDocument");doc.import_file("res://gui_world.xml")
- PhysicsServer3D.call("scene_configure_model",world,doc.snapshot(),"res://")
+ PhysicsServer3D.call("scene_configure_world",world,(doc.snapshot()).xml)
  bob=RigidBody3D.new();bob.name="Bob";bob.position=Vector3(0,1,0)
  var collider=CollisionShape3D.new();var shape=BoxShape3D.new();shape.size=Vector3(.6,.8,.5);collider.shape=shape;bob.add_child(collider)
  var mesh=MeshInstance3D.new();var box=BoxMesh.new();box.size=shape.size;mesh.mesh=box;bob.add_child(mesh);scene.add_child(bob)

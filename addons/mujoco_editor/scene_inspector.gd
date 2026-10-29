@@ -5,7 +5,9 @@ const Terrain = preload("res://addons/godot_mujoco/model/static_heightfield.gd")
 const World = preload("res://addons/godot_mujoco/model/runtime_world.gd")
 const Geom = preload("res://addons/godot_mujoco/model/geom_node.gd")
 const Appearance = preload("res://addons/godot_mujoco/model/geom_appearance.gd")
+const CollisionProperty = preload("collision_property.gd")
 var plugin: EditorPlugin
+var creating_editor := false
 func _can_handle(object: Object) -> bool:
 	return object is Geom or object is Model or object is Terrain or object is World or (object is Node3D and object.has_meta("map_specs"))
 func _parse_begin(object: Object) -> void:
@@ -15,18 +17,17 @@ func _parse_begin(object: Object) -> void:
 	add_custom_control(note)
 	var button := Button.new(); button.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	if object is Model:
-		button.text="显示模型操作" if object.design else "升级为可编辑层级节点"
-		button.disabled=not object.design and not object.model
+		button.text="显示模型操作"
+		button.disabled=not object.design
 		button.pressed.connect(func():
 			if not is_instance_valid(object): return
-			if not object.design: object.upgrade_author_model(); EditorInterface.mark_scene_as_unsaved()
 			plugin.panel.select(object); plugin.reveal_scope(0))
 	elif object is Terrain:
 		button.text="编辑此地形 / 显式 Apply"
 		button.pressed.connect(func():
 			if is_instance_valid(object) and plugin.heightfield_panel.select_target(object): plugin.reveal_scope(2))
 	elif object is World:
-		note.text="全局 · World 参数\nworld_design / world_model 定义整个 MuJoCo 世界的选项。物理设计修改会暂停运行世界并重新验证。"
+		note.text="全局 · World 参数\nworld_design 定义整个 MuJoCo 世界的选项。物理设计修改会暂停运行世界并重新验证。"
 		button.free(); return
 	else:
 		button.text="载入此场景地图到右侧草稿"
@@ -46,5 +47,21 @@ func _parse_group(object: Object, group: String) -> void:
 	var fields := Appearance.fields()
 	for index in fields.size(): add_property_editor(fields[index].name, editors[index], false, fields[index].label)
 
-func _parse_property(object: Object, _type: Variant.Type, name: String, _hint_type: PropertyHint, _hint_string: String, _usage_flags: int, _wide: bool) -> bool:
-	return object is Geom and Appearance.handles(name)
+func _parse_property(object: Object, type: Variant.Type, name: String, hint_type: PropertyHint, hint_string: String, usage_flags: int, wide: bool) -> bool:
+	if creating_editor: return false
+	if object is Geom and Appearance.handles(name): return true
+	if not name.begins_with("mjcf/collision_"): return false
+	if object is Geom:
+		var labels := {"mode":"碰撞表示","sdf_depth":"SDF 深度","maxhullvert":"凸包顶点上限","actual":"有效碰撞","world":"世界检测策略"}
+		var key := name.trim_prefix("mjcf/collision_")
+		add_property_editor(name,CollisionProperty.new(name),false,labels.get(key,key))
+		return true
+	if object is World:
+		creating_editor = true
+		var editor := EditorInspector.instantiate_property_editor(object,type,name,hint_type,hint_string,usage_flags,wide)
+		creating_editor = false
+		var labels := {"nativeccd":"原生凸碰撞算法","multiccd":"多接触点检测","ccd_iterations":"凸检测迭代","ccd_tolerance":"凸检测容差","sdf_iterations":"SDF 迭代","sdf_initpoints":"SDF 初始搜索点"}
+		editor.tooltip_text = "作用于整个 World，所有模型继承。nativeccd 开启为 GJK/EPA，关闭为 libccd/MPR；multiccd 为多接触点检测，不是时域连续防穿透。"
+		add_property_editor(name,editor,false,labels.get(name.trim_prefix("mjcf/collision_"),name))
+		return true
+	return false

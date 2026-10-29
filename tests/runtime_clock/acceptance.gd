@@ -1,5 +1,5 @@
 extends SceneTree
-const Builder = preload("res://addons/godot_mujoco/model/package_builder.gd")
+const Builder = preload("res://addons/godot_mujoco/model/author_builder.gd")
 const World = preload("res://addons/godot_mujoco/model/runtime_world.gd")
 const Instance = preload("res://addons/godot_mujoco/model/model_instance.gd")
 const Host = preload("res://addons/godot_mujoco/model/environment_host.gd")
@@ -12,6 +12,15 @@ func ticks(n: int) -> void:
 	for unused in n:
 		await physics_frame
 		await process_frame
+func host_ready(host: Node) -> void:
+	var deadline := Time.get_ticks_msec()+125000
+	while host.rebuilding and Time.get_ticks_msec()<deadline: await process_frame
+	check(not host.rebuilding and host.last_error.is_empty(), "environment composition completed: " + host.last_error)
+func world_ready(world: Node) -> void:
+	var deadline := Time.get_ticks_msec()+125000
+	await ticks(2)
+	while world.info().get("compile_status") not in ["ready","failed"] and Time.get_ticks_msec()<deadline: await process_frame
+	check(world.info().get("compile_status")=="ready", "world compile completed")
 func done(world: Node) -> void:
 	for unused in 120:
 		if world.command_request==0: return
@@ -22,7 +31,7 @@ func call_command(world: Node, method: String, argument: Variant = null) -> void
 	await done(world)
 	check(world.last_error.is_empty(),"complete " + method + ": " + world.last_error)
 func instance(resource: Resource, name: String, position: Vector3) -> Node:
-	var node=Instance.new();node.model=resource;node.name=name;node.position=position;return node
+	var node=Instance.new();node.design=resource;node.name=name;node.position=position;return node
 func _initialize() -> void: call_deferred("run")
 func run() -> void:
 	var file:=FileAccess.open("res://fixture.xml",FileAccess.WRITE)
@@ -30,10 +39,10 @@ func run() -> void:
 	file.close()
 	var doc: RefCounted=ClassDB.instantiate("MjEditorDocument")
 	check(doc.import_file("res://fixture.xml"),"create clock fixture")
-	var package: Dictionary=Builder.pack(doc,"res://models","clock")
+	var package: Dictionary=await Builder.save_document(doc,"res://models","clock")
 	check(package.error.is_empty(),"save clock design")
 	var resource=load(package.path)
-	var environment=World.new();environment.name="Environment";environment.world_model=resource;environment.start_paused=true
+	var environment=World.new();environment.name="Environment";environment.world_design=resource.fork();environment.start_paused=true
 	var robot=instance(resource,"Robot",Vector3.ZERO);environment.add_child(robot);robot.owner=environment
 	var body:=RigidBody3D.new();body.name="Ordinary";body.position=Vector3(3,3,0)
 	var shape:=CollisionShape3D.new();var sphere:=SphereShape3D.new();sphere.radius=.2;shape.shape=sphere
@@ -41,7 +50,7 @@ func run() -> void:
 	var scene:=PackedScene.new();check(scene.pack(environment)==OK and ResourceSaver.save(scene,"res://Environment.tscn")==OK,"save authored environment")
 	environment.free()
 	var host=Host.new();host.environment_scene=load("res://Environment.tscn");root.add_child(host)
-	await ticks(3)
+	await host_ready(host)
 	var world=host.world
 	check(is_instance_valid(world) and world.ready_for_models,"host configures independent world")
 	if not is_instance_valid(world): quit(1);return
@@ -84,23 +93,25 @@ func run() -> void:
 	check(robot.state().controls.drive==start.controls.drive and body.constant_force==Vector3.ZERO,"reset restores controls and clears ordinary constant force")
 	for trial in 3:
 		var added=instance(resource,"Added",Vector3(5,0,0));world.add_child(added)
-		await ticks(1)
+		await world_ready(world)
 		await call_command(world,"step_simulation",2)
 		await call_command(world,"reset_simulation")
 		check(is_instance_valid(added) and added.model_rid.is_valid() and added.state().joints.root.qvel==PackedFloat64Array([0,0,0,0,0,0]),"reset retains and initializes runtime addition")
-		added.queue_free();await ticks(2)
-	var edit_doc: RefCounted=resource.open_document().document
-	check(edit_doc.edit({"op":"set","kind":"body","name":"ball","values":{"mass":3.0}}),"author inertia edit while world paused")
-	var edited_package: Dictionary=Builder.pack(edit_doc,"res://models","edited")
+		added.queue_free();await world_ready(world)
+	# Exercise the same source staging transaction used by the connected author editor.
+	var geom_id := ""
+	for entity in robot.design.entities():
+		if entity.kind=="geom" and entity.name=="ball_geom": geom_id=entity.id
+	var command := preload("res://addons/godot_mujoco/model/author_commands.gd").execute(robot.design,{"op":"set","id":geom_id,"values":{"mass":3.0}})
+	check(command.get("error", "").is_empty(),"author mass edit while paused")
 	var paused_time: float=world.info().time
-	check(robot.request_model_edit(load(edited_package.path)),"queue paused runtime model edit")
-	for unused in 120:
-		if robot.edit_request==0: break
-		await ticks(1)
-	check(robot.property_revision==1 and robot.state().bodies.ball.mass==3 and world.info().time==paused_time,"paused model transaction preserves simulation clock")
+	robot.design.restore_author(command.after)
+	PhysicsServer3D.call("scene_stage_author_model",world.space,robot.model_rid,robot.author_definition())
+	await world_ready(world)
+	check(robot.state().bodies.ball.mass==3 and world.info().time==paused_time,"paused source transaction preserves simulation clock")
 	await call_command(world,"reset_simulation")
 	check(robot.state().bodies.ball.mass==3,"state reset keeps committed design changes")
-	var second_host=Host.new();second_host.environment_scene=load("res://Environment.tscn");root.add_child(second_host);await ticks(3);await done(second_host.world)
+	var second_host=Host.new();second_host.environment_scene=load("res://Environment.tscn");root.add_child(second_host);await host_ready(second_host);await done(second_host.world)
 	await call_command(world,"step_simulation",7)
 	check(second_host.world.info().time==0,"independent World3D clock remains unchanged")
 	await call_command(world,"capture_snapshot")
@@ -116,10 +127,11 @@ func run() -> void:
 	check(host.world==world and world.info().time==time and not host.last_error.is_empty(),"failed environment candidate preserves original world and state")
 	host.environment_scene=saved
 	world.add_child(instance(resource,"DiscardedAddition",Vector3(7,0,0)))
+	await world_ready(world)
 	for trial in 3:
 		check(host.request_rebuild_environment(true),"request environment rebuild")
 		check(not host.request_rebuild_environment(true),"repeated environment rebuild rejected")
-		await ticks(3);await done(host.world)
+		await host_ready(host);await done(host.world)
 		world=host.world
 		check(world.info().time==0 and world.info().paused and not world.has_node("DiscardedAddition"),"environment reload restores saved design and discards runtime additions")
 	check(controls.game_elapsed>game,"game UI survives all resets and rebuilds")
@@ -134,9 +146,9 @@ func run() -> void:
 		if child is Button and child.text.begins_with("重置仿真"): child.pressed.emit()
 	await done(world)
 	check(world.info().time==0,"actual reset control restores state")
-	check(preload("res://addons/godot_mujoco/model/scene_builder.gd").save_playground(resource,"res://GeneratedPlayground.tscn")==OK,"editor playground builder saves controls and environment")
+	check(await preload("res://addons/godot_mujoco/model/scene_builder.gd").save_playground(resource,"res://GeneratedPlayground.tscn")==OK,"editor playground builder saves controls and environment")
 	var generated=load("res://GeneratedPlayground.tscn").instantiate()
-	root.add_child(generated);await ticks(3)
+	root.add_child(generated);await host_ready(generated.get_node("EnvironmentHost"))
 	check(generated.get_node("EnvironmentHost").world.ready_for_models and generated.get_node("SimulationControls").target()==generated.get_node("EnvironmentHost").world,"saved playground reopens with connected controls")
 	generated.queue_free();await ticks(2)
 	await rebuild_feedback_regression(controls,host,second_host)
@@ -165,7 +177,7 @@ func rebuild_feedback_regression(controls: Node, host: Node, other_host: Node) -
 	check(original.last_error.is_empty(),"host error remains visible even when retained world error is empty")
 	host.environment_scene=saved
 	var original_id: int=original.get_instance_id()
-	button.pressed.emit();await ticks(3);await done(host.world);await ticks(1)
+	button.pressed.emit();await host_ready(host);await done(host.world);await ticks(1)
 	check(controls.feedback.contains("Environment rebuild succeeded") and controls.status.text.contains("Environment rebuild succeeded") and not controls.feedback.contains("failed"),"successful button retry replaces failure with visible completion")
 	check(host.world.get_instance_id()!=original_id and controls.bound_world==host.world,"world replacement rebinds command completion signal")
 	check(host.world.command_finished.is_connected(controls.on_command_finished),"new world command signal connected")
@@ -183,7 +195,7 @@ func rebuild_feedback_regression(controls: Node, host: Node, other_host: Node) -
 	check(not other_host.rebuild_finished.is_connected(controls.on_rebuild_finished) and not other_host.world.command_finished.is_connected(controls.on_command_finished),"controls exit disconnects host and world signals")
 	root.add_child(controls)
 	check(other_host.rebuild_finished.is_connected(controls.on_rebuild_finished) and other_host.world.command_finished.is_connected(controls.on_command_finished),"same controls reentry restores single signal subscriptions")
-	var temporary=Host.new();temporary.environment_scene=saved;root.add_child(temporary);await ticks(3)
+	var temporary=Host.new();temporary.environment_scene=saved;root.add_child(temporary);await host_ready(temporary)
 	controls.environment_host=temporary
 	temporary.queue_free();await ticks(3)
 	check(not is_instance_valid(controls.bound_host) and not is_instance_valid(controls.bound_world) and controls.status.text.contains("no world"),"host destruction detaches signals and shows no world safely")

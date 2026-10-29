@@ -4,6 +4,7 @@ const Layout = preload("res://addons/godot_mujoco/model/world_layout.gd")
 var plugin: EditorPlugin
 var worlds := {}
 var sessions: Array[int] = []
+signal instances_changed
 var tick := 0.0
 var epoch := 0
 
@@ -18,6 +19,7 @@ func _setup_session(session_id: int) -> void:
 func stopped(session_id: int) -> void:
 	for key in worlds.keys():
 		if worlds[key].session == session_id: worlds.erase(key)
+	instances_changed.emit()
 
 func editor_world(info: Dictionary) -> Node:
 	var root := EditorInterface.get_edited_scene_root()
@@ -32,7 +34,8 @@ func send(info: Dictionary, operation: String, payload: Dictionary) -> void:
 
 func _capture(message: String, data: Array, session_id: int) -> bool:
 	if data.size() != 1: return false
-	if message == "mujoco_author:removed": worlds.erase(str(session_id) + ":" + str(data[0])); return true
+	if message == "mujoco_author:removed":
+		worlds.erase(str(session_id) + ":" + str(data[0])); instances_changed.emit(); return true
 	if not data[0] is Dictionary: return false
 	var value: Dictionary = data[0]
 	var key := str(session_id) + ":" + str(value.get("id", ""))
@@ -45,13 +48,17 @@ func _capture(message: String, data: Array, session_id: int) -> bool:
 		value.sent_epoch = 0
 		var node := editor_world(value)
 		if node:
-			value.signature = signature(Layout.capture(node))
+			value.signature = value.get("source_signature", "")
 			value.sent_signature = value.signature
 		worlds[key] = value
 		if node: send(value, "hello", {})
 		return true
 	if not worlds.has(key): return true
 	var info: Dictionary = worlds[key]
+	if message == "mujoco_author:instances":
+		info.instances = value.get("instances", []).duplicate(true)
+		instances_changed.emit()
+		return true
 	if message == "mujoco_author:paused":
 		info.ack_epoch = int(value.epoch)
 		return true
@@ -65,10 +72,7 @@ func _capture(message: String, data: Array, session_id: int) -> bool:
 	return false
 
 func signature(layout: Dictionary) -> String:
-	var copy := layout.duplicate(true)
-	for model in copy.get("models", []):
-		for key in ["cache_path", "compiled_snapshot", "cached_entities", "cached_geometry", "collision_geometry"]: model.erase(key)
-	return str(hash(var_to_bytes(copy)))
+	return Layout.signature(layout)
 
 func model_world(model: Node) -> Node:
 	var node := model
@@ -101,7 +105,7 @@ func apply_model(model: Node, _result: Dictionary) -> void:
 func models_valid(world: Node) -> bool:
 	for node in Layout.nodes(world):
 		if not node.has_method("author_definition") or not node.design: continue
-		if node.design.validated_revision != node.design.revision or not node.design.validation_error.is_empty(): return false
+		if node.design.validated_revision != node.design.revision or node.design.validated_context != node.compilation_signature() or not node.design.validation_error.is_empty(): return false
 		if node.author_scene and (node.author_scene.due_ms > 0 or node.author_scene.compiler.busy()): return false
 	return true
 
@@ -133,3 +137,28 @@ func shutdown() -> void:
 		if session.stopped.is_connected(stopped.bind(session_id)): session.stopped.disconnect(stopped.bind(session_id))
 	worlds.clear()
 	sessions.clear()
+
+func runtime_targets() -> Dictionary:
+	var result := {}
+	for world_key in worlds:
+		for item in worlds[world_key].get("instances", []):
+			var value: Dictionary = item.duplicate(true)
+			value.world = world_key
+			result[str(world_key) + "/" + str(item.id)] = value
+	return result
+
+func send_preset(target: String, operation: String, payload: Dictionary) -> bool:
+	var targets := runtime_targets()
+	if not targets.has(target): return false
+	var value: Dictionary = targets[target]
+	if value.pending and operation != "cancel_preset": return false
+	var session := get_session(worlds[value.world].session)
+	if not session.is_active(): return false
+	payload = payload.duplicate(true)
+	payload.instance = value.id
+	payload.revision = value.revision
+	send(worlds[value.world], operation, payload)
+	for item in worlds[value.world].get("instances", []):
+		if item.id == value.id: item.pending = true
+	instances_changed.emit()
+	return true

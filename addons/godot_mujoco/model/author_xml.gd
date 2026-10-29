@@ -99,6 +99,10 @@ static func entity_kind(element: Dictionary) -> String:
 	return element.tag if element.tag in ["body", "geom", "joint"] else ""
 
 static func ensure_names(tree: Dictionary) -> void:
+	# Preserve MuJoCo's file-derived asset names before copying files to hashes.
+	for asset in section(tree,"asset").get("children",[]):
+		if asset.tag in ["mesh","texture","hfield","skin"] and str(asset.attrs.get("name","")).is_empty() and not str(asset.attrs.get("file","")).is_empty():
+			asset.attrs.name = str(asset.attrs.file).get_file().get_basename()
 	var used := {}
 	var world := section(tree, "worldbody")
 	if world.is_empty(): return

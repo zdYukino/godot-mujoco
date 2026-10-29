@@ -66,10 +66,10 @@ func run():
 	check(watch.inspect(true).state == "冲突","P0 source/local dirty conflict")
 	var before: Dictionary = doc.snapshot()
 	check(not doc.import_file("res://fixtures/bad.xml") and doc.snapshot() == before,"P0 bad MJCF atomic rollback")
-	var packed_model: Dictionary = preload("res://addons/godot_mujoco/model/package_builder.gd").pack(doc,"res://mjcf_packages","normalized")
+	var packed_model: Dictionary = preload("res://addons/godot_mujoco/model/author_builder.gd").pack(doc,"res://mjcf_packages","normalized")
 	check(packed_model.error.is_empty(),"P0 normalized MJCF safe copy "+packed_model.error)
 	if packed_model.error.is_empty():
-		var resource = load(packed_model.path); check(resource.open_document().error.is_empty(),"P0 reimport normalized include-free copy")
+		var resource = load(packed_model.path); check(resource.validate_dependencies().is_empty(),"P0 reimport normalized include-free copy")
 
 	var assets_doc: RefCounted = ClassDB.instantiate("MjEditorDocument")
 	check(assets_doc.import_file("res://fixtures/asset.xml"),"P0 MJCF mesh/texture document")

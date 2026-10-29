@@ -20,13 +20,8 @@ def run(kind,index,slot):
    if rc==0:
     text=(d/'pressure.log').read_text();rc=0 if pressure_passed(text) else 1
  else:
-  project=d/'project';shutil.copytree(a.source/'tests/editor_plugin',project);shutil.copytree(a.source/'addons',project/'addons');assert not(project/'.godot').exists()
-  rc=execute('import',[str(a.source/'scripts/import_headless.sh'),str(project)],120)
-  if rc==0:
-   env['DISPLAY']=':97';env['LIBGL_ALWAYS_SOFTWARE']='1'
-   rc=execute('editor',['godot','--editor','--path',str(project),'--rendering-method','gl_compatibility','--audio-driver','Dummy','--resolution','1600x1000','--','--mj-editor-test','--report='+str(d/'results.json')],180)
-   if rc==0:
-    result=json.loads((d/'results.json').read_text());text=(d/'editor.log').read_text();host_errors={'ERROR: Required Vulkan instance extension VK_KHR_surface not found.','ERROR: Condition \"err != OK\" is true. Returning: err'};unexpected=[line for line in text.splitlines() if 'ERROR:' in line and line not in host_errors];rc=0 if result['failed']==0 and not unexpected and 'leaked' not in text else 1
+  rc=execute('editor',['python3',str(a.source/'tests/node_authoring/run.py'),'--out',str(d/'authoring'),'--godot','godot'],600)
+
  record={'kind':kind,'index':index,'exit':rc,'commands':commands,'source_commit':manifest['remote_commit'],'source_tree':manifest['tree'],'engine_sha256':manifest['engine_sha256'],'extension_sha256':manifest['extension_sha256'],'private_xdg':{k:v for k,v in env.items() if k.startswith('XDG_')}};(d/'trial.json').write_text(json.dumps(record,indent=2));print(json.dumps({'kind':kind,'index':index,'exit':rc}),flush=True);return record
 jobs=[('runtime',i) for i in range(3)]+[('assets',i) for i in range(3)]+[('gui',i) for i in range(5)]
 with concurrent.futures.ThreadPoolExecutor(max_workers=2) as pool:

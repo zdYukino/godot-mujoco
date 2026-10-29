@@ -27,7 +27,7 @@ def row(name):
 def valid(s):return s['models'] and all(m['validated']==m['revision'] and not m['error'] for m in s['models'])
 def entity(name):return next(e for e in state()['entities'] if e['name']==name)
 if a.stage=='import':
-    button('载入 MJCF / 模型包')
+    button('载入 MJCF')
     s=wait(lambda s:any('dialog' in c for c in s['controls']))
     dialog=next(c for c in s['controls'] if 'dialog' in c)
     d.click(dialog['file']);d.type(str(a.out/'project/fixture.xml'));d.key('Return')

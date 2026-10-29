@@ -25,6 +25,13 @@ func run() -> void:
 		if not packed: continue
 		var scene: Node = packed.instantiate(); root.add_child(scene)
 		check(scene is MjRuntimeWorld and scene.world_design != null,"scene owns author world")
+		var registration_failed := false
+		for node in preload("res://addons/godot_mujoco/model/world_layout.gd").nodes(scene):
+			if node is MjModelInstance:
+				check(node.model_rid.is_valid(),"model registered: "+str(node.name)+" "+node.last_error)
+				registration_failed = registration_failed or not node.model_rid.is_valid()
+		if registration_failed:
+			scene.queue_free(); await process_frame; continue
 		if not await settled(scene):
 			check(false,"background startup: "+str(scene.info().get("last_error")))
 			scene.queue_free(); await process_frame; continue
@@ -42,12 +49,12 @@ func run() -> void:
 		for node in preload("res://addons/godot_mujoco/model/world_layout.gd").nodes(scene):
 			if node is MjModelInstance: models.append(node)
 		for model in models:
-			check(model.model==null and model.design!=null,"formal author source replaces packaged runtime model")
+			check(model.design!=null and not "model" in model,"formal author source replaces packaged runtime model")
 			check(not model.author_scene.nodes.is_empty(),"semantic body/geom/joint hierarchy")
 			check(model.visuals.size()==model.design.cached_geometry.size(),"all persisted visual meshes loaded")
 		match String(scene.name):
 			"ShapeGallery":
-				check(scene.get_node("Model").state().joints.size()==7,"seven freejoint shapes")
+				check(scene.get_node("Model").state().joints.size()==scene.get_node("Model").design.entities().filter(func(e):return e.kind=="joint").size(),"current authored joints are all simulated")
 				check(info.ncon>0,"shapes contact floor")
 			"PassiveG1Gallery":
 				var robot = scene.get_node("G1_1")

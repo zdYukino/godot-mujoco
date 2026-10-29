@@ -1,6 +1,6 @@
 @tool
 extends RefCounted
-const Builder = preload("../model/package_builder.gd")
+const Builder = preload("../model/asset_files.gd")
 ## Immutable, content-addressed directory; all visual resources are embedded.
 static func localize(node: Node) -> String:
 	if node is MeshInstance3D and node.mesh:

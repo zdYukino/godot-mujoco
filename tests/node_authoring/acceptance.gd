@@ -80,27 +80,11 @@ func run() -> void:
 	if output.get("success", false):
 		check(output.entities.size() >= 5, "compiler returns semantic entity metadata")
 		check(output.geometry.size() == 2, "compiler returns actual geometry")
-	# Legacy JSON/packages retain deliberate qpos, copy dependencies, and discard
-	# simulation velocity/time when turning into an author document.
-	DirAccess.make_dir_recursive_absolute("user://legacy_package")
-	var mesh_path := "user://legacy_package/tetra.obj"
-	var mesh_file := FileAccess.open(mesh_path,FileAccess.WRITE)
-	mesh_file.store_string("v 0 0 0\nv 1 0 0\nv 0 1 0\nv 0 0 1\nf 1 3 2\nf 1 2 4\nf 1 4 3\nf 2 3 4\n");mesh_file.close()
-	var mesh_hash := FileAccess.get_sha256(mesh_path)
-	var legacy_xml := '<mujoco><compiler angle="radian"/><asset><mesh name="tetra" file="tetra.obj"/></asset><worldbody><body name="b" pos="0 0 1"><joint name="j"/><geom name="g" type="mesh" mesh="tetra"/></body></worldbody></mujoco>'
-	var legacy_value := {"format":1,"xml":legacy_xml,"state":{"qpos":[.4],"qvel":[99.0],"time":7.0}}
-	var legacy_path := "user://legacy_package/design.gmj.json"
-	var legacy_file := FileAccess.open(legacy_path,FileAccess.WRITE);legacy_file.store_string(JSON.stringify(legacy_value));legacy_file.close()
-	var imported_legacy: Resource = Author.from_snapshot(legacy_value,legacy_path.get_base_dir()).design
-	output.clear()
-	service.submit({"op":"import_author","author":imported_legacy.author_snapshot(),"source":legacy_path,"source_sha256":FileAccess.get_sha256(legacy_path)})
-	deadline = Time.get_ticks_msec()+30000
-	while output.is_empty() and Time.get_ticks_msec()<deadline: await process_frame
-	check(output.get("success",false),"legacy source compiles with project-managed dependency copies: "+str(output.get("error","")))
-	if output.get("success",false):
-		check(is_equal_approx(float(output.snapshot.state.qpos[0]),.4) and is_zero_approx(float(output.snapshot.state.qvel[0])) and output.snapshot.state.time==0,"legacy import retains initial qpos without runtime time or velocity")
-		check(output.author.dependencies.keys().all(func(path):return str(path).begins_with("res://mujoco_models/")),"legacy dependency references become portable project paths")
-		check(FileAccess.get_sha256(mesh_path)==mesh_hash and FileAccess.file_exists(output.author.provenance.source_archive),"original legacy files stay read-only and are archived")
+	# Current author resources preserve deliberate initial qpos and project-owned dependencies.
+	var native: RefCounted = ClassDB.instantiate("MjEditorDocument")
+	check(native.compile_author('<mujoco><worldbody><body name="b"><joint name="j"/><geom size=".1"/></body></worldbody></mujoco>', {"j":[.4]}), "prepare native initial pose")
+	var imported: Resource = Author.from_native_document(native).design
+	check(is_equal_approx(float(imported.native_initial_pose().j[0]), .4), "current author import retains initial qpos")
 	# Validate kill and recovery using a worker that never returns to its event loop.
 	output.clear()
 	service.worker_script = "res://slow_worker.gd"

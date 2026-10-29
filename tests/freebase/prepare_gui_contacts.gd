@@ -1,5 +1,5 @@
 extends SceneTree
-const Builder=preload("res://addons/godot_mujoco/model/package_builder.gd")
+const Builder=preload("res://addons/godot_mujoco/model/author_builder.gd")
 const SceneBuilder=preload("res://addons/godot_mujoco/model/scene_builder.gd")
 func _initialize() -> void: call_deferred("run")
 func box(world: Node, name_: String, size_: Vector3, pos: Vector3, friction: float) -> void:
@@ -29,7 +29,7 @@ func run() -> void:
    if collisions.get(g.name,"").contains("ankle_roll") and g.type==2:lowest=minf(lowest,g.transform.origin.y-g.size.x)
   candidate=doc.snapshot();candidate.state.erase("integration");candidate.state.qpos[2]=.001-lowest;candidate.state.qvel[0]=1.5
   if not doc.restore(candidate):printerr(doc.get_error());quit(1);return
-  var package=Builder.pack(doc,"res://models","gui_"+mode)
+  var package=await Builder.save_document(doc,"res://models","gui_"+mode)
   if not package.error.is_empty():printerr(package.error);quit(1);return
   var world=SceneBuilder.create(load(package.path));world.start_paused=true
   box(world,"Ground",Vector3(20,.1,20),Vector3(0,-.05,0),friction)

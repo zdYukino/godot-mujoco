@@ -12,6 +12,13 @@ var status: Label
 var importer: Node
 var show_visuals := true
 var show_collisions := false
+var runtime_targets: OptionButton
+var runtime_status: Label
+var runtime_target_key := ""
+var preset_service: Node
+var preset_path := ""
+var preset_target: WeakRef
+var preset_revision := -1
 
 func button(label: String, callback: Callable) -> Button:
 	var result := Button.new()
@@ -21,8 +28,7 @@ func button(label: String, callback: Callable) -> Button:
 	return result
 
 func _ready() -> void:
-	button("载入 MJCF / 模型包", import_dialog)
-	button("升级选中模型为层级节点", upgrade_selected)
+	button("载入 MJCF", import_dialog)
 	button("导出 MJCF 与依赖", export_dialog)
 	var help := Label.new()
 	help.text = "场景树中选部件，Inspector 修改参数，操作轴移动/旋转。Ctrl+D 复制，Ctrl+S 保存。运行中修改会自动暂停，编译成功后手动继续。"
@@ -48,6 +54,18 @@ func _ready() -> void:
 	add_child(importer)
 	importer.completed.connect(import_finished)
 	importer.status_changed.connect(func(message): status.text = message)
+	var separator := HSeparator.new(); add_child(separator)
+	button("导出当前设计控制预设", save_preset_dialog)
+	runtime_targets = OptionButton.new(); runtime_targets.fit_to_longest_item = false; add_child(runtime_targets)
+	runtime_targets.item_selected.connect(func(index):
+		runtime_target_key = runtime_targets.get_item_metadata(index); refresh_runtime_targets())
+	runtime_status = Label.new(); runtime_status.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART; add_child(runtime_status)
+	button("应用整份运行预设", runtime_preset_dialog)
+	button("取消待提交运行预设", func(): plugin.author_debugger.send_preset(runtime_target_key,"cancel_preset",{}))
+	preset_service = Service.new(); add_child(preset_service)
+	preset_service.completed.connect(preset_captured)
+	plugin.author_debugger.instances_changed.connect(refresh_runtime_targets)
+	refresh_runtime_targets()
 	refresh()
 
 func select(node: Node) -> void:
@@ -65,7 +83,7 @@ func refresh() -> void:
 		model = null
 		status.text = "选择模型根节点或 body / geom / joint；也可直接载入 MJCF。"
 	elif not model.design:
-		status.text = "旧模型资源：点击升级后直接编辑层级节点。"
+		status.text = "请选择或导入当前 MJCF 作者设计。"
 	else:
 		status.text = "%s · 设计版本 %d\n%s" % [model.name, model.design.revision, model.author_scene.compiled_status if model.author_scene else "初始化"]
 		if not model.last_error.is_empty(): status.text += "\n" + model.last_error
@@ -74,7 +92,7 @@ func import_dialog() -> void:
 	var dialog := EditorFileDialog.new()
 	dialog.access = EditorFileDialog.ACCESS_FILESYSTEM
 	dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE
-	dialog.filters = PackedStringArray(["*.xml ; MJCF", "*.tres ; Saved MuJoCo model", "*.gmj.json ; Legacy document"])
+	dialog.filters = PackedStringArray(["*.xml ; MJCF"])
 	add_child(dialog)
 	dialog.file_selected.connect(func(path): import_file(path); dialog.queue_free())
 	dialog.canceled.connect(dialog.queue_free)
@@ -85,24 +103,15 @@ func import_file(path: String) -> void:
 	if not root is Node3D:
 		status.text = "请先打开或新建一个 3D 场景。"
 		return
-	if path.get_extension() == "tres":
-		var resource := ResourceLoader.load(path, "", ResourceLoader.CACHE_MODE_IGNORE)
-		var result := Author.from_legacy(resource)
-		if not result.error.is_empty(): status.text = result.error; return
-		import_legacy(result.design,path)
-	elif path.ends_with(".gmj.json"):
-		var value: Variant = JSON.parse_string(FileAccess.get_file_as_string(path))
-		if not value is Dictionary or not value.get("xml") is String:
-			status.text = "Invalid legacy document"
-			return
-		var result := Author.from_snapshot(value,path.get_base_dir())
-		if not result.error.is_empty(): status.text = result.error; return
-		import_legacy(result.design,path)
-	else:
-		importer.submit({"op":"import", "source":path, "generation":"import", "revision":0})
-
-func import_legacy(design: Resource, path: String) -> void:
-	importer.submit({"op":"import_author","author":design.author_snapshot(),"source":path,"source_sha256":FileAccess.get_sha256(path),"generation":"import","revision":design.revision})
+	if path.get_extension().to_lower() != "xml":
+		status.text = "仅支持 MJCF XML，请重新导入源文件。"
+		return
+	var request := {"op":"import", "source":path, "generation":"import", "revision":0}
+	var selected := EditorInterface.get_selection().get_selected_nodes()
+	var parent: Node = selected[0] if selected.size() == 1 else null
+	while parent and not parent is World: parent = parent.get_parent()
+	if parent and parent.world_design: request.context = preload("res://addons/godot_mujoco/model/collision_settings.gd").context(parent,parent.world_design)
+	importer.submit(request)
 
 func import_finished(result: Dictionary) -> void:
 	if not result.has("author"): status.text = result.get("error", "导入失败"); return
@@ -114,6 +123,8 @@ func import_finished(result: Dictionary) -> void:
 		design.cached_entities = result.entities
 		design.cached_geometry = result.geometry
 		design.collision_geometry = result.collision_geometry
+		design.collision_stats = result.get("collision_stats",[])
+		design.validated_context = result.get("context", "")
 		design.compiled_snapshot = result.snapshot
 		design.validated_revision = design.revision
 	else:
@@ -133,11 +144,11 @@ func create_model(design: Resource) -> void:
 	if not world:
 		created_world = World.new()
 		created_world.name = "MuJoCoWorld"
-		created_world.world_design = design
+		created_world.world_design = design.fork()
 		world = created_world
 	elif not world.world_design:
-		var error: String = world.upgrade_author_world()
-		if not error.is_empty(): status.text=error; return
+		status.text = "World 需要当前作者设计，请重新导入 MJCF。"
+		return
 	var instance := Model.new()
 	instance.name = str(design.tree.attrs.get("model", "Model")).validate_node_name()
 	instance.design = design
@@ -154,12 +165,6 @@ func create_model(design: Resource) -> void:
 	EditorInterface.get_selection().clear()
 	EditorInterface.get_selection().add_node(instance)
 	select(instance)
-
-func upgrade_selected() -> void:
-	if not model: return
-	var error: String = model.upgrade_author_model()
-	if not error.is_empty(): status.text = error
-	else: EditorInterface.mark_scene_as_unsaved(); refresh()
 
 func parent_identity() -> String:
 	if not model or selected_id.is_empty(): return ""
@@ -219,3 +224,62 @@ func update_overlay_visibility() -> void:
 
 func shutdown() -> void:
 	if importer: importer.cancel()
+	if preset_service: preset_service.cancel()
+	if plugin.author_debugger.instances_changed.is_connected(refresh_runtime_targets): plugin.author_debugger.instances_changed.disconnect(refresh_runtime_targets)
+
+func refresh_runtime_targets() -> void:
+	if not runtime_targets: return
+	var targets: Dictionary = plugin.author_debugger.runtime_targets()
+	runtime_targets.clear()
+	for key in targets:
+		runtime_targets.add_item(str(targets[key].label))
+		runtime_targets.set_item_metadata(runtime_targets.item_count-1,key)
+		if key == runtime_target_key: runtime_targets.select(runtime_targets.item_count-1)
+	if not targets.has(runtime_target_key): runtime_target_key = str(targets.keys()[0]) if not targets.is_empty() else ""
+	if runtime_target_key.is_empty(): runtime_status.text = "F5 运行后可选择实例应用控制预设。"; return
+	var value: Dictionary = targets[runtime_target_key]
+	var outcome: Dictionary = value.get("preset", {})
+	runtime_status.text = "revision %d · %s" % [value.revision,"pending" if value.pending else "ready"]
+	if not outcome.is_empty(): runtime_status.text += " · %s #%d" % [outcome.get("status",""),outcome.get("request",0)]
+	if not value.get("error", "").is_empty(): runtime_status.text += "\n" + str(value.error)
+
+func runtime_preset_dialog() -> void:
+	var targets: Dictionary = plugin.author_debugger.runtime_targets()
+	if not targets.has(runtime_target_key): return
+	var key := runtime_target_key
+	var revision: int = targets[key].revision
+	var dialog := EditorFileDialog.new(); dialog.access = EditorFileDialog.ACCESS_FILESYSTEM
+	dialog.file_mode = EditorFileDialog.FILE_MODE_OPEN_FILE; dialog.filters = PackedStringArray(["*.json ; 控制预设 v2"])
+	add_child(dialog)
+	dialog.file_selected.connect(func(path):
+		var current: Dictionary = plugin.author_debugger.runtime_targets()
+		var loaded: Dictionary = preload("control_presets.gd").read_file(path)
+		if key != runtime_target_key or not current.has(key) or current[key].revision != revision: runtime_status.text = "运行目标或版本已变化，请重新选择预设。"
+		elif not loaded.error.is_empty(): runtime_status.text = loaded.error
+		elif not plugin.author_debugger.send_preset(key,"preset",{"preset":loaded.value}): runtime_status.text = "目标不可用或正在提交。"
+		dialog.queue_free())
+	dialog.canceled.connect(dialog.queue_free); dialog.popup_centered_ratio(.65)
+
+func save_preset_dialog() -> void:
+	if not model or not model.design: return
+	var target := weakref(model)
+	var revision: int = model.design.revision
+	var dialog := EditorFileDialog.new(); dialog.access = EditorFileDialog.ACCESS_FILESYSTEM
+	dialog.file_mode = EditorFileDialog.FILE_MODE_SAVE_FILE; dialog.filters = PackedStringArray(["*.json ; 控制预设 v2"])
+	add_child(dialog)
+	dialog.file_selected.connect(func(path):
+		var selected: Node = target.get_ref()
+		if selected and selected.design.revision == revision:
+			preset_target = target; preset_revision = revision; preset_path = path
+			preset_service.submit({"op":"capture_preset", "author":selected.design.author_snapshot(), "context":selected.compilation_context()})
+		dialog.queue_free())
+	dialog.canceled.connect(dialog.queue_free); dialog.popup_centered_ratio(.65)
+
+func preset_captured(result: Dictionary) -> void:
+	if not result.get("success",false): status.text = result.get("error","预设导出失败"); return
+	var target: Node = preset_target.get_ref() if preset_target else null
+	if not target or target.design.revision != preset_revision: status.text = "设计已变化，请重新导出预设。"; return
+	var file := FileAccess.open(preset_path+".tmp",FileAccess.WRITE)
+	if not file: status.text = "无法写入预设"; return
+	file.store_string(JSON.stringify(result.preset,"\t")); file.close()
+	status.text = "控制预设已导出" if DirAccess.rename_absolute(preset_path+".tmp",preset_path)==OK else "无法保存预设"

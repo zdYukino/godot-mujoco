@@ -26,12 +26,12 @@ func request_rebuild_environment(discard_runtime_changes: bool) -> bool:
 
 func validate_models(node: Node) -> String:
 	if node is MjRuntimeWorld:
-		if not node.world_model: return "Environment has no world_model"
-		var error: String=node.world_model.validate_package()
+		if not node.world_design: return "Environment has no world_design"
+		var error: String=node.world_design.validate_dependencies()
 		if not error.is_empty(): return error
 	if node is MjModelInstance:
-		if not node.model: return "Environment model instance has no resource"
-		var error: String=node.model.validate_package()
+		if not node.design: return "Environment model instance has no resource"
+		var error: String=node.design.validate_dependencies()
 		if not error.is_empty(): return error
 	for child in node.get_children():
 		var error := validate_models(child)
@@ -68,7 +68,14 @@ func rebuild_environment() -> void:
 	viewport.render_target_update_mode=SubViewport.UPDATE_DISABLED
 	add_child(viewport)
 	viewport.add_child(candidate)
-	last_error=candidate.last_error if not candidate.ready_for_models else loaded_models(candidate)
+	# Keep the active environment until asynchronous composition and preview construction succeed.
+	var deadline := Time.get_ticks_msec() + 125000
+	while is_instance_valid(candidate) and candidate.ready_for_models and not candidate.author_started:
+		var status: Dictionary = candidate.info()
+		if status.get("compile_status") == "failed" or Time.get_ticks_msec() > deadline: break
+		await get_tree().process_frame
+	last_error=candidate.last_error if not candidate.author_started else loaded_models(candidate)
+	if not candidate.author_started and last_error.is_empty(): last_error = "Environment compilation did not complete"
 	if not last_error.is_empty():
 		remove_child(viewport)
 		viewport.queue_free()

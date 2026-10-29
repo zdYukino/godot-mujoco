@@ -5,6 +5,8 @@
 #include "physics/mj_g1_import.h"
 #include "physics/mj_physics_server.h"
 #include "physics/mj_state_transfer.h"
+#include "physics/mj_collision_options.h"
+#include "physics/mj_collision_stats.h"
 #include <godot_cpp/classes/project_settings.hpp>
 #include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/variant/packed_float64_array.hpp>
@@ -35,15 +37,14 @@ void assign_names(mjSpec*s){for(auto t:{mjOBJ_BODY,mjOBJ_JOINT,mjOBJ_GEOM,mjOBJ_
 Transform3D pose(const mjtNum*p,const mjtNum*m){Basis b;for(int r=0;r<3;++r)for(int c=0;c<3;++c)b[r][c]=m[3*r+c];return Transform3D(mj_to_godot(b),mj_to_godot(Vector3(p[0],p[1],p[2])));}
 }
 void MjEditorDocument::_bind_methods(){
- ClassDB::bind_method(D_METHOD("compile_author","xml","initial_pose"),&MjEditorDocument::compile_author,DEFVAL(Dictionary()));
+ ClassDB::bind_method(D_METHOD("compile_author","xml","initial_pose","mesh_options","initial_controls"),&MjEditorDocument::compile_author,DEFVAL(Dictionary()),DEFVAL(Dictionary()),DEFVAL(Dictionary()));
+ ClassDB::bind_method(D_METHOD("collision_stats"),&MjEditorDocument::collision_stats);
  ClassDB::bind_method(D_METHOD("save_compiled","path"),&MjEditorDocument::save_compiled);
  ClassDB::bind_method(D_METHOD("restore_compiled","snapshot","path"),&MjEditorDocument::restore_compiled);
  ClassDB::bind_method(D_METHOD("compose_author_world","request"),&MjEditorDocument::compose_author_world);
  ClassDB::bind_method(D_METHOD("apply_dynamic_snapshot","state","aliases","reset"),&MjEditorDocument::apply_dynamic_snapshot);
  ClassDB::bind_method(D_METHOD("import_g1","path","free_base","relaxed"),&MjEditorDocument::import_g1,DEFVAL(false),DEFVAL(false));
  ClassDB::bind_method(D_METHOD("asset_manifest"),&MjEditorDocument::asset_manifest);
- ClassDB::bind_method(D_METHOD("portable_snapshot","mapping"),&MjEditorDocument::portable_snapshot);
- ClassDB::bind_method(D_METHOD("restore_at","snapshot","directory"),&MjEditorDocument::restore_at);
  ClassDB::bind_method(D_METHOD("import_file","path"),&MjEditorDocument::import_file);
  ClassDB::bind_method(D_METHOD("snapshot"),&MjEditorDocument::snapshot);
  ClassDB::bind_method(D_METHOD("restore","snapshot"),&MjEditorDocument::restore);
@@ -60,39 +61,51 @@ void MjEditorDocument::_bind_methods(){
 }
 MjEditorDocument::MjEditorDocument(){char e[1024]={};commit(mj_parseXMLString("<mujoco><compiler angle='radian'/><option timestep='0.002'/><worldbody><geom name='floor' type='plane' size='5 5 .1'/></worldbody></mujoco>",nullptr,e,sizeof(e)));}
 MjEditorDocument::~MjEditorDocument(){gmj_load_trace::mark("document.destroy_begin");if(data)mj_deleteData(data);if(model)mj_deleteModel(model);if(spec)mj_deleteSpec(spec);gmj_load_trace::mark("document.destroy_end");}
-bool MjEditorDocument::compile_author(const String &text,const Dictionary &initial){
+bool MjEditorDocument::compile_author(const String &text,const Dictionary &initial,const Dictionary &mesh_options,const Dictionary &initial_controls){
+ GmjMeshCacheScope cache(!mesh_options.is_empty());
  char e[2048]={};auto*c=mj_parseXMLString(text.utf8().get_data(),nullptr,e,sizeof(e));
  if(!c){error=String::utf8(e);return false;}
+ error=gmj_apply_mesh_options(c,mesh_options);
+ if(!error.is_empty()){mj_deleteSpec(c);return false;}
  if(!commit(c,Dictionary(),false))return false;
+ explicit_mesh_options=mesh_options.duplicate(true);
  for(auto key:initial.keys()){
   String label=key;int j=mj_name2id(model,mjOBJ_JOINT,label.utf8().get_data());
   if(j<0){error="Unknown initial-pose joint: "+label;return false;}
   int count=model->jnt_type[j]==mjJNT_FREE?7:model->jnt_type[j]==mjJNT_BALL?4:1;
   if(!read_values(initial[key],data->qpos+model->jnt_qposadr[j],count)){error="Invalid initial joint position: "+label;return false;}
  }
+ for(auto key:initial_controls.keys()){String label=key;int a=mj_name2id(model,mjOBJ_ACTUATOR,label.utf8().get_data());double value=0;
+  if(a<0||!scalar(initial_controls[key],value)||(model->actuator_ctrllimited[a]&&(value<model->actuator_ctrlrange[2*a]||value>model->actuator_ctrlrange[2*a+1]))){error="Invalid initial actuator control: "+label;return false;}data->ctrl[a]=value;
+ }
  mj_normalizeQuat(model,data->qpos);mj_forward(model,data);
  for(int i=0;i<model->nv;++i)if(!std::isfinite(data->qacc[i])){error="Nonfinite authored initial dynamics";return false;}
  paused=true;return true;
 }
 bool MjEditorDocument::compose_author_world(const Dictionary &request){
+ Array sources=request.get("sources",Array());bool custom_depth=false;
+ for(int i=0;i<sources.size();++i)if(!Dictionary(Dictionary(sources[i]).get("mesh_options",Dictionary())).is_empty())custom_depth=true;
+ GmjMeshCacheScope cache(custom_depth);
  char e[2048]={};String text=request.get("base_xml",String());
  auto*c=mj_parseXMLString(text.utf8().get_data(),nullptr,e,sizeof(e));if(!c){error=String::utf8(e);return false;}
  auto fail=[&](const String&message){error=message;mj_deleteSpec(c);return false;};
  PackedByteArray options=request.get("options",PackedByteArray());
  if(options.size()!=sizeof(mjOption))return fail("Compiler/world option ABI mismatch");
  std::memcpy(&c->option,options.ptr(),sizeof(mjOption));mjs_setDeepCopy(c,1);
- Array sources=request.get("sources",Array());
  for(int i=0;i<sources.size();++i){Dictionary source=sources[i];String xml=source["xml"],prefix=source["prefix"];
   auto*child=mj_parseXMLString(xml.utf8().get_data(),nullptr,e,sizeof(e));if(!child)return fail(String::utf8(e));
   if(mjs_firstElement(child,mjOBJ_PLUGIN)){mj_deleteSpec(child);return fail("Plugins are disabled in author worlds");}
+  gmj_inherit_collision_options(child->option,c->option);
   String conflict=gmj_option_conflict(c->option,child->option);
   if(!conflict.is_empty()){mj_deleteSpec(child);return fail("World/model option conflict: "+conflict);}
   bool mocap=false;for(auto*body=mjs_firstElement(child,mjOBJ_BODY);body;body=mjs_nextElement(child,body))mocap=mocap||mjs_asBody(body)->mocap;
   if(child->nuserdata||child->nkey||mjs_firstElement(child,mjOBJ_KEY)||mocap){mj_deleteSpec(child);return fail("Shared author worlds do not support global userdata, mocap sources or keyframes; author data is preserved");}
   if(mjs_firstElement(child,mjOBJ_FLEX)||mjs_firstElement(child,mjOBJ_SKIN)){mj_deleteSpec(child);return fail("Flex and skin authoring need a dedicated node adapter; source is preserved");}
 
-  Dictionary mesh_options=source.get("mesh_options",Dictionary());Array mesh_names=mesh_options.keys();
-  for(int k=0;k<mesh_names.size();++k){String name=mesh_names[k];Dictionary fields=mesh_options[name];auto*mesh=mjs_findElement(child,mjOBJ_MESH,name.utf8().get_data());int depth=fields.get("octree_maxdepth",0);if(!mesh||depth<3||depth>8){mj_deleteSpec(child);return fail("Invalid source mesh octree settings");}mjs_asMesh(mesh)->octree_maxdepth=depth;}
+  String mesh_error=gmj_apply_mesh_options(child,source.get("mesh_options",Dictionary()));
+  if(!mesh_error.is_empty()){mj_deleteSpec(child);return fail(mesh_error);}
+  Dictionary runtime=source.get("runtime_drives",Dictionary());
+  for(auto key:runtime.keys()) {String label=key;auto*e=mjs_findElement(child,mjOBJ_ACTUATOR,label.utf8().get_data());if(!e){mj_deleteSpec(child);return fail("Missing runtime preset actuator");}auto*a=mjs_asActuator(e);Dictionary fields=runtime[key];if(fields.has("kp")){a->gainprm[0]=double(fields["kp"]);a->biasprm[1]=-double(fields["kp"]);}if(fields.has("kv")){a->biasprm[2]=-double(fields["kv"]);if(!fields.has("kp"))a->gainprm[0]=double(fields["kv"]);}}
   auto*frame=mjs_addFrame(mjs_findBody(c,"world"),nullptr);Transform3D pose=source.get("pose",Transform3D());
   Vector3 pos=godot_to_mj(pose.origin);Quaternion q=godot_to_mj(pose.basis).get_rotation_quaternion();
   for(int k=0;k<3;++k)frame->pos[k]=pos[k];frame->quat[0]=q.w;frame->quat[1]=q.x;frame->quat[2]=q.y;frame->quat[3]=q.z;
@@ -108,6 +121,7 @@ bool MjEditorDocument::compose_author_world(const Dictionary &request){
    if(!read_values(initial[key],p,count)){error="Invalid authored initial joint: "+label;return false;}
    if(model->jnt_type[j]==mjJNT_FREE){Vector3 pos=godot_to_mj(pose.basis).xform(Vector3(p[0],p[1],p[2]))+godot_to_mj(pose.origin);Quaternion q=godot_to_mj(pose.basis).get_rotation_quaternion()*Quaternion(p[4],p[5],p[6],p[3]);for(int k=0;k<3;++k)p[k]=pos[k];p[3]=q.w;p[4]=q.x;p[5]=q.y;p[6]=q.z;}
   }
+  Dictionary controls=source.get("initial_controls",Dictionary());for(auto key:controls.keys()){String label=key;int a=mj_name2id(model,mjOBJ_ACTUATOR,(prefix+label).utf8().get_data());double value=0;if(a<0||!scalar(controls[key],value)||(model->actuator_ctrllimited[a]&&(value<model->actuator_ctrlrange[2*a]||value>model->actuator_ctrlrange[2*a+1]))){error="Invalid initial control";return false;}data->ctrl[a]=value;}
  }
  return apply_dynamic_snapshot(request.get("state",Dictionary()),request.get("aliases",Dictionary()),request.get("reset",Dictionary()));
 }
@@ -156,6 +170,9 @@ bool MjEditorDocument::restore_compiled(const Dictionary &snapshot,const String 
 }
 bool MjEditorDocument::commit(mjSpec*c,const Dictionary &state,bool migrate){
  if(!c){error="Invalid MJCF specification";return false;}
+ bool custom_depth=false;mjsMesh defaults{};mjs_defaultMesh(&defaults);
+ for(auto*e=mjs_firstElement(c,mjOBJ_MESH);e;e=mjs_nextElement(c,e))if(mjs_asMesh(e)->octree_maxdepth!=defaults.octree_maxdepth)custom_depth=true;
+ GmjMeshCacheScope mesh_cache(custom_depth);
  // Reject plugin instances before compilation can invoke registered callbacks.
  if(mjs_firstElement(c,mjOBJ_PLUGIN)){error="Plugin execution is disabled in editor/map documents";mj_deleteSpec(c);return false;}
  for(auto* e=mjs_firstElement(c,mjOBJ_HFIELD);e;e=mjs_nextElement(c,e)){auto*h=mjs_asHField(e);if(*mjs_getString(h->file)||h->nrow<2||h->nrow>256||h->ncol<2||h->ncol>256){error="Document heightfields require inline elevation data and 2..256 rows/columns";mj_deleteSpec(c);return false;}}
@@ -270,18 +287,6 @@ Dictionary MjEditorDocument::asset_manifest() const {
  gmj_asset_xml(xml(),[&](const String &path){if(!assets.has(path))assets.push_back(path);return path;});
  result["assets"]=assets;return result;
 }
-Dictionary MjEditorDocument::portable_snapshot(const Dictionary &mapping) const {
- bool valid=true;Dictionary result=snapshot();
- String portable=gmj_asset_xml(result["xml"],[&](const String &path){if(!mapping.has(path)){valid=false;return path;}String rel=mapping[path];if(rel.is_absolute_path()||rel.contains("..")||!rel.begins_with("assets/"))valid=false;return rel;});
- if(!valid||portable.is_empty())return {};result["xml"]=portable;return result;
-}
-bool MjEditorDocument::restore_at(const Dictionary &r,const String &directory){
- gmj_load_trace::mark("document.asset_paths_begin");
- if((int(r.get("format",0))!=1&&int(r.get("format",0))!=2)||!r.has("xml")||!r.has("state")){error="Invalid portable model snapshot";return false;}
- String base=ProjectSettings::get_singleton()->globalize_path(directory);bool valid=true;
- String resolved=gmj_asset_xml(r["xml"],[&](const String&rel){if(rel.is_absolute_path()||rel.contains("..")||!rel.begins_with("assets/")){valid=false;error="Portable model contains an absolute or escaping asset path: "+rel;return rel;}String absolute=base.path_join(rel);if(!FileAccess::file_exists(absolute)){valid=false;error="Missing packaged dependency: "+rel;}return absolute;});
- if(!valid||resolved.is_empty())return false;gmj_load_trace::mark("document.asset_paths_end");Dictionary snapshot=r.duplicate(true);snapshot["xml"]=resolved;return restore(snapshot);
-}
 void MjEditorDocument::set_paused(bool v){paused=v;accumulator=0;}
 void MjEditorDocument::advance(double dt){if(paused||!model||!std::isfinite(dt)||dt<=0)return;accumulator=std::min(.1,accumulator+dt);int count=std::min(100,int(accumulator/model->opt.timestep));for(int i=0;i<count;++i)mj_step(model,data);accumulator-=count*model->opt.timestep;mj_forward(model,data);for(int i=0;i<model->nv;++i)if(!std::isfinite(data->qvel[i])){paused=true;error="Nonfinite preview state; preview paused";break;}}
 bool MjEditorDocument::edit(const Dictionary &cmd){
@@ -373,6 +378,7 @@ Dictionary MjEditorDocument::inspect() const {
  for(int a=0;a<model->nu;++a){Dictionary e,p;e["kind"]="actuator";e["name"]=name(model,mjOBJ_ACTUATOR,a);e["parent"]="";String type=drive_kind(model,a);p["type"]=type;p["control"]=data->ctrl[a];p["ctrl_limited"]=bool(model->actuator_ctrllimited[a]);p["ctrl_range"]=numbers(model->actuator_ctrlrange+2*a,2);p["gain_type"]=model->actuator_gaintype[a];p["bias_type"]=model->actuator_biastype[a];p["dynamics_type"]=model->actuator_dyntype[a];p["gear"]=numbers(model->actuator_gear+6*a,6);p["transmission_type"]=model->actuator_trntype[a];p["target_joint"]=model->actuator_trntype[a]==mjTRN_JOINT?name(model,mjOBJ_JOINT,model->actuator_trnid[2*a]):String("N/A (non-joint transmission)");p["kp"]=type=="position-compatible"?Variant(model->actuator_gainprm[mjNGAIN*a]):Variant("N/A");p["kv"]=type!="general/non-PD"?Variant(-model->actuator_biasprm[mjNBIAS*a+2]):Variant("N/A");e["properties"]=p;entities.push_back(e);}
  out["entities"]=entities;return out;
 }
+Array MjEditorDocument::collision_stats() const {return gmj_collision_stats(model);}
 Array MjEditorDocument::geometry() const {
  Array result;if(!model)return result;
  for(int g=0;g<model->ngeom;++g){Dictionary geo;geo["name"]=name(model,mjOBJ_GEOM,g);geo["type"]=model->geom_type[g];geo["transform"]=pose(data->geom_xpos+3*g,data->geom_xmat+9*g);geo["size"]=Vector3(model->geom_size[3*g],model->geom_size[3*g+1],model->geom_size[3*g+2]);geo["color"]=Color(model->geom_rgba[4*g],model->geom_rgba[4*g+1],model->geom_rgba[4*g+2],model->geom_rgba[4*g+3]);

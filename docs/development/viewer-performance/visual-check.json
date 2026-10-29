@@ -1,0 +1,23 @@
+{
+  "gallery": {
+    "width": 1920,
+    "height": 1080,
+    "silhouette_differing_pixels": 31,
+    "silhouette_difference_fraction": 1.4949845679012346e-05,
+    "rgb_mean_absolute_error_255": 0.003772022890946502
+  },
+  "g1-single": {
+    "width": 1920,
+    "height": 1080,
+    "silhouette_differing_pixels": 0,
+    "silhouette_difference_fraction": 0.0,
+    "rgb_mean_absolute_error_255": 0.00468701774691358
+  },
+  "g1-dual": {
+    "width": 1920,
+    "height": 1080,
+    "silhouette_differing_pixels": 0,
+    "silhouette_difference_fraction": 0.0,
+    "rgb_mean_absolute_error_255": 0.004375
+  }
+}

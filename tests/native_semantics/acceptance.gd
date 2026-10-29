@@ -68,7 +68,7 @@ func run() -> void:
  fixture.store_string('<mujoco><option timestep=".01" gravity="0 0 -10" integrator="Euler"/><worldbody/></mujoco>'); fixture.close()
  var document: RefCounted = ClassDB.instantiate("MjEditorDocument")
  check(document.import_file("res://semantics.xml"), "empty lightweight authored world")
- check(PhysicsServer3D.call("scene_configure_model", space, document.snapshot(), "res://"), "configure exact .01 second steps")
+ check(PhysicsServer3D.call("scene_configure_world",space,(document.snapshot()).xml), "configure exact .01 second steps")
  var body := make_body(space)
  PhysicsServer3D.body_set_force_integration_callback(body, integrate)
  PhysicsServer3D.body_set_state_sync_callback(body, sync)

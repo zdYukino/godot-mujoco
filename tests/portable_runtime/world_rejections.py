@@ -6,7 +6,7 @@ from pathlib import Path
 import subprocess
 
 CASES = {
-    "missing_model": ("Assign a world_model resource to define all global MuJoCo options", 6),
+    "missing_model": ("Assign a world_design author resource to define global MuJoCo options", 6),
     "ownership": ("Only one MjRuntimeWorld may own a World3D; use a separate SubViewport for another world", 8),
 }
 MARKER = "WORLD_REJECTION_RESULT "

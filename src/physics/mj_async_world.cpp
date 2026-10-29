@@ -49,9 +49,9 @@ bool MjPhysicsServer3D::scene_enable_authoring(const RID&r,const String&xml){
  auto*s=space(r);if(!s||flushing)return false;char error[2048]={};auto*spec=mj_parseXMLString(xml.utf8().get_data(),nullptr,error,sizeof(error));
  if(!spec){s->last_error=String::utf8(error);return false;}
  if(mjs_firstElement(spec,mjOBJ_PLUGIN)){mj_deleteSpec(spec);s->last_error="Plugins are disabled";return false;}
- s->options=spec->option;mj_deleteSpec(spec);
- if(!std::isfinite(s->options.timestep)||s->options.timestep<.0001){s->last_error="World timestep must be at least .0001 s";return false;}
- s->authoring=true;s->authored_options=true;s->paused=true;s->dirty=true;s->design_blocked=true;s->compile_status="pending";++s->design_revision;
+ auto options=spec->option;mj_deleteSpec(spec);
+ if(!std::isfinite(options.timestep)||options.timestep<.0001||options.timestep>.1){s->last_error="World timestep must be at least .0001 s";return false;}
+ s->options=options;s->authoring=true;s->authored_options=true;s->paused=true;s->dirty=true;s->design_blocked=true;s->compile_status="pending";++s->design_revision;
  s->gravity_direction=mj_to_godot(Vector3(s->options.gravity[0],s->options.gravity[1],s->options.gravity[2]));s->gravity=s->gravity_direction.length();if(s->gravity>0)s->gravity_direction/=s->gravity;
  return true;
 }
@@ -74,8 +74,8 @@ RID MjPhysicsServer3D::scene_stage_author_model(const RID&r,const RID&id,const D
  else{result=handles.make_rid(0);auto value=std::make_unique<MjImported>();value->rid=result;value->whole_model=true;value->prefix="import_"+std::to_string(result.get_id())+"_";object=value.get();s->imported[result.get_id()]=std::move(value);}
  Dictionary lean;Array entities=definition.get("entities",Array()),layout;
  for(int i=0;i<entities.size();++i){Dictionary source=entities[i],item;for(const char*key:{"id","kind","name","parent_id","attrs"})if(source.has(key))item[key]=source[key];layout.push_back(item);}
- lean["entities"]=layout;lean["initial"]=definition.get("initial",Dictionary());lean["revision"]=definition.get("revision",0);lean["mesh_options"]=definition.get("mesh_options",Dictionary());
- object->author_xml=xml;object->author_definition=lean;object->pose=pose;object->label=definition.get("label",String("Model"));object->query_object_id=uint64_t(int64_t(definition.get("owner",0)));
+ lean["entities"]=layout;lean["initial"]=definition.get("initial",Dictionary());lean["initial_controls"]=definition.get("initial_controls",Dictionary());lean["revision"]=definition.get("revision",0);lean["mesh_options"]=definition.get("mesh_options",Dictionary());
+ object->runtime_drives.clear();object->author_xml=xml;object->author_definition=lean;object->pose=pose;object->label=definition.get("label",String("Model"));object->query_object_id=uint64_t(int64_t(definition.get("owner",0)));
  dirty(r);return result;
 }
 bool MjPhysicsServer3D::scene_stage_author_remove(const RID&r,const RID&id){auto*s=space(r);if(!s||!s->authoring)return false;auto it=s->imported.find(id.get_id());if(it==s->imported.end())return false;it->second->author_definition["removed"]=true;dirty(r);return true;}
@@ -87,7 +87,7 @@ Dictionary MjPhysicsServer3D::scene_async_snapshot(const RID&r){
  PackedByteArray options;options.resize(sizeof(mjOption));std::memcpy(options.ptrw(),&s->options,sizeof(mjOption));result["options"]=options;
  Array sources;Dictionary aliases,reset;
  for(auto &entry:s->imported){auto&o=*entry.second;if(bool(o.author_definition.get("removed",false)))continue;
-  Dictionary source;source["xml"]=o.author_xml.is_empty()&&o.spec?gmj_spec_xml(o.spec):o.author_xml;source["prefix"]=String(o.prefix.c_str());source["pose"]=o.pose;source["initial"]=o.author_definition.get("initial",Dictionary());source["mesh_options"]=o.author_definition.get("mesh_options",Dictionary());sources.push_back(source);migration_map(o,aliases,reset);
+  Dictionary source;source["xml"]=o.author_xml.is_empty()&&o.spec?gmj_spec_xml(o.spec):o.author_xml;source["prefix"]=String(o.prefix.c_str());source["pose"]=o.pose;source["initial"]=o.author_definition.get("initial",Dictionary());source["initial_controls"]=o.author_definition.get("initial_controls",Dictionary());source["mesh_options"]=o.author_definition.get("mesh_options",Dictionary());source["runtime_drives"]=o.runtime_drives;sources.push_back(source);migration_map(o,aliases,reset);
  }
  for(auto id:s->author_reset_bodies)reset[String("native_joint_")+String::num_uint64(id)]=true;
  result["sources"]=sources;result["aliases"]=aliases;result["reset"]=reset;s->compile_status="compiling";return result;
@@ -137,7 +137,7 @@ void MjPhysicsServer3D::process_async_worlds(){
   s.author_reset_bodies.clear();
   auto*old_model=s.model;auto*old_data=s.data;s.model=m;s.data=d;candidate->model=nullptr;candidate->data=nullptr;
   s.geom_owners=std::move(mapped);s.imported_query_owners=std::move(query_owners);s.query_sdf_fields.clear();s.dirty=false;s.design_blocked=false;s.paused=true;s.last_error="";s.compile_status="ready";s.committed_design_revision=s.design_revision;++s.revision;
-  for(auto it=s.imported.begin();it!=s.imported.end();){if(bool(it->second->author_definition.get("removed",false))){handles.free(it->second->rid);it=s.imported.erase(it);}else{it->second->committed_definition=it->second->author_definition.duplicate(true);it->second->committed_pose=it->second->pose;it->second->has_committed_pose=true;++it->second->property_revision;++it;}}
+  for(auto it=s.imported.begin();it!=s.imported.end();){if(bool(it->second->author_definition.get("removed",false))){handles.free(it->second->rid);it=s.imported.erase(it);}else{if(it->second->has_committed_pose&&(it->second->committed_definition!=it->second->author_definition||it->second->committed_pose!=it->second->pose))++it->second->property_revision;it->second->committed_definition=it->second->author_definition.duplicate(true);it->second->committed_pose=it->second->pose;it->second->has_committed_pose=true;++it;}}
   s.committed_bodies.clear();s.committed_shapes.clear();s.committed_areas.clear();
   for(auto&area:areas)if(area.second->space==s.rid){s.committed_areas.emplace(area.first,*area.second);for(auto&instance:area.second->shapes){auto*sh=shape(instance.shape);if(sh)s.committed_shapes[sh->rid.get_id()]=*sh;}}
   for(auto &body_entry:bodies){auto&b=*body_entry.second;if(b.space!=s.rid)continue;b.mj_body=mj_name2id(m,mjOBJ_BODY,("b"+std::to_string(b.rid.get_id())).c_str());read_body(b);s.committed_bodies.emplace(body_entry.first,b);for(auto&shape_instance:b.shapes){auto*sh=shape(shape_instance.shape);if(sh){auto copy=*sh;if(copy.data.get_type()==Variant::DICTIONARY)copy.data=Dictionary(copy.data).duplicate(true);s.committed_shapes[sh->rid.get_id()]=copy;}}}

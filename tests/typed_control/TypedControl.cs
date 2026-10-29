@@ -10,6 +10,15 @@ public partial class TypedControl : Node
     { if (!condition) throw new Exception(name); checks++; GD.Print("PASS ", name); }
     private async Task Frames(int count = 1)
     { for (int i=0;i<count;i++) await ToSignal(GetTree(), SceneTree.SignalName.ProcessFrame); }
+    private async Task Ready(Node world) {
+        var deadline=Time.GetTicksMsec()+120000;
+        while(Time.GetTicksMsec()<deadline) {
+            var info=world.Call("info").AsGodotDictionary();
+            if(world.Get("author_started").AsBool()&&info["compile_status"].AsString()=="ready"&&world.Get("command_request").AsInt64()==0)return;
+            await Frames();
+        }
+        throw new Exception("Author world compilation timeout");
+    }
     private async Task Idle(WorldHandle world)
     {
         for(int i=0;i<240;i++) { if(world.Read().Value.PendingRequest==0) return; await Frames(); }
@@ -30,13 +39,13 @@ public partial class TypedControl : Node
             var scene=GD.Load<PackedScene>("res://Environment.tscn");
             var host=new SubViewport { OwnWorld3D=true };AddChild(host);
             var node=scene.Instantiate<Node3D>();
-            var design=node.Get("world_model");
+            var design=node.Get("world_design");
             node.SetScript(GD.Load<Script>("res://derived_world.gd"));
-            node.Set("world_model",design);node.Set("start_paused",true);
+            node.Set("world_design",design);node.Set("start_paused",true);
             var inheritedInstance=node.GetNode<Node>("First");
-            var instanceDesign=inheritedInstance.Get("model");
+            var instanceDesign=inheritedInstance.Get("design");
             inheritedInstance.SetScript(GD.Load<Script>("res://derived_instance.gd"));
-            inheritedInstance.Set("model",instanceDesign);
+            inheritedInstance.Set("design",instanceDesign);
             Check(!WorldHandle.Bind(node).Success && !InstanceHandle.Bind(inheritedInstance).Success,"inherited nodes outside tree rejected");
             host.AddChild(node);
             var unrelated=new Node();host.AddChild(unrelated);
@@ -50,7 +59,8 @@ public partial class TypedControl : Node
             using var first=InstanceHandle.Bind(node.GetNode<Node>("First")).Value;
             using var second=InstanceHandle.Bind(node.GetNode<Node>("Second")).Value;
             Check(!world.Step().Accepted,"initial snapshot pending rejects command");
-            await Idle(world);
+            Check(!first.Read().Success,"uncompiled registered instance returns a typed failure");
+            await Ready(node);await Idle(world);
             Check(world.Read().Success && world.Read().Value.Paused,"typed world state");
             Check(await Task.Run(() => !world.Read().Success && !WorldHandle.Bind(node).Success && !ModelDesign.Load("res://missing.tres").Success),"worker thread access safely rejected");
             Check(first.Read().Value.Identity!=second.Read().Value.Identity,"distinct instance identities");
@@ -80,28 +90,30 @@ public partial class TypedControl : Node
             var secondBefore=second.Read().Value.Joints["hinge"].Position[0];
             var firstNode=node.GetNode<Node>("First");
             firstNode.SetProcess(false); // Hold result polling while native physics commits.
-            var editRequest=first.Apply(loaded.Value,0);
+            var preset=Json.ParseString(FileAccess.GetFileAsString("res://preset.json")).AsGodotDictionary();
+            var editRequest=first.ApplyControlPreset(preset,0);
             long nativeRevision=0;
-            for(int i=0;i<240 && nativeRevision==0;i++) {
+            for(var deadline=Time.GetTicksMsec()+30000;Time.GetTicksMsec()<deadline && nativeRevision==0;) {
                 await Frames();
                 nativeRevision=firstNode.Call("state").AsGodotDictionary()["property_revision"].AsInt64();
             }
             Check(nativeRevision==1 && firstNode.Get("property_revision").AsInt64()==0,"reproduce native commit before node revision polling");
-            Check(first.Read().Value.Revision==nativeRevision && first.Read().Value.Bodies["arm"].Mass==2,"typed snapshot revision matches committed native bodies");
+            Check(first.Read().Value.Revision==nativeRevision && first.Read().Value.Actuators["drive"].Gain==35,"typed snapshot revision matches committed native gains");
             Check(!editRequest.Finished.IsCompleted,"completion waits for node polling independently of snapshot revision");
             firstNode.SetProcess(true);
             var edit=await Done(editRequest);
             Check(edit.Revision==1 && first.Read().Value.Revision==1 && second.Read().Value.Revision==0,"revision isolated");
             Check(Math.Abs(first.Read().Value.Joints["hinge"].Position[0]-firstBefore)<1e-10 && Math.Abs(second.Read().Value.Joints["hinge"].Position[0]-secondBefore)<1e-10,"compatible states continuous");
-            Check(first.Read().Value.Bodies["arm"].Mass==2 && second.Read().Value.Bodies["arm"].Mass==1,"inertia revision applied to one instance");
-            edit=await Done(first.Apply(loaded.Value,0),false);
+            Check(first.Read().Value.Actuators["drive"].Gain==35 && second.Read().Value.Actuators["drive"].Gain==20,"preset gains applied to one instance");
+            edit=await Done(first.ApplyControlPreset(preset,0),false);
             Check(edit.Error.Length>0 && first.Read().Value.Revision==1,"stale revision failure feedback");
             firstNode.Call("unload_model");
             Check(!first.Read().Success && !first.SetControl("drive",.2).Success,"unloaded instance handle safely rejected immediately");
             Check(firstNode.Call("load_model").AsBool(),"same node reloaded");
             using var reloaded=InstanceHandle.Bind(firstNode).Value;
             Check(reloaded.IsAlive && !first.IsAlive,"old handle cannot bind a new RID implicitly");
-            var pending=reloaded.Apply(loaded.Value);
+            await Ready(node);
+            var pending=reloaded.ApplyControlPreset(preset,0);
             firstNode.QueueFree();
             Check(!reloaded.Read().Success,"queued deletion already rejected");
             await Frames(3);
@@ -113,7 +125,7 @@ public partial class TypedControl : Node
             var next=scene.Instantiate<Node3D>();host.AddChild(next);
             using var reopened=WorldHandle.Bind(next).Value;
             using var model=InstanceHandle.Bind(next.GetNode<Node>("First")).Value;
-            await Idle(reopened);
+            await Ready(next);await Idle(reopened);
             Check(reopened.Read().Value.Time==0 && model.Read().Value.Controls["drive"]==0 && model.Read().Value.Revision==0,"saved environment reopens design not simulation");
             Check(model.Read().Value.Bodies["arm"].Mass==1 && !world.IsAlive,"rebuilt environment has original design and new handles");
             // Same node exits/re-enters: old handle must remain invalid after reentry.

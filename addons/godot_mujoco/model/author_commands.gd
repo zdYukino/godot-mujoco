@@ -3,6 +3,7 @@ extends RefCounted
 const Xml = preload("author_xml.gd")
 const Author = preload("author_resource.gd")
 const Appearance = preload("geom_appearance.gd")
+const Collision = preload("collision_settings.gd")
 
 static func kind_of(element: Dictionary, parent_tag := "") -> String:
 	var kind := Xml.entity_kind(element)
@@ -129,6 +130,9 @@ static func _apply(design: Resource, command: Dictionary) -> Dictionary:
 		return result
 	if element.is_empty() or Xml.entity_kind(element).is_empty(): return {"error":"Unknown author entity"}
 	match operation:
+		"collision":
+			var error := Collision.apply_geom(design,element,command.get("field",""),command.get("value"))
+			if not error.is_empty(): return {"error":error}
 		"appearance":
 			var error := Appearance.apply(design, element, command.get("field", ""), command.get("value"))
 			if not error.is_empty(): return {"error":error}
@@ -175,18 +179,8 @@ static func _apply(design: Resource, command: Dictionary) -> Dictionary:
 		"mesh_scale":
 			var scale: Vector3 = command.get("value", Vector3.ONE)
 			if not scale.is_finite() or scale.x <= 0 or scale.y <= 0 or scale.z <= 0: return {"error":"Mesh scale must be finite and positive"}
-			var assets := Xml.section(design.tree, "asset")
-			var mesh := {}
-			for asset in assets.get("children", []):
-				if asset.tag == "mesh" and asset.attrs.get("name") == element.attrs.get("mesh"): mesh = asset
+			var mesh := Collision.private_mesh(design,element)
 			if mesh.is_empty(): return {"error":"Missing mesh asset"}
-			if mesh.get("scale_owner", "") != identity:
-				mesh = mesh.duplicate(true)
-				mesh.id = Xml.uuid()
-				mesh.attrs.name = unique_name(design.tree, "mesh", element.attrs.name + "_mesh")
-				mesh.scale_owner = identity
-				assets.children.append(mesh)
-				element.attrs.mesh = mesh.attrs.name
 			mesh.attrs.scale = Xml.numeric_text([scale.x, scale.z, scale.y])
 		"rename":
 			var label: String = command.get("name", "").strip_edges()
@@ -266,7 +260,10 @@ static func _apply(design: Resource, command: Dictionary) -> Dictionary:
 			for entry in dependencies:
 				if not selected.has(entry.source.id): continue
 				var dependency: Dictionary=entry.source.duplicate(true)
-				Xml.clone_ids(dependency,{})
+				var dependency_ids := {}
+				Xml.clone_ids(dependency,dependency_ids)
+				for old_id in dependency_ids:
+					if design.initial_controls.has(old_id): design.initial_controls[dependency_ids[old_id]] = design.initial_controls[old_id]
 				if dependency.attrs.has("name"): dependency.attrs.name=replacements[str(entry.section)+":"+str(dependency.attrs.name)]
 				rewrite(dependency,replacements)
 				Xml.section(design.tree,entry.section).children.append(dependency)

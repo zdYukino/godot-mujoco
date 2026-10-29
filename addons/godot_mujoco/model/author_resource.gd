@@ -8,6 +8,7 @@ signal design_changed
 @export_storage var document_id := ""
 @export_storage var tree: Dictionary = {}
 @export_storage var initial_pose: Dictionary = {}
+@export_storage var initial_controls: Dictionary = {}
 @export_storage var dependencies: Dictionary = {}
 @export_storage var provenance: Dictionary = {}
 @export_storage var revision := 0
@@ -17,7 +18,9 @@ signal design_changed
 @export_storage var cached_geometry: Array = []
 @export_storage var collision_geometry: Array = []
 @export_storage var cache_path := ""
-@export_storage var legacy_snapshot: Dictionary = {}
+@export_storage var mesh_options: Dictionary = {}
+@export_storage var collision_stats: Array = []
+@export_storage var validated_context := ""
 @export_storage var compiled_snapshot: Dictionary = {}
 
 static func from_xml(text: String) -> Dictionary:
@@ -31,35 +34,26 @@ static func from_xml(text: String) -> Dictionary:
 	result.normalize_geometries()
 	return {"error":"", "design":result}
 
-static func from_legacy(model: Resource) -> Dictionary:
-	if not model or not model.get("snapshot") is Dictionary: return {"error":"Not a MuJoCo model resource"}
-	return from_snapshot(model.snapshot,model.resource_path.get_base_dir(),model.provenance,model.dependencies)
-
-static func from_snapshot(snapshot: Dictionary, directory := "", source_provenance := {}, source_dependencies := {}) -> Dictionary:
-	if not snapshot.get("xml") is String or not snapshot.get("state",{}) is Dictionary or not snapshot.get("state",{}).get("qpos",[]) is Array: return {"error":"Invalid legacy XML/state document"}
-	var result := from_xml(snapshot.get("xml", ""))
+static func from_native_document(document: RefCounted) -> Dictionary:
+	var result := from_xml(document.snapshot().xml)
 	if not result.error.is_empty(): return result
-	var design: MjAuthorResource = result.design
-	for element in Xml.walk(design.tree):
-		for key in element.get("attrs", {}):
-			if key in ["file", "fileleft", "fileright", "fileup", "filedown", "filefront", "fileback"]:
-				var path: String = element.attrs[key]
-				if not path.is_absolute_path() and not path.begins_with("res://"): element.attrs[key] = directory.path_join(path)
-	design.provenance = source_provenance.duplicate(true)
-	design.dependencies = source_dependencies.duplicate(true)
-	design.legacy_snapshot = snapshot.duplicate(true)
-	var positions: Array = snapshot.get("state", {}).get("qpos", [])
-	var offset := 0
-	for entity in design.entities():
-		if entity.kind != "joint": continue
-		var type: String = entity.attrs.get("type", "hinge")
-		var count := 7 if type == "free" else 4 if type == "ball" else 1
-		if offset + count <= positions.size(): design.initial_pose[entity.id] = positions.slice(offset, offset + count)
-		offset += count
+	var joints := {}
+	for entity in document.inspect().entities:
+		if entity.kind == "joint": joints[entity.name] = entity.properties.qpos
+	var options: Dictionary = document.snapshot().get("mesh_options", {})
+	for asset in Xml.walk(result.design.tree):
+		if asset.tag == "mesh" and options.has(asset.attrs.get("name", "")):
+			result.design.mesh_options[asset.id] = options[asset.attrs.name].duplicate(true)
+	for entity in result.design.entities():
+		if entity.kind == "joint" and joints.has(entity.name): result.design.initial_pose[entity.id] = Array(joints[entity.name])
+	for element in Xml.section(result.design.tree,"actuator").get("children",[]):
+		if not element.has("attrs"): continue
+		for entity in document.inspect().entities:
+			if entity.kind == "actuator" and entity.name == element.attrs.get("name", ""): result.design.initial_controls[element.id] = entity.properties.control
 	return result
 
 func author_snapshot() -> Dictionary:
-	return {"format":format_version, "document_id":document_id, "tree":tree.duplicate(true), "initial_pose":initial_pose.duplicate(true), "dependencies":dependencies.duplicate(true), "provenance":provenance.duplicate(true), "revision":revision}
+	return {"format":format_version, "document_id":document_id, "tree":tree.duplicate(true), "initial_pose":initial_pose.duplicate(true), "initial_controls":initial_controls.duplicate(true), "mesh_options":mesh_options.duplicate(true), "dependencies":dependencies.duplicate(true), "provenance":provenance.duplicate(true), "revision":revision}
 
 func restore_author(value: Dictionary) -> String:
 	if value.get("format") != 1 or not value.get("tree") is Dictionary: return "Unsupported author document"
@@ -69,10 +63,20 @@ func restore_author(value: Dictionary) -> String:
 	for element in Xml.walk(candidate):
 		if not element.has("id") or identities.has(element.id): return "Missing or duplicate author identity"
 		identities[element.id] = true
+	var native_options: Variant = value.get("mesh_options", {})
+	if not native_options is Dictionary: return "Invalid mesh options"
+	for identity in native_options:
+		var mesh := Xml.find(candidate,str(identity))
+		var fields: Variant = native_options[identity]
+		if mesh.get("tag") != "mesh" or not fields is Dictionary or fields.size() != 1: return "Invalid mesh option target"
+		var depth: Variant = fields.get("octree_maxdepth")
+		if typeof(depth) not in [TYPE_FLOAT,TYPE_INT] or not is_finite(depth) or depth != floor(depth) or depth < 3 or depth > 8: return "SDF depth must be an integer in 3..8"
+	mesh_options = native_options.duplicate(true)
 	format_version = 1
 	document_id = value.get("document_id", Xml.uuid())
 	tree = candidate
 	initial_pose = value.get("initial_pose", {}).duplicate(true)
+	initial_controls = value.get("initial_controls", {}).duplicate(true)
 	dependencies = value.get("dependencies", {}).duplicate(true)
 	provenance = value.get("provenance", {}).duplicate(true)
 	revision = int(value.get("revision", 0))
@@ -184,12 +188,14 @@ func fork() -> MjAuthorResource:
 	result.collision_geometry = collision_geometry.duplicate(true)
 	result.cache_path = cache_path
 	result.validated_revision = validated_revision
-	result.legacy_snapshot = legacy_snapshot.duplicate(true)
+	result.collision_stats = collision_stats.duplicate(true)
+	result.validated_context = validated_context
 	result.compiled_snapshot = compiled_snapshot.duplicate(true)
 	return result
 
-func worker_xml() -> String:
+func worker_xml(collision_options: Dictionary = {}) -> String:
 	var copy := tree.duplicate(true)
+	if not collision_options.is_empty(): preload("collision_settings.gd").write_world(copy,collision_options)
 	for element in Xml.walk(copy):
 		for key in element.get("attrs", {}):
 			if key in ["file", "fileleft", "fileright", "fileup", "filedown", "filefront", "fileback"]:
@@ -204,10 +210,17 @@ func native_initial_pose() -> Dictionary:
 		if not name.is_empty(): result[name] = initial_pose[identity].duplicate() if initial_pose[identity] is Array else initial_pose[identity]
 	return result
 
-func runtime_xml() -> String:
-	if compiled_snapshot.is_empty() or validated_revision != revision: return worker_xml()
+func native_mesh_options() -> Dictionary:
+	var result := {}
+	for identity in mesh_options:
+		var asset := Xml.find(tree,identity)
+		if not asset.is_empty(): result[str(asset.attrs.name)] = mesh_options[identity].duplicate(true)
+	return result
+
+func runtime_xml(collision_options: Dictionary = {}) -> String:
+	if compiled_snapshot.is_empty() or validated_revision != revision: return worker_xml(collision_options)
 	var parsed := Xml.parse(compiled_snapshot.get("xml", ""))
-	if not parsed.error.is_empty(): return worker_xml()
+	if not parsed.error.is_empty(): return worker_xml(collision_options)
 	var assets := {}
 	for element in Xml.walk(tree):
 		if element.get("attrs", {}).has("name"): assets[str(element.tag) + ":" + str(element.attrs.name)] = element.attrs
@@ -217,4 +230,33 @@ func runtime_xml() -> String:
 			if key in ["file", "fileleft", "fileright", "fileup", "filedown", "filefront", "fileback"] and source.has(key):
 				var path: String = source[key]
 				element.attrs[key] = ProjectSettings.globalize_path(path) if path.begins_with("res://") else path
+	if not collision_options.is_empty(): preload("collision_settings.gd").write_world(parsed.tree,collision_options)
 	return Xml.write(parsed.tree)
+
+func validate_dependencies() -> String:
+	if format_version != 1 or tree.get("tag") != "mujoco": return "Invalid author design"
+	var referenced := {}
+	for element in Xml.walk(tree):
+		if element.tag == "include": return "Import MJCF first to expand source includes"
+		if element.tag == "compiler":
+			for key in ["assetdir","meshdir","texturedir"]:
+				if not element.attrs.get(key, "").is_empty(): return "Author assets cannot redirect directories"
+		for key in ["file", "fileleft", "fileright", "fileup", "filedown", "filefront", "fileback"]:
+			var path: String = element.get("attrs", {}).get(key, "")
+			if not path.is_empty(): referenced[path] = true
+	for path in referenced:
+		if not dependencies.has(path): return "Untracked author dependency: " + str(path)
+	for path in dependencies:
+		if not path is String or not path.begins_with("res://") or path.contains("..") or path.contains("\\") or path.trim_prefix("res://").split("/").has(""):
+			return "Author dependencies must belong to this project"
+		if not referenced.has(path): return "Unreferenced author dependency: " + str(path)
+		if not FileAccess.file_exists(path): return "Missing author dependency: " + str(path)
+		if FileAccess.get_sha256(path) != dependencies[path]: return "Author dependency hash mismatch: " + str(path)
+	return ""
+
+func native_initial_controls() -> Dictionary:
+	var result := {}
+	for identity in initial_controls:
+		var label := source_name(identity)
+		if not label.is_empty(): result[label] = initial_controls[identity]
+	return result

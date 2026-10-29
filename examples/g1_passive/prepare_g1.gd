@@ -1,5 +1,5 @@
 extends SceneTree
-const Package=preload("res://addons/godot_mujoco/model/package_builder.gd")
+const Package=preload("res://addons/godot_mujoco/model/author_builder.gd")
 const Builder=preload("res://addons/godot_mujoco/model/scene_builder.gd")
 const Instance=preload("res://addons/godot_mujoco/model/model_instance.gd")
 func _initialize() -> void: call_deferred("run")
@@ -27,7 +27,7 @@ func run() -> void:
 	definitions.set_meta("geometries",geometries)
 	if ResourceSaver.save(definitions,"res://g1_collision_previews.res",ResourceSaver.FLAG_COMPRESS)!=OK: quit(1); return
 	definitions=load("res://g1_collision_previews.res")
-	var packed: Dictionary=Package.pack(doc,"res://models","passive_g1")
+	var packed: Dictionary=await Package.save_document(doc,"res://models","passive_g1")
 	if not packed.error.is_empty(): printerr(packed.error); quit(1); return
 	var robot_model: Resource=load(packed.path)
 	# Keep saved provenance portable; mesh bytes remain the upstream originals.
@@ -40,17 +40,18 @@ func run() -> void:
 	var floor_doc: RefCounted=ClassDB.instantiate("MjEditorDocument")
 	var xml:="<mujoco><compiler angle='radian'/><option timestep='0.002' gravity='0 0 -9.81' integrator='implicitfast' solver='Newton'><flag nativeccd='enable'/></option><worldbody><geom name='floor_geom' type='box' size='6 4 .1' pos='0 0 -.1' rgba='.25 .28 .32 1' friction='.9 .005 .0001'/></worldbody></mujoco>"
 	if not floor_doc.restore({"format":1,"source":"","xml":xml,"state":{}}): printerr(floor_doc.get_error()); quit(1); return
-	var floor_package: Dictionary=Package.pack(floor_doc,"res://models","gallery_floor")
+	var floor_package: Dictionary=await Package.save_document(floor_doc,"res://models","gallery_floor")
 	if not floor_package.error.is_empty(): printerr(floor_package.error); quit(1); return
 	var world:=Builder.create(load(floor_package.path)); world.name="PassiveG1Gallery"
-	var robot:=Instance.new(); robot.name="G1_1"; robot.model=robot_model; robot.position=Vector3(-1.8,.82,0); robot.rotation_degrees.z=5; world.add_child(robot); robot.owner=world
+	var robot:=Instance.new(); robot.name="G1_1"; robot.design=robot_model; robot.position=Vector3(-1.8,.82,0); robot.rotation_degrees.z=5; world.add_child(robot); robot.owner=world
 	# Preserve sky/light; this second example uses a closer camera only.
 	var original: Node=load("res://Main.tscn").instantiate()
 	for name in ["PolyHavenSky","Sun"]:
 		var node: Node=original.get_node(name).duplicate(); world.add_child(node); node.owner=world
 	original.free()
 	var camera=preload("res://g1_camera.gd").new(); camera.name="Camera"; camera.fov=50; camera.near=.05; camera.frame_for_count(1); world.add_child(camera); camera.owner=world
-	var controls:=Node.new(); controls.name="DisplayControls"; controls.set_script(preload("res://g1_controls.gd")); controls.robot_model=robot_model; controls.collision_definitions=definitions; world.add_child(controls); controls.owner=world
+	var controls:=Node.new(); controls.name="DisplayControls"; controls.set_script(preload("res://g1_controls.gd")); controls.collision_definitions=definitions; world.add_child(controls); controls.owner=world
+	assert((await preload("res://addons/godot_mujoco/model/scene_builder.gd").prepare_tree(world)).is_empty())
 	var scene:=PackedScene.new(); var error:=scene.pack(world)
 	if error==OK: error=ResourceSaver.save(scene,"res://G1.tscn")
 	world.free(); print("PASSIVE_G1_BUILD ",JSON.stringify({"error":error,"robot_model":packed.path}))

@@ -455,10 +455,13 @@ void MjPhysicsServer3D::_sync(){}
 void MjPhysicsServer3D::_end_sync(){}
 bool MjPhysicsServer3D::_is_flushing_queries() const{return flushing;}
 void MjPhysicsServer3D::_step(float dt){
+#ifdef GMJ_VIEWER_BENCHMARK
+ GmjBenchmarkTimer benchmark_timer{gmj_benchmark_step_us};
+#endif
  process_async_worlds();
  for(auto &entry:bodies)entry.second->contacts.clear();
  process_heightfields();
- process_model_edits();
+ process_control_commits();
  process_world_commands(); // Before stepping, including paused worlds: UI only enqueues snapshots.
  if(!active||dt<=0){for(auto&e:spaces){e.second->single_steps=0;complete_world_step(*e.second,"Physics integration inactive or invalid timestep");}return;}last_step=dt;
  // Each Godot fixed tick advances each active space exactly dt. Subdivide, don't

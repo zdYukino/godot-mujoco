@@ -54,8 +54,10 @@ func run():
 		check(doc.restore({"format":1,"xml":"<mujoco><option timestep='.002'/>"+asset+"<worldbody>"+bodies+"</worldbody></mujoco>","state":{},"source":""}),"pair probes compile "+kind)
 		var snapshot: Dictionary=doc.snapshot(); snapshot.state.erase("integration"); snapshot.state.qvel=[0,-2,0,0,0,0,0,-2,0,0,0,0]
 		var space := scene.get_world_3d().space; PhysicsServer3D.call("scene_pause",space,true)
-		var id: RID=PhysicsServer3D.call("scene_load_model",space,snapshot,"","pair_"+kind,Transform3D.IDENTITY)
-		check(id.is_valid(),"pair actual load "+kind); PhysicsServer3D.call("scene_pause",space,false)
+		var id: RID=PhysicsServer3D.call("scene_load_xml",space,(snapshot).xml,(snapshot).get("state",{}),(snapshot).get("mesh_options",{}),"pair_"+kind,Transform3D.IDENTITY)
+		check(id.is_valid(),"pair actual load "+kind)
+		check(id.is_valid() and PhysicsServer3D.call("scene_state",space,id).joints.free0.qvel[1] == -2,"XML load preserves explicit initial velocity "+kind)
+		PhysicsServer3D.call("scene_pause",space,false)
 		var force := false; var normal := false
 		for i in 75:
 			await ticks(1)
