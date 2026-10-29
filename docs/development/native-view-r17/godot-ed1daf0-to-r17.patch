@@ -1,0 +1,938 @@
+--- a/SConstruct
++++ b/SConstruct
+@@ -881,7 +881,7 @@
+             # Apple Clang, its linker doesn't like -s.
+             env.AppendUnique(LINKFLAGS=["-Wl,-S", "-Wl,-x", "-Wl,-dead_strip"])
+         else:
+-            env.AppendUnique(LINKFLAGS=["-s"])
++            env.AppendUnique(LINKFLAGS=[]) # isolated: retain matching function symbols
+ 
+     # Linker needs optimization flags too, at least for Emscripten.
+     # For other toolchains, this _may_ be useful for LTO too to disambiguate.
+--- a/core/debugger/remote_debugger.cpp
++++ b/core/debugger/remote_debugger.cpp
+@@ -336,6 +336,15 @@
+ 	}
+ }
+ 
++bool RemoteDebugger::_is_application_message(const String &p_message) {
++	const int colon = p_message.find_char(':');
++	if (colon < 0) {
++		return false; // Break/continue/step and stack inspection are unprefixed.
++	}
++	const String capture = p_message.substr(0, colon);
++	return capture != "core" && capture != "profiler";
++}
++
+ Error RemoteDebugger::_try_capture(const String &p_msg, const Array &p_data, bool &r_captured) {
+ 	const int idx = p_msg.find_char(':');
+ 	r_captured = false;
+@@ -347,6 +356,24 @@
+ 		return ERR_UNAVAILABLE; // Unknown message...
+ 	}
+ 	const String msg = p_msg.substr(idx + 1);
++	if (!_is_application_message(p_msg)) {
++		return capture_parse(cap, msg, p_data, r_captured);
++	}
++	// No mutex is held across script code. Both debug() and poll_events()
++	// select messages with _next_message(), so only controls can reenter.
++	struct CaptureScope {
++		Mutex &mutex;
++		HashSet<Thread::ID> &threads;
++		Thread::ID thread;
++		CaptureScope(Mutex &p_mutex, HashSet<Thread::ID> &p_threads) : mutex(p_mutex), threads(p_threads), thread(Thread::get_caller_id()) {
++			MutexLock lock(mutex);
++			threads.insert(thread);
++		}
++		~CaptureScope() {
++			MutexLock lock(mutex);
++			threads.erase(thread);
++		}
++	} capture_scope(mutex, threads_in_capture);
+ 	return capture_parse(cap, msg, p_data, r_captured);
+ }
+ 
+@@ -374,22 +401,36 @@
+ 	}
+ }
+ 
++// Called with mutex held. Keep deferred application messages in their original
++// per-thread queue; controls may pass them while an application capture is active.
++List<RemoteDebugger::Message>::Element *RemoteDebugger::_next_message() {
++	const Thread::ID thread = Thread::get_caller_id();
++	if (!messages.has(thread)) {
++		return nullptr;
++	}
++	const bool defer_application = threads_in_capture.has(thread);
++	for (List<Message>::Element *element = messages[thread].front(); element; element = element->next()) {
++		if (!defer_application || !_is_application_message(element->get().message)) {
++			return element;
++		}
++	}
++	return nullptr;
++}
++
+ bool RemoteDebugger::_has_messages() {
+ 	MutexLock mutex_lock(mutex);
+-	return messages.has(Thread::get_caller_id()) && !messages[Thread::get_caller_id()].is_empty();
++	return _next_message() != nullptr;
+ }
+ 
+ Array RemoteDebugger::_get_message() {
+ 	MutexLock mutex_lock(mutex);
+-	ERR_FAIL_COND_V(!messages.has(Thread::get_caller_id()), Array());
+-	List<Message> &message_list = messages[Thread::get_caller_id()];
+-	ERR_FAIL_COND_V(message_list.is_empty(), Array());
+-
++	List<Message>::Element *element = _next_message();
++	ERR_FAIL_NULL_V(element, Array());
+ 	Array msg;
+ 	msg.resize(2);
+-	msg[0] = message_list.front()->get().message;
+-	msg[1] = message_list.front()->get().data;
+-	message_list.pop_front();
++	msg[0] = element->get().message;
++	msg[1] = element->get().data;
++	messages[Thread::get_caller_id()].erase(element);
+ 	return msg;
+ }
+ 
+@@ -397,6 +438,7 @@
+ 	//this function is called when there is a debugger break (bug on script)
+ 	//or when execution is paused from editor
+ 
++	bool outermost_break = false;
+ 	{
+ 		MutexLock lock(mutex);
+ 		// Tests that require mutex.
+@@ -414,6 +456,7 @@
+ 			return; // Peer does not support blocking IO. We could at least send the error though.
+ 		}
+ 
++		outermost_break = !threads_in_break.has(Thread::get_caller_id());
+ 		threads_in_break.insert(Thread::get_caller_id());
+ 	}
+ 
+@@ -438,7 +481,9 @@
+ 		}
+ 	} else {
+ 		MutexLock mutex_lock(mutex);
+-		messages.insert(Thread::get_caller_id(), List<Message>());
++		if (!messages.has(Thread::get_caller_id())) {
++			messages.insert(Thread::get_caller_id(), List<Message>());
++		}
+ 	}
+ 
+ 	while (is_peer_connected()) {
+@@ -641,11 +686,12 @@
+ 	{
+ 		MutexLock mutex_lock(mutex);
+ 
+-		if (!Thread::is_main_thread()) {
+-			messages.erase(Thread::get_caller_id());
+-		}
+-
+-		threads_in_break.erase(Thread::get_caller_id());
++		if (outermost_break) {
++			if (!Thread::is_main_thread()) {
++				messages.erase(Thread::get_caller_id());
++			}
++			threads_in_break.erase(Thread::get_caller_id());
++		}
+ 	}
+ }
+ 
+@@ -662,7 +708,9 @@
+ 
+ 	_poll_messages();
+ 
+-	while (_has_messages()) {
++	// Bound dispatch work per ordinary poll so a finite application backlog
++	// cannot monopolize one frame. Nested polls can still service controls.
++	for (int dispatched = 0; dispatched < 64 && _has_messages(); ++dispatched) {
+ 		Array arr = _get_message();
+ 
+ 		ERR_CONTINUE(arr.size() != 2);
+@@ -677,13 +725,7 @@
+ 			continue;
+ 		}
+ 
+-		const String cap = cmd.substr(0, idx);
+-		if (!has_capture(cap)) {
+-			continue; // Unknown message...
+-		}
+-
+-		const String msg = cmd.substr(idx + 1);
+-		capture_parse(cap, msg, arr[1], parsed);
++		_try_capture(cmd, arr[1], parsed);
+ 	}
+ 
+ 	// Reload scripts during idle poll only.
+--- a/core/debugger/remote_debugger.h
++++ b/core/debugger/remote_debugger.h
+@@ -85,6 +85,9 @@
+ 
+ 	HashMap<Thread::ID, List<Message>> messages;
+ 	HashSet<Thread::ID> threads_in_break;
++	HashSet<Thread::ID> threads_in_capture;
++	static bool _is_application_message(const String &p_message);
++	List<Message>::Element *_next_message();
+ 
+ 	void _poll_messages();
+ 	bool _has_messages();
+--- a/drivers/gles3/rasterizer_canvas_gles3.cpp
++++ b/drivers/gles3/rasterizer_canvas_gles3.cpp
+@@ -324,10 +324,10 @@
+ 
+ 		Size2i ssize = texture_storage->render_target_get_size(p_to_render_target);
+ 
+-		// If we've overridden the render target's color texture, then we need
+-		// to invert the Y axis, so 2D texture appear right side up.
+-		// We're probably rendering directly to an XR device.
+-		float y_scale = texture_storage->render_target_get_override_color(p_to_render_target).is_valid() ? -2.0f : 2.0f;
++		// A direct window target has no final blit to invert the Y axis.
++		// Color overrides (for example XR) also need the inverted projection.
++		const bool flip_y = texture_storage->render_target_get_override_color(p_to_render_target).is_valid() || texture_storage->render_target_get_direct_to_screen(p_to_render_target);
++		float y_scale = flip_y ? -2.0f : 2.0f;
+ 
+ 		Transform3D screen_transform;
+ 		screen_transform.translate_local(-(ssize.width / 2.0f), -(ssize.height / 2.0f), 0.0f);
+@@ -698,7 +698,12 @@
+ 			current_clip = state.canvas_instance_batches[i].clip;
+ 			if (current_clip) {
+ 				glEnable(GL_SCISSOR_TEST);
+-				glScissor(current_clip->final_clip_rect.position.x, current_clip->final_clip_rect.position.y, current_clip->final_clip_rect.size.x, current_clip->final_clip_rect.size.y);
++				Rect2 clip_rect = current_clip->final_clip_rect;
++				if (GLES3::TextureStorage::get_singleton()->render_target_get_direct_to_screen(p_to_render_target)) {
++					// Projection is top-down on the system framebuffer; scissor is bottom-up.
++					clip_rect.position.y = GLES3::TextureStorage::get_singleton()->render_target_get_size(p_to_render_target).height - clip_rect.position.y - clip_rect.size.y;
++				}
++				glScissor(clip_rect.position.x, clip_rect.position.y, clip_rect.size.x, clip_rect.size.y);
+ 			} else {
+ 				glDisable(GL_SCISSOR_TEST);
+ 			}
+--- a/drivers/gles3/storage/SCsub
++++ b/drivers/gles3/storage/SCsub
+@@ -1,6 +1,8 @@
+ #!/usr/bin/env python
+ from misc.utility.scons_hints import *
+-
+ Import("env")
+-
+-env.add_source_files(env.drivers_sources, "*.cpp")
++for source in Glob("*.cpp"):
++    compilation = env.Clone() if source.name == "texture_storage.cpp" else env
++    if source.name == "texture_storage.cpp":
++        compilation.Append(CCFLAGS=["-g2"])
++    compilation.add_source_files(env.drivers_sources, [source])
+--- a/drivers/gles3/storage/material_storage.cpp
++++ b/drivers/gles3/storage/material_storage.cpp
+@@ -40,6 +40,8 @@
+ #include "drivers/gles3/storage/config.h"
+ #include "drivers/gles3/storage/texture_storage.h"
+ #include "servers/rendering/rendering_server_types.h"
++#include "servers/rendering/rendering_server_globals.h"
++#include "servers/rendering/renderer_viewport.h"
+ #include "servers/rendering/storage/variant_converters.h"
+ 
+ using namespace GLES3;
+@@ -2684,6 +2686,13 @@
+ 	actions.render_mode_values["blend_premul_alpha"] = Pair<int *, int>(&blend_modei, BLEND_MODE_PMALPHA);
+ 	actions.render_mode_values["blend_disabled"] = Pair<int *, int>(&blend_modei, BLEND_MODE_DISABLED);
+ 
++	// Direct window projection changes screen-space Y semantics. Keep user
++	// shaders that observe screen coordinates on the established offscreen path.
++	// Use compiler identifier tracking rather than text matching (comments/macros).
++	bool uses_screen_coordinates = false;
++	for (const char *name : { "SCREEN_UV", "FRAGCOORD", "SCREEN_PIXEL_SIZE", "SCREEN_MATRIX", "POINT_COORD", "dFdy", "dFdyFine", "dFdyCoarse" }) {
++		actions.usage_flag_pointers[name] = &uses_screen_coordinates;
++	}
+ 	actions.usage_flag_pointers["texture_sdf"] = &uses_sdf;
+ 	actions.usage_flag_pointers["texture_sdf_normal"] = &uses_sdf;
+ 	actions.usage_flag_pointers["TIME"] = &uses_time;
+@@ -2701,6 +2710,11 @@
+ 	blend_mode = BlendMode(blend_modei);
+ 	uses_screen_texture = gen_code.uses_screen_texture;
+ 	uses_screen_texture_mipmaps = gen_code.uses_screen_texture_mipmaps;
++	// Built-in group shaders compile before canvas_render is published. User
++	// screen/SDF/coordinate shaders permanently opt out of the narrow fast path.
++	if (RSG::canvas_render && RSG::viewport && (uses_screen_texture || uses_sdf || uses_screen_coordinates)) {
++		RSG::viewport->disable_direct_window_canvas();
++	}
+ 
+ #if 0
+ 	print_line("**compiling shader:");
+--- a/editor/debugger/script_editor_debugger.cpp
++++ b/editor/debugger/script_editor_debugger.cpp
+@@ -343,9 +343,15 @@
+ 
+ void ScriptEditorDebugger::_thread_debug_enter(uint64_t p_thread_id) {
+ 	ERR_FAIL_COND(!threads_debugged.has(p_thread_id));
+-	ThreadDebugged &td = threads_debugged[p_thread_id];
++	const ThreadDebugged td = threads_debugged[p_thread_id];
++	const Ref<RemoteDebuggerPeer> session_peer = peer;
+ 	_set_reason_text(td.error, MESSAGE_ERROR);
+ 	emit_signal(SNAME("breaked"), true, td.can_debug, td.error, td.has_stackdump);
++	// A debugger plugin may stop or replace this session from the signal.
++	// Do not retain a map-element reference or continue entering a stale break.
++	if (peer != session_peer || !threads_debugged.has(p_thread_id) || debugging_thread_id != p_thread_id) {
++		return;
++	}
+ 	_mute_audio_on_break(true);
+ 	if (!td.error.is_empty() && EDITOR_GET("debugger/auto_switch_to_stack_trace")) {
+ 		tabs->set_current_tab(0);
+@@ -373,12 +379,19 @@
+ 	static uint32_t order_inc = 0;
+ 	td.debug_order = order_inc++;
+ 
++	if (threads_debugged.has(p_thread_id)) {
++		suspended_thread_breaks[p_thread_id].push_back(threads_debugged[p_thread_id]);
++	}
+ 	threads_debugged.insert(p_thread_id, td);
+ 
+-	if (threads_debugged.size() == 1) {
+-		// First thread that requests debug
++	if (threads_debugged.size() == 1 || debugging_thread_id == p_thread_id) {
++		// Refresh the selected thread when it enters a nested pause, too.
+ 		debugging_thread_id = p_thread_id;
++		const Ref<RemoteDebuggerPeer> session_peer = peer;
+ 		_thread_debug_enter(p_thread_id);
++		if (peer != session_peer || !threads_debugged.has(p_thread_id) || debugging_thread_id != p_thread_id) {
++			return;
++		}
+ 		can_request_idle_draw = true;
+ 		if (is_move_to_foreground()) {
+ 			DisplayServer::get_singleton()->window_move_to_foreground();
+@@ -390,6 +403,22 @@
+ }
+ 
+ void ScriptEditorDebugger::_msg_debug_exit(uint64_t p_thread_id, const Array &p_data) {
++	if (suspended_thread_breaks.has(p_thread_id)) {
++		Vector<ThreadDebugged> &stack = suspended_thread_breaks[p_thread_id];
++		threads_debugged[p_thread_id] = stack[stack.size() - 1];
++		stack.resize(stack.size() - 1);
++		if (stack.is_empty()) {
++			suspended_thread_breaks.erase(p_thread_id);
++		}
++		if (p_thread_id == debugging_thread_id) {
++			_clear_execution();
++			// Restore the outer reason and controls. Request a fresh stack after
++			// the nested capture has unwound; do not report execution resumed.
++			_thread_debug_enter(p_thread_id);
++		}
++		_update_buttons_state();
++		return;
++	}
+ 	threads_debugged.erase(p_thread_id);
+ 	if (p_thread_id == debugging_thread_id) {
+ 		_clear_execution();
+@@ -423,6 +452,7 @@
+ 			_update_buttons_state();
+ 		} else {
+ 			_thread_debug_enter(debugging_thread_id);
++			_update_buttons_state();
+ 		}
+ 	} else {
+ 		_update_buttons_state();
+@@ -1336,6 +1366,7 @@
+ void ScriptEditorDebugger::stop() {
+ 	set_process(false);
+ 	threads_debugged.clear();
++	suspended_thread_breaks.clear();
+ 	debugging_thread_id = Thread::UNASSIGNED_ID;
+ 	remote_pid = 0;
+ 	_clear_execution();
+--- a/editor/debugger/script_editor_debugger.h
++++ b/editor/debugger/script_editor_debugger.h
+@@ -188,6 +188,8 @@
+ 	};
+ 
+ 	HashMap<uint64_t, ThreadDebugged> threads_debugged;
++	// A thread can pause again inside an application debugger capture.
++	HashMap<uint64_t, Vector<ThreadDebugged>> suspended_thread_breaks;
+ 	bool thread_list_updating = false;
+ 
+ 	void _select_thread(int p_index);
+--- a/editor/doc/editor_help.cpp
++++ b/editor/doc/editor_help.cpp
+@@ -75,6 +75,9 @@
+ #endif
+ 
+ #include "modules/regex/regex.h"
++
++// Main-thread lifecycle guard: queued static callbacks outlive EditorNode.
++static bool doc_cleanup_started = false;
+ 
+ #define CONTRIBUTE_URL "https://contributing.godotengine.org/en/latest/documentation/class_reference.html"
+ 
+@@ -3081,6 +3084,10 @@
+ }
+ 
+ void EditorHelp::_gen_extensions_docs() {
++	if (doc_cleanup_started) {
++		return;
++	}
++
+ 	doc->generate((DocTools::GENERATE_FLAG_SKIP_BASIC_TYPES | DocTools::GENERATE_FLAG_EXTENSION_CLASSES_ONLY));
+ 
+ 	// Append extra doc data, as it gets overridden by the generation step.
+@@ -3093,6 +3100,10 @@
+ }
+ 
+ void EditorHelp::load_script_doc_cache() {
++	if (doc_cleanup_started) {
++		return;
++	}
++
+ 	if (!ProjectSettings::get_singleton()->is_project_loaded()) {
+ 		print_verbose("Skipping loading script doc cache since no project is open.");
+ 		return;
+@@ -3167,6 +3178,10 @@
+ }
+ 
+ void EditorHelp::regenerate_script_doc_cache() {
++	if (doc_cleanup_started) {
++		return;
++	}
++
+ 	if (EditorFileSystem::get_singleton()->is_scanning()) {
+ 		// Wait until EditorFileSystem scanning is complete to use updated filesystem structure.
+ 		EditorFileSystem::get_singleton()->connect(SNAME("sources_changed"), callable_mp_static(_regenerate_script_doc_cache), CONNECT_ONE_SHOT);
+@@ -3252,6 +3267,10 @@
+ }
+ 
+ void EditorHelp::generate_doc(bool p_use_cache, bool p_use_script_cache) {
++	if (doc_cleanup_started) {
++		return;
++	}
++
+ 	doc_generation_count++;
+ 	OS::get_singleton()->benchmark_begin_measure("EditorHelp", vformat("Generate Documentation (Run %d)", doc_generation_count));
+ 
+@@ -3363,6 +3382,9 @@
+ }
+ 
+ void EditorHelp::cleanup_doc() {
++	// The worker may enqueue callbacks while being joined. They must not access
++	// the deleted document or restart generation during the final queue flush.
++	doc_cleanup_started = true;
+ 	_wait_for_thread();
+ 	memdelete(doc);
+ 	doc = nullptr;
+--- a/scene/resources/3d/separation_ray_shape_3d.cpp
++++ b/scene/resources/3d/separation_ray_shape_3d.cpp
+@@ -52,6 +52,11 @@
+ }
+ 
+ void SeparationRayShape3D::_update_shape() {
++	if (!get_rid().is_valid()) {
++		WARN_PRINT_ONCE("SeparationRayShape3D has no valid backend shape; collision is unavailable.");
++		Shape3D::_update_shape(); // Keep editor debug geometry invalidation working.
++		return;
++	}
+ 	Dictionary d;
+ 	d["length"] = length;
+ 	d["slide_on_slope"] = slide_on_slope;
+--- a/servers/rendering/renderer_canvas_cull.cpp
++++ b/servers/rendering/renderer_canvas_cull.cpp
+@@ -784,6 +784,7 @@
+ 
+ 		line->points[0] = p_from;
+ 		line->points[1] = p_to;
++		RSG::viewport->disable_direct_window_canvas();
+ 		line->point_count = 2;
+ 	}
+ 	for (uint32_t i = 0; i < line->point_count; i++) {
+@@ -995,6 +996,7 @@
+ 	}
+ 
+ 	if (p_width < 0) {
++		RSG::viewport->disable_direct_window_canvas();
+ 		if (p_antialiased) {
+ 			WARN_PRINT("Antialiasing is not supported for thin polylines drawn using line strips (`p_width < 0`).");
+ 		}
+@@ -1253,6 +1255,7 @@
+ 
+ 	// TODO: `canvas_item_add_line`(`multiline`, `polyline`) share logic, should factor out.
+ 	if (p_width < 0) {
++		RSG::viewport->disable_direct_window_canvas();
+ 		if (p_antialiased) {
+ 			WARN_PRINT("Antialiasing is not supported for thin multilines drawn using line strips (`p_width < 0`).");
+ 		}
+@@ -1732,6 +1735,11 @@
+ 
+ 	Item *canvas_item = canvas_item_owner.get_or_null(p_item);
+ 	ERR_FAIL_NULL(canvas_item);
++	// Window Y projection changes point/line rasterization at pixel boundaries.
++	// Keep these low-level primitives on the existing offscreen path.
++	if (pc < 3) {
++		RSG::viewport->disable_direct_window_canvas();
++	}
+ 
+ 	Item::CommandPrimitive *prim = canvas_item->alloc_command<Item::CommandPrimitive>();
+ 	ERR_FAIL_NULL(prim);
+@@ -1809,6 +1817,8 @@
+ void RendererCanvasCull::canvas_item_add_mesh(RID p_item, const RID &p_mesh, const Transform2D &p_transform, const Color &p_modulate, RID p_texture) {
+ 	Item *canvas_item = canvas_item_owner.get_or_null(p_item);
+ 	ERR_FAIL_NULL(canvas_item);
++	// Arbitrary topology and particle expansion are outside this 2D fast path.
++	RSG::viewport->disable_direct_window_canvas();
+ 	ERR_FAIL_COND(!p_mesh.is_valid());
+ 
+ 	Item::CommandMesh *m = canvas_item->alloc_command<Item::CommandMesh>();
+@@ -1828,6 +1838,8 @@
+ void RendererCanvasCull::canvas_item_add_particles(RID p_item, RID p_particles, RID p_texture) {
+ 	Item *canvas_item = canvas_item_owner.get_or_null(p_item);
+ 	ERR_FAIL_NULL(canvas_item);
++	// Arbitrary topology and particle expansion are outside this 2D fast path.
++	RSG::viewport->disable_direct_window_canvas();
+ 
+ 	Item::CommandParticles *part = canvas_item->alloc_command<Item::CommandParticles>();
+ 	ERR_FAIL_NULL(part);
+@@ -1842,6 +1854,8 @@
+ void RendererCanvasCull::canvas_item_add_multimesh(RID p_item, RID p_mesh, RID p_texture) {
+ 	Item *canvas_item = canvas_item_owner.get_or_null(p_item);
+ 	ERR_FAIL_NULL(canvas_item);
++	// Arbitrary topology and particle expansion are outside this 2D fast path.
++	RSG::viewport->disable_direct_window_canvas();
+ 
+ 	Item::CommandMultiMesh *mm = canvas_item->alloc_command<Item::CommandMultiMesh>();
+ 	ERR_FAIL_NULL(mm);
+@@ -1928,6 +1942,7 @@
+ void RendererCanvasCull::canvas_item_set_copy_to_backbuffer(RID p_item, bool p_enable, const Rect2 &p_rect) {
+ 	Item *canvas_item = canvas_item_owner.get_or_null(p_item);
+ 	ERR_FAIL_NULL(canvas_item);
++	RSG::viewport->set_direct_window_dependency(p_item, p_enable, false);
+ 	if (p_enable && (canvas_item->copy_back_buffer == nullptr)) {
+ 		canvas_item->copy_back_buffer = memnew(RendererCanvasRender::Item::CopyBackBuffer);
+ 	}
+@@ -2072,6 +2087,7 @@
+ void RendererCanvasCull::canvas_item_set_canvas_group_mode(RID p_item, RSE::CanvasGroupMode p_mode, float p_clear_margin, bool p_fit_empty, float p_fit_margin, bool p_blur_mipmaps) {
+ 	Item *canvas_item = canvas_item_owner.get_or_null(p_item);
+ 	ERR_FAIL_NULL(canvas_item);
++	RSG::viewport->set_direct_window_dependency(p_item, p_mode != RSE::CANVAS_GROUP_MODE_DISABLED, true);
+ 
+ 	if (p_mode == RSE::CANVAS_GROUP_MODE_DISABLED) {
+ 		if (canvas_item->canvas_group != nullptr) {
+@@ -2670,6 +2686,10 @@
+ 			canvas_item->canvas_group = nullptr;
+ 		}
+ 
++		if (RSG::viewport) {
++			RSG::viewport->set_direct_window_dependency(p_rid, false, false);
++			RSG::viewport->set_direct_window_dependency(p_rid, false, true);
++		}
+ 		canvas_item_owner.free(p_rid);
+ 
+ 	} else if (canvas_light_owner.owns(p_rid)) {
+--- a/servers/rendering/renderer_viewport.cpp
++++ b/servers/rendering/renderer_viewport.cpp
+@@ -335,6 +335,29 @@
+ #endif // _3D_DISABLED
+ }
+ 
++bool RendererViewport::_direct_window_supported(const Viewport *p_viewport, DisplayServerEnums::WindowID p_window, const Rect2 &p_rect) const {
++	// Scoped fast path: one opaque 2D viewport covering one X11 window at 1:1.
++	if (p_window == DisplayServerEnums::INVALID_WINDOW_ID || !RSG::rasterizer->is_opengl() || !RSG::rasterizer->is_low_end() || DisplayServer::get_singleton()->get_name() != "X11" || DisplayServer::get_singleton()->get_window_list().size() != 1 || p_viewport->view_count != 1 || p_viewport->transparent_bg || p_viewport->camera.is_valid() || p_viewport->use_hdr_2d || p_viewport->msaa_2d != RSE::VIEWPORT_MSAA_DISABLED || direct_window_canvas_unsupported || !direct_window_backbuffers.is_empty() || !direct_window_groups.is_empty()) {
++		return false;
++	}
++#ifndef XR_DISABLED
++	if (p_viewport->use_xr) {
++		return false;
++	}
++#endif
++	const Size2i window_size = DisplayServer::get_singleton()->window_get_size(p_window);
++	const Rect2 rect = p_rect == Rect2() ? Rect2(Point2(), p_viewport->size) : p_rect;
++	if (rect.position != Point2() || rect.size != Size2(window_size) || p_viewport->size != window_size) {
++		return false;
++	}
++	for (const Viewport *other : active_viewports) {
++		if (other != p_viewport && other->viewport_to_screen == p_window) {
++			return false;
++		}
++	}
++	return true;
++}
++
+ void RendererViewport::_draw_viewport(Viewport *p_viewport) {
+ 	if (p_viewport->measure_render_time) {
+ 		String rt_id = "vp_begin_" + itos(p_viewport->self.get_id());
+@@ -869,6 +892,16 @@
+ 			continue; //should not draw
+ 		}
+ 
++		// Recheck at draw time: topology/window/size may have changed since the request.
++		if (vp->viewport_render_direct_to_screen && !_direct_window_supported(vp, vp->viewport_to_screen, vp->viewport_to_screen_rect)) {
++			viewport_set_render_direct_to_screen(vp->self, false);
++			WARN_PRINT("Direct-to-screen layout became unsupported; falling back to offscreen.");
++		}
++
++		if (OS::get_singleton()->has_environment("GMJ_EDITOR_AUDIT") && vp->viewport_to_screen != DisplayServerEnums::INVALID_WINDOW_ID) {
++			print_line(vformat("GMJ_EDITOR_AUDIT draw {\"viewport\":%d,\"window\":%d,\"direct\":%d,\"sticky_canvas_unsupported\":%d,\"windows\":%d,\"width\":%d,\"height\":%d,\"camera\":%d}", vp->self.get_id(), vp->viewport_to_screen, int(vp->viewport_render_direct_to_screen), int(direct_window_canvas_unsupported), DisplayServer::get_singleton()->get_window_list().size(), vp->size.x, vp->size.y, int(vp->camera.is_valid())));
++		}
++
+ 		RENDER_TIMESTAMP("> Render Viewport " + itos(i));
+ 
+ 		RSG::texture_storage->render_target_set_as_unused(vp->render_target);
+@@ -949,6 +982,9 @@
+ 					}
+ 					blits->push_back(blit);
+ 				}
++			} else if (vp->viewport_to_screen != DisplayServerEnums::INVALID_WINDOW_ID && RSG::rasterizer->is_opengl()) {
++				// Direct-to-screen omits the blit, but must still finish this window.
++				RSG::rasterizer->gl_end_frame(p_swap_buffers);
+ 			}
+ 		}
+ 
+@@ -1157,7 +1193,17 @@
+ 	Viewport *viewport = viewport_owner.get_or_null(p_viewport);
+ 	ERR_FAIL_NULL(viewport);
+ 
++	if (viewport->viewport_render_direct_to_screen && !_direct_window_supported(viewport, p_screen, p_rect)) {
++		viewport_set_render_direct_to_screen(p_viewport, false);
++		WARN_PRINT("Direct-to-screen attachment unsupported; falling back to offscreen.");
++	}
+ 	if (p_screen != DisplayServerEnums::INVALID_WINDOW_ID) {
++		for (Viewport *other : active_viewports) {
++			if (other != viewport && other->viewport_to_screen == p_screen && other->viewport_render_direct_to_screen) {
++				viewport_set_render_direct_to_screen(other->self, false);
++				WARN_PRINT("Multiple viewports share a window; falling back to offscreen.");
++			}
++		}
+ 		// If using OpenGL we can optimize this operation by rendering directly to system_fbo
+ 		// instead of rendering to fbo and copying to system_fbo after
+ 		if (RSG::rasterizer->is_low_end() && viewport->viewport_render_direct_to_screen) {
+@@ -1183,6 +1229,15 @@
+ 	Viewport *viewport = viewport_owner.get_or_null(p_viewport);
+ 	ERR_FAIL_NULL(viewport);
+ 
++	if (p_enable && !_direct_window_supported(viewport, viewport->viewport_to_screen, viewport->viewport_to_screen_rect)) {
++		p_enable = false;
++		WARN_PRINT("Direct-to-screen supports only a single full-window opaque 2D X11 viewport; falling back to offscreen.");
++	}
++
++	if (OS::get_singleton()->has_environment("GMJ_EDITOR_AUDIT")) {
++		print_line(vformat("GMJ_EDITOR_AUDIT setter {\"viewport\":%d,\"accepted\":%d,\"sticky_canvas_unsupported\":%d}", p_viewport.get_id(), int(p_enable), int(direct_window_canvas_unsupported)));
++	}
++
+ 	if (p_enable == viewport->viewport_render_direct_to_screen) {
+ 		return;
+ 	}
+@@ -1394,6 +1449,10 @@
+ 	if (viewport->msaa_2d == p_msaa) {
+ 		return;
+ 	}
++	if (p_msaa != RSE::VIEWPORT_MSAA_DISABLED && viewport->viewport_render_direct_to_screen) {
++		viewport_set_render_direct_to_screen(p_viewport, false);
++		WARN_PRINT("Direct-to-screen MSAA unsupported; falling back to offscreen.");
++	}
+ 	viewport->msaa_2d = p_msaa;
+ 	RSG::texture_storage->render_target_set_msaa(viewport->render_target, p_msaa);
+ }
+@@ -1415,6 +1474,10 @@
+ 
+ 	if (viewport->use_hdr_2d == p_use_hdr_2d) {
+ 		return;
++	}
++	if (p_use_hdr_2d && viewport->viewport_render_direct_to_screen) {
++		viewport_set_render_direct_to_screen(p_viewport, false);
++		WARN_PRINT("Direct-to-screen HDR unsupported; falling back to offscreen.");
+ 	}
+ 	viewport->use_hdr_2d = p_use_hdr_2d;
+ 	RSG::texture_storage->render_target_set_use_hdr(viewport->render_target, p_use_hdr_2d);
+--- a/servers/rendering/renderer_viewport.h
++++ b/servers/rendering/renderer_viewport.h
+@@ -39,6 +39,14 @@
+ 
+ class RendererViewport {
+ public:
++	// Conservative process-lifetime opt-out when user canvas content needs a backbuffer.
++	void disable_direct_window_canvas() { direct_window_canvas_unsupported = true; }
++	// Render-server-owned sets: repeated setters are idempotent and RID reuse is
++	// safe because canvas item destruction removes both dependencies.
++	void set_direct_window_dependency(RID p_item, bool p_enabled, bool p_group) {
++		HashSet<RID> &items = p_group ? direct_window_groups : direct_window_backbuffers;
++		if (p_enabled) { items.insert(p_item); } else { items.erase(p_item); }
++	}
+ 	struct CanvasBase {
+ 	};
+ 
+@@ -210,6 +218,10 @@
+ 	void _configure_3d_render_buffers(Viewport *p_viewport);
+ 	void _draw_3d(Viewport *p_viewport);
+ 	void _draw_viewport(Viewport *p_viewport);
++	bool direct_window_canvas_unsupported = false;
++	HashSet<RID> direct_window_backbuffers;
++	HashSet<RID> direct_window_groups;
++	bool _direct_window_supported(const Viewport *p_viewport, DisplayServerEnums::WindowID p_window, const Rect2 &p_rect) const;
+ 	DisplayServerEnums::WindowID _get_containing_window(Viewport *p_viewport);
+ 
+ 	int occlusion_rays_per_thread = 512;
+--- a/servers/rendering/rendering_server_default.cpp
++++ b/servers/rendering/rendering_server_default.cpp
+@@ -473,3 +473,183 @@
+ 
+ RenderingServerDefault::~RenderingServerDefault() {
+ }
++
++// An asynchronous upload owns an Image snapshot, not a reference to the caller's
++// mutable Image. Pixel storage remains COW-shared until either side writes.
++// The caller must still serialize its own concurrent writes during this call.
++RID RenderingServerDefault::texture_2d_create(const Ref<Image> &p_image) {
++	RID ret = RSG::texture_storage->texture_allocate();
++	if (Thread::get_caller_id() == server_thread || RSG::rasterizer->can_create_resources_async()) {
++		RSG::texture_storage->texture_2d_initialize(ret, p_image);
++	} else {
++		Ref<Image> snapshot;
++		if (p_image.is_valid()) {
++			snapshot = p_image->duplicate();
++		}
++		command_queue.push(RSG::texture_storage, &RendererTextureStorage::texture_2d_initialize, ret, snapshot);
++	}
++	return ret;
++}
++
++void RenderingServerDefault::texture_2d_update(RID p_texture, const Ref<Image> &p_image, int p_layer) {
++	redraw_request();
++	if (Thread::get_caller_id() != server_thread) {
++		Ref<Image> snapshot;
++		if (p_image.is_valid()) {
++			snapshot = p_image->duplicate();
++		}
++		command_queue.push(RSG::texture_storage, &RendererTextureStorage::texture_2d_update, p_texture, snapshot, p_layer);
++	} else {
++		command_queue.flush_if_pending();
++		RSG::texture_storage->texture_2d_update(p_texture, p_image, p_layer);
++	}
++}
++
++namespace {
++Vector<Ref<Image>> snapshot_texture_images(const Vector<Ref<Image>> &p_images) {
++	Vector<Ref<Image>> snapshots;
++	snapshots.resize(p_images.size());
++	for (int i = 0; i < p_images.size(); ++i) {
++		if (p_images[i].is_valid()) {
++			snapshots.write[i] = p_images[i]->duplicate();
++		}
++	}
++	return snapshots;
++}
++} // namespace
++
++RID RenderingServerDefault::texture_2d_layered_create(const Vector<Ref<Image>> &p_layers, RSE::TextureLayeredType p_layered_type) {
++	RID ret = RSG::texture_storage->texture_allocate();
++	if (Thread::get_caller_id() == server_thread || RSG::rasterizer->can_create_resources_async()) {
++		RSG::texture_storage->texture_2d_layered_initialize(ret, p_layers, p_layered_type);
++	} else {
++		Vector<Ref<Image>> snapshots = snapshot_texture_images(p_layers);
++		command_queue.push(RSG::texture_storage, &RendererTextureStorage::texture_2d_layered_initialize, ret, snapshots, p_layered_type);
++	}
++	return ret;
++}
++
++RID RenderingServerDefault::texture_3d_create(Image::Format p_format, int p_width, int p_height, int p_depth, bool p_mipmaps, const Vector<Ref<Image>> &p_data) {
++	RID ret = RSG::texture_storage->texture_allocate();
++	if (Thread::get_caller_id() == server_thread || RSG::rasterizer->can_create_resources_async()) {
++		RSG::texture_storage->texture_3d_initialize(ret, p_format, p_width, p_height, p_depth, p_mipmaps, p_data);
++	} else {
++		Vector<Ref<Image>> snapshots = snapshot_texture_images(p_data);
++		command_queue.push(RSG::texture_storage, &RendererTextureStorage::texture_3d_initialize, ret, p_format, p_width, p_height, p_depth, p_mipmaps, snapshots);
++	}
++	return ret;
++}
++
++void RenderingServerDefault::texture_3d_update(RID p_texture, const Vector<Ref<Image>> &p_data) {
++	redraw_request();
++	if (Thread::get_caller_id() != server_thread) {
++		Vector<Ref<Image>> snapshots = snapshot_texture_images(p_data);
++		command_queue.push(RSG::texture_storage, &RendererTextureStorage::texture_3d_update, p_texture, snapshots);
++	} else {
++		command_queue.flush_if_pending();
++		RSG::texture_storage->texture_3d_update(p_texture, p_data);
++	}
++}
++
++// TypedArray shares its Array container on ordinary copy. RID values themselves
++// are immutable handles; a shallow container duplicate owns the submitted list.
++void RenderingServerDefault::texture_drawable_blit_rect(const TypedArray<RID> &p_textures, const Rect2i &p_rect, RID p_material, const Color &p_modulate, const TypedArray<RID> &p_source_textures, int p_to_mipmap) {
++	redraw_request();
++	if (Thread::get_caller_id() != server_thread) {
++		TypedArray<RID> textures = p_textures.duplicate();
++		TypedArray<RID> sources = p_source_textures.duplicate();
++		command_queue.push(RSG::texture_storage, &RendererTextureStorage::texture_drawable_blit_rect, textures, p_rect, p_material, p_modulate, sources, p_to_mipmap);
++	} else {
++		command_queue.flush_if_pending();
++		RSG::texture_storage->texture_drawable_blit_rect(p_textures, p_rect, p_material, p_modulate, p_source_textures, p_to_mipmap);
++	}
++}
++
++void RenderingServerDefault::compositor_set_compositor_effects(RID p_compositor, const TypedArray<RID> &p_effects) {
++	redraw_request();
++	if (Thread::get_caller_id() != server_thread) {
++		TypedArray<RID> effects = p_effects.duplicate();
++		command_queue.push(RSG::scene, &RenderingMethod::compositor_set_compositor_effects, p_compositor, effects);
++	} else {
++		command_queue.flush_if_pending();
++		RSG::scene->compositor_set_compositor_effects(p_compositor, p_effects);
++	}
++}
++
++void RenderingServerDefault::material_set_param(RID p_material, const StringName &p_param, const Variant &p_value) {
++	// Backends may retain the parameter until a later UBO update, even on
++	// the rendering thread. Own containers in both dispatch paths.
++	Variant snapshot = p_value.duplicate(true);
++	redraw_request();
++	if (Thread::get_caller_id() != server_thread) {
++		command_queue.push(RSG::material_storage, &RendererMaterialStorage::material_set_param, p_material, p_param, snapshot);
++	} else {
++		command_queue.flush_if_pending();
++		RSG::material_storage->material_set_param(p_material, p_param, snapshot);
++	}
++}
++
++void RenderingServerDefault::instance_geometry_set_shader_parameter(RID p_instance, const StringName &p_parameter, const Variant &p_value) {
++	// Backends may retain the parameter until a later UBO update, even on
++	// the rendering thread. Own containers in both dispatch paths.
++	Variant snapshot = p_value.duplicate(true);
++	redraw_request();
++	if (Thread::get_caller_id() != server_thread) {
++		command_queue.push(RSG::scene, &RenderingMethod::instance_geometry_set_shader_parameter, p_instance, p_parameter, snapshot);
++	} else {
++		command_queue.flush_if_pending();
++		RSG::scene->instance_geometry_set_shader_parameter(p_instance, p_parameter, snapshot);
++	}
++}
++
++void RenderingServerDefault::canvas_item_set_instance_shader_parameter(RID p_item, const StringName &p_parameter, const Variant &p_value) {
++	// Backends may retain the parameter until a later UBO update, even on
++	// the rendering thread. Own containers in both dispatch paths.
++	Variant snapshot = p_value.duplicate(true);
++	redraw_request();
++	if (Thread::get_caller_id() != server_thread) {
++		command_queue.push(RSG::canvas, &RendererCanvasCull::canvas_item_set_instance_shader_parameter, p_item, p_parameter, snapshot);
++	} else {
++		command_queue.flush_if_pending();
++		RSG::canvas->canvas_item_set_instance_shader_parameter(p_item, p_parameter, snapshot);
++	}
++}
++
++void RenderingServerDefault::global_shader_parameter_add(const StringName &p_name, RSE::GlobalShaderParameterType p_type, const Variant &p_value) {
++	// Backends may retain the parameter until a later UBO update, even on
++	// the rendering thread. Own containers in both dispatch paths.
++	Variant snapshot = p_value.duplicate(true);
++	redraw_request();
++	if (Thread::get_caller_id() != server_thread) {
++		command_queue.push(RSG::material_storage, &RendererMaterialStorage::global_shader_parameter_add, p_name, p_type, snapshot);
++	} else {
++		command_queue.flush_if_pending();
++		RSG::material_storage->global_shader_parameter_add(p_name, p_type, snapshot);
++	}
++}
++
++void RenderingServerDefault::global_shader_parameter_set(const StringName &p_name, const Variant &p_value) {
++	// Backends may retain the parameter until a later UBO update, even on
++	// the rendering thread. Own containers in both dispatch paths.
++	Variant snapshot = p_value.duplicate(true);
++	redraw_request();
++	if (Thread::get_caller_id() != server_thread) {
++		command_queue.push(RSG::material_storage, &RendererMaterialStorage::global_shader_parameter_set, p_name, snapshot);
++	} else {
++		command_queue.flush_if_pending();
++		RSG::material_storage->global_shader_parameter_set(p_name, snapshot);
++	}
++}
++
++void RenderingServerDefault::global_shader_parameter_set_override(const StringName &p_name, const Variant &p_value) {
++	// Backends may retain the parameter until a later UBO update, even on
++	// the rendering thread. Own containers in both dispatch paths.
++	Variant snapshot = p_value.duplicate(true);
++	redraw_request();
++	if (Thread::get_caller_id() != server_thread) {
++		command_queue.push(RSG::material_storage, &RendererMaterialStorage::global_shader_parameter_set_override, p_name, snapshot);
++	} else {
++		command_queue.flush_if_pending();
++		RSG::material_storage->global_shader_parameter_set_override(p_name, snapshot);
++	}
++}
+--- a/servers/rendering/rendering_server_default.h
++++ b/servers/rendering/rendering_server_default.h
+@@ -211,9 +211,9 @@
+ 	}
+ 
+ 	//these go pass-through, as they can be called from any thread
+-	FUNCRIDTEX1(texture_2d, const Ref<Image> &)
+-	FUNCRIDTEX2(texture_2d_layered, const Vector<Ref<Image>> &, RSE::TextureLayeredType)
+-	FUNCRIDTEX6(texture_3d, Image::Format, int, int, int, bool, const Vector<Ref<Image>> &)
++	virtual RID texture_2d_create(const Ref<Image> &p_image) override;
++	virtual RID texture_2d_layered_create(const Vector<Ref<Image>> &p_layers, RSE::TextureLayeredType p_layered_type) override;
++	virtual RID texture_3d_create(Image::Format p_format, int p_width, int p_height, int p_depth, bool p_mipmaps, const Vector<Ref<Image>> &p_data) override;
+ 	FUNCRIDTEX3(texture_external, int, int, uint64_t)
+ 	FUNCRIDTEX1(texture_proxy, RID)
+ 	FUNCRIDTEX5(texture_drawable, int, int, RSE::TextureDrawableFormat, const Color &, bool)
+@@ -224,12 +224,12 @@
+ 	}
+ 
+ 	//these go through command queue if they are in another thread
+-	FUNC3(texture_2d_update, RID, const Ref<Image> &, int)
+-	FUNC2(texture_3d_update, RID, const Vector<Ref<Image>> &)
++	virtual void texture_2d_update(RID p_texture, const Ref<Image> &p_image, int p_layer) override;
++	virtual void texture_3d_update(RID p_texture, const Vector<Ref<Image>> &p_data) override;
+ 	FUNC4(texture_external_update, RID, int, int, uint64_t)
+ 	FUNC2(texture_proxy_update, RID, RID)
+ 
+-	FUNC6(texture_drawable_blit_rect, const TypedArray<RID> &, const Rect2i &, RID, const Color &, const TypedArray<RID> &, int)
++	virtual void texture_drawable_blit_rect(const TypedArray<RID> &p_textures, const Rect2i &p_rect, RID p_material, const Color &p_modulate, const TypedArray<RID> &p_source_textures, int p_to_mipmap) override;
+ 
+ 	//these also go pass-through
+ 	FUNCRIDTEX0(texture_2d_placeholder)
+@@ -345,7 +345,7 @@
+ 
+ 	FUNC2(material_set_shader, RID, RID)
+ 
+-	FUNC3(material_set_param, RID, const StringName &, const Variant &)
++	virtual void material_set_param(RID p_material, const StringName &p_param, const Variant &p_value) override;
+ 	FUNC2RC(Variant, material_get_param, RID, const StringName &)
+ 
+ 	FUNC2(material_set_render_priority, RID, int)
+@@ -824,7 +824,7 @@
+ 
+ 	/* COMPOSITOR */
+ 
+-	FUNC2(compositor_set_compositor_effects, RID, const TypedArray<RID> &)
++	virtual void compositor_set_compositor_effects(RID p_compositor, const TypedArray<RID> &p_effects) override;
+ 
+ 	FUNCRIDSPLIT(compositor)
+ 
+@@ -969,7 +969,7 @@
+ 	FUNC4(instance_geometry_set_lightmap, RID, RID, const Rect2 &, int)
+ 	FUNC2(instance_geometry_set_lod_bias, RID, float)
+ 	FUNC2(instance_geometry_set_transparency, RID, float)
+-	FUNC3(instance_geometry_set_shader_parameter, RID, const StringName &, const Variant &)
++	virtual void instance_geometry_set_shader_parameter(RID p_instance, const StringName &p_parameter, const Variant &p_value) override;
+ 	FUNC2RC(Variant, instance_geometry_get_shader_parameter, RID, const StringName &)
+ 	FUNC2RC(Variant, instance_geometry_get_shader_parameter_default_value, RID, const StringName &)
+ 	FUNC2SC(instance_geometry_get_shader_parameter_list, RID, List<PropertyInfo> *)
+@@ -1056,7 +1056,7 @@
+ 
+ 	FUNC2(canvas_item_set_material, RID, RID)
+ 
+-	FUNC3(canvas_item_set_instance_shader_parameter, RID, const StringName &, const Variant &)
++	virtual void canvas_item_set_instance_shader_parameter(RID p_item, const StringName &p_parameter, const Variant &p_value) override;
+ 	FUNC2RC(Variant, canvas_item_get_instance_shader_parameter, RID, const StringName &)
+ 	FUNC2RC(Variant, canvas_item_get_instance_shader_parameter_default_value, RID, const StringName &)
+ 	FUNC2SC(canvas_item_get_instance_shader_parameter_list, RID, List<PropertyInfo> *)
+@@ -1133,11 +1133,11 @@
+ #define ServerName RendererMaterialStorage
+ #define server_name RSG::material_storage
+ 
+-	FUNC3(global_shader_parameter_add, const StringName &, RSE::GlobalShaderParameterType, const Variant &)
++	virtual void global_shader_parameter_add(const StringName &p_name, RSE::GlobalShaderParameterType p_type, const Variant &p_value) override;
+ 	FUNC1(global_shader_parameter_remove, const StringName &)
+ 	FUNC0RC(Vector<StringName>, global_shader_parameter_get_list)
+-	FUNC2(global_shader_parameter_set, const StringName &, const Variant &)
+-	FUNC2(global_shader_parameter_set_override, const StringName &, const Variant &)
++	virtual void global_shader_parameter_set(const StringName &p_name, const Variant &p_value) override;
++	virtual void global_shader_parameter_set_override(const StringName &p_name, const Variant &p_value) override;
+ 	FUNC1RC(RSE::GlobalShaderParameterType, global_shader_parameter_get_type, const StringName &)
+ 	FUNC1RC(Variant, global_shader_parameter_get, const StringName &)
+ 

@@ -22,7 +22,7 @@ func _ready() -> void:
 func help_title() -> String: return "无控 G1 示例"
 func help_description() -> String:
 	return "真实 Unitree G1，自由基座、重力开启、无 actuator / PD 驱动。初始倾斜用于避免完美对称平衡；倒地由物理计算产生。\n\n场景树的 body / geom / joint 可直接编辑。运行中设计修改会暂停实际物理，后台重建后手动继续。\n\n添加 G1 按钮向编辑器请求复制，可 Ctrl+Z、Ctrl+S。独立运行时禁用设计按钮。双 G1 是有超时和取消能力的诊断项，不作为单 G1 验收门槛。\n\n滚轮缩放，F 重新取景；碰撞 mask 保留原有设置。"
-func valid_robot_state(robot: Node3D) -> Dictionary:
+func valid_robot_state(robot) -> Dictionary:
 	if not is_instance_valid(robot) or not robot.model_rid.is_valid(): return {}
 	var value: Dictionary = robot.state()
 	return value if value.has("joints") and value.has("geoms") else {}
@@ -58,11 +58,12 @@ func _process(delta: float) -> void:
 		if not node is Instance or node == model or robots.has(node) or valid_robot_state(node).is_empty(): continue
 		robots.append(node); build_robot_overlay(node); apply_display()
 		if robots.size() > 1: world.get_node("Camera").frame_for_count(robots.size())
-	for robot in robots.duplicate():
+	for index in range(robots.size()-1,-1,-1):
+		var robot = robots[index]
 		var value := valid_robot_state(robot)
 		if value.is_empty():
 			for overlay in robot_overlays.get(robot, {}).values(): overlay.queue_free()
-			robot_overlays.erase(robot); robots.erase(robot); continue
+			robot_overlays.erase(robot); robots.remove_at(index); continue
 		for geom in value.geoms:
 			if robot_overlays.get(robot, {}).has(geom.name):
 				for wire in robot_overlays[robot][geom.name].get_children(): wire.global_transform = geom.transform

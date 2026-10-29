@@ -49,6 +49,9 @@ void MjPhysicsServer3D::_bind_methods(){
  ClassDB::bind_method(D_METHOD("scene_add_box","space","label","pose","size","mass"),&MjPhysicsServer3D::scene_add_box);
  ClassDB::bind_method(D_METHOD("scene_remove","space","object"),&MjPhysicsServer3D::scene_remove);
  ClassDB::bind_method(D_METHOD("scene_info","space"),&MjPhysicsServer3D::scene_info);
+#ifdef GMJ_NATIVE_VIEW_EXPERIMENTAL
+ ClassDB::bind_method(D_METHOD("scene_native_view_snapshot","space","known_revision","include_model"),&MjPhysicsServer3D::scene_native_view_snapshot,DEFVAL(true));
+#endif
  ClassDB::bind_method(D_METHOD("scene_collision_stats","space"),&MjPhysicsServer3D::scene_collision_stats);
 #ifdef GMJ_VIEWER_BENCHMARK
  ClassDB::bind_method(D_METHOD("scene_benchmark","space","action","payload"),&MjPhysicsServer3D::scene_benchmark);

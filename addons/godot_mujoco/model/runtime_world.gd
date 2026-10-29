@@ -7,6 +7,11 @@ const Author = preload("author_resource.gd")
 const Collision = preload("collision_settings.gd")
 @export var world_design: MjAuthorResource
 @export var start_paused := false
+@export var native_view_experimental := false
+@export var native_view_direct_experimental := false
+var native_view_active := false
+var native_view: Control
+var native_view_autostart_armed := false
 var space := RID()
 var last_error := ""
 var ready_for_models := false
@@ -29,6 +34,7 @@ var pending_author_views := {}
 var retiring_nodes: Array[Node] = []
 var views_pending := false
 var publish_at := 0
+var trace_state := {}
 
 func _enter_tree() -> void:
 	if Engine.is_editor_hint(): return
@@ -69,10 +75,16 @@ func _ready() -> void:
 		author_compiler.completed.connect(author_world_compiled)
 		source_layout = Layout.capture(self)
 		AuthorBridge.attach(self)
+		native_view_autostart_armed = native_view_experimental
+		if native_view_autostart_armed and not world_ready.is_connected(_start_native_view_when_ready):
+			world_ready.connect(_start_native_view_when_ready, CONNECT_ONE_SHOT)
 		return
 
 func _exit_tree() -> void:
 	if Engine.is_editor_hint(): return
+	native_view_autostart_armed = false
+	if world_ready.is_connected(_start_native_view_when_ready): world_ready.disconnect(_start_native_view_when_ready)
+	if is_instance_valid(native_view): native_view.stop("World removed"); native_view.queue_free(); native_view=null
 	if not author_live_id.is_empty(): AuthorBridge.detach(self)
 	if author_compiler:
 		author_compiler.cancel(); author_compiler.queue_free(); author_compiler = null
@@ -87,6 +99,7 @@ func _exit_tree() -> void:
 	if world and world.has_meta("mj_runtime_owner"):
 		world.remove_meta("mj_runtime_owner")
 	ready_for_models = false
+	preload("author_trace.gd").flush()
 
 func set_paused(value: bool) -> bool:
 	if world_design and not value and (views_pending or not author_started): return false
@@ -141,6 +154,10 @@ func _process(delta: float) -> void:
 func poll_author_world() -> void:
 	if not ready_for_models or not author_compiler: return
 	var state := info()
+	if preload("author_trace.gd").enabled():
+		var observed={"status":state.get("compile_status"),"revision":state.get("design_revision"),"committed":state.get("committed_design_revision"),"views_pending":views_pending,"queued":queued_design_revision,"busy":author_compiler.busy()}
+		if observed!=trace_state:
+			preload("author_trace.gd").event("game_poll",observed);trace_state=observed
 	var revision := int(state.get("design_revision", -1))
 	if views_pending and not state.get("design_pending", true): commit_author_views()
 	if views_pending and state.get("compile_status") == "rendering" and all_author_visuals_ready():
@@ -347,3 +364,30 @@ func restore_world_snapshot(snapshot: Dictionary) -> void:
 		if plugin and plugin.author_debugger: plugin.author_debugger.pause_world(self)
 		for node in Layout.nodes(self):
 			if node.has_method("author_definition") and node.author_scene: node.author_scene.queue_compile()
+
+func _start_native_view_when_ready() -> void:
+	if native_view_autostart_armed and is_inside_tree():
+		native_view_autostart_armed = false
+		start_native_view()
+
+func start_native_view() -> bool:
+	if Engine.is_editor_hint() or not native_view_experimental or not ready_for_models: return false
+	if info().get("compile_status", "") == "closed":
+		last_error = "Shared world is closed"; return false
+	if is_instance_valid(native_view):
+		native_view.request_direct_to_screen=native_view_direct_experimental
+		return not native_view.stopped or native_view.start_for(self)
+	native_view=preload("../native_view/runtime_view.gd").new()
+	native_view.z_index=-100
+	native_view.name="ExperimentalMuJoCoView";native_view.enabled=true;native_view.request_direct_to_screen=native_view_direct_experimental
+	get_window().add_child(native_view);native_view.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	if native_view.start_for(self): return true
+	last_error=native_view.last_error;native_view.queue_free();native_view=null;return false
+
+func sync_native_view_fallback() -> void:
+	for node in Layout.nodes(self):
+		if node != self and node.has_method("sync_native_view_fallback"): node.sync_native_view_fallback()
+
+func stop_native_view() -> Dictionary:
+	native_view_autostart_armed = false
+	return native_view.stop() if is_instance_valid(native_view) else {}

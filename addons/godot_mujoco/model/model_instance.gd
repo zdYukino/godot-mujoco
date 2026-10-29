@@ -93,6 +93,8 @@ func show_editor_preview() -> void:
 
 func _physics_process(_delta: float) -> void:
 	if Engine.is_editor_hint() or not model_rid.is_valid(): return
+	var runtime_owner := find_world()
+	if runtime_owner and runtime_owner.native_view_active: return
 	if author_scene: author_scene.update_runtime(state())
 
 func request_control_preset(preset: Dictionary, expected_revision: int) -> bool:
@@ -199,3 +201,7 @@ func finish_preset(result: Dictionary) -> void:
 	last_preset_result.status = "completed" if result.success else ("cancelled" if result.get("cancelled", false) else "failed")
 	pending_preset = false
 	edit_finished.emit(result)
+
+func sync_native_view_fallback() -> void:
+	if is_inside_tree() and model_rid.is_valid() and author_scene:
+		author_scene.update_runtime(state())

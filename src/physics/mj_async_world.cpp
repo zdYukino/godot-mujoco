@@ -1,3 +1,4 @@
+#include "mj_dictionary_compat.h"
 #include "mj_physics_server.h"
 #include "mj_assets.h"
 #include <godot_cpp/classes/project_settings.hpp>
@@ -137,7 +138,7 @@ void MjPhysicsServer3D::process_async_worlds(){
   s.author_reset_bodies.clear();
   auto*old_model=s.model;auto*old_data=s.data;s.model=m;s.data=d;candidate->model=nullptr;candidate->data=nullptr;
   s.geom_owners=std::move(mapped);s.imported_query_owners=std::move(query_owners);s.query_sdf_fields.clear();s.dirty=false;s.design_blocked=false;s.paused=true;s.last_error="";s.compile_status="ready";s.committed_design_revision=s.design_revision;++s.revision;
-  for(auto it=s.imported.begin();it!=s.imported.end();){if(bool(it->second->author_definition.get("removed",false))){handles.free(it->second->rid);it=s.imported.erase(it);}else{if(it->second->has_committed_pose&&(it->second->committed_definition!=it->second->author_definition||it->second->committed_pose!=it->second->pose))++it->second->property_revision;it->second->committed_definition=it->second->author_definition.duplicate(true);it->second->committed_pose=it->second->pose;it->second->has_committed_pose=true;++it;}}
+  for(auto it=s.imported.begin();it!=s.imported.end();){if(bool(it->second->author_definition.get("removed",false))){handles.free(it->second->rid);it=s.imported.erase(it);}else{if(it->second->has_committed_pose&&(it->second->committed_definition!=it->second->author_definition||it->second->committed_pose!=it->second->pose))++it->second->property_revision;replace_dictionary(it->second->committed_definition,it->second->author_definition.duplicate(true));it->second->committed_pose=it->second->pose;it->second->has_committed_pose=true;++it;}}
   s.committed_bodies.clear();s.committed_shapes.clear();s.committed_areas.clear();
   for(auto&area:areas)if(area.second->space==s.rid){s.committed_areas.emplace(area.first,*area.second);for(auto&instance:area.second->shapes){auto*sh=shape(instance.shape);if(sh)s.committed_shapes[sh->rid.get_id()]=*sh;}}
   for(auto &body_entry:bodies){auto&b=*body_entry.second;if(b.space!=s.rid)continue;b.mj_body=mj_name2id(m,mjOBJ_BODY,("b"+std::to_string(b.rid.get_id())).c_str());read_body(b);s.committed_bodies.emplace(body_entry.first,b);for(auto&shape_instance:b.shapes){auto*sh=shape(shape_instance.shape);if(sh){auto copy=*sh;if(copy.data.get_type()==Variant::DICTIONARY)copy.data=Dictionary(copy.data).duplicate(true);s.committed_shapes[sh->rid.get_id()]=copy;}}}

@@ -695,6 +695,10 @@ bool MjDirectSpaceState::_intersect_ray(const Vector3 &p_from, const Vector3 &p_
 		return false;
 	}
 	MjSpace *query_space = server->space(rid);
+	// A legitimately closed author world is an empty query target. Keep invalid RID,
+	// pending frees, non-finite input and actual rebuild failures diagnostic.
+	if (query_space && !server->pending_free.count(rid.get_id()) && query_space->authoring &&
+		query_space->compile_status == "closed" && !query_space->model && !query_space->data) return false;
 	if (!query_space || !server->rebuild(*query_space) ||
 			!query_space->model || !query_space->data) {
 		// In particular, do not query stale geometry after a failed rebuild.

@@ -1,3 +1,4 @@
+#include "mj_dictionary_compat.h"
 #include "mj_load_trace.h"
 #include "mj_physics_server.h"
 #include "mj_options.h"
@@ -112,7 +113,7 @@ void MjPhysicsServer3D::process_control_commits(){
    auto valid=[](const mjtNum*p,int n,bool bounded){for(int i=0;i<n;++i)if(!std::isfinite(p[i])||(bounded&&mju_isBad(p[i])))return false;return true;};
    if(!valid(d->qpos,m->nq,true)||!valid(d->qvel,m->nv,true)||!valid(d->qacc,m->nv,true)||!valid(d->qacc_smooth,m->nv,true)||!valid(d->actuator_force,m->nu,false)||!valid(d->qfrc_actuator,m->nv,false)||!valid(d->qfrc_constraint,m->nv,false))return fail("Unsafe migrated candidate dynamics; preset not committed");
    for(int i=0;i<mjNWARNING;++i)if(d->warning[i].number!=warnings[i])return fail("Candidate dynamics produced a warning; preset not committed");
-   auto*old_model=s->model;auto*old_data=s->data;s->query_sdf_fields.clear();s->model=m;s->data=d;object.runtime_drives=drives.duplicate(true);++object.property_revision;++s->revision;
+   auto*old_model=s->model;auto*old_data=s->data;s->query_sdf_fields.clear();s->model=m;s->data=d;replace_dictionary(object.runtime_drives,drives.duplicate(true));++object.property_revision;++s->revision;
    result["revision"]=int64_t(object.property_revision);result["success"]=true;result["state"]=scene_state(request.space,request.object);
    async_threads.emplace_back([old_model,old_data](){gmj_background_worker=true;mj_deleteData(old_data);mj_deleteModel(old_model);});return {};
   };result["error"]=apply();std::lock_guard<std::mutex> lock(requests_mutex);control_results[request.request]=result;

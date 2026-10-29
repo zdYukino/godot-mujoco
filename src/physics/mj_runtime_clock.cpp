@@ -1,3 +1,4 @@
+#include "mj_dictionary_compat.h"
 #include "mj_physics_server.h"
 #include <cmath>
 namespace godot {
@@ -41,7 +42,7 @@ void MjPhysicsServer3D::process_world_commands(){
    String command=request.command;
    if(command=="pause"||command=="resume"){s->paused=command=="pause";s->accumulator=0;return {};}
    if(command=="step"){if(!active||!s->active)return "Single-step requires an active physics space";if(!s->paused)return "Single-step requires a paused simulation";if(request.count<1||request.count>1000)return "Step count must be 1..1000";s->single_steps=request.count;s->pending_step_request=request.request;s->skip_tick=false;return {};}
-   if(command=="capture"){s->checkpoint=capture(s->model,s->data);s->skip_tick=true;return {};}
+   if(command=="capture"){replace_dictionary(s->checkpoint,capture(s->model,s->data));s->skip_tick=true;return {};}
    if(command!="reset")return "Unknown simulation command";
    if(s->checkpoint.is_empty())return "No simulation checkpoint; capture one before resetting";
    // Candidate data is isolated until validation succeeds; the active data remains intact.

@@ -1,3 +1,4 @@
+#include "physics/mj_dictionary_compat.h"
 #include "physics/mj_load_trace.h"
 #include "mj_editor_document.h"
 #include "physics/mj_assets.h"
@@ -68,7 +69,7 @@ bool MjEditorDocument::compile_author(const String &text,const Dictionary &initi
  error=gmj_apply_mesh_options(c,mesh_options);
  if(!error.is_empty()){mj_deleteSpec(c);return false;}
  if(!commit(c,Dictionary(),false))return false;
- explicit_mesh_options=mesh_options.duplicate(true);
+ replace_dictionary(explicit_mesh_options,mesh_options.duplicate(true));
  for(auto key:initial.keys()){
   String label=key;int j=mj_name2id(model,mjOBJ_JOINT,label.utf8().get_data());
   if(j<0){error="Unknown initial-pose joint: "+label;return false;}
@@ -253,7 +254,7 @@ bool MjEditorDocument::restore(const Dictionary&r){paused=true;if((int(r.get("fo
    mjs_asMesh(element)->octree_maxdepth=int(depth);
   }
  }
- if(!commit(c,r["state"],false))return false;explicit_mesh_options=Dictionary(r.get("mesh_options",Dictionary())).duplicate(true);source=r.get("source",String());return true;}
+ if(!commit(c,r["state"],false))return false;replace_dictionary(explicit_mesh_options,Dictionary(r.get("mesh_options",Dictionary())).duplicate(true));source=r.get("source",String());return true;}
 bool MjEditorDocument::import_g1(const String &path,bool free_base,bool relaxed){String absolute=ProjectSettings::get_singleton()->globalize_path(path);auto*c=gmj_import_g1(absolute,error,free_base,relaxed);if(!c)return false;if(!commit(c,Dictionary(),false))return false;
  for(int j=0;j<model->njnt;++j)if(model->jnt_type[j]==mjJNT_HINGE&&model->jnt_limited[j])data->qpos[model->jnt_qposadr[j]]=std::clamp(0.0,model->jnt_range[2*j]+.001,model->jnt_range[2*j+1]-.001);
  for(int a=0;a<model->nu;++a)if(model->actuator_trntype[a]==mjTRN_JOINT)data->ctrl[a]=data->qpos[model->jnt_qposadr[model->actuator_trnid[2*a]]];

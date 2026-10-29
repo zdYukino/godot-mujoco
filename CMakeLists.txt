@@ -209,6 +209,29 @@ if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 target_link_libraries(godot_mujoco PRIVATE godot-cpp "${MUJOCO_LINK_LIB}")
+option(GMJ_NATIVE_VIEW_EXPERIMENTAL "Enable bounded shared-world display snapshots (experimental)" OFF)
+if(GMJ_NATIVE_VIEW_EXPERIMENTAL)
+    target_compile_definitions(godot_mujoco PRIVATE GMJ_NATIVE_VIEW_EXPERIMENTAL)
+    target_sources(godot_mujoco PRIVATE src/physics/mj_native_view_snapshot.cpp)
+    if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux" OR NOT CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64|AMD64")
+        message(FATAL_ERROR "Experimental native view currently supports Linux x86_64/X11/OpenGL only")
+    endif()
+    find_package(OpenGL REQUIRED)
+    find_package(X11 REQUIRED)
+    add_library(gmj_shared_native_view SHARED addons/godot_mujoco/native_view/bridge.cpp)
+    target_link_libraries(gmj_shared_native_view PRIVATE godot-cpp "${MUJOCO_LINK_LIB}" OpenGL::GL X11::X11 ${CMAKE_DL_LIBS})
+    target_include_directories(gmj_shared_native_view PRIVATE "${MUJOCO_INCLUDE_DIR}")
+    target_compile_options(gmj_shared_native_view PRIVATE -fvisibility=hidden -fno-gnu-unique)
+    target_link_options(gmj_shared_native_view PRIVATE "LINKER:--wrap=mj_step" "LINKER:--wrap=mj_step1" "LINKER:--wrap=mj_step2")
+    set_target_properties(gmj_shared_native_view PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/addons/godot_mujoco/native_view/bin"
+        BUILD_RPATH "$ORIGIN/../../bin" INSTALL_RPATH "$ORIGIN/../../bin")
+    configure_file(addons/godot_mujoco/native_view/bridge.gdextension.in
+        "${CMAKE_CURRENT_SOURCE_DIR}/addons/godot_mujoco/native_view/bin/bridge.gdextension" COPYONLY)
+else()
+    # Remove only our generated registration, so an OFF rebuild cannot autoload a stale bridge.
+    file(REMOVE "${CMAKE_CURRENT_SOURCE_DIR}/addons/godot_mujoco/native_view/bin/bridge.gdextension")
+endif()
 target_include_directories(godot_mujoco PRIVATE "${MUJOCO_INCLUDE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/src/physics/query_ccd")
 
 # Test-only access to the active shared world. Normal plugin builds expose none

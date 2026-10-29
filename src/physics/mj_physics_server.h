@@ -140,6 +140,9 @@ public:
  bool scene_remove(const RID &space, const RID &object);
  Array scene_collision_stats(const RID &space) const;
  Dictionary scene_info(const RID &space) const;
+#ifdef GMJ_NATIVE_VIEW_EXPERIMENTAL
+ Dictionary scene_native_view_snapshot(const RID &space, int64_t known_revision, bool include_model=true) const;
+#endif
 #ifdef GMJ_VIEWER_BENCHMARK
  Dictionary scene_benchmark(const RID &space, const String &action, const Dictionary &payload);
 #endif
@@ -165,7 +168,10 @@ public:
  Dictionary scene_heightfield_result(int64_t request);
  void scene_cancel_heightfield(int64_t request);
  void process_heightfields();
- struct HeightfieldEdit {int64_t request,revision; RID space,body; Dictionary design; uint64_t owner;};
+ struct HeightfieldEdit {int64_t request,revision; RID space,body; Dictionary design; uint64_t owner;
+  // deque::erase compacts elements: force member copy assignment with this SDK.
+  HeightfieldEdit &operator=(const HeightfieldEdit &) = default;
+ };
  std::deque<HeightfieldEdit> heightfield_edits;
  std::map<int64_t,Dictionary> heightfield_results;
  std::map<uint64_t,int64_t> heightfield_revisions;
@@ -173,7 +179,10 @@ public:
  struct WorldCommand {int64_t request;RID space;String command;int count;};
  std::deque<WorldCommand> world_commands;
  std::map<int64_t,Dictionary> world_command_results;
- struct ControlCommit {int64_t request, expected_revision; RID space, object; Dictionary snapshot;};
+ struct ControlCommit {int64_t request, expected_revision; RID space, object; Dictionary snapshot;
+  // Suppress implicit member-wise move assignment (Dictionary SDK bug).
+  ControlCommit &operator=(const ControlCommit &) = default;
+ };
  std::mutex requests_mutex;
  std::deque<ControlCommit> control_commits;
  std::map<int64_t,Dictionary> control_results;

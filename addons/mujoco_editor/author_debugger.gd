@@ -1,5 +1,6 @@
 @tool
 extends EditorDebuggerPlugin
+const Trace = preload("res://addons/godot_mujoco/model/author_trace.gd")
 const Layout = preload("res://addons/godot_mujoco/model/world_layout.gd")
 var plugin: EditorPlugin
 var worlds := {}
@@ -7,6 +8,7 @@ var sessions: Array[int] = []
 signal instances_changed
 var tick := 0.0
 var epoch := 0
+var trace_send_seq := 0
 
 func _has_capture(capture: String) -> bool:
 	return capture == "mujoco_author"
@@ -28,9 +30,15 @@ func editor_world(info: Dictionary) -> Node:
 
 func send(info: Dictionary, operation: String, payload: Dictionary) -> void:
 	var session := get_session(info.session)
-	if not session.is_active(): return
+	var active := session.is_active()
+	if Trace.enabled():
+		trace_send_seq+=1
+		payload["_gmj_trace"]={"editor_pid":OS.get_process_id(),"session":info.session,"world":info.id,"send_seq":trace_send_seq,"epoch":payload.get("epoch",-1),"sent_us":Time.get_ticks_usec()}
+		Trace.event("editor_send_attempt",{"operation":operation,"active":active,"trace":payload._gmj_trace,"request_epoch":info.get("request_epoch",-1),"ack_epoch":info.get("ack_epoch",-1),"sent_epoch":info.get("sent_epoch",-1)})
+	if not active: return
 	payload.id = info.id
 	session.send_message("mujoco_author:" + operation, [payload])
+	if Trace.enabled():Trace.event("editor_send_return",{"operation":operation,"trace":payload._gmj_trace})
 
 func _capture(message: String, data: Array, session_id: int) -> bool:
 	if data.size() != 1: return false
@@ -38,6 +46,7 @@ func _capture(message: String, data: Array, session_id: int) -> bool:
 		worlds.erase(str(session_id) + ":" + str(data[0])); instances_changed.emit(); return true
 	if not data[0] is Dictionary: return false
 	var value: Dictionary = data[0]
+	if Trace.enabled() and message in ["mujoco_author:world","mujoco_author:paused","mujoco_author:request"]: Trace.event("editor_receive", {"session":session_id,"message":message,"value":value})
 	var key := str(session_id) + ":" + str(value.get("id", ""))
 	if message == "mujoco_author:world":
 		value.session = session_id
@@ -60,7 +69,9 @@ func _capture(message: String, data: Array, session_id: int) -> bool:
 		instances_changed.emit()
 		return true
 	if message == "mujoco_author:paused":
+		if Trace.enabled():Trace.event("editor_ack_before",{"session":session_id,"world":info.id,"old":info.ack_epoch,"incoming":value.epoch,"request":info.request_epoch,"trace":value.get("_gmj_trace",{})})
 		info.ack_epoch = int(value.epoch)
+		if Trace.enabled():Trace.event("editor_ack_after",{"session":session_id,"world":info.id,"ack":info.ack_epoch,"request":info.request_epoch,"trace":value.get("_gmj_trace",{})})
 		return true
 	if message == "mujoco_author:request":
 		var node := editor_world(info)
@@ -117,7 +128,14 @@ func synchronize(world: Node) -> void:
 		if info.signature != current:
 			info.signature = current
 			pause_world(world)
-		if (info.sent_signature == current and int(info.sent_epoch) == int(info.request_epoch)) or int(info.ack_epoch) != int(info.request_epoch) or not models_valid(world): continue
+		var handshake_ready: bool=not (info.sent_signature == current and int(info.sent_epoch) == int(info.request_epoch)) and int(info.ack_epoch) == int(info.request_epoch)
+		var valid := false
+		if handshake_ready or Trace.enabled(): valid=models_valid(world)
+		if Trace.enabled():
+			var gate={"id":info.id,"session":info.session,"scene":info.scene,"path":info.path,"current":current,"signature":info.signature,"sent_signature":info.sent_signature,"request_epoch":info.request_epoch,"ack_epoch":info.ack_epoch,"sent_epoch":info.sent_epoch,"valid":valid}
+			if info.get("trace_gate",{}) != gate:
+				Trace.event("editor_gate",gate);info["trace_gate"]=gate.duplicate(true)
+		if not handshake_ready or not valid: continue
 		info.sent_signature = current
 		info.sent_epoch = info.request_epoch
 		send(info, "patch", {"layout":layout})

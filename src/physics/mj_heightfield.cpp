@@ -1,3 +1,4 @@
+#include "mj_dictionary_compat.h"
 #include "mj_physics_server.h"
 #include <godot_cpp/core/object.hpp>
 #include <godot_cpp/variant/packed_float32_array.hpp>
@@ -56,7 +57,7 @@ void MjPhysicsServer3D::process_heightfields(){
  bool was_paused=s->paused;s->paused=true;
  RID id=e.body;bool added=!b;Dictionary old;Transform3D old_pose;uint32_t old_layer=1,old_mask=1;double old_friction=b?double(_body_get_param(id,BODY_PARAM_FRICTION)):1.0;
  if(added){id=_body_create();b=body(id);b->heightfield=true;b->mode=BODY_MODE_STATIC;b->object_id=e.owner;b->space=e.space;b->shapes.push_back({make_shape(SHAPE_HEIGHTMAP,e.design),Transform3D(),false});}
- else{old=shape(b->shapes[0].shape)->data;old_pose=b->transform;old_layer=b->layer;old_mask=b->mask;}
+ else{replace_dictionary(old,Dictionary(shape(b->shapes[0].shape)->data));old_pose=b->transform;old_layer=b->layer;old_mask=b->mask;}
  if(remove)b->space=RID();else{shape(b->shapes[0].shape)->data=e.design;b->transform=e.design["pose"];b->layer=e.design.get("layer",1);b->mask=e.design.get("mask",1);b->params[BODY_PARAM_FRICTION]=e.design.get("friction",1.0);}
  s->dirty=true;bool ok=rebuild(*s);String error=s->last_error;
  if(!ok){if(added)_free_rid(id);else{b->space=e.space;b->transform=old_pose;b->layer=old_layer;b->mask=old_mask;b->params[BODY_PARAM_FRICTION]=old_friction;shape(b->shapes[0].shape)->data=old;}s->dirty=false;}
