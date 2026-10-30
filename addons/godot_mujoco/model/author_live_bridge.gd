@@ -24,7 +24,9 @@ static func publish(world: Node) -> void:
 	var source: Node = world
 	while source.owner: source = source.owner
 	var path := str(source.get_path_to(world))
-	EngineDebugger.send_message("mujoco_author:world", [{"id":world.author_live_id, "scene":source.scene_file_path, "path":path, "status":world.info().get("compile_status", ""), "revision":world.info().get("design_revision", 0), "source_signature":preload("world_layout.gd").signature(world.source_layout)}])
+	var source_scene: String=world.get_meta("mj_saved_scene",source.scene_file_path)
+	path=world.get_meta("mj_saved_world_path",path)
+	EngineDebugger.send_message("mujoco_author:world", [{"id":world.author_live_id, "scene":source_scene, "path":path, "status":world.info().get("compile_status", ""), "revision":world.info().get("design_revision", 0), "source_signature":preload("world_layout.gd").signature(world.source_layout)}])
 
 static func publish_instances(world: Node) -> void:
 	if not world or not EngineDebugger.is_active(): return
@@ -36,14 +38,9 @@ static func publish_instances(world: Node) -> void:
 		instances.append({"id":node.live_id, "instance_id":node.design_instance_id, "label":str(node.get_path()), "revision":node.state().get("property_revision", 0), "pending":node.edit_request!=0, "error":node.last_error, "preset":outcome})
 	EngineDebugger.send_message("mujoco_author:instances", [{"id":world.author_live_id, "instances":instances}])
 
-static func request(world: Node, command: Dictionary) -> int:
-	if not world or not world.editor_connected: return 0
-	if Trace.enabled(): Trace.event("game_request_before", {"command":command,"info":world.info()})
-	next_request += 1
-	PhysicsServer3D.call("scene_pause_for_author", world.space)
-	EngineDebugger.send_message("mujoco_author:request", [{"id":world.author_live_id, "request":next_request, "command":command.duplicate(true)}])
-	if Trace.enabled(): Trace.event("game_request_sent", {"request":next_request,"info":world.info()})
-	return next_request
+static func request(world: Node, _command: Dictionary) -> int:
+	world.last_error="设计修改请在 Godot 编辑器执行。"
+	return 0
 
 static func receive(message: String, data: Array) -> bool:
 	if data.size() != 1 or not data[0] is Dictionary: return false

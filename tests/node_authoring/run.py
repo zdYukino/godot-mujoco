@@ -25,6 +25,8 @@ with (project / 'project.godot').open('a') as stream:
     stream.write('\n[editor_plugins]\nenabled=PackedStringArray("res://addons/mujoco_editor/plugin.cfg")\n')
     stream.write('\n[physics]\n3d/physics_engine="MuJoCo"\n3d/run_on_separate_thread=false\n')
 env = os.environ.copy()
+env.setdefault('DISPLAY', ':0')
+env.setdefault('XAUTHORITY', '/run/user/1000/gdm/Xauthority')
 for name in ['XDG_DATA_HOME', 'XDG_CONFIG_HOME', 'XDG_CACHE_HOME']:
     folder = out / name.lower()
     folder.mkdir(exist_ok=True)

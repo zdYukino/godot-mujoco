@@ -1,0 +1,374 @@
+{
+  "date": "2026-10-30",
+  "versions": {
+    "mujoco": "3.16.0",
+    "godot": "4.7.2.stable.mono.official.ed1daf0bf"
+  },
+  "platform": {
+    "os": "Linux x86_64",
+    "display": "X11",
+    "godot_renderer": "gl_compatibility",
+    "gpu": "AMD GFX1103_R1",
+    "driver": "Mesa 23.2.1"
+  },
+  "viewer_acceptance": {
+    "native_glx": {
+      "passed": 272,
+      "failed": 0,
+      "native": true
+    },
+    "godot_native_gl_compiled_off": {
+      "passed": 267,
+      "failed": 0,
+      "native": false
+    },
+    "headless_native_gl_compiled_off": {
+      "passed": 263,
+      "failed": 0,
+      "native": false
+    }
+  },
+  "entry_points": {
+    "headless_examples_and_template": {
+      "shape_gallery": {
+        "failed": 0,
+        "passed": 17
+      },
+      "g1_passive": {
+        "failed": 0,
+        "passed": 24
+      },
+      "sdf_terrain": {
+        "failed": 0,
+        "passed": 16
+      },
+      "pendulum": {
+        "failed": 0,
+        "passed": 44
+      },
+      "light_workflow": {
+        "passed": 9,
+        "failed": 0
+      },
+      "new_project": {
+        "failed": 0,
+        "passed": 12
+      }
+    },
+    "real_native_examples_and_template": {
+      "shape_gallery": {
+        "failed": 0,
+        "passed": 20
+      },
+      "g1_passive": {
+        "failed": 0,
+        "passed": 27
+      },
+      "sdf_terrain": {
+        "failed": 0,
+        "passed": 19
+      },
+      "pendulum": {
+        "failed": 0,
+        "passed": 53
+      },
+      "light_workflow": {
+        "passed": 11,
+        "failed": 0
+      },
+      "new_project": {
+        "failed": 0,
+        "passed": 15
+      }
+    },
+    "g1_test_configuration": {
+      "rendering/mujoco_native_view/max_model_mib": 192
+    },
+    "f5_selector_and_restart": [
+      {
+        "stage": "import",
+        "ok": true,
+        "returncode": 0,
+        "reports": [],
+        "baseline_errors": [],
+        "unexpected_errors": []
+      },
+      {
+        "stage": "f5",
+        "ok": true,
+        "returncode": 0,
+        "reports": [
+          {
+            "failed": 0,
+            "passed": 25
+          }
+        ],
+        "baseline_errors": [],
+        "unexpected_errors": []
+      },
+      {
+        "stage": "reopen",
+        "ok": true,
+        "returncode": 0,
+        "reports": [
+          {
+            "failed": 0,
+            "passed": 3
+          }
+        ],
+        "baseline_errors": [],
+        "unexpected_errors": []
+      },
+      {
+        "stage": "fallback",
+        "ok": true,
+        "returncode": 0,
+        "reports": [
+          {
+            "failed": 0,
+            "passed": 7
+          }
+        ],
+        "baseline_errors": [],
+        "unexpected_errors": []
+      }
+    ],
+    "shape_materials_display_reopen_and_source_offline": {
+      "failed": 0,
+      "floor_contacts": {
+        "box_geom": true,
+        "capsule_geom": true,
+        "cone_geom": true,
+        "cylinder_geom": true,
+        "ellipsoid_geom": true,
+        "floor_geom": true,
+        "sphere_geom": true
+      },
+      "passed": 105,
+      "scope": "actual shared MuJoCo physics; GUI acceptance separate",
+      "shipped.log": {
+        "failed": 0,
+        "floor_contacts": {
+          "box_geom": true,
+          "capsule_geom": true,
+          "cylinder_geom": true,
+          "ellipsoid_geom": true,
+          "floor_geom": true,
+          "probe_geom": true
+        },
+        "passed": 92,
+        "scope": "actual shared MuJoCo physics; GUI acceptance separate"
+      },
+      "missing-source.log": {
+        "failed": 0,
+        "floor_contacts": {
+          "box_geom": true,
+          "capsule_geom": true,
+          "cone_geom": true,
+          "cylinder_geom": true,
+          "ellipsoid_geom": true,
+          "floor_geom": true,
+          "sphere_geom": true
+        },
+        "passed": 105,
+        "scope": "actual shared MuJoCo physics; GUI acceptance separate"
+      },
+      "editor": {
+        "failed": 0,
+        "passed": 4
+      }
+    },
+    "runtime_clock": {
+      "failed": 0,
+      "passed": 133
+    },
+    "csharp_clock": "PASS: saved environment, exact 7 steps, reset, resume, pause",
+    "authoring": {
+      "checks": 40,
+      "failed": 0,
+      "failures": []
+    },
+    "live_editor": {
+      "checks": 26,
+      "failed": 0,
+      "scope": "runtime design rejection, editor-origin UndoRedo and live synchronization"
+    },
+    "author_runtime": {
+      "checks": 33,
+      "failed": 0
+    },
+    "sdf_final_native_capability_check": {
+      "passed": 20,
+      "failed": 0,
+      "evidence": "build-runtime-viewer/native-examples-final/sdf_terrain-final.log"
+    },
+    "saved_shape_note": "The working tree already contained local shape-gallery design edits. These were preserved; canonical seven-body contact/stability checks run on the isolated regenerated and source-offline fixtures."
+  },
+  "coverage": [
+    "Both renderers share authoritative camera, CPU picking, selection, tracking and perturbation.",
+    "Picking retains the presented frame and frozen visibility, including queued display changes.",
+    "Running force, paused pose, pre-existing external wrench ownership, cross-window mouse release, focus loss and saturated input cancellation.",
+    "Exact N-step batches, reset/snapshot separation, history navigation, controls, scalar joints, equality and stale revisions.",
+    "Real profiler timing and sensor values, bounded Watch, logging settings and model/data output.",
+    "F11 under floating-window focus, text focus priority, F1/F2, backtick/F6/F7 and no additional system window.",
+    "Transactional saved-source reload, fixed-camera restore, inline game/controller lifetime, repeated reload, invalid-source rollback and root rendering restoration.",
+    "Partial SubViewportContainer input rectangle and HUD placement.",
+    "Whole-system CPU and RAM counters; matched AMD driver GPU and VRAM counters available on this host.",
+    "Mouse downward delta and wheel increments match MuJoCo 3.16 simulate; same-tick release preserves final camera and paused-pose movement.",
+    "Reload preserves the live run/pause mode for direct saved sources and EnvironmentHost, including a saved source whose initial mode differs.",
+    "Expired displayed-frame inputs are rejected and release active perturbation."
+  ],
+  "performance": {
+    "godot": {
+      "vsync": false,
+      "fps_cap": 120,
+      "native_gl_compiled": false,
+      "samples": [
+        {
+          "frame_ms_p50": 8.592,
+          "frame_ms_p95": 8.95,
+          "history_bytes": 1296000,
+          "mode": "off",
+          "process_rss_kib": 466380,
+          "scene_slots": 3
+        },
+        {
+          "frame_ms_p50": 8.634,
+          "frame_ms_p95": 8.977,
+          "history_bytes": 1296000,
+          "mode": "fps",
+          "process_rss_kib": 466380,
+          "scene_slots": 3
+        },
+        {
+          "frame_ms_p50": 8.682,
+          "frame_ms_p95": 9.111,
+          "history_bytes": 1296000,
+          "mode": "all",
+          "process_rss_kib": 466380,
+          "scene_slots": 3
+        },
+        {
+          "frame_ms_p50": 8.662,
+          "frame_ms_p95": 9.115,
+          "history_bytes": 1296000,
+          "mode": "analysis",
+          "process_rss_kib": 466616,
+          "scene_slots": 3
+        }
+      ]
+    },
+    "native_glx": {
+      "vsync": false,
+      "fps_cap": 120,
+      "native_gl_compiled": true,
+      "samples": [
+        {
+          "frame_ms_p50": 8.429,
+          "frame_ms_p95": 8.609,
+          "history_bytes": 1296000,
+          "mode": "off",
+          "process_rss_kib": 461912,
+          "scene_slots": 3
+        },
+        {
+          "frame_ms_p50": 8.461,
+          "frame_ms_p95": 8.606,
+          "history_bytes": 1296000,
+          "mode": "fps",
+          "process_rss_kib": 461912,
+          "scene_slots": 3
+        },
+        {
+          "frame_ms_p50": 8.414,
+          "frame_ms_p95": 8.661,
+          "history_bytes": 1296000,
+          "mode": "all",
+          "process_rss_kib": 461912,
+          "scene_slots": 3
+        },
+        {
+          "frame_ms_p50": 8.458,
+          "frame_ms_p95": 8.729,
+          "history_bytes": 1296000,
+          "mode": "analysis",
+          "process_rss_kib": 461916,
+          "scene_slots": 3
+        }
+      ]
+    }
+  },
+  "reload_resources": {
+    "godot": [
+      {
+        "history_bytes": 1296000,
+        "rss_kib": 478464,
+        "scene_slots": 1
+      },
+      {
+        "history_bytes": 1296000,
+        "rss_kib": 479920,
+        "scene_slots": 1
+      },
+      {
+        "history_bytes": 1296000,
+        "rss_kib": 481476,
+        "scene_slots": 1
+      }
+    ],
+    "native_glx": [
+      {
+        "history_bytes": 1296000,
+        "rss_kib": 472504,
+        "scene_slots": 2
+      },
+      {
+        "history_bytes": 1296000,
+        "rss_kib": 474028,
+        "scene_slots": 2
+      },
+      {
+        "history_bytes": 1296000,
+        "rss_kib": 475320,
+        "scene_slots": 2
+      }
+    ]
+  },
+  "screenshots": {
+    "source": "Actual editor F5 runs from tests/native_view; paused authoritative state with the same authored camera",
+    "godot": "docs/pics/f5-renderer-godot.png",
+    "native": "docs/pics/f5-renderer-native.png"
+  },
+  "commands": [
+    "python3 tests/runtime_viewer/run.py --out NEW_DIR",
+    "python3 tests/runtime_viewer/run.py --out NEW_DIR --native",
+    "python3 tests/runtime_viewer/run.py --out NEW_DIR --headless --install NATIVE_OFF_INSTALL",
+    "python3 tests/example_projects/run.py --out NEW_DIR",
+    "python3 tests/example_projects/run.py --out NEW_DIR --native",
+    "python3 tests/native_view/run.py --out NEW_DIR",
+    "OUT=NEW_DIR bash tests/runtime_clock/run.sh",
+    "OUT=NEW_DIR bash tests/shape_gallery/run.sh",
+    "python3 tests/node_authoring/run.py --out NEW_DIR"
+  ],
+  "limits": [
+    "These short capped fixture samples are not production benchmarks or uncapped throughput comparisons.",
+    "VSync disabled, maximum 120 FPS, 30 warmup frames and 180 measured frames per mode; off/FPS/all metrics/analysis modes run with real simulation.",
+    "Process RSS includes Godot, assets, Mesa/GLX caches and driver allocations; it is not the owned-buffer budget.",
+    "Three frozen scene slots maximum; history up to 2000 states and 100000000 bytes; CPU viewer admission 256 MiB.",
+    "Native platform, rigid-model, one-system-window and asset budgets remain unchanged. G1 needs the explicit existing large-model allowance.",
+    "Optional unavailable or ambiguous GPU telemetry stays disabled; no external telemetry tool is installed.",
+    "Embedded GameView fullscreen remains editor-managed; no Godot engine change.",
+    "Godot diagnostics retain Godot materials/lighting. Native OpenGL surface effects and Godot 3D SDF slices are backend-specific with explicit availability explanations."
+  ],
+  "ci": {
+    "configured_workflow": ".github/workflows/cmake-build.yml",
+    "check": "Headless shared runtime viewer on the default build without enabling native GL",
+    "local_invocation": "passed",
+    "remote_run_triggered": false
+  },
+  "final_workspace_build": {
+    "native_gl": true,
+    "addon_bin": "addons/godot_mujoco/bin",
+    "committed": false
+  }
+}

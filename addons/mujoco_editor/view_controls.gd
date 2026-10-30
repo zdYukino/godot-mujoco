@@ -6,11 +6,16 @@ const Terrain = preload("res://addons/godot_mujoco/model/static_heightfield.gd")
 const Preview = preload("res://addons/godot_mujoco/map/collision_preview.gd")
 const Overlay = preload("res://addons/godot_mujoco/model/collision_overlay.gd")
 const Visual = preload("res://addons/godot_mujoco/model/model_visual.gd")
+const RenderSettings = preload("res://addons/godot_mujoco/native_view/settings.gd")
 const META := "mujoco_render_modes"
 var plugin: EditorPlugin
 var entities := true
 var collisions := false
 var menu: MenuButton
+var renderer_choice: OptionButton
+var renderer_note: Label
+var renderer_row: HBoxContainer
+var renderer_error := ""
 var overlay_root: Node3D
 var hidden_visuals: Array[MeshInstance3D] = []
 var signature := ""
@@ -22,13 +27,50 @@ func _ready() -> void:
 	menu.get_popup().add_check_item("显示碰撞网格",1)
 	menu.get_popup().add_separator()
 	menu.get_popup().add_item("橙色碰撞边界 · 青色选择框",2); menu.get_popup().set_item_disabled(3,true)
+	menu.get_popup().add_separator()
+	menu.get_popup().add_radio_check_item("F5 渲染：Godot",10)
+	menu.get_popup().add_radio_check_item("F5 渲染：MuJoCo 原生",11)
 	var saved: Dictionary=EditorInterface.get_base_control().get_meta(META,{"entities":true,"collisions":false})
 	entities=saved.entities; collisions=saved.collisions
 	menu.get_popup().id_pressed.connect(func(id):
 		if id==0: set_modes(not entities,collisions)
-		elif id==1: set_modes(entities,not collisions))
+		elif id==1: set_modes(entities,not collisions)
+		elif id==10: set_renderer(RenderSettings.GODOT)
+		elif id==11: set_renderer(RenderSettings.MUJOCO))
+	renderer_row=HBoxContainer.new();plugin.dock.add_child(renderer_row);plugin.dock.move_child(renderer_row,1)
+	var renderer_label := Label.new(); renderer_label.text="F5 渲染："; renderer_row.add_child(renderer_label)
+	renderer_choice=OptionButton.new(); renderer_choice.name="F5Renderer"
+	renderer_choice.add_item("Godot",RenderSettings.GODOT)
+	renderer_choice.add_item("MuJoCo 原生",RenderSettings.MUJOCO)
+	renderer_row.add_child(renderer_choice)
+	renderer_note=Label.new();renderer_note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
+	plugin.dock.add_child(renderer_note);plugin.dock.move_child(renderer_note,2)
+	renderer_choice.item_selected.connect(func(index): set_renderer(renderer_choice.get_item_id(index)))
+	refresh_renderer()
 	overlay_root=plugin.create_preview_root("SceneCollisionOverlay")
 	apply_modes()
+
+func set_renderer(value: int) -> Error:
+	var error := RenderSettings.save_mode(value)
+	renderer_error = "" if error == OK else (RenderSettings.unavailable_reason() if error == ERR_UNAVAILABLE else "无法保存渲染选择："+error_string(error))
+	refresh_renderer()
+	return error
+
+func refresh_renderer() -> void:
+	if not is_instance_valid(renderer_choice): return
+	var root := EditorInterface.get_edited_scene_root()
+	var scene_default: bool = root.native_view_experimental if root is MjRuntimeWorld else false
+	renderer_choice.select(RenderSettings.MUJOCO if RenderSettings.requested(scene_default) else RenderSettings.GODOT)
+	menu.get_popup().set_item_checked(menu.get_popup().get_item_index(10),renderer_choice.selected==0)
+	menu.get_popup().set_item_checked(menu.get_popup().get_item_index(11),renderer_choice.selected==1)
+	var reason := RenderSettings.unavailable_reason()
+	renderer_choice.set_item_disabled(1,not reason.is_empty())
+	menu.get_popup().set_item_disabled(menu.get_popup().get_item_index(11),not reason.is_empty())
+	renderer_choice.tooltip_text="保存到当前工程，下次 F5 生效；编辑视图保持 Godot。\nMuJoCo 原生支持旋转、缩放，暂不支持原生选择、跟踪或拖拽施力。"
+	if not reason.is_empty(): renderer_choice.tooltip_text+="\n"+reason
+	renderer_note.text=renderer_error if not renderer_error.is_empty() else ("下次 F5 生效" if EditorInterface.is_playing_scene() else "")
+	renderer_note.visible=not renderer_note.text.is_empty()
+	renderer_note.tooltip_text=reason
 func set_modes(show_entities: bool,show_collisions: bool) -> void:
 	entities=show_entities; collisions=show_collisions; apply_modes()
 
@@ -45,7 +87,7 @@ func apply_modes() -> void:
 	update_scene()
 func _process(delta: float) -> void:
 	tick+=delta
-	if tick>=.25: tick=0; update_scene()
+	if tick>=.25: tick=0; refresh_renderer(); update_scene()
 func restore_visuals() -> void:
 	for mesh in hidden_visuals:
 		if is_instance_valid(mesh): RenderingServer.instance_set_visible(mesh.get_instance(),mesh.is_visible_in_tree())
@@ -104,4 +146,6 @@ func update_scene() -> void:
 	overlay_root.visible=collisions
 func shutdown() -> void:
 	restore_visuals()
+	if is_instance_valid(renderer_row): renderer_row.free()
+	if is_instance_valid(renderer_note): renderer_note.free()
 	if is_instance_valid(overlay_root): overlay_root.free()

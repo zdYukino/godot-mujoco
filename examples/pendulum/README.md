@@ -10,7 +10,7 @@ F5 运行 Main.tscn；打开 ChaosPendulum.tscn、VisualDebug.tscn 后按 F6。�
 位姿与尺寸，保留材质、相机和灯光。混沌双摆的初始关节位置随场景保存；仿真按世界
 时钟推进，不再每帧手动调用 MjWorld.step。
 
-VisualDebug 显示接触点、世界坐标下的接触力、body 坐标系、关节锚点/轴和质心。
+三个场景均采用共享 MuJoCo 相机、拾取和扰动逻辑。Tab / Shift+Tab 原版左右面板，F1 帮助、F2 MuJoCo Info，Space 暂停，Backspace 初始重置；F11 仅为 Godot 渲染选择、独立性能和扩展。VisualDebug 改用官方诊断图元；在原版 Rendering 中打开接触、坐标系、关节及质心选项；在 F11 → Renderer 切换 Godot / MuJoCo 原生后端。
 在本地场景树或 Inspector 编辑设计，后台验证后 F5；运行中编辑会自动暂停并重建，
 完成后手动继续。Ctrl+D、Undo/Redo、Ctrl+S 使用 Godot 原生操作。
 

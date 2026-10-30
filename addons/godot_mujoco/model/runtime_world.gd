@@ -5,13 +5,17 @@ const AuthorBridge = preload("author_live_bridge.gd")
 const Layout = preload("world_layout.gd")
 const Author = preload("author_resource.gd")
 const Collision = preload("collision_settings.gd")
+const RenderSettings = preload("../native_view/settings.gd")
 @export var world_design: MjAuthorResource
 @export var start_paused := false
 @export var native_view_experimental := false
 @export var native_view_direct_experimental := false
 var native_view_active := false
+var native_view_error := ""
 var native_view: Control
 var native_view_autostart_armed := false
+var runtime_viewer: Node
+var viewer_deferred := false
 var space := RID()
 var last_error := ""
 var ready_for_models := false
@@ -25,6 +29,7 @@ var author_started := false
 var resume_after_capture := false
 var manual_resume_required := false
 signal world_ready
+signal viewer_ready(viewer: Node)
 signal editor_connection_changed(connected: bool)
 signal design_request_finished(result: Dictionary)
 var author_live_id := ""
@@ -38,6 +43,7 @@ var trace_state := {}
 
 func _enter_tree() -> void:
 	if Engine.is_editor_hint(): return
+	native_view_error = ""
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	last_error = ""
 	author_started = false
@@ -75,13 +81,20 @@ func _ready() -> void:
 		author_compiler.completed.connect(author_world_compiled)
 		source_layout = Layout.capture(self)
 		AuthorBridge.attach(self)
+		# Explicit project choices override legacy per-scene experimental flags.
+		native_view_experimental = RenderSettings.requested(native_view_experimental)
+		if RenderSettings.mode() != RenderSettings.INHERIT: native_view_direct_experimental = false
 		native_view_autostart_armed = native_view_experimental
 		if native_view_autostart_armed and not world_ready.is_connected(_start_native_view_when_ready):
 			world_ready.connect(_start_native_view_when_ready, CONNECT_ONE_SHOT)
+		if not viewer_deferred: call_deferred("activate_runtime_viewer")
 		return
 
 func _exit_tree() -> void:
 	if Engine.is_editor_hint(): return
+	if is_instance_valid(runtime_viewer) and runtime_viewer.runtime_world==self:
+		runtime_viewer.queue_free()
+	runtime_viewer=null
 	native_view_autostart_armed = false
 	if world_ready.is_connected(_start_native_view_when_ready): world_ready.disconnect(_start_native_view_when_ready)
 	if is_instance_valid(native_view): native_view.stop("World removed"); native_view.queue_free(); native_view=null
@@ -132,6 +145,24 @@ func capture_snapshot() -> bool:
 func reset_simulation() -> bool:
 	# Retain topology, resources and runtime additions. This does not save design data.
 	return request_command("reset")
+
+func reset_initial() -> bool:
+	return request_command("reset_initial")
+
+func restore_snapshot() -> bool:
+	return request_command("restore_snapshot")
+
+func activate_runtime_viewer(existing: Node = null) -> void:
+	if Engine.is_editor_hint() or not ready_for_models: return
+	viewer_deferred=false
+	if is_instance_valid(existing):
+		runtime_viewer=existing
+	elif not is_instance_valid(runtime_viewer):
+		runtime_viewer=preload("../viewer/runtime_viewer.gd").new()
+		runtime_viewer.runtime_world=self
+		get_tree().root.add_child(runtime_viewer)
+	viewer_ready.emit(runtime_viewer)
+	if author_started and native_view_autostart_armed: _start_native_view_when_ready()
 
 func _process(delta: float) -> void:
 	if Engine.is_editor_hint(): return
@@ -189,8 +220,9 @@ func author_world_compiled(result: Dictionary) -> void:
 		return
 	if not PhysicsServer3D.call("scene_submit_async", space, revision, result): last_error = "Compiled world became obsolete"
 
-func request_editor_design(command: Dictionary) -> int:
-	return AuthorBridge.request(self, command)
+func request_editor_design(_command: Dictionary) -> int:
+	last_error="设计修改请在 Godot 编辑器执行；运行窗口只修改仿真状态。"
+	return 0
 
 func cancel_author_compile() -> void:
 	if not world_design or not ready_for_models: return
@@ -366,23 +398,32 @@ func restore_world_snapshot(snapshot: Dictionary) -> void:
 			if node.has_method("author_definition") and node.author_scene: node.author_scene.queue_compile()
 
 func _start_native_view_when_ready() -> void:
-	if native_view_autostart_armed and is_inside_tree():
+	if native_view_autostart_armed and is_inside_tree() and not viewer_deferred:
 		native_view_autostart_armed = false
-		start_native_view()
+		if not start_native_view(): push_warning("MuJoCo 原生渲染未启动，继续使用 Godot："+native_view_error)
 
 func start_native_view() -> bool:
 	if Engine.is_editor_hint() or not native_view_experimental or not ready_for_models: return false
 	if info().get("compile_status", "") == "closed":
-		last_error = "Shared world is closed"; return false
+		last_error = "Shared world is closed"; native_view_error=last_error; return false
 	if is_instance_valid(native_view):
 		native_view.request_direct_to_screen=native_view_direct_experimental
-		return not native_view.stopped or native_view.start_for(self)
+		var started: bool = not native_view.stopped or native_view.start_for(self)
+		native_view_error = "" if started else native_view.last_error
+		if not started: last_error=native_view_error
+		return started
 	native_view=preload("../native_view/runtime_view.gd").new()
 	native_view.z_index=-100
 	native_view.name="ExperimentalMuJoCoView";native_view.enabled=true;native_view.request_direct_to_screen=native_view_direct_experimental
-	get_window().add_child(native_view);native_view.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	if native_view.start_for(self): return true
-	last_error=native_view.last_error;native_view.queue_free();native_view=null;return false
+	get_viewport().add_child(native_view);native_view.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	if native_view.start_for(self): native_view_error=""; return true
+	last_error=native_view.last_error;native_view_error=last_error;native_view.queue_free();native_view=null;return false
+
+func rendering_status() -> String:
+	if native_view_active: return "MuJoCo 原生"
+	if not native_view_error.is_empty(): return "Godot（原生回退："+native_view_error+"）"
+	if is_instance_valid(native_view) and not native_view.stopped: return "Godot（原生启动中）"
+	return "Godot"
 
 func sync_native_view_fallback() -> void:
 	for node in Layout.nodes(self):

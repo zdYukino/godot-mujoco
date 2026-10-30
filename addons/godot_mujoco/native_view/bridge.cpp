@@ -42,8 +42,8 @@
 
 using namespace godot;
 static std::atomic<void*> display_owner{nullptr};
-// Linker wrappers observe bridge-origin step calls, including a diagnostic
-// positive control. They do not claim to intercept other DSOs' internal calls.
+// Linker wrappers observe bridge-origin step calls. They do not claim to
+// intercept other DSOs' internal calls.
 static std::atomic<int64_t> bridge_step_calls{0};
 extern "C" void __real_mj_step(const mjModel*,mjData*);
 extern "C" void __real_mj_step1(const mjModel*,mjData*);
@@ -371,34 +371,31 @@ public:
       if(glCheckFramebufferStatus(GL_FRAMEBUFFER)!=GL_FRAMEBUFFER_COMPLETE){fail("Shared texture framebuffer is incomplete");return;}
     }
     if(!direct_fbo&&(render.offWidth!=width||render.offHeight!=height))mjr_resizeOffscreen(width,height,&render);
-    if(action>=0){
-      if(fixture_camera){
-        const auto before=scene_ready?mjv_averageCamera(scene.camera,scene.camera+1):base_camera;
-        adopt_camera(before);
-        mjv_updateScene(model,data,&options,nullptr,&camera,mjCAT_ALL,&scene);
-        const auto after=mjv_averageCamera(scene.camera,scene.camera+1);
-        camera_transfer_error=0;
-        for(int k=0;k<3;++k){
-          camera_transfer_error=std::max(camera_transfer_error,double(std::abs(before.pos[k]-after.pos[k])));
-          camera_transfer_error=std::max(camera_transfer_error,double(std::abs(before.forward[k]-after.forward[k])));
-          camera_transfer_error=std::max(camera_transfer_error,double(std::abs(before.up[k]-after.up[k])));
-        }
-        camera_transfer_error=std::max(camera_transfer_error,double(std::abs(before.frustum_top-after.frustum_top)));
-        fixture_camera=false;
-      }
-      mjv_moveCamera(model,action,dx,dy,&camera);
-    }
     const auto setup=Clock::now();
-    // This is a disposable display replica. Never mj_step or mutate the shared world.
+    // Consume the authoritative CPU scene. This replica is an asset owner only:
+    // it never runs mj_forward, mj_step, or independent camera/picking logic.
     PackedFloat64Array state=render_shared.get("state",PackedFloat64Array());
     if(state.size()!=mj_stateSize(model,mjSTATE_INTEGRATION)){fail("Display state/model size mismatch");return;}
     mj_setState(model,data,state.ptr(),mjSTATE_INTEGRATION);
     if(state_audit)compare_state(state,false);
-    if(state_audit&&frame==0&&std::getenv("GMJ_DIAGNOSTIC_STEP_CONTROL"))mj_step(model,data);
-    mj_forward(model,data);
-    if(state_audit)compare_state(state,true);
     const auto stepped=Clock::now();
-    mjv_updateScene(model,data,&options,nullptr,&camera,mjCAT_ALL,&scene);
+    PackedByteArray geoms=render_shared.get("scene_geoms",PackedByteArray());
+    PackedByteArray lights=render_shared.get("scene_lights",PackedByteArray());
+    PackedByteArray cameras=render_shared.get("scene_cameras",PackedByteArray());
+    PackedByteArray flags=render_shared.get("scene_flags",PackedByteArray());
+    PackedByteArray visual=render_shared.get("scene_visual",PackedByteArray());
+    PackedByteArray stat=render_shared.get("scene_stat",PackedByteArray());
+    if(int(render_shared.get("scene_abi",0))!=mj_version()||geoms.size()%sizeof(mjvGeom)||geoms.size()>scene.maxgeom*int(sizeof(mjvGeom))||lights.size()%sizeof(mjvLight)||lights.size()>mjMAXLIGHT*int(sizeof(mjvLight))||cameras.size()!=sizeof(scene.camera)||flags.size()!=sizeof(scene.flags)||visual.size()!=sizeof(mjVisual)||stat.size()!=sizeof(mjStatistic)){fail("Invalid authoritative scene packet");return;}
+    scene.ngeom=geoms.size()/sizeof(mjvGeom);scene.nlight=lights.size()/sizeof(mjvLight);
+    if(!geoms.is_empty())std::memcpy(scene.geoms,geoms.ptr(),geoms.size());
+    if(!lights.is_empty())std::memcpy(scene.lights,lights.ptr(),lights.size());
+    std::memcpy(scene.camera,cameras.ptr(),cameras.size());std::memcpy(scene.flags,flags.ptr(),flags.size());
+    // Context-sized GPU resources retain the admitted settings used by load().
+    const auto quality=model->vis.quality;
+    const int offwidth=model->vis.global.offwidth,offheight=model->vis.global.offheight;
+    std::memcpy(&model->vis,visual.ptr(),visual.size());std::memcpy(&model->stat,stat.ptr(),stat.size());
+    model->vis.quality=quality;model->vis.global.offwidth=offwidth;model->vis.global.offheight=offheight;
+    scene.stereo=mjSTEREO_NONE;
     if(fixture_camera){
       auto c=base_camera;
       const double a=.25*std::sin(2*3.141592653589793*phase/12),co=std::cos(a),si=std::sin(a);
@@ -495,7 +492,7 @@ public:
     check_errors();
     const auto end=Clock::now();
     Dictionary d;
-    d["texture"]=current.rid;d["width"]=width;d["height"]=height;d["generation"]=generation;d["frame"]=++frame;
+    d["viewer_frame_id"]=render_shared.get("frame_id",0);d["viewer_revision"]=render_shared.get("revision",-1);d["authoritative_scene"]=true;d["texture"]=current.rid;d["width"]=width;d["height"]=height;d["generation"]=generation;d["frame"]=++frame;
     d["shared_revision"]=render_shared["revision"];d["shared_space"]=render_shared["space"];
     double qsum=0;for(int i=0;i<model->nq;++i)qsum+=(i+1)*data->qpos[i];d["qpos_checksum"]=qsum;
     d["stepping_policy"]="restore_then_forward";d["reference_view"]=reference_view;d["reference_geom_count"]=int(reference_ids.size());
@@ -552,7 +549,7 @@ public:
   }
   int request_shared(const Dictionary &packet,int width,int height,double dx,double dy,int action) {
     if(!main_thread()||Engine::get_singleton()->is_editor_hint())return 0;
-    if(!packet.has("space")||!packet.has("revision")||!packet.has("state"))return 0;
+    if(!packet.has("space")||!packet.has("revision")||!packet.has("state")||!packet.has("scene_geoms"))return 0;
     PackedFloat64Array state=packet["state"];
     if(state.size()>1048576||!std::isfinite(dx)||!std::isfinite(dy)||action>mjMOUSE_ZOOM||action < -1)return 0;
     for(int i=0;i<state.size();++i)if(!std::isfinite(state[i]))return 0;

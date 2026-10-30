@@ -3,6 +3,8 @@
 #include <mujoco/mjxmacro.h>
 #include <godot_cpp/variant/dictionary.hpp>
 #include <godot_cpp/variant/array.hpp>
+#include <godot_cpp/variant/variant.hpp>
+#include <godot_cpp/variant/string.hpp>
 namespace godot {
 inline String gmj_option_conflict(const mjOption&a,const mjOption&b){
 #define X(type,name,count) if(a.name!=b.name)return #name;

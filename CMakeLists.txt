@@ -186,6 +186,7 @@ add_library(godot_mujoco SHARED
     src/physics/mj_async_world.cpp
     src/physics/mj_heightfield.cpp
     src/physics/mj_runtime_clock.cpp
+    src/viewer/mj_runtime_viewer.cpp
     src/physics/mj_physics_server.cpp
     src/physics/mj_native_joint.cpp
     src/physics/mj_area.cpp
@@ -210,6 +211,8 @@ endif()
 
 target_link_libraries(godot_mujoco PRIVATE godot-cpp "${MUJOCO_LINK_LIB}")
 option(GMJ_NATIVE_VIEW_EXPERIMENTAL "Enable bounded shared-world display snapshots (experimental)" OFF)
+set(GMJ_NATIVE_VIEW_BIN "${CMAKE_CURRENT_SOURCE_DIR}/addons/godot_mujoco/native_view/bin"
+    CACHE PATH "Directory that receives the experimental native-view bridge")
 if(GMJ_NATIVE_VIEW_EXPERIMENTAL)
     target_compile_definitions(godot_mujoco PRIVATE GMJ_NATIVE_VIEW_EXPERIMENTAL)
     target_sources(godot_mujoco PRIVATE src/physics/mj_native_view_snapshot.cpp)
@@ -224,13 +227,13 @@ if(GMJ_NATIVE_VIEW_EXPERIMENTAL)
     target_compile_options(gmj_shared_native_view PRIVATE -fvisibility=hidden -fno-gnu-unique)
     target_link_options(gmj_shared_native_view PRIVATE "LINKER:--wrap=mj_step" "LINKER:--wrap=mj_step1" "LINKER:--wrap=mj_step2")
     set_target_properties(gmj_shared_native_view PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/addons/godot_mujoco/native_view/bin"
+        LIBRARY_OUTPUT_DIRECTORY "${GMJ_NATIVE_VIEW_BIN}"
         BUILD_RPATH "$ORIGIN/../../bin" INSTALL_RPATH "$ORIGIN/../../bin")
     configure_file(addons/godot_mujoco/native_view/bridge.gdextension.in
-        "${CMAKE_CURRENT_SOURCE_DIR}/addons/godot_mujoco/native_view/bin/bridge.gdextension" COPYONLY)
+        "${GMJ_NATIVE_VIEW_BIN}/bridge.gdextension" COPYONLY)
 else()
     # Remove only our generated registration, so an OFF rebuild cannot autoload a stale bridge.
-    file(REMOVE "${CMAKE_CURRENT_SOURCE_DIR}/addons/godot_mujoco/native_view/bin/bridge.gdextension")
+    file(REMOVE "${GMJ_NATIVE_VIEW_BIN}/bridge.gdextension")
 endif()
 target_include_directories(godot_mujoco PRIVATE "${MUJOCO_INCLUDE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/src/physics/query_ccd")
 

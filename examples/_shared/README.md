@@ -2,7 +2,7 @@
 
 这里没有 `project.godot`，由例程通过相对链接复用：
 
-- `gallery.gd`：形状例程界面及 G1 界面的基类。
+- `gallery.gd`：形状 / G1 的网格材质及共享查看器说明扩展，不再创建独立工具条。
 - `floor_grid.gdshader`：地板网格着色器。
 - `assets/`：天空 HDR 与素材来源、许可说明。
 

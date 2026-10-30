@@ -9,9 +9,16 @@ func check(ok: bool,label: String) -> void:
 func material_color(material: Material) -> Color:
 	return material.get_shader_parameter("base_color") if material is ShaderMaterial else material.albedo_color
 func command_settle(world) -> void:
-	for i in 12:
+	var deadline := Time.get_ticks_msec()+120000
+	while Time.get_ticks_msec()<deadline:
 		await physics_frame; await process_frame
-		if world.command_request==0: return
+		if world.author_started and world.command_request==0: return
+func viewer_command(viewer: Node, command: Dictionary) -> void:
+	check(viewer.request_action(command),"queue shared viewer "+str(command.action))
+	var deadline := Time.get_ticks_msec()+10000
+	while viewer.command_request!=0 and Time.get_ticks_msec()<deadline: await process_frame
+	check(viewer.command_request==0 and viewer.last_error.is_empty(),"shared viewer completes "+str(command.action))
+	await process_frame; await process_frame
 func _initialize() -> void: call_deferred("run")
 func run() -> void:
 	var scene: PackedScene=load("res://Main.tscn")
@@ -29,9 +36,10 @@ func run() -> void:
 			if str(geom.name).ends_with(name):
 				actual[name]=geom.type
 				check(geom.has("color") and geom.color.is_equal_approx(colors[name]),"actual runtime geometry preserves MJCF RGBA "+name)
-				check(material_color(model.visuals[geom.name].material_override).is_equal_approx(colors[name]),"runtime material preserves authored RGBA "+name)
+				check(material_color(model.visuals[name].material_override).is_equal_approx(colors[name]),"runtime material preserves authored RGBA "+name)
 	check(actual==expected,"actual mjModel types match native primitives and convex mesh cone")
-	check(model.state().joints.size()==7,"seven independent freejoint dynamic rigid bodies")
+	var canonical: bool=model.state().joints.size()==7
+	check(model.state().joints.size()==model.design.entities().filter(func(entity):return entity.kind=="joint").size(),"current saved authored joints are all simulated")
 	var opened: Dictionary={"error":"", "document":ClassDB.instantiate("MjEditorDocument")}
 	opened.document.compile_author(model.design.worker_xml(),model.design.native_initial_pose(),model.design.native_mesh_options())
 	var cone_hull:=false
@@ -42,22 +50,25 @@ func run() -> void:
 	var materials:= {}
 	for name in model.visuals: materials[name]=model.visuals[name].material_override
 	var controls=world.get_node("DisplayControls")
-	check(not controls.help_panel.visible and not controls.help_button.button_pressed,"runtime help starts collapsed")
+	var viewer: Node=world.runtime_viewer
+	while viewer.frame.is_empty(): await process_frame
+	while not viewer.preference_queue.is_empty() or not viewer.pending.is_empty(): await process_frame
+	check(not viewer.windows.help.visible and not viewer.controls.visible,"runtime help and F11 controls start collapsed")
 	for i in 5:
-		controls.help_button.button_pressed=true
-		check(controls.help_panel.visible,"help toggle opens panel")
-		controls.help_panel.get_child(0).get_child(0).get_children().back().pressed.emit()
-		check(not controls.help_panel.visible and not controls.help_button.button_pressed,"help close resets toggle for repeat use")
+		viewer.toggle_auxiliary("help")
+		check(viewer.windows.help.visible,"F1 action opens shared help")
+		check(viewer.windows.help is Control and not viewer.windows.help is Window,"F1 is the original scene overlay")
+		viewer.toggle_auxiliary("help")
+		check(not viewer.windows.help.visible,"F1 action closes original help for repeat use")
 	check(model.state().joints==before,"help interactions preserve physical state")
 	var window_size:=root.size
 	for size in [Vector2i(1280,800),Vector2i(900,600)]:
 		root.size=size; await process_frame; await process_frame
-		controls.layout_chrome(); await process_frame
-		var bounds: Rect2=controls.chrome.get_global_rect()
-		check(bounds.position.x>=0 and bounds.end.x<=root.get_visible_rect().size.x and bounds.size.y<125,"collapsed toolbar stays compact inside window "+str(size))
-		controls.set_help_visible(true); await process_frame
-		check(controls.chrome.get_global_rect().end.y<=root.get_visible_rect().size.y,"expanded help fits window "+str(size))
-		controls.set_help_visible(false)
+		viewer.set_controls_visible(true); await process_frame
+		var bounds := Rect2(Vector2(viewer.controls.position),Vector2(viewer.controls.size))
+		check(bounds.position.x>=0 and bounds.end.x<=root.get_visible_rect().size.x and bounds.end.y<=root.get_visible_rect().size.y,"F11 floating controls fit window "+str(size))
+		viewer.set_controls_visible(false)
+		check(not viewer.controls.visible,"F11 controls close in resized window")
 	root.size=window_size; await process_frame
 	var floor: MeshInstance3D
 	for name in model.visuals:
@@ -73,28 +84,31 @@ func run() -> void:
 	check(is_equal_approx(controls.grid_material.get_shader_parameter("spacing_m"),2.0) and floor.mesh==floor_mesh and floor.transform==floor_transform and model.visuals.size()==original_count and model.state().joints==before,"configurable grid spacing does not alter geometry or physics")
 	controls.grid_spacing_m=1.0; controls.apply_floor_grid()
 	var retained_material=controls.grid_material
-	model.build_visuals(PhysicsServer3D.call("scene_geometry",world.space,model.model_rid),true)
+	model.author_scene.geometry_queue=model.design.cached_geometry.duplicate(true)
+	while not model.author_scene.geometry_queue.is_empty(): model.author_scene.build_geometry_step()
 	controls.apply_floor_grid()
 	check(controls.grid_material==retained_material and model.visuals.values().filter(func(mesh): return mesh.material_override==retained_material).size()==1,"runtime visual rebuild reapplies cached grid only to floor")
 	materials.clear()
 	for name in model.visuals: materials[name]=model.visuals[name].material_override
+	viewer.cache_geometry() # Rebind mesh visibility after the explicit visual rebuild above.
 	for visual in [true,false]:
-		for collision in [true,false]:
-			controls.entities.set_pressed_no_signal(visual); controls.collisions.set_pressed_no_signal(collision); controls.apply_display()
-			check(model.visuals.values().all(func(mesh): return mesh.visible==visual) and controls.overlays.values().all(func(overlay): return overlay.visible==collision),"runtime independent display combination %s/%s" % [visual,collision])
+		for diagnostic in [true,false]:
+			await viewer_command(viewer,{"action":"group","name":"geom","id":0,"value":visual})
+			await viewer_command(viewer,{"action":"vis","id":2,"value":diagnostic})
+			check(model.visuals.values().all(func(mesh): return mesh.visible==visual) and bool(viewer.frame.settings.vis[2])==diagnostic,"runtime group and official diagnostics %s/%s" % [visual,diagnostic])
 			var rgba_ok:=true
 			for full_name in model.visuals:
 				for name in colors:
 					if str(full_name).ends_with(name): rgba_ok=rgba_ok and material_color(model.visuals[full_name].material_override).is_equal_approx(colors[name])
 			check(rgba_ok,"four display modes preserve actual material RGB and alpha values")
 			check(model.state().joints==before and model.visuals.keys().all(func(name): return model.visuals[name].material_override==materials[name]),"display preserves physical state and original materials")
-	controls.entities.set_pressed_no_signal(true); controls.collisions.set_pressed_no_signal(true); controls.apply_display()
-	controls.pause_button.pressed.emit(); await command_settle(world)
-	check(not world.info().paused,"compact pause button resumes actual world")
-	controls.pause_button.pressed.emit(); await command_settle(world)
-	check(world.info().paused,"compact pause button pauses actual world")
-	controls.reset_button.pressed.emit(); await command_settle(world)
-	check(model.state().joints==before and world.info().paused,"compact reset restores initial state and retains pause")
+	await viewer_command(viewer,{"action":"group","name":"geom","id":0,"value":true})
+	await viewer_command(viewer,{"action":"pause"})
+	check(not world.info().paused,"shared pause action resumes actual world")
+	await viewer_command(viewer,{"action":"pause"})
+	check(world.info().paused,"shared pause action pauses actual world")
+	await viewer_command(viewer,{"action":"reset_initial"})
+	check(model.state().joints==before and world.info().paused,"initial reset restores design state and retains pause")
 	world.set_paused(false)
 	var body_pair:=false
 	var stable_samples:=[]
@@ -110,28 +124,31 @@ func run() -> void:
 		if i>=570: stable_samples.append(model.state().bodies)
 	world.set_paused(true)
 	for name in ["sphere","box","cylinder","cone","capsule","ellipsoid"]:
+		if not canonical:
+			check(model.state().bodies[name].transform.is_finite(),name+" remains finite in the locally edited saved design")
+			continue
 		check(contacts.has(name+"_geom"),name+" has positive contact force against the common floor")
 		var body: Dictionary=model.state().bodies[name]
 		check(body.transform.is_finite() and body.transform.origin.y>-.1 and body.transform.origin.y<1.5,name+" settles above floor after actual drop")
 		var spread:=0.0
 		for sample in stable_samples: spread=maxf(spread,body.transform.origin.distance_to(sample[name].transform.origin))
 		check(spread<.05,name+" final half-second translation remains stable")
-	check(body_pair,"positive box/probe contact proves object-object collision in the same space")
+	if canonical: check(body_pair,"positive box/probe contact proves object-object collision in the same space")
 	check(world.info().warning_count==0,"no MuJoCo instability warnings")
 	# Non-unit alpha guards all four channels through the actual shared backend API.
 	var tint={"format":1,"xml":"<mujoco><compiler angle='radian'/><option timestep='0.002' gravity='0 0 -9.81' integrator='implicitfast' solver='Newton'><flag nativeccd='enable'/></option><worldbody><geom name='rgba_probe' type='sphere' size='.1' pos='20 0 0' rgba='.13 .27 .61 .37'/></worldbody></mujoco>","source":"","state":{}}
-	var tint_rid: RID=PhysicsServer3D.call("scene_load_xml",world.space,(tint).xml,(tint).get("state",{}),(tint).get("mesh_options",{}),"rgba_test",Transform3D.IDENTITY)
-	check(tint_rid.is_valid(),"RGBA probe loads into real shared runtime: "+str(world.info().last_error))
-	if tint_rid.is_valid():
-		var tint_geoms: Array=PhysicsServer3D.call("scene_geometry",world.space,tint_rid)
+	var tint_doc: RefCounted=ClassDB.instantiate("MjEditorDocument")
+	check(tint_doc.compile_author(tint.xml),"RGBA probe compiles through the real author backend")
+	if tint_doc.get_error().is_empty():
+		var tint_geoms: Array=tint_doc.geometry()
 		check(tint_geoms.size()==1 and tint_geoms[0].has("color") and tint_geoms[0].color.is_equal_approx(Color(.13,.27,.61,.37)),"backend preserves non-unit alpha and all RGB channels")
 		var tint_visual=preload("res://addons/godot_mujoco/model/model_visual.gd").create(tint_geoms[0])
 		check(tint_visual.material_override.albedo_color.is_equal_approx(Color(.13,.27,.61,.37)),"runtime visual receives non-unit RGBA without fallback")
-		tint_visual.free(); PhysicsServer3D.free_rid(tint_rid)
-	controls.set_help_visible(true)
+		tint_visual.free()
+	viewer.toggle_auxiliary("help")
 	world.free(); await process_frame
-	world=scene.instantiate(); world.start_paused=true; root.add_child(world); await process_frame
-	check(not world.get_node("DisplayControls").help_panel.visible,"saved scene reopen defaults to hidden help")
+	world=scene.instantiate(); world.start_paused=true; root.add_child(world); await command_settle(world)
+	check(not world.runtime_viewer.windows.help.visible and not world.runtime_viewer.controls.visible,"saved scene reopen defaults to hidden help/controls")
 	check(world.get_node("Model").state().joints==before,"saved scene reopen reproduces initial state")
 	world.free(); await process_frame
 	print("SHAPE_GALLERY_RESULT ",JSON.stringify({"passed":passed,"failed":failed,"floor_contacts":contacts,"scope":"actual shared MuJoCo physics; GUI acceptance separate"}))

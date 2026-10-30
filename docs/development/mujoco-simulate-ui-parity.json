@@ -1,0 +1,6604 @@
+{
+  "upstream_version": "3.16.0",
+  "source_named_controls": 204,
+  "unmatched": [],
+  "controls": [
+    {
+      "section": "File",
+      "label": "Save xml",
+      "type": "button",
+      "source": "simulate/simulate.cc",
+      "line": 120,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "File",
+      "label": "Save mjb",
+      "type": "button",
+      "source": "simulate/simulate.cc",
+      "line": 121,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "File",
+      "label": "Print model",
+      "type": "button",
+      "source": "simulate/simulate.cc",
+      "line": 122,
+      "source_options_or_shortcut": "CM",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "File",
+      "label": "Print data",
+      "type": "button",
+      "source": "simulate/simulate.cc",
+      "line": 123,
+      "source_options_or_shortcut": "CD",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "File",
+      "label": "Quit",
+      "type": "button",
+      "source": "simulate/simulate.cc",
+      "line": 124,
+      "source_options_or_shortcut": "CQ",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "File",
+      "label": "Screenshot",
+      "type": "button",
+      "source": "simulate/simulate.cc",
+      "line": 125,
+      "source_options_or_shortcut": "CP",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Integrator",
+      "type": "select",
+      "source": "simulate/simulate.cc",
+      "line": 803,
+      "source_options_or_shortcut": "Euler\\nRK4\\nimplicit\\nimplicitfast\\ndiscrete",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "SELECT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "SELECT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Cone",
+      "type": "select",
+      "source": "simulate/simulate.cc",
+      "line": 804,
+      "source_options_or_shortcut": "Pyramidal\\nElliptic",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "SELECT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "SELECT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Jacobian",
+      "type": "select",
+      "source": "simulate/simulate.cc",
+      "line": 805,
+      "source_options_or_shortcut": "Dense\\nSparse\\nAuto",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "SELECT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "SELECT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Solver",
+      "type": "select",
+      "source": "simulate/simulate.cc",
+      "line": 806,
+      "source_options_or_shortcut": "PGS\\nCG\\nNewton",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "SELECT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "SELECT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Algorithmic Parameters",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 807,
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Timestep",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 808,
+      "source_options_or_shortcut": "1 0 1",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Iterations",
+      "type": "editint",
+      "source": "simulate/simulate.cc",
+      "line": 809,
+      "source_options_or_shortcut": "1 0 1000",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Tolerance",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 810,
+      "source_options_or_shortcut": "1 0 1",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "LS Iter",
+      "type": "editint",
+      "source": "simulate/simulate.cc",
+      "line": 811,
+      "source_options_or_shortcut": "1 0 100",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "LS Tol",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 812,
+      "source_options_or_shortcut": "1 0 0.1",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Noslip Iter",
+      "type": "editint",
+      "source": "simulate/simulate.cc",
+      "line": 813,
+      "source_options_or_shortcut": "1 0 1000",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Noslip Tol",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 814,
+      "source_options_or_shortcut": "1 0 1",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "CCD Iter",
+      "type": "editint",
+      "source": "simulate/simulate.cc",
+      "line": 815,
+      "source_options_or_shortcut": "1 0 1000",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "CCD Tol",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 816,
+      "source_options_or_shortcut": "1 0 1",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Sleep Tol",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 817,
+      "source_options_or_shortcut": "1 0 1",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "SDF Iter",
+      "type": "editint",
+      "source": "simulate/simulate.cc",
+      "line": 818,
+      "source_options_or_shortcut": "1 1 20",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "SDF Init",
+      "type": "editint",
+      "source": "simulate/simulate.cc",
+      "line": 819,
+      "source_options_or_shortcut": "1 1 100",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Physical Parameters",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 820,
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Gravity",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 821,
+      "source_options_or_shortcut": "3",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Physics design is read-only at runtime."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Physics design is read-only at runtime."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Wind",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 822,
+      "source_options_or_shortcut": "3",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Magnetic",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 823,
+      "source_options_or_shortcut": "3",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Density",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 824,
+      "source_options_or_shortcut": "1",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Viscosity",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 825,
+      "source_options_or_shortcut": "1",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Imp Ratio",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 826,
+      "source_options_or_shortcut": "1",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Disable Flags",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 827,
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Enable Flags",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 831,
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Contact Override",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 835,
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Margin",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 836,
+      "source_options_or_shortcut": "1",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Sol Imp",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 837,
+      "source_options_or_shortcut": "5",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Sol Ref",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 838,
+      "source_options_or_shortcut": "2",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Friction",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 839,
+      "source_options_or_shortcut": "5",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Physics design is read-only at runtime. Edit in Godot editor."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Actuator Group Enable",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 843,
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Act Group 0",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 844,
+      "source_options_or_shortcut": "",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Actuator design groups are read-only at runtime."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Actuator design groups are read-only at runtime."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Act Group 1",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 845,
+      "source_options_or_shortcut": "",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Actuator design groups are read-only at runtime."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Actuator design groups are read-only at runtime."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Act Group 2",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 846,
+      "source_options_or_shortcut": "",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Actuator design groups are read-only at runtime."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Actuator design groups are read-only at runtime."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Act Group 3",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 847,
+      "source_options_or_shortcut": "",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Actuator design groups are read-only at runtime."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Actuator design groups are read-only at runtime."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Act Group 4",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 848,
+      "source_options_or_shortcut": "",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Actuator design groups are read-only at runtime."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Actuator design groups are read-only at runtime."
+        }
+      }
+    },
+    {
+      "section": "Physics",
+      "label": "Act Group 5",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 849,
+      "source_options_or_shortcut": "",
+      "support": "read-only design inspection",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Actuator design groups are read-only at runtime."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Actuator design groups are read-only at runtime."
+        }
+      }
+    },
+    {
+      "section": "Rendering",
+      "label": "Camera",
+      "type": "select",
+      "source": "simulate/simulate.cc",
+      "line": 899,
+      "source_options_or_shortcut": "Free\\nTracking",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Rendering",
+      "label": "Label",
+      "type": "select",
+      "source": "simulate/simulate.cc",
+      "line": 900,
+      "source_options_or_shortcut": "None\\nBody\\nJoint\\nGeom\\nSite\\nCamera\\nLight\\nTendon\\nActuator\\nConstraint\\nFlex\\nSkin\\nSelection\\nSel Pnt\\nContact\\nForce\\nIsland",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SELECT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SELECT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Rendering",
+      "label": "Frame",
+      "type": "select",
+      "source": "simulate/simulate.cc",
+      "line": 905,
+      "source_options_or_shortcut": "None\\nBody\\nGeom\\nSite\\nCamera\\nLight\\nContact\\nWorld",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SELECT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SELECT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Rendering",
+      "label": "Copy camera",
+      "type": "button",
+      "source": "simulate/simulate.cc",
+      "line": 909,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Rendering",
+      "label": "Model Elements",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 910,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Rendering",
+      "label": "OpenGL Effects",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 914,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Rendering",
+      "label": "Tree depth",
+      "type": "sliderint",
+      "source": "simulate/simulate.cc",
+      "line": 962,
+      "source_options_or_shortcut": "0 20",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SLIDER",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SLIDER",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Rendering",
+      "label": "Flex layer",
+      "type": "sliderint",
+      "source": "simulate/simulate.cc",
+      "line": 963,
+      "source_options_or_shortcut": "0 10",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "SLIDER",
+          "reason": "Current rigid model has no flex."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "SLIDER",
+          "reason": "Current rigid model has no flex."
+        }
+      }
+    },
+    {
+      "section": "Rendering",
+      "label": "Sensor",
+      "type": "select",
+      "source": "simulate/simulate.cc",
+      "line": 989,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "model-conditional",
+          "reason": "Original selector is created only when user image sensors exist."
+        },
+        "native": {
+          "state": "model-conditional",
+          "reason": "Original selector is created only when user image sensors exist."
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Headlight",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 1022,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Active",
+      "type": "radio",
+      "source": "simulate/simulate.cc",
+      "line": 1023,
+      "source_options_or_shortcut": "Off\\nOn",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "RADIO",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable"
+        },
+        "native": {
+          "state": "available",
+          "item": "RADIO",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Ambient",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1024,
+      "source_options_or_shortcut": "3",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable"
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Diffuse",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1025,
+      "source_options_or_shortcut": "3",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable"
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Specular",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1026,
+      "source_options_or_shortcut": "3",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable"
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Free Camera",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 1027,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Orthographic",
+      "type": "radio",
+      "source": "simulate/simulate.cc",
+      "line": 1028,
+      "source_options_or_shortcut": "No\\nYes",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "RADIO",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "RADIO",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Field of view",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1029,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Center",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 1030,
+      "source_options_or_shortcut": "3",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Azimuth",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1031,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Elevation",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1032,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Align",
+      "type": "button",
+      "source": "simulate/simulate.cc",
+      "line": 1033,
+      "source_options_or_shortcut": "CA",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Global",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 1034,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Extent",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 1035,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Inertia",
+      "type": "radio",
+      "source": "simulate/simulate.cc",
+      "line": 1036,
+      "source_options_or_shortcut": "Box\\nEllipsoid",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "RADIO",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "RADIO",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "BVH active",
+      "type": "radio",
+      "source": "simulate/simulate.cc",
+      "line": 1037,
+      "source_options_or_shortcut": "False\\nTrue",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "RADIO",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "RADIO",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Map",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 1038,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Stiffness",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1039,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Rot stiffness",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1040,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Force",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1041,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Torque",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1042,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Alpha",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1043,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable"
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Fog start",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1044,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable"
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Fog end",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1045,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable"
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Z near",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1046,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Z far",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1047,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Haze",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1048,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable"
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Shadow clip",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1049,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable"
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Shadow scale",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1050,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable"
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Scale",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 1051,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "All (meansize)",
+      "type": "editnum",
+      "source": "simulate/simulate.cc",
+      "line": 1052,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Force width",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1053,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Contact width",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1054,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Contact height",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1055,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Connect",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1056,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Com",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1057,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Camera",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1058,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Light",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1059,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Select point",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1060,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Joint length",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1061,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Joint width",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1062,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Actuator length",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1063,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Actuator width",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1064,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Frame length",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1065,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Frame width",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1066,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Constraint",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1067,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "Slider-crank",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1068,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "RGBA",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 1069,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "fog",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1070,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable"
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "haze",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1071,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "EDIT",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable"
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "force",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1072,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "inertia",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1073,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "joint",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1074,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "actuator",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1075,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "actnegative",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1076,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "actpositive",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1077,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "com",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1078,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "camera",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1079,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "light",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1080,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "selectpoint",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1081,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "connect",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1082,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "contactpoint",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1083,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "contactforce",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1084,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "contactfriction",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1085,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "contacttorque",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1086,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "contactgap",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1087,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "rangefinder",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1088,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "constraint",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1089,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "slidercrank",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1090,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "crankbroken",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1091,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "frustum",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1092,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "bv",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1093,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Visualization",
+      "label": "bvactive",
+      "type": "editfloat",
+      "source": "simulate/simulate.cc",
+      "line": 1094,
+      "source_options_or_shortcut": "4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDIT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Geom groups",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 1106,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Geom 0",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1107,
+      "source_options_or_shortcut": " 0",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Geom 1",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1108,
+      "source_options_or_shortcut": " 1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Geom 2",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1109,
+      "source_options_or_shortcut": " 2",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Geom 3",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1110,
+      "source_options_or_shortcut": " 3",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Geom 4",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1111,
+      "source_options_or_shortcut": " 4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Geom 5",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1112,
+      "source_options_or_shortcut": " 5",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Site groups",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 1113,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Site 0",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1114,
+      "source_options_or_shortcut": "S0",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Site 1",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1115,
+      "source_options_or_shortcut": "S1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Site 2",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1116,
+      "source_options_or_shortcut": "S2",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Site 3",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1117,
+      "source_options_or_shortcut": "S3",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Site 4",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1118,
+      "source_options_or_shortcut": "S4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Site 5",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1119,
+      "source_options_or_shortcut": "S5",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Joint groups",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 1120,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Joint 0",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1121,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Joint 1",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1122,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Joint 2",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1123,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Joint 3",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1124,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Joint 4",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1125,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Joint 5",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1126,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Tendon groups",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 1127,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Tendon 0",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1128,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Tendon 1",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1129,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Tendon 2",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1130,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Tendon 3",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1131,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Tendon 4",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1132,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Tendon 5",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1133,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Actuator groups",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 1134,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Actuator 0",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1135,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Actuator 1",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1136,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Actuator 2",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1137,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Actuator 3",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1138,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Actuator 4",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1139,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Actuator 5",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1140,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Flex groups",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 1141,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Flex 0",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1142,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Flex 1",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1143,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Flex 2",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1144,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Flex 3",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1145,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Flex 4",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1146,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Flex 5",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1147,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Skin groups",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 1148,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Skin 0",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1149,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Skin 1",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1150,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Skin 2",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1151,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Skin 3",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1152,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Skin 4",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1153,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        }
+      }
+    },
+    {
+      "section": "Group enable",
+      "label": "Skin 5",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1154,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Current supported model has no flex/skin"
+        }
+      }
+    },
+    {
+      "section": "Logging",
+      "label": "Console",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1173,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Logging",
+      "label": "File",
+      "type": "checkbyte",
+      "source": "simulate/simulate.cc",
+      "line": 1174,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Logging",
+      "label": "Info topics",
+      "type": "separator",
+      "source": "simulate/simulate.cc",
+      "line": 1175,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Control",
+      "label": "Clear all",
+      "type": "button",
+      "source": "simulate/simulate.cc",
+      "line": 1249,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Option",
+      "label": "Help",
+      "type": "checkint",
+      "source": "simulate/simulate.h",
+      "line": 334,
+      "source_options_or_shortcut": " #290",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Option",
+      "label": "Info",
+      "type": "checkint",
+      "source": "simulate/simulate.h",
+      "line": 335,
+      "source_options_or_shortcut": " #291",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Option",
+      "label": "Profiler",
+      "type": "checkint",
+      "source": "simulate/simulate.h",
+      "line": 336,
+      "source_options_or_shortcut": " #292",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Option",
+      "label": "Sensor",
+      "type": "checkint",
+      "source": "simulate/simulate.h",
+      "line": 337,
+      "source_options_or_shortcut": " #293",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Option",
+      "label": "Pause update",
+      "type": "checkint",
+      "source": "simulate/simulate.h",
+      "line": 338,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Option",
+      "label": "Fullscreen",
+      "type": "checkint",
+      "source": "simulate/simulate.h",
+      "line": 340,
+      "source_options_or_shortcut": " #294",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Option",
+      "label": "Vertical Sync",
+      "type": "checkint",
+      "source": "simulate/simulate.h",
+      "line": 344,
+      "source_options_or_shortcut": "",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "CHECK",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Option",
+      "label": "Busy Wait",
+      "type": "checkint",
+      "source": "simulate/simulate.h",
+      "line": 345,
+      "source_options_or_shortcut": "",
+      "support": "host-loop limitation",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Godot owns the event/render loop; simulate's busy-wait scheduler is not used."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "CHECK",
+          "reason": "Godot owns the event/render loop; simulate's busy-wait scheduler is not used."
+        }
+      }
+    },
+    {
+      "section": "Option",
+      "label": "Spacing",
+      "type": "select",
+      "source": "simulate/simulate.h",
+      "line": 346,
+      "source_options_or_shortcut": "Tight\\nWide",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SELECT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SELECT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Option",
+      "label": "Color",
+      "type": "select",
+      "source": "simulate/simulate.h",
+      "line": 347,
+      "source_options_or_shortcut": "Default\\nOrange\\nWhite\\nBlack",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SELECT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SELECT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Option",
+      "label": "Font",
+      "type": "select",
+      "source": "simulate/simulate.h",
+      "line": 348,
+      "source_options_or_shortcut": "50 %\\n100 %\\n150 %\\n200 %\\n250 %\\n300 %",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SELECT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SELECT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Simulation",
+      "label": "Num threads",
+      "type": "sliderint",
+      "source": "simulate/simulate.h",
+      "line": 357,
+      "source_options_or_shortcut": "0 10",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SLIDER",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SLIDER",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Simulation",
+      "label": "Reset",
+      "type": "button",
+      "source": "simulate/simulate.h",
+      "line": 358,
+      "source_options_or_shortcut": " #259",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Simulation",
+      "label": "Reload",
+      "type": "button",
+      "source": "simulate/simulate.h",
+      "line": 359,
+      "source_options_or_shortcut": "CL",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Simulation",
+      "label": "Align",
+      "type": "button",
+      "source": "simulate/simulate.h",
+      "line": 360,
+      "source_options_or_shortcut": "CA",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Simulation",
+      "label": "Copy state",
+      "type": "button",
+      "source": "simulate/simulate.h",
+      "line": 361,
+      "source_options_or_shortcut": "CC",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "BUTTON",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Simulation",
+      "label": "Key",
+      "type": "sliderint",
+      "source": "simulate/simulate.h",
+      "line": 362,
+      "source_options_or_shortcut": "0 0",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "SLIDER",
+          "reason": "No model keyframes. The existing shared-world composition does not accept source models with keyframes; original design data is retained by the editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "SLIDER",
+          "reason": "No model keyframes. The existing shared-world composition does not accept source models with keyframes; original design data is retained by the editor."
+        }
+      }
+    },
+    {
+      "section": "Simulation",
+      "label": "Load key",
+      "type": "button",
+      "source": "simulate/simulate.h",
+      "line": 363,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "BUTTON",
+          "reason": "No model keyframes. The existing shared-world composition does not accept source models with keyframes; original design data is retained by the editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "BUTTON",
+          "reason": "No model keyframes. The existing shared-world composition does not accept source models with keyframes; original design data is retained by the editor."
+        }
+      }
+    },
+    {
+      "section": "Simulation",
+      "label": "Save key",
+      "type": "button",
+      "source": "simulate/simulate.h",
+      "line": 364,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "disabled",
+          "item": "BUTTON",
+          "reason": "No model keyframes. The existing shared-world composition does not accept source models with keyframes; original design data is retained by the editor."
+        },
+        "native": {
+          "state": "disabled",
+          "item": "BUTTON",
+          "reason": "No model keyframes. The existing shared-world composition does not accept source models with keyframes; original design data is retained by the editor."
+        }
+      }
+    },
+    {
+      "section": "Simulation",
+      "label": "Noise scale",
+      "type": "slidernum",
+      "source": "simulate/simulate.h",
+      "line": 365,
+      "source_options_or_shortcut": "0 1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SLIDER",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SLIDER",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Simulation",
+      "label": "Noise rate",
+      "type": "slidernum",
+      "source": "simulate/simulate.h",
+      "line": 366,
+      "source_options_or_shortcut": "0 4",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SLIDER",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SLIDER",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Simulation",
+      "label": "History",
+      "type": "separator",
+      "source": "simulate/simulate.h",
+      "line": 367,
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "SEPARATOR",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Watch",
+      "label": "Field",
+      "type": "edittxt",
+      "source": "simulate/simulate.h",
+      "line": 376,
+      "source_options_or_shortcut": "qpos",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDITTXT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDITTXT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Watch",
+      "label": "Index",
+      "type": "editint",
+      "source": "simulate/simulate.h",
+      "line": 377,
+      "source_options_or_shortcut": "1",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "EDITINT",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "EDITINT",
+          "reason": ""
+        }
+      }
+    },
+    {
+      "section": "Watch",
+      "label": "Value",
+      "type": "static",
+      "source": "simulate/simulate.h",
+      "line": 378,
+      "source_options_or_shortcut": " ",
+      "support": "adapted",
+      "backends": {
+        "godot": {
+          "state": "available",
+          "item": "STATIC",
+          "reason": ""
+        },
+        "native": {
+          "state": "available",
+          "item": "STATIC",
+          "reason": ""
+        }
+      }
+    }
+  ],
+  "dynamic": {
+    "godot": {
+      "backend": "godot",
+      "bodies": [
+        {
+          "id": 1,
+          "name": "b395136991234"
+        },
+        {
+          "id": 2,
+          "name": "import_403726925828_ball"
+        },
+        {
+          "id": 3,
+          "name": "import_403726925828_arm"
+        }
+      ],
+      "cameras": [
+        "Free",
+        "Tracking",
+        "import_403726925828_side"
+      ],
+      "frames": [
+        "None",
+        "Body",
+        "Geom",
+        "Site",
+        "Camera",
+        "Light",
+        "Contact",
+        "World"
+      ],
+      "geoms": [
+        {
+          "group": 0,
+          "id": 0,
+          "name": "import_403726925828_ground",
+          "object_id": 44140856838,
+          "owner_rid": "RID(403726925828)"
+        },
+        {
+          "group": 0,
+          "id": 1,
+          "name": "g0",
+          "object_id": 44207965706,
+          "owner_rid": "RID(395136991234)"
+        },
+        {
+          "group": 0,
+          "id": 2,
+          "name": "import_403726925828_ball_geom",
+          "object_id": 44140856838,
+          "owner_rid": "RID(403726925828)"
+        },
+        {
+          "group": 0,
+          "id": 3,
+          "name": "import_403726925828_editor_5_2",
+          "object_id": 44140856838,
+          "owner_rid": "RID(403726925828)"
+        }
+      ],
+      "groups": [
+        {
+          "name": "geom",
+          "supported": true
+        },
+        {
+          "name": "site",
+          "supported": true
+        },
+        {
+          "name": "joint",
+          "supported": true
+        },
+        {
+          "name": "tendon",
+          "supported": true
+        },
+        {
+          "name": "actuator",
+          "supported": true
+        },
+        {
+          "name": "flex",
+          "supported": false
+        },
+        {
+          "name": "skin",
+          "supported": false
+        }
+      ],
+      "image_sensors": [],
+      "keyframe_reason": "No model keyframes. The existing shared-world composition does not accept source models with keyframes; original design data is retained by the editor.",
+      "keyframes": [],
+      "labels": [
+        "None",
+        "Body",
+        "Joint",
+        "Geom",
+        "Site",
+        "Camera",
+        "Light",
+        "Tendon",
+        "Actuator",
+        "Constraint",
+        "Flex",
+        "Skin",
+        "Selection",
+        "Sel Pnt",
+        "Contact",
+        "Force",
+        "Island"
+      ],
+      "nkey": 0,
+      "physics_disable_names": [
+        "Constraint",
+        "Equality",
+        "Frictionloss",
+        "Limit",
+        "Contact",
+        "Spring",
+        "Damper",
+        "Gravity",
+        "Clampctrl",
+        "Warmstart",
+        "Filterparent",
+        "Actuation",
+        "Refsafe",
+        "Sensor",
+        "Midphase",
+        "Eulerdamp",
+        "AutoReset",
+        "NativeCCD",
+        "Island",
+        "MultiCCD"
+      ],
+      "physics_enable_names": [
+        "Override",
+        "Energy",
+        "Fwdinv",
+        "InvDiscrete",
+        "Sleep",
+        "DiagExact",
+        "IPC"
+      ],
+      "rnd": [
+        {
+          "id": 0,
+          "name": "Shadow",
+          "reason": "MuJoCo OpenGL effect; Godot uses its scene materials/environment",
+          "shortcut": "S",
+          "supported": false,
+          "value": true
+        },
+        {
+          "id": 1,
+          "name": "Wireframe",
+          "reason": "MuJoCo OpenGL effect; Godot uses its scene materials/environment",
+          "shortcut": "W",
+          "supported": false,
+          "value": false
+        },
+        {
+          "id": 2,
+          "name": "Reflection",
+          "reason": "MuJoCo OpenGL effect; Godot uses its scene materials/environment",
+          "shortcut": "R",
+          "supported": false,
+          "value": true
+        },
+        {
+          "id": 3,
+          "name": "Additive",
+          "reason": "MuJoCo OpenGL effect; Godot uses its scene materials/environment",
+          "shortcut": "L",
+          "supported": false,
+          "value": false
+        },
+        {
+          "id": 4,
+          "name": "Skybox",
+          "reason": "MuJoCo OpenGL effect; Godot uses its scene materials/environment",
+          "shortcut": "K",
+          "supported": false,
+          "value": true
+        },
+        {
+          "id": 5,
+          "name": "Fog",
+          "reason": "MuJoCo OpenGL effect; Godot uses its scene materials/environment",
+          "shortcut": "G",
+          "supported": false,
+          "value": false
+        },
+        {
+          "id": 6,
+          "name": "Haze",
+          "reason": "MuJoCo OpenGL effect; Godot uses its scene materials/environment",
+          "shortcut": "/",
+          "supported": false,
+          "value": true
+        },
+        {
+          "id": 7,
+          "name": "Depth",
+          "reason": "MuJoCo OpenGL effect; Godot uses its scene materials/environment",
+          "shortcut": "",
+          "supported": false,
+          "value": false
+        },
+        {
+          "id": 8,
+          "name": "Segment",
+          "reason": "MuJoCo OpenGL effect; Godot uses its scene materials/environment",
+          "shortcut": ",",
+          "supported": false,
+          "value": false
+        },
+        {
+          "id": 9,
+          "name": "Id Color",
+          "reason": "MuJoCo OpenGL effect; Godot uses its scene materials/environment",
+          "shortcut": "",
+          "supported": false,
+          "value": false
+        },
+        {
+          "id": 10,
+          "name": "Cull Face",
+          "reason": "MuJoCo OpenGL effect; Godot uses its scene materials/environment",
+          "shortcut": "",
+          "supported": false,
+          "value": true
+        }
+      ],
+      "save_xml_supported": true,
+      "vis": [
+        {
+          "id": 0,
+          "name": "Convex Hull",
+          "reason": "Godot keeps authored surface materials; this MuJoCo surface effect is unavailable",
+          "shortcut": "H",
+          "supported": false,
+          "value": false
+        },
+        {
+          "id": 1,
+          "name": "Texture",
+          "reason": "Godot keeps authored surface materials; this MuJoCo surface effect is unavailable",
+          "shortcut": "X",
+          "supported": false,
+          "value": true
+        },
+        {
+          "id": 2,
+          "name": "Joint",
+          "reason": "",
+          "shortcut": "J",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 3,
+          "name": "Camera",
+          "reason": "",
+          "shortcut": "Q",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 4,
+          "name": "Actuator",
+          "reason": "",
+          "shortcut": "U",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 5,
+          "name": "Activation",
+          "reason": "Godot keeps authored surface materials; this MuJoCo surface effect is unavailable",
+          "shortcut": ",",
+          "supported": false,
+          "value": false
+        },
+        {
+          "id": 6,
+          "name": "Light",
+          "reason": "",
+          "shortcut": "Z",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 7,
+          "name": "Tendon",
+          "reason": "",
+          "shortcut": "V",
+          "supported": true,
+          "value": true
+        },
+        {
+          "id": 8,
+          "name": "Range Finder",
+          "reason": "",
+          "shortcut": "Y",
+          "supported": true,
+          "value": true
+        },
+        {
+          "id": 9,
+          "name": "Equality",
+          "reason": "",
+          "shortcut": "E",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 10,
+          "name": "Inertia",
+          "reason": "",
+          "shortcut": "I",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 11,
+          "name": "Scale Inertia",
+          "reason": "",
+          "shortcut": "'",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 12,
+          "name": "Perturb Force",
+          "reason": "",
+          "shortcut": "B",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 13,
+          "name": "Perturb Object",
+          "reason": "Godot keeps authored surface materials; this MuJoCo surface effect is unavailable",
+          "shortcut": "O",
+          "supported": false,
+          "value": true
+        },
+        {
+          "id": 14,
+          "name": "Contact Point",
+          "reason": "",
+          "shortcut": "C",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 15,
+          "name": "Island",
+          "reason": "Godot keeps authored surface materials; this MuJoCo surface effect is unavailable",
+          "shortcut": "N",
+          "supported": false,
+          "value": false
+        },
+        {
+          "id": 16,
+          "name": "Contact Force",
+          "reason": "",
+          "shortcut": "F",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 17,
+          "name": "Contact Split",
+          "reason": "",
+          "shortcut": "P",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 18,
+          "name": "Transparent",
+          "reason": "Godot keeps authored surface materials; this MuJoCo surface effect is unavailable",
+          "shortcut": "T",
+          "supported": false,
+          "value": false
+        },
+        {
+          "id": 19,
+          "name": "Auto Connect",
+          "reason": "",
+          "shortcut": "A",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 20,
+          "name": "Center of Mass",
+          "reason": "",
+          "shortcut": "M",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 21,
+          "name": "Select Point",
+          "reason": "",
+          "shortcut": "",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 22,
+          "name": "Static Body",
+          "reason": "",
+          "shortcut": "D",
+          "supported": true,
+          "value": true
+        },
+        {
+          "id": 23,
+          "name": "Skin",
+          "reason": "Current rigid model has no flex/skin",
+          "shortcut": ";",
+          "supported": false,
+          "value": true
+        },
+        {
+          "id": 24,
+          "name": "Flex Vert",
+          "reason": "Current rigid model has no flex/skin",
+          "shortcut": "",
+          "supported": false,
+          "value": false
+        },
+        {
+          "id": 25,
+          "name": "Flex Edge",
+          "reason": "Current rigid model has no flex/skin",
+          "shortcut": "",
+          "supported": false,
+          "value": true
+        },
+        {
+          "id": 26,
+          "name": "Flex Face",
+          "reason": "Current rigid model has no flex/skin",
+          "shortcut": "",
+          "supported": false,
+          "value": false
+        },
+        {
+          "id": 27,
+          "name": "Flex Skin",
+          "reason": "Current rigid model has no flex/skin",
+          "shortcut": "",
+          "supported": false,
+          "value": true
+        },
+        {
+          "id": 28,
+          "name": "Body Tree",
+          "reason": "",
+          "shortcut": "`",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 29,
+          "name": "Mesh Tree",
+          "reason": "",
+          "shortcut": "\\",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 30,
+          "name": "SDF iters",
+          "reason": "",
+          "shortcut": "",
+          "supported": true,
+          "value": false
+        }
+      ],
+      "visual": [
+        {
+          "integer": true,
+          "name": "headlight.active",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable",
+          "supported": false,
+          "values": [
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "headlight.ambient",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable",
+          "supported": false,
+          "values": [
+            0.100000001490116,
+            0.100000001490116,
+            0.100000001490116
+          ]
+        },
+        {
+          "integer": false,
+          "name": "headlight.diffuse",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable",
+          "supported": false,
+          "values": [
+            0.400000005960464,
+            0.400000005960464,
+            0.400000005960464
+          ]
+        },
+        {
+          "integer": false,
+          "name": "headlight.specular",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable",
+          "supported": false,
+          "values": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "integer": true,
+          "name": "global.orthographic",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "global.fovy",
+          "reason": "",
+          "supported": true,
+          "values": [
+            45.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "stat.center",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.0999999985098838,
+            0.0,
+            0.95
+          ]
+        },
+        {
+          "integer": false,
+          "name": "global.azimuth",
+          "reason": "",
+          "supported": true,
+          "values": [
+            90.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "global.elevation",
+          "reason": "",
+          "supported": true,
+          "values": [
+            -45.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "stat.extent",
+          "reason": "",
+          "supported": true,
+          "values": [
+            2.9
+          ]
+        },
+        {
+          "integer": true,
+          "name": "global.ellipsoidinertia",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.0
+          ]
+        },
+        {
+          "integer": true,
+          "name": "global.bvactive",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.stiffness",
+          "reason": "",
+          "supported": true,
+          "values": [
+            100.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.stiffnessrot",
+          "reason": "",
+          "supported": true,
+          "values": [
+            500.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.force",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.00499999988824129
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.torque",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.100000001490116
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.alpha",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable",
+          "supported": false,
+          "values": [
+            0.300000011920929
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.fogstart",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable",
+          "supported": false,
+          "values": [
+            3.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.fogend",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable",
+          "supported": false,
+          "values": [
+            10.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.znear",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.00999999977648258
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.zfar",
+          "reason": "",
+          "supported": true,
+          "values": [
+            50.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.haze",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable",
+          "supported": false,
+          "values": [
+            0.300000011920929
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.shadowclip",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable",
+          "supported": false,
+          "values": [
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.shadowscale",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable",
+          "supported": false,
+          "values": [
+            0.600000023841858
+          ]
+        },
+        {
+          "integer": false,
+          "name": "stat.meansize",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.283333334326744
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.forcewidth",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.100000001490116
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.contactwidth",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.300000011920929
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.contactheight",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.100000001490116
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.connect",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.com",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.400000005960464
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.camera",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.300000011920929
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.light",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.300000011920929
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.selectpoint",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.jointlength",
+          "reason": "",
+          "supported": true,
+          "values": [
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.jointwidth",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.100000001490116
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.actuatorlength",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.699999988079071
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.actuatorwidth",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.framelength",
+          "reason": "",
+          "supported": true,
+          "values": [
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.framewidth",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.100000001490116
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.constraint",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.100000001490116
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.slidercrank",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.fog",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable",
+          "supported": false,
+          "values": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.haze",
+          "reason": "Godot keeps its authored lighting/environment; this OpenGL setting is unavailable",
+          "supported": false,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.force",
+          "reason": "",
+          "supported": true,
+          "values": [
+            1.0,
+            0.5,
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.inertia",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.800000011920929,
+            0.200000002980232,
+            0.200000002980232,
+            0.600000023841858
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.joint",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232,
+            0.600000023841858,
+            0.800000011920929,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.actuator",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232,
+            0.25,
+            0.200000002980232,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.actuatornegative",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232,
+            0.600000023841858,
+            0.899999976158142,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.actuatorpositive",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.400000005960464,
+            0.200000002980232,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.com",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.899999976158142,
+            0.899999976158142,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.camera",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.600000023841858,
+            0.899999976158142,
+            0.600000023841858,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.light",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.600000023841858,
+            0.600000023841858,
+            0.899999976158142,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.selectpoint",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.899999976158142,
+            0.100000001490116,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.connect",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232,
+            0.200000002980232,
+            0.800000011920929,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.contactpoint",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.600000023841858,
+            0.200000002980232,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.contactforce",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.699999988079071,
+            0.899999976158142,
+            0.899999976158142,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.contactfriction",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.800000011920929,
+            0.400000005960464,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.contacttorque",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.699999988079071,
+            0.899999976158142,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.contactgap",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.5,
+            0.800000011920929,
+            0.899999976158142,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.rangefinder",
+          "reason": "",
+          "supported": true,
+          "values": [
+            1.0,
+            1.0,
+            0.100000001490116,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.constraint",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.slidercrank",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.5,
+            0.300000011920929,
+            0.800000011920929,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.crankbroken",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.frustum",
+          "reason": "",
+          "supported": true,
+          "values": [
+            1.0,
+            1.0,
+            0.0,
+            0.200000002980232
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.bv",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.0,
+            1.0,
+            0.0,
+            0.5
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.bvactive",
+          "reason": "",
+          "supported": true,
+          "values": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ]
+        }
+      ]
+    },
+    "native": {
+      "backend": "native",
+      "bodies": [
+        {
+          "id": 1,
+          "name": "b395136991234"
+        },
+        {
+          "id": 2,
+          "name": "import_403726925828_ball"
+        },
+        {
+          "id": 3,
+          "name": "import_403726925828_arm"
+        }
+      ],
+      "cameras": [
+        "Free",
+        "Tracking",
+        "import_403726925828_side"
+      ],
+      "frames": [
+        "None",
+        "Body",
+        "Geom",
+        "Site",
+        "Camera",
+        "Light",
+        "Contact",
+        "World"
+      ],
+      "geoms": [
+        {
+          "group": 0,
+          "id": 0,
+          "name": "import_403726925828_ground",
+          "object_id": 44358960649,
+          "owner_rid": "RID(403726925828)"
+        },
+        {
+          "group": 0,
+          "id": 1,
+          "name": "g0",
+          "object_id": 44426069517,
+          "owner_rid": "RID(395136991234)"
+        },
+        {
+          "group": 0,
+          "id": 2,
+          "name": "import_403726925828_ball_geom",
+          "object_id": 44358960649,
+          "owner_rid": "RID(403726925828)"
+        },
+        {
+          "group": 0,
+          "id": 3,
+          "name": "import_403726925828_editor_5_2",
+          "object_id": 44358960649,
+          "owner_rid": "RID(403726925828)"
+        }
+      ],
+      "groups": [
+        {
+          "name": "geom",
+          "supported": true
+        },
+        {
+          "name": "site",
+          "supported": true
+        },
+        {
+          "name": "joint",
+          "supported": true
+        },
+        {
+          "name": "tendon",
+          "supported": true
+        },
+        {
+          "name": "actuator",
+          "supported": true
+        },
+        {
+          "name": "flex",
+          "supported": false
+        },
+        {
+          "name": "skin",
+          "supported": false
+        }
+      ],
+      "image_sensors": [],
+      "keyframe_reason": "No model keyframes. The existing shared-world composition does not accept source models with keyframes; original design data is retained by the editor.",
+      "keyframes": [],
+      "labels": [
+        "None",
+        "Body",
+        "Joint",
+        "Geom",
+        "Site",
+        "Camera",
+        "Light",
+        "Tendon",
+        "Actuator",
+        "Constraint",
+        "Flex",
+        "Skin",
+        "Selection",
+        "Sel Pnt",
+        "Contact",
+        "Force",
+        "Island"
+      ],
+      "nkey": 0,
+      "physics_disable_names": [
+        "Constraint",
+        "Equality",
+        "Frictionloss",
+        "Limit",
+        "Contact",
+        "Spring",
+        "Damper",
+        "Gravity",
+        "Clampctrl",
+        "Warmstart",
+        "Filterparent",
+        "Actuation",
+        "Refsafe",
+        "Sensor",
+        "Midphase",
+        "Eulerdamp",
+        "AutoReset",
+        "NativeCCD",
+        "Island",
+        "MultiCCD"
+      ],
+      "physics_enable_names": [
+        "Override",
+        "Energy",
+        "Fwdinv",
+        "InvDiscrete",
+        "Sleep",
+        "DiagExact",
+        "IPC"
+      ],
+      "rnd": [
+        {
+          "id": 0,
+          "name": "Shadow",
+          "reason": "",
+          "shortcut": "S",
+          "supported": true,
+          "value": true
+        },
+        {
+          "id": 1,
+          "name": "Wireframe",
+          "reason": "",
+          "shortcut": "W",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 2,
+          "name": "Reflection",
+          "reason": "",
+          "shortcut": "R",
+          "supported": true,
+          "value": true
+        },
+        {
+          "id": 3,
+          "name": "Additive",
+          "reason": "",
+          "shortcut": "L",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 4,
+          "name": "Skybox",
+          "reason": "",
+          "shortcut": "K",
+          "supported": true,
+          "value": true
+        },
+        {
+          "id": 5,
+          "name": "Fog",
+          "reason": "",
+          "shortcut": "G",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 6,
+          "name": "Haze",
+          "reason": "",
+          "shortcut": "/",
+          "supported": true,
+          "value": true
+        },
+        {
+          "id": 7,
+          "name": "Depth",
+          "reason": "",
+          "shortcut": "",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 8,
+          "name": "Segment",
+          "reason": "",
+          "shortcut": ",",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 9,
+          "name": "Id Color",
+          "reason": "",
+          "shortcut": "",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 10,
+          "name": "Cull Face",
+          "reason": "",
+          "shortcut": "",
+          "supported": true,
+          "value": true
+        }
+      ],
+      "save_xml_supported": true,
+      "vis": [
+        {
+          "id": 0,
+          "name": "Convex Hull",
+          "reason": "",
+          "shortcut": "H",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 1,
+          "name": "Texture",
+          "reason": "",
+          "shortcut": "X",
+          "supported": true,
+          "value": true
+        },
+        {
+          "id": 2,
+          "name": "Joint",
+          "reason": "",
+          "shortcut": "J",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 3,
+          "name": "Camera",
+          "reason": "",
+          "shortcut": "Q",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 4,
+          "name": "Actuator",
+          "reason": "",
+          "shortcut": "U",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 5,
+          "name": "Activation",
+          "reason": "",
+          "shortcut": ",",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 6,
+          "name": "Light",
+          "reason": "",
+          "shortcut": "Z",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 7,
+          "name": "Tendon",
+          "reason": "",
+          "shortcut": "V",
+          "supported": true,
+          "value": true
+        },
+        {
+          "id": 8,
+          "name": "Range Finder",
+          "reason": "",
+          "shortcut": "Y",
+          "supported": true,
+          "value": true
+        },
+        {
+          "id": 9,
+          "name": "Equality",
+          "reason": "",
+          "shortcut": "E",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 10,
+          "name": "Inertia",
+          "reason": "",
+          "shortcut": "I",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 11,
+          "name": "Scale Inertia",
+          "reason": "",
+          "shortcut": "'",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 12,
+          "name": "Perturb Force",
+          "reason": "",
+          "shortcut": "B",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 13,
+          "name": "Perturb Object",
+          "reason": "",
+          "shortcut": "O",
+          "supported": true,
+          "value": true
+        },
+        {
+          "id": 14,
+          "name": "Contact Point",
+          "reason": "",
+          "shortcut": "C",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 15,
+          "name": "Island",
+          "reason": "",
+          "shortcut": "N",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 16,
+          "name": "Contact Force",
+          "reason": "",
+          "shortcut": "F",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 17,
+          "name": "Contact Split",
+          "reason": "",
+          "shortcut": "P",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 18,
+          "name": "Transparent",
+          "reason": "",
+          "shortcut": "T",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 19,
+          "name": "Auto Connect",
+          "reason": "",
+          "shortcut": "A",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 20,
+          "name": "Center of Mass",
+          "reason": "",
+          "shortcut": "M",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 21,
+          "name": "Select Point",
+          "reason": "",
+          "shortcut": "",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 22,
+          "name": "Static Body",
+          "reason": "",
+          "shortcut": "D",
+          "supported": true,
+          "value": true
+        },
+        {
+          "id": 23,
+          "name": "Skin",
+          "reason": "Current rigid model has no flex/skin",
+          "shortcut": ";",
+          "supported": false,
+          "value": true
+        },
+        {
+          "id": 24,
+          "name": "Flex Vert",
+          "reason": "Current rigid model has no flex/skin",
+          "shortcut": "",
+          "supported": false,
+          "value": false
+        },
+        {
+          "id": 25,
+          "name": "Flex Edge",
+          "reason": "Current rigid model has no flex/skin",
+          "shortcut": "",
+          "supported": false,
+          "value": true
+        },
+        {
+          "id": 26,
+          "name": "Flex Face",
+          "reason": "Current rigid model has no flex/skin",
+          "shortcut": "",
+          "supported": false,
+          "value": false
+        },
+        {
+          "id": 27,
+          "name": "Flex Skin",
+          "reason": "Current rigid model has no flex/skin",
+          "shortcut": "",
+          "supported": false,
+          "value": true
+        },
+        {
+          "id": 28,
+          "name": "Body Tree",
+          "reason": "",
+          "shortcut": "`",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 29,
+          "name": "Mesh Tree",
+          "reason": "",
+          "shortcut": "\\",
+          "supported": true,
+          "value": false
+        },
+        {
+          "id": 30,
+          "name": "SDF iters",
+          "reason": "",
+          "shortcut": "",
+          "supported": true,
+          "value": false
+        }
+      ],
+      "visual": [
+        {
+          "integer": true,
+          "name": "headlight.active",
+          "reason": "",
+          "supported": true,
+          "values": [
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "headlight.ambient",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.100000001490116,
+            0.100000001490116,
+            0.100000001490116
+          ]
+        },
+        {
+          "integer": false,
+          "name": "headlight.diffuse",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.400000005960464,
+            0.400000005960464,
+            0.400000005960464
+          ]
+        },
+        {
+          "integer": false,
+          "name": "headlight.specular",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.5,
+            0.5,
+            0.5
+          ]
+        },
+        {
+          "integer": true,
+          "name": "global.orthographic",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "global.fovy",
+          "reason": "",
+          "supported": true,
+          "values": [
+            45.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "stat.center",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.0999999985098838,
+            0.0,
+            0.95
+          ]
+        },
+        {
+          "integer": false,
+          "name": "global.azimuth",
+          "reason": "",
+          "supported": true,
+          "values": [
+            90.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "global.elevation",
+          "reason": "",
+          "supported": true,
+          "values": [
+            -45.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "stat.extent",
+          "reason": "",
+          "supported": true,
+          "values": [
+            2.9
+          ]
+        },
+        {
+          "integer": true,
+          "name": "global.ellipsoidinertia",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.0
+          ]
+        },
+        {
+          "integer": true,
+          "name": "global.bvactive",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.stiffness",
+          "reason": "",
+          "supported": true,
+          "values": [
+            100.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.stiffnessrot",
+          "reason": "",
+          "supported": true,
+          "values": [
+            500.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.force",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.00499999988824129
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.torque",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.100000001490116
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.alpha",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.300000011920929
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.fogstart",
+          "reason": "",
+          "supported": true,
+          "values": [
+            3.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.fogend",
+          "reason": "",
+          "supported": true,
+          "values": [
+            10.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.znear",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.00999999977648258
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.zfar",
+          "reason": "",
+          "supported": true,
+          "values": [
+            50.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.haze",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.300000011920929
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.shadowclip",
+          "reason": "",
+          "supported": true,
+          "values": [
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "map.shadowscale",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.600000023841858
+          ]
+        },
+        {
+          "integer": false,
+          "name": "stat.meansize",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.283333334326744
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.forcewidth",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.100000001490116
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.contactwidth",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.300000011920929
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.contactheight",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.100000001490116
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.connect",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.com",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.400000005960464
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.camera",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.300000011920929
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.light",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.300000011920929
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.selectpoint",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.jointlength",
+          "reason": "",
+          "supported": true,
+          "values": [
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.jointwidth",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.100000001490116
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.actuatorlength",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.699999988079071
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.actuatorwidth",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.framelength",
+          "reason": "",
+          "supported": true,
+          "values": [
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.framewidth",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.100000001490116
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.constraint",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.100000001490116
+          ]
+        },
+        {
+          "integer": false,
+          "name": "scale.slidercrank",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.fog",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.haze",
+          "reason": "",
+          "supported": true,
+          "values": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.force",
+          "reason": "",
+          "supported": true,
+          "values": [
+            1.0,
+            0.5,
+            0.5,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.inertia",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.800000011920929,
+            0.200000002980232,
+            0.200000002980232,
+            0.600000023841858
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.joint",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232,
+            0.600000023841858,
+            0.800000011920929,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.actuator",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232,
+            0.25,
+            0.200000002980232,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.actuatornegative",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232,
+            0.600000023841858,
+            0.899999976158142,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.actuatorpositive",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.400000005960464,
+            0.200000002980232,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.com",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.899999976158142,
+            0.899999976158142,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.camera",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.600000023841858,
+            0.899999976158142,
+            0.600000023841858,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.light",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.600000023841858,
+            0.600000023841858,
+            0.899999976158142,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.selectpoint",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.899999976158142,
+            0.100000001490116,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.connect",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.200000002980232,
+            0.200000002980232,
+            0.800000011920929,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.contactpoint",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.600000023841858,
+            0.200000002980232,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.contactforce",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.699999988079071,
+            0.899999976158142,
+            0.899999976158142,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.contactfriction",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.800000011920929,
+            0.400000005960464,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.contacttorque",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.699999988079071,
+            0.899999976158142,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.contactgap",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.5,
+            0.800000011920929,
+            0.899999976158142,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.rangefinder",
+          "reason": "",
+          "supported": true,
+          "values": [
+            1.0,
+            1.0,
+            0.100000001490116,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.constraint",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.slidercrank",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.5,
+            0.300000011920929,
+            0.800000011920929,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.crankbroken",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.899999976158142,
+            0.0,
+            0.0,
+            1.0
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.frustum",
+          "reason": "",
+          "supported": true,
+          "values": [
+            1.0,
+            1.0,
+            0.0,
+            0.200000002980232
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.bv",
+          "reason": "",
+          "supported": true,
+          "values": [
+            0.0,
+            1.0,
+            0.0,
+            0.5
+          ]
+        },
+        {
+          "integer": false,
+          "name": "rgba.bvactive",
+          "reason": "",
+          "supported": true,
+          "values": [
+            1.0,
+            0.0,
+            0.0,
+            0.5
+          ]
+        }
+      ]
+    }
+  },
+  "late_verification": {
+    "native_bindings_passed": 108,
+    "godot_gl_off_bindings_passed": 105,
+    "failed": 0,
+    "record": "runtime-panels-validation-2026-10-30.json#focused_bindings",
+    "note": "Real text-popup F11 and model/world lifetime tests; static upstream inventory unchanged."
+  }
+}

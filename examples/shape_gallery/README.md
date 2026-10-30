@@ -21,12 +21,12 @@
 
 1. 启动 **Godot 4.7.2 .NET 项目管理器**，点击 **导入（Import）**，选择当前仓库里的 **examples/shape_gallery/project.godot**，点击 **导入并编辑**。
 2. 等待首次资源导入完成，点击 **运行项目**（F5）。主场景已经配置为 **Main.tscn**，模型包、相机、天空、地面和运行控件均已保存。
-3. 在运行画面右上角勾选 **实体 / 碰撞**，点击 **暂停 / 继续**、**重置** 或 **说明 / 帮助**。
+3. Tab / Shift+Tab 开关原版左右面板，Rendering / Group enable 调整运行显示。F1 帮助、F2 MuJoCo Info；Space 暂停 / 继续、Backspace 初始重置。**F11** 仅提供 Godot 渲染选择、独立 FPS/系统性能、工具和示例扩展。
 4. 点击编辑器的 **停止**（F8）返回。修改场景后点击 **保存场景**（Ctrl+S），下次直接从项目管理器重开。
 
 无需复制项目或 addons，无需运行 prepare.gd。保持完整仓库目录结构，共享插件通过相对链接连接。项目已经配置 MuJoCo 后端、编辑插件和 GL Compatibility。需要从源模型练习导入时，在右侧 **MuJoCo → MJCF 文档** 展开 **文档 / 导入 / 发布**，开启草稿显示，再点击 **Import MJCF** 选择 **assets/gallery.xml**。
 
-编辑器保留一个原生 3D 视图；`MuJoCo 显示` 菜单独立勾选实体与碰撞网格，属性在右侧。运行场景顶部提供紧凑的实体/碰撞开关、暂停/继续、重置及“说明 / 帮助”。帮助默认收起，点击可展开，再次点击或用“收起说明”关闭；不绑定相机快捷键。打开或关闭帮助不改变物理状态，重开场景恢复默认收起。此运行 UI 由 `gallery.gd` 在 CanvasLayer 内动态创建，与编辑器右侧属性 dock 无关。切换四种显示组合不改变碰撞参与或视觉材质。橙色边线为碰撞表示，非实心替换材质。编辑真实节点使用 Godot 原生变换轴；未应用草稿仅提供可靠的右侧数值编辑，不绘制伪可拖动轴。
+编辑器继续使用 Godot 3D 视图、变换轴和右侧属性，`MuJoCo 显示` 菜单管理编辑显示。游戏使用共享 MuJoCo 相机、拾取和扰动逻辑；初始视角沿用活动场景相机，Ctrl+A 切换模型默认取景。Godot 和 MuJoCo 原生后端使用相同原版面板和快捷键；F11 仅为附加功能，显隐不会暂停。`gallery.gd` 只提供网格材质和示例说明，不再创建旧工具条。操作、后端限制见[运行查看器](../../addons/godot_mujoco/viewer/README.md)。
 
 ## 开发者：重新生成与验收
 
@@ -46,4 +46,4 @@ GODOT_BIN="$GODOT_BIN" OUT=/tmp/gmj-gallery-check bash tests/shape_gallery/run.s
 
 默认间距 **1 m**、线宽 **0.015 m**，深灰基底和低对比灰线。在 Main 场景选中 `DisplayControls`，修改 `grid_spacing_m`（0.1–10 m）和 `grid_line_width_m`（0.001–0.1 m）后保存即可。世界坐标使间距不依赖盒体 UV 或缩放；不是屏幕像素间距。地板底色继续读取 MJCF RGBA。示例脚本缓存一个 ShaderMaterial，编辑器和 runtime 重建视觉后重用它，只匹配本示例模型的 `floor_geom`，不改变通用模型渲染代码。
 
-头部控制条保留必要操作，长技术说明与素材归属在本文及 SOURCES 中。自动测试验证帮助默认隐藏与重复开关、暂停/重置、四种显隐、网格配置不改几何/物理、保存重开，以及编辑器/runtime 重建后的材质复用。网格视觉、字体和窗口缩放的最终效果仍由实际 GUI 验收确认。
+网格设置保留在编辑器，示例运行说明移至 F1 帮助。`tests/shape_gallery` 检查网格与物理保留、共享显示和场景重开；统一交互及 F5 后端另由 `tests/runtime_viewer/run.py`、`tests/native_view/run.py` 验证。

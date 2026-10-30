@@ -43,6 +43,8 @@ jobs:
         run: bash scripts/setup.sh check --mujoco-root "$GITHUB_WORKSPACE/build-linux/_deps/mujoco-src" --build-dir "$RUNNER_TEMP/gmj-sdk-check"
       - name: Strict isolated lightweight smoke
         run: bash scripts/setup.sh smoke --out "$GITHUB_WORKSPACE/evidence/smoke"
+      - name: Shared runtime viewer without native GL
+        run: python3 tests/runtime_viewer/run.py --godot "$GODOT_BIN" --headless --out "$GITHUB_WORKSPACE/evidence/runtime-viewer"
       - name: Node authoring and live editor acceptance
         run: xvfb-run -a python3 tests/node_authoring/run.py --godot "$GODOT_BIN" --out "$GITHUB_WORKSPACE/evidence/node-authoring"
       - name: Preserve outcomes and logs, including initialization failures
@@ -54,4 +56,5 @@ jobs:
             evidence/
             !evidence/smoke/project/
             !evidence/node-authoring/project/
+            !evidence/runtime-viewer/project/
           if-no-files-found: warn

@@ -33,6 +33,7 @@ var last_scene: Node
 func _enter_tree() -> void:
 	if not ClassDB.class_exists("MjEditorDocument"): return
 	preload("res://addons/godot_mujoco/model/collision_settings.gd").register_project_settings()
+	preload("res://addons/godot_mujoco/native_view/settings.gd").register_project_settings()
 	set_input_event_forwarding_always_enabled()
 	EditorInterface.get_base_control().set_meta("mujoco_author_plugin", self)
 	author_gizmo = preload("author_gizmo.gd").new(); add_node_3d_gizmo_plugin(author_gizmo)
@@ -431,7 +432,7 @@ func run_author_test() -> void:
 	if script:
 		var runner = script.new(); EditorInterface.get_base_control().set_meta("mj_author_test", runner); runner.run(self)
 
-func execute_game_design(world: Node, command: Dictionary) -> Dictionary:
+func execute_editor_design(world: Node, command: Dictionary) -> Dictionary:
 	if not world: return {"success":false, "error":"没有匹配的编辑器场景。"}
 	var operation: String = command.get("op", "")
 	if operation == "duplicate_model":
@@ -447,7 +448,7 @@ func execute_game_design(world: Node, command: Dictionary) -> Dictionary:
 		if command.get("pose") is Transform3D: copy.transform = source.get_parent().global_transform.affine_inverse() * command.pose
 		else: copy.position.x += 2.0
 		var undo := get_undo_redo()
-		undo.create_action("复制模型（游戏按钮）", UndoRedo.MERGE_DISABLE, world)
+		undo.create_action("复制模型", UndoRedo.MERGE_DISABLE, world)
 		undo.add_do_method(self, "attach_author_node", source.get_parent(), copy)
 		undo.add_undo_method(source.get_parent(), "remove_child", copy)
 		undo.add_do_reference(copy)
@@ -466,7 +467,7 @@ func execute_game_design(world: Node, command: Dictionary) -> Dictionary:
 		var error: String = data.validate()
 		if not error.is_empty(): return {"success":false, "error":error}
 		var undo := get_undo_redo()
-		undo.create_action("编辑地形（游戏按钮）", UndoRedo.MERGE_DISABLE, target)
+		undo.create_action("编辑地形", UndoRedo.MERGE_DISABLE, target)
 		undo.add_do_property(target, "design", data)
 		undo.add_undo_property(target, "design", target.design)
 		undo.commit_action()

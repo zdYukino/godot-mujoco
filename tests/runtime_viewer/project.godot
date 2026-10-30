@@ -1,0 +1,12 @@
+config_version=5
+[application]
+config/name="MuJoCo Runtime Viewer Acceptance"
+[display]
+window/size/viewport_width=1100
+window/size/viewport_height=760
+[physics]
+3d/physics_engine="MuJoCo"
+[rendering]
+renderer/rendering_method="gl_compatibility"
+[audio]
+driver/driver="Dummy"

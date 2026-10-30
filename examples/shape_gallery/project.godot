@@ -34,3 +34,4 @@ enabled=PackedStringArray("res://addons/mujoco_editor/plugin.cfg")
 [rendering]
 
 renderer/rendering_method="gl_compatibility"
+mujoco_native_view/renderer=0

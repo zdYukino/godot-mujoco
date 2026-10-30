@@ -15,7 +15,7 @@ func run() -> void:
 	var controls=scene.get_node("DisplayControls")
 	var model=scene.get_node("Model")
 	var material=controls.grid_material
-	check(material is ShaderMaterial and controls.help_panel==null,"editor has grid without runtime help or control overlay")
+	check(material is ShaderMaterial and scene.runtime_viewer==null,"editor has grid without runtime viewer")
 	check(model.visuals.values().filter(func(mesh): return mesh.material_override==material).size()==1,"editor grid affects only existing floor mesh")
 	model.show_editor_preview()
 	for i in 5: await get_tree().process_frame

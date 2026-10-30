@@ -58,10 +58,10 @@ static func playground(environment: PackedScene) -> Control:
 	host.size_flags_vertical=Control.SIZE_EXPAND_FILL
 	host.custom_minimum_size=Vector2(640,480)
 	root.add_child(host);host.owner=root
+	# Retain the named controller API for saved scenes; its legacy UI is hidden.
 	var controls := preload("simulation_controls.gd").new()
 	controls.name="SimulationControls"
 	controls.environment_host=host
-	controls.custom_minimum_size.x=360
 	root.add_child(controls);controls.owner=root
 	return root
 

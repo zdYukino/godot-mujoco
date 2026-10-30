@@ -13,7 +13,6 @@ public partial class LightWorkflow : Node
     private Node3D environment=null!;
     private Label status=null!;
     private HSlider control=null!;
-    private Button designButton=null!;
     private readonly List<Button> buttons=new();
     private string message="初始化…";
     private bool busy=true;
@@ -46,24 +45,27 @@ public partial class LightWorkflow : Node
             second=InstanceHandle.Bind(environment.GetNode("Second")).Value;
             terrain=TerrainHandle.Bind(environment.GetNode("Terrain")).Value;
             while(world.Read().Value.PendingRequest!=0)await Frames();
-            var canvas=new CanvasLayer();AddChild(canvas);var column=new VBoxContainer{Position=new Vector2(16,16)};canvas.AddChild(column);
+            var column=new VBoxContainer();
             status=new Label();column.AddChild(status);
-            var row=new HBoxContainer();column.AddChild(row);
-            Button(row,"暂停 / 继续",()=>world.Pause(!world.Read().Value.Paused));
-            Button(row,"精确步进 100",()=>world.Step(100));Button(row,"记录复位点",()=>world.Capture());
-            Button(row,"重置仿真",()=>world.Reset());
-            designButton=new Button{Text="抬高地形角点"};row.AddChild(designButton);
-            designButton.Pressed+=()=>{
-                var request=environment.Call("request_editor_design",new Godot.Collections.Dictionary{
-                    {"op","terrain_update"},{"path","Terrain"},{"index",0},{"delta",.1}}).AsInt64();
-                message=request==0?"设计修改需要连接对应编辑器场景":"已请求编辑器修改，后台重建后手动继续";
-            };
+            var viewer=environment.Get("runtime_viewer").AsGodotObject() as Node;
+            if(viewer==null)throw new InvalidOperationException("RuntimeViewer unavailable");
+            viewer.Call("register_extension","light_workflow","轻量模型驱动",column,
+                "两个固定基座轻量模型反向控制。全局仿真操作使用原版 Simulation 面板；F11 仅为 Godot 附加功能，精确步进位于 Tools；关节目标仅改变运行控制，地形设计请在 Godot 编辑器修改。");
+            viewer.Connect("world_changed",Callable.From<Node>(RebindWorld));
             column.AddChild(new Label{Text="关节目标（弧度）：两个固定基座轻量模型反向控制；重置不撤销地形设计。"});
             control=new HSlider{MinValue=-.7,MaxValue=.7,Step=.05,CustomMinimumSize=new Vector2(500,24)};column.AddChild(control);
             control.ValueChanged+=value=>SetControl(value);
             busy=false;
             if(OS.GetCmdlineUserArgs().Contains("--self-test"))await SelfTest();
         }catch(Exception error){GD.PrintErr("LIGHT_WORKFLOW_FAIL ",error);GetTree().Quit(1);}
+    }
+    private void RebindWorld(Node node) {
+        world?.Dispose();first?.Dispose();second?.Dispose();terrain?.Dispose();
+        environment=(Node3D)node;
+        world=WorldHandle.Bind(environment).Value;
+        first=InstanceHandle.Bind(environment.GetNode("First")).Value;
+        second=InstanceHandle.Bind(environment.GetNode("Second")).Value;
+        terrain=TerrainHandle.Bind(environment.GetNode("Terrain")).Value;
     }
     private void SetControl(double value) {
         var a=first!.SetControl("drive",value);var b=second!.SetControl("drive",-value);
@@ -74,13 +76,23 @@ public partial class LightWorkflow : Node
         var state=world.Read();if(!state.Success)return;
         status.Text=$"time={state.Value.Time:F3}s paused={state.Value.Paused} contacts={state.Value.Contacts}\n{message}";
         foreach(var button in buttons)button.Disabled=busy;
-        designButton.Disabled=busy||!environment.Get("editor_connected").AsBool()||environment.Call("info").AsGodotDictionary()["design_pending"].AsBool();
         control.Editable=!busy;
         if(!busy && first!=null) { var snapshot=first.Read(); if(snapshot.Success)control.SetValueNoSignal(snapshot.Value.Controls["drive"]); }
     }
     private async Task SelfTest() {
         int checks=0;
         void Check(bool ok,string label){if(!ok)throw new Exception(label);checks++;GD.Print("PASS ",label);}
+        if(DisplayServer.GetName()!="headless") {
+            GetTree().Root.GrabFocus();DisplayServer.WindowSetVsyncMode(DisplayServer.VSyncMode.Disabled);
+            if(ProjectSettings.GetSetting("rendering/mujoco_native_view/renderer",-1).AsInt32()==1) {
+                var deadline=Time.GetTicksMsec()+30000;
+                while(!environment.Get("native_view_active").AsBool()&&Time.GetTicksMsec()<deadline)await Frames();
+                Check(environment.Get("native_view_active").AsBool(),"real native renderer active");
+                var view=(Node)environment.Get("native_view").AsGodotObject();
+                var render=view.Get("latest").AsGodotDictionary();
+                Check(render["authoritative_scene"].AsBool()&&render["bridge_step_calls"].AsInt64()==0&&render["gl_errors"].AsInt64()==0,"native rendering does not add physics steps");
+            }
+        }
         Check(world!.Read().Value.Paused && terrain!.Read().Value.Active,"initialized paused composite world");
         SetControl(.5);await Finish(world.Step(100));
         Check(Math.Abs(world.Read().Value.Time-.2)<1e-9,"exact typed steps");

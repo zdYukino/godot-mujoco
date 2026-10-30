@@ -1,0 +1,36 @@
+<mujoco model="GodotPhysicsSpace">
+  <compiler angle="radian" />
+
+  <default>
+    <default class="import_403726925828_main" />
+  </default>
+
+  <worldbody>
+    <body name="b395136991234" pos="-1 0 2">
+      <joint name="native_joint_395136991234" type="free" />
+      <geom name="g0" size="0.2" mass="2" />
+    </body>
+    <geom name="import_403726925828_ground" size="5 5 0.1" type="plane" />
+    <camera name="import_403726925828_side" quat="0.773342 0.633989 0 0" pos="0 -6 3" />
+    <body name="import_403726925828_ball" pos="0 0 2">
+      <joint name="import_403726925828_root" type="free" />
+      <geom name="import_403726925828_ball_geom" size="0.25" mass="2" />
+    </body>
+    <body name="import_403726925828_arm" pos="1 0 2">
+      <joint name="import_403726925828_hinge" range="-1 1" />
+      <geom name="import_403726925828_editor_5_2" size="0.1 0.3" type="capsule" mass="1" />
+    </body>
+  <camera pos="0.000 -5.000 2.000" xyaxes="1.000 0.000 -0.000 0.000 0.000 1.000" name="runtime_reference" fovy="74.9999989755345" /></worldbody>
+
+  <equality>
+    <weld name="import_403726925828_hold" body1="import_403726925828_ball" relpose="0 0 -2 1 0 0 0" active="false" />
+  </equality>
+
+  <actuator>
+    <general name="import_403726925828_drive" joint="import_403726925828_hinge" ctrlrange="-1 1" ctrllimited="true" input="pos" biastype="affine" gainprm="10" biasprm="0 -10" />
+  </actuator>
+
+  <sensor>
+    <jointpos joint="import_403726925828_hinge" name="import_403726925828_joint_position" />
+  </sensor>
+<visual><map znear="0.017241379567261416" zfar="1379.3103448275863" /></visual></mujoco>

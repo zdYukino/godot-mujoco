@@ -34,6 +34,7 @@ struct GmjBenchmarkTimer {
 };
 #endif
 struct MjAsyncCandidate;
+struct MjViewerState;
 class MjPhysicsServer3D;
 class MjDirectBodyState;
 class MjDirectSpaceState;
@@ -86,6 +87,8 @@ struct MjArea {
  Callable body_callback, area_callback; std::set<MjAreaPair> reported;
 };
 struct MjSpace {
+ std::shared_ptr<MjViewerState> viewer;
+ double viewer_speed=1.0;
  bool authoring=false, preparing_source=false, design_blocked=false, author_initializing=true;
  uint64_t design_revision=0, committed_design_revision=0;
  std::set<uint64_t> author_reset_bodies;
@@ -99,6 +102,9 @@ struct MjSpace {
  int64_t pending_step_request=0;
  Dictionary born_state, checkpoint; int single_steps=0; bool skip_tick=false;
  bool authored_options=false; mjOption options{};
+ // Canonical XML of this committed design, independent of MuJoCo's process-global
+ // last-XML slot (other worlds/background compilers may replace that slot).
+ String compiled_xml;
  std::map<uint64_t,std::unique_ptr<MjImported>> imported;
  RID rid; bool active=false, dirty=true; mjModel *model=nullptr; mjData *data=nullptr;
  MjDirectSpaceState *direct=nullptr; Vector3 gravity_direction=Vector3(0,-1,0); double gravity=9.8;
@@ -140,8 +146,16 @@ public:
  bool scene_remove(const RID &space, const RID &object);
  Array scene_collision_stats(const RID &space) const;
  Dictionary scene_info(const RID &space) const;
+ int64_t scene_viewer_request(const RID &space,int64_t revision,int64_t frame,int64_t sequence,const Dictionary &command);
+ Dictionary scene_viewer_frame(const RID &space,int64_t known_revision,const Dictionary &options);
+ bool scene_viewer_ack(const RID &space,int64_t revision,int64_t frame);
+ void process_viewer_commands();
+ struct ViewerCommand {int64_t request,revision,frame,sequence;RID space;Dictionary command;
+  ViewerCommand &operator=(const ViewerCommand &) = default;
+ };
+ std::deque<ViewerCommand> viewer_commands;
 #ifdef GMJ_NATIVE_VIEW_EXPERIMENTAL
- Dictionary scene_native_view_snapshot(const RID &space, int64_t known_revision, bool include_model=true) const;
+ Dictionary scene_native_view_snapshot(const RID &space, int64_t known_revision, bool include_model=true, const Dictionary &viewer_options=Dictionary()) const;
 #endif
 #ifdef GMJ_VIEWER_BENCHMARK
  Dictionary scene_benchmark(const RID &space, const String &action, const Dictionary &payload);

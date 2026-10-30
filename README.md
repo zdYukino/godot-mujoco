@@ -127,12 +127,67 @@ godot-mujoco/
 
 保持仓库目录结构完整，以便例程使用共享插件和素材。五个图形例程均使用共享 MuJoCo 物理后端和可保存的作者场景；轻量例程需要正常构建 C#。独立 MjWorld 保留为 API 与诊断入口。G1 没有站立或行走控制，倒地是预期行为；多机器人热添加仍有[已知限制](examples/g1_passive/README.md)。
 
+## F5 选择 Godot 或 MuJoCo 原生渲染
+
+在 **右侧 MuJoCo 面板顶部 → F5 渲染** 下拉框中选择 **Godot** 或 **MuJoCo 原生**。也可使用 **3D 视图顶部 → MuJoCo 显示 → F5 渲染** 菜单。选择会保存到当前工程的 `project.godot`，下次 F5 生效；切换后需停止并重新运行。编辑视图始终由 Godot 绘制。运行浮窗（F11）的状态会标明实际使用的渲染方式；原生启动失败时保留 Godot 画面并显示回退原因。
+
+`shape_gallery` 预选 MuJoCo 原生；尚未构建原生桥时会回退到 Godot，也可在工具栏中明确选择 Godot。其他工程未设置时沿用场景默认值。
+
+G1 的原生模型传输超过默认 64 MiB；需要原生显示时，在项目设置中将 `rendering/mujoco_native_view/max_model_mib` 显式设为 192。默认限额下会回退 Godot，并保留共享操作。
+
+原生渲染需要先构建一次原生桥。关闭已打开的编辑器，安装 OpenGL / X11 开发库（Ubuntu：`sudo apt install libgl-dev libx11-dev`），然后在仓库根目录运行：
+
+```bash
+cmake -S . -B build-linux -DGMJ_NATIVE_VIEW_EXPERIMENTAL=ON
+cmake --build build-linux --parallel 2
+./em_run.sh --exp shape_gallery
+```
+
+重新打开编辑器后即可选择 **MuJoCo 原生**。缺少原生库、使用非 X11 会话、非 Compatibility 渲染或物理独立线程时，该选项会禁用，悬停可查看原因。项目选择保存在 `rendering/mujoco_native_view/renderer`：`0` 为 Godot，`1` 为 MuJoCo；未设置时保持原有场景默认值。项目选择优先于旧的场景实验属性。
+
+两种画面使用**同一个 MuJoCo 物理世界**，切换渲染方式不会改变碰撞算法、时间步或物理精度。
+
+| 对比 | Godot 渲染 | MuJoCo 原生渲染 |
+|---|---|---|
+| 画面来源 | 将模型转换为 Godot Mesh，再由 Godot 绘制 | 用 MuJoCo `mjv` / `mjr` 生成画面，通过 GPU 纹理显示在 Godot 中 |
+| 优势 | 保留 Godot 材质、HDR 环境、网格地板、灯光及自定义 Shader；适合游戏和场景表现 | 使用 MuJoCo 模型的原生显示方式，减少模型节点姿态同步；适合检查 MuJoCo 模型外观 |
+| 视觉差别 | 保留 Godot 材质与灯光 | 使用 MuJoCo 材质与灯光；不绘制 Godot 天空、地板 Shader 或自定义 3D 特效。两者共用相机与交互状态 |
+| 运行操作 | 共享 MuJoCo 相机、选择、跟踪、施力与暂停姿态操作 | 同一共享控制器，调用官方 `mjv_*` API；操作真实仿真数据 |
+| 仿真控制 / UI | Tab / Shift+Tab 原版左右面板，F1–F4 原版叠加；F11 仅 Godot 附加功能 | 使用同一套面板和快捷键；Godot 控件适配 simulate，F2 Info 与 Godot 性能独立 |
+| 显示与诊断 | 官方相机与诊断图元转换为 Godot 显示；不支持的表面效果明确禁用 | 公共 CPU 场景直接交给 MuJoCo 绘制，包括真实接触诊断；支持项遵守刚体与资源限制 |
+| 性能取舍 | 有节点同步和 Godot 绘制成本 | 有版本化模型快照、公共 CPU 场景、GLX 上下文切换和 GPU 同步成本；**不能据此保证更快**，需针对实际场景测量 |
+| 平台与成熟度 | 常规显示路径，沿用现有插件支持范围 | 实验功能；目前限 Linux x86_64、X11、OpenGL、单个主运行窗口、主线程物理；有模型与内存预算 |
+
+普通 GPU 纹理合成使用仓库锁定的官方 Godot，无需替换引擎。编辑器开关不启用“直出屏幕”；后者仍需[自定义 Godot 补丁](docs/development/native-view-r17/README.md)。原生视图仍有设备故障恢复、平台和模型资源限制，详见[原生视图说明](addons/godot_mujoco/native_view/README.md)。
+
+下图为同一 `shape_gallery` 的 F5 实拍；两种渲染共用交互和初始相机，材质与灯光不同，不作为性能比较：
+
+| Godot | MuJoCo 原生 |
+|---|---|
+| [![Godot F5 画面](docs/pics/f5-renderer-godot.png)](docs/pics/f5-renderer-godot.png) | [![MuJoCo 原生 F5 画面](docs/pics/f5-renderer-native.png)](docs/pics/f5-renderer-native.png) |
+
+## 统一运行操作与性能显示
+
+两种渲染均使用 MuJoCo 3.16 的相机、拾取和扰动 API，并按原版 simulate 组织左右面板。**Tab** 显隐左侧原版菜单，**Shift+Tab** 显隐右侧 Joint / Control / Equality；Alt+分组字母折叠对应组。**F1 / F2 / F3 / F4** 分别开关原版 Help / Info / Profiler / Sensors 叠加。**F11** 仅打开可拖动、缩放的 **Godot 附加功能**浮窗，提供渲染后端、FPS/系统性能、示例扩展和附加工具。菜单显隐不暂停仿真；编辑器原有操作不变。
+
+- 左拖旋转、右拖平移、中键 / 滚轮缩放，Shift 调整方向，Alt 交换左右键。左双击选择，PageUp 选择父级，右双击居中，Ctrl+右双击跟踪。
+- Ctrl+左拖施加旋转扰动、Ctrl+右拖平移扰动；运行时施力，暂停时按 MuJoCo 的自由关节 / mocap 规则调整姿态。松键、失焦或打开浮窗会取消扰动。
+- Space 暂停 / 继续；← 后退历史，→ 前进历史或单步；`-` / `=` 调整 0.1%～100% 速度；`[` / `]` 固定相机，Esc 自由相机。F6/F7 循环坐标系 / 标签，原生反引号 Body Tree 保留。F11 内 Tab / Shift+Tab 移动控件焦点；文本编辑优先消费按键。
+- Backspace 回到设计初始状态、时间归零；手动记录 / 恢复快照独立，不改变初始重置。Ctrl+L 事务式重载最后保存的设计，失败保留当前世界。旧 `reset_simulation()` 保留 checkpoint 兼容语义，新代码可用 `reset_initial()` / `restore_snapshot()`。
+- Ctrl+C / Ctrl+Shift+C 复制状态；Ctrl+M/D/P 输出模型 / 数据 / 含 UI 的截图，默认保存到 `user://mujoco_viewer/` 时间戳目录；Ctrl+Q 退出运行。F5 全屏适用于独立运行，嵌入式 GameView 提示编辑器管理限制；F8–F10 保留 Godot 调试操作。
+
+Godot 性能叠加首次默认只显示 **FPS**，由 F11 → Performance 独立控制；**F2 只控制 MuJoCo Info**，与 FPS/系统性能开关互不影响。所有性能指标包括 FPS 都可关闭。可选 CPU / 内存 / GPU / 显存采用**整机 / 整卡**口径，GPU 采样必须匹配实际渲染设备；不可用时明确禁用。CPU/GPU 毫秒耗时单独标注。原生帧更新率与 Godot 宿主 FPS 分开显示。信息约 5 Hz 刷新，系统占用约 1 Hz 采样，偏好保存在各项目的 `user://`。
+
+原版 File 提供 XML / MJB 保存和模型/数据文本输出；Simulation 提供关键帧、控制噪声、线程数和历史拖动。关键帧控件按模型能力启用；当前共享世界组合仍不接受含 keyframe 的来源模型，界面会明确说明。Physics 设计参数保持只读；Busy Wait 由 Godot 主循环管理，因此禁用并解释限制。面板采用 Godot 控件适配固定版本定义，原生渲染仍通过 `mjr_render` 绘制三维画面。所有示例、模板与生成的 playground 自动接入，示例专用运行控件位于 F11 → Examples，精确 N 步和手动快照位于 F11 → Tools。完整能力、C# 接口、资源预算及验收方法见[运行查看器说明](addons/godot_mujoco/viewer/README.md)。
+
+[本次验收记录](docs/development/runtime-viewer-validation-2026-10-30.json)包含双后端、原生 GL 关闭构建、F5、示例与重载检查，以及关闭叠加 / 仅 FPS / 全部指标 / 分析图表四种配置的 p50/p95 帧耗时和内存样本。限帧测试不能用于证明哪种后端更快。原版面板与 F11 拆分的新一轮验收另见[界面对照](docs/development/mujoco-simulate-ui-parity.md)和[验收记录](docs/development/runtime-panels-validation-2026-10-30.json)。
+
 ## 导入模型并运行
 
 1. 打开并保存 3D 场景，在右侧 **MuJoCo → MJCF 层级模型** 点击 **载入 MJCF**，选择 `.xml`。
 2. 模型自动成为正式场景树中的 body / geom / joint 层级。选择节点，在 Godot Inspector 修改参数，用原生 Gizmo 移动、旋转；Ctrl+D 复制，Ctrl+Z 撤销。
 3. Ctrl+S 保存场景。后台验证成功后按 F5；未完成模型也可保存，当前无效设计禁止运行。
-4. F5 期间编辑本地设计会自动暂停实际物理，后台编译整个世界并原子提交；成功后手动继续。游戏设计按钮也修改同一个编辑器场景，可以撤销和保存。
+4. F5 期间编辑本地设计会自动暂停实际物理，后台编译整个世界并原子提交；成功后手动继续。增删模型、地形等设计操作在编辑器执行；运行窗口只修改仿真状态，不回写设计。
 
 原始 MJCF 及依赖只读，项目保存副本和完整 XML 作者树。模型导入仅接受 MJCF XML；旧模型包、自动转换和升级入口已移除。详见 [层级节点编辑指南](docs/node-authoring.zh-CN.md)。
 

@@ -1,6 +1,8 @@
 #include "mj_load_trace.h"
 #include "mj_state_transfer.h"
+#include "mj_assets.h"
 #include "mj_physics_server.h"
+#include "../viewer/mj_runtime_viewer.h"
 #include <godot_cpp/variant/utility_functions.hpp>
 #include <algorithm>
 #include <cmath>
@@ -348,6 +350,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
   const mjtObj kinds[]={mjOBJ_GEOM,mjOBJ_JOINT,mjOBJ_ACTUATOR,mjOBJ_EQUALITY,mjOBJ_TENDON,mjOBJ_SENSOR};const char*keys[]={"geom","joint","actuator","equality","tendon","sensor"};const mjtSize sizes[]={model->ngeom,model->njnt,model->nu,model->neq,model->ntendon,model->nsensor};
   for(int k=0;k<6;++k){int found=0;for(int i=0;i<sizes[k];++i){const char*n=mj_id2name(model,kinds[k],i);if(n&&std::string(n).rfind(o.prefix,0)==0)++found;}if(found!=int(counts[keys[k]])){s.last_error="Composition changed model element count: "+String(keys[k]);mj_deleteModel(model);mj_deleteSpec(spec);return false;}}
  }
+ String compiled_xml=gmj_spec_xml(spec);
  gmj_load_trace::mark("rebuild.spec_delete_begin");mj_deleteSpec(spec);gmj_load_trace::mark("rebuild.make_data_begin",model->narena,model->nbuffer);mjData *data=mj_makeData(model);gmj_load_trace::mark("rebuild.make_data_end");
  if(!data){mj_deleteModel(model);s.last_error="Could not allocate candidate data";return false;}
  // Initialize new bounded joints inside their URDF limits, with matching targets.
@@ -412,7 +415,7 @@ bool MjPhysicsServer3D::rebuild(MjSpace&s,const Dictionary&control_overrides,boo
  }
  s.query_sdf_fields.clear();
  gmj_load_trace::mark("rebuild.old_delete_begin");if(s.data)mj_deleteData(s.data);if(s.model)mj_deleteModel(s.model);gmj_load_trace::mark("rebuild.old_delete_end");
- s.model=model;s.data=data;s.geom_owners=std::move(mapped);s.imported_query_owners=std::move(imported_query_owners);s.dirty=false;s.last_error="";++s.revision;
+ s.model=model;s.data=data;s.compiled_xml=compiled_xml;s.geom_owners=std::move(mapped);s.imported_query_owners=std::move(imported_query_owners);s.dirty=false;s.last_error="";++s.revision;
  for(auto &entry:bodies)if(entry.second->space==s.rid)entry.second->contacts.clear();
  for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s.rid)continue;std::string name="b"+std::to_string(b.rid.get_id());b.mj_body=mj_name2id(model,mjOBJ_BODY,name.c_str());if(!validate_dynamics)write_body(b);}
  // Validated transactions commit exactly the data already checked above.
@@ -462,16 +465,17 @@ void MjPhysicsServer3D::_step(float dt){
  for(auto &entry:bodies)entry.second->contacts.clear();
  process_heightfields();
  process_control_commits();
+ process_viewer_commands();
  process_world_commands(); // Before stepping, including paused worlds: UI only enqueues snapshots.
  if(!active||dt<=0){for(auto&e:spaces){e.second->single_steps=0;complete_world_step(*e.second,"Physics integration inactive or invalid timestep");}return;}last_step=dt;
  // Each Godot fixed tick advances each active space exactly dt. Subdivide, don't
  // accumulate another autonomous clock (MjWorld owns entirely separate models).
- for(auto &entry:spaces){auto&s=*entry.second;if(s.skip_tick){s.skip_tick=false;continue;}if(!s.active||(s.paused&&s.single_steps==0))continue;
+ for(auto &entry:spaces){auto&s=*entry.second;if(s.skip_tick){s.skip_tick=false;continue;}if(!s.active)continue;if(s.paused&&s.single_steps==0){gmj_viewer_update_paused(s);continue;}
  if(!rebuild(s)){s.single_steps=0;complete_world_step(s,s.last_error);continue;}
  const double saved_accumulator=s.accumulator;
  int steps;
  if(s.single_steps>0){steps=s.single_steps;s.single_steps=0;s.model->opt.timestep=s.options.timestep;}
- else if(s.authored_options){s.accumulator+=dt;steps=int((s.accumulator+1e-12)/s.options.timestep);s.accumulator-=steps*s.options.timestep;s.model->opt.timestep=s.options.timestep;}
+ else if(s.authored_options){s.accumulator+=dt*s.viewer_speed;steps=int((s.accumulator+1e-12)/s.options.timestep);s.accumulator-=steps*s.options.timestep;s.model->opt.timestep=s.options.timestep;}
  else{steps=std::max(1,int(std::ceil(double(dt)/0.002)));s.model->opt.timestep=double(dt)/steps;}
  if(steps<=0)continue;
  const double span=steps*s.model->opt.timestep;
@@ -484,6 +488,7 @@ void MjPhysicsServer3D::_step(float dt){
   for(auto&be:bodies){auto&b=*be.second;if(b.space==s.rid)saved_bodies.push_back({&b,b.callback_pending,b.sync_pending,b.environment_valid,b.integration_step,b.integration_environment});}
  }
  bool drive_failed=false;
+ gmj_viewer_begin_batch(s);
  // Godot damping is applied once per server integration interval, not once
  // per MuJoCo solver subdivision (which changes its numerical meaning).
  for(auto &be:bodies){auto&b=*be.second;if(b.space!=s.rid||b.mode!=BODY_MODE_RIGID||b.mj_body<1)continue;
@@ -508,7 +513,9 @@ void MjPhysicsServer3D::_step(float dt){
  }
  }
  if(!apply_native_hinge_drives(s,span)){s.paused=true;s.last_error="Native Hinge drive numerical state rejected";drive_failed=true;ERR_PRINT(s.last_error);break;}
+ gmj_viewer_before_step(s);
  mj_step(s.model,s.data);if(n==steps-1)collect_contacts(s);
+ gmj_viewer_after_step(s);
  if(driven){bool valid=validate_native_hinge_step(s);for(int w=0;w<mjNWARNING;++w)if(s.data->warning[w].number>backup->warning[w].number)valid=false;
   if(!valid){s.paused=true;s.last_error="Native Hinge drive post-step state rejected";drive_failed=true;ERR_PRINT(s.last_error);break;}}
  }
@@ -517,6 +524,7 @@ void MjPhysicsServer3D::_step(float dt){
   complete_world_step(s,s.last_error);continue;
  }
  complete_world_step(s);
+ gmj_viewer_after_batch(s); // Capture real integration diagnostics before forward overwrites them.
  mj_forward(s.model,s.data);
  for(auto &be:bodies){auto&b=*be.second;if(b.space==s.rid){read_body(b);b.force=Vector3();b.torque=Vector3();}}
  }

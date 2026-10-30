@@ -156,6 +156,8 @@ public sealed class WorldHandle : RuntimeHandle
     public Request Step(int count = 1) => Queue("step_simulation", count);
     public Request Capture() => Queue("capture_snapshot");
     public Request Reset() => Queue("reset_simulation");
+    public Request ResetInitial() => Queue("reset_initial");
+    public Request RestoreSnapshot() => Queue("restore_snapshot");
 }
 
 public sealed class InstanceHandle : RuntimeHandle

@@ -127,12 +127,67 @@ After the one-time [addon build](docs/linux-install.zh-CN.md), run `./em_run.sh 
 
 Keep the repository layout intact so examples can use shared addons and assets. All five visual examples use the shared MuJoCo backend and persistent author nodes. The light C# example needs an ordinary .NET build. Independent MjWorld remains available for API and diagnostic tests. G1 has no standing or walking controller and is expected to fall; multi-robot hot-add has [known limitations](examples/g1_passive/README.md).
 
+## Choose the F5 renderer
+
+Use **F5 渲染** at the top of the **right-hand MuJoCo dock** to select **Godot** or **MuJoCo 原生**. The **MuJoCo 显示** menu in the 3D viewport offers the same choices. The choice is saved in the current `project.godot` and applies to the next F5 run; stop and restart an existing game. The editing viewport continues to use Godot. The runtime window (F11) reports the actual renderer. A failed native start keeps the Godot picture and displays the fallback reason.
+
+`shape_gallery` selects native MuJoCo initially. Without a built bridge it falls back to Godot; you can also explicitly select Godot in the toolbar. Other projects without a choice retain their scene defaults.
+
+G1 exceeds the default 64 MiB native model transport limit. To display it natively, explicitly set `rendering/mujoco_native_view/max_model_mib` to 192. The default limit falls back to Godot while retaining shared interaction.
+
+Build native-view support once before selecting it. Close the editor, install the OpenGL and X11 development libraries (Ubuntu: `sudo apt install libgl-dev libx11-dev`), then run from the repository root:
+
+```bash
+cmake -S . -B build-linux -DGMJ_NATIVE_VIEW_EXPERIMENTAL=ON
+cmake --build build-linux --parallel 2
+./em_run.sh --exp shape_gallery
+```
+
+Reopen the editor to load the new extensions. The native option is disabled, with a reason in its tooltip, if the bridge is missing, the session is not X11, the renderer is not Compatibility, or physics uses a separate thread. The project setting is `rendering/mujoco_native_view/renderer`: `0` selects Godot and `1` selects MuJoCo. An absent setting retains the previous scene default. An explicit project choice overrides the old per-scene experimental flags.
+
+Both renderers use **the same MuJoCo physics world**. Changing the renderer does not change collision algorithms, simulation timestep or physical accuracy.
+
+| Aspect | Godot rendering | Native MuJoCo rendering |
+|---|---|---|
+| Image generation | Convert models to Godot meshes and draw with Godot | Draw with MuJoCo `mjv` / `mjr`, then display the GPU texture in Godot |
+| Strengths | Godot materials, HDR environments, grid shaders, lighting and custom shaders; useful for game and scene presentation | MuJoCo's model appearance and less model-node pose synchronization; useful for inspecting MuJoCo visual geometry |
+| Appearance | Authored Godot materials and lighting | MuJoCo materials and lighting; Godot skies, grid shaders and custom 3D effects are excluded. Camera and interaction state are shared |
+| Interaction | Shared MuJoCo camera, selection, tracking and perturbation | The same controller uses official `mjv_*` APIs and changes authoritative simulation data |
+| Simulation controls / UI | Tab / Shift+Tab original sidebars, F1–F4 original overlays; F11 Godot extras only | The same panels and shortcuts; simulate adapted to Godot controls, with independent F2 Info and Godot performance |
+| Diagnostics | Official camera/diagnostic primitives adapted to Godot; unsupported surface effects disabled explicitly | Draw the authoritative CPU scene, including actual contact diagnostics, within rigid-model/resource limits |
+| Performance | Node synchronization and Godot drawing costs | Revisioned model snapshots, shared CPU scene generation, GLX context switching and GPU synchronization costs; **faster rendering is not guaranteed** and must be measured per scene |
+| Support | Standard display path, following existing addon platform support | Experimental: Linux x86_64, X11, OpenGL, one main runtime window and main-thread physics; model and memory budgets apply |
+
+Normal GPU texture composition uses the pinned official Godot build. The editor switch does not enable direct-to-screen presentation; that remains a separate [custom-engine experiment](docs/development/native-view-r17/README.md). Device-failure recovery, platform/model support and resource admission remain limited; see the [native-view notes](addons/godot_mujoco/native_view/README.md).
+
+Actual F5 captures of the same `shape_gallery` in its initial paused state. Interaction and initial camera are shared; materials and lighting differ. These are not performance measurements:
+
+| Godot | Native MuJoCo |
+|---|---|
+| [![Godot F5 picture](docs/pics/f5-renderer-godot.png)](docs/pics/f5-renderer-godot.png) | [![Native MuJoCo F5 picture](docs/pics/f5-renderer-native.png)](docs/pics/f5-renderer-native.png) |
+
+## Shared runtime interaction and performance
+
+Both renderers use the MuJoCo 3.16 camera, picking and perturbation APIs and the original simulate panel organization. **Tab / Shift+Tab** toggle the left / right native-style panels; Alt+section letter folds the corresponding group. **F1/F2/F3/F4** independently toggle Help / MuJoCo Info / Profiler / Sensors overlays. **F11** opens only the movable, resizable **Godot extras** window: renderer choice, FPS/system metrics, example extensions and additional tools. Visibility changes do not pause simulation. Editor input stays unchanged.
+
+- Left/right/middle drag orbit/pan/zoom; wheel zooms, Shift changes direction, Alt swaps mouse buttons. Double-click selects, PageUp selects the parent, right double-click centers, Ctrl+right double-click tracks.
+- Ctrl+left/right drag rotate/translate a perturbation. Running applies forces; paused editing follows MuJoCo free-joint/mocap semantics. Release, focus loss and opening a panel cancel perturbation.
+- Space runs/pauses; arrows browse history or take one new step; `-`/`=` select official 0.1–100% speed tiers. `[`/`]` cycle fixed cameras, Esc selects free camera; F6/F7 cycle frames/labels. Backtick retains Body Tree. Within F11, Tab/Shift+Tab move control focus; text editing has priority.
+- Backspace resets the design initial state at time zero. Capture/Restore Snapshot are separate. Ctrl+L transactionally reloads the last saved design; failure preserves the current world. Legacy `reset_simulation()` keeps checkpoint semantics; new APIs include `reset_initial()` and `restore_snapshot()`.
+- Ctrl+C / Ctrl+Shift+C copy state; Ctrl+M/D/P write model/data/composed screenshots into timestamped `user://mujoco_viewer/` folders by default; Ctrl+Q quits the game. F5 fullscreen works standalone; embedded GameView explains its editor-managed limitation. F8–F10 remain Godot debugger controls.
+
+The Godot performance overlay initially shows **FPS only**, controlled independently by F11 → Performance. **F2 controls MuJoCo Info only**; neither switch changes the other. Every performance metric, including FPS, can be disabled. Optional CPU/RAM/GPU/VRAM use **whole-system/card** counters, with a verified render-device match. Missing counters are disabled with a reason. CPU/GPU milliseconds are labeled separately from utilization; native update FPS is separate from Godot host FPS. Info refreshes at 5 Hz, OS counters at 1 Hz. Personal preferences live under each project's `user://`.
+
+File includes XML/MJB saves and model/data text exports. Simulation includes keyframes, control noise, solver workers and history scrubbing. Keyframe controls follow model capabilities: the existing shared-world composer still rejects source models containing keyframes, with an explicit UI reason. Physics design settings stay read-only; Busy Wait is disabled because Godot owns the host scheduler. Godot controls adapt the pinned simulate definitions; native 3D rendering still uses `mjr_render`. All examples, templates and generated playgrounds install the viewer automatically. Example-specific controls live in F11 → Examples; exact N-step and manual snapshot tools live in F11 → Tools. See the [runtime viewer contract](addons/godot_mujoco/viewer/README.md) for capabilities, C# APIs, budgets and validation.
+
+The [validation record](docs/development/runtime-viewer-validation-2026-10-30.json) includes both renderers, the native-GL-disabled build, F5, examples and reload checks, plus p50/p95 frame times and memory samples with the overlay off, FPS only, all metrics and analysis charts. These capped fixture measurements do not establish which renderer is faster. The subsequent panel/F11 separation has its own [control comparison](docs/development/mujoco-simulate-ui-parity.md) and [validation record](docs/development/runtime-panels-validation-2026-10-30.json).
+
 ## Import and run a model
 
 1. Open a saved 3D scene. In the right **MuJoCo → MJCF 层级模型** panel choose **载入 MJCF**.
 2. Import creates persistent body / geom / joint scene nodes. Edit typed Inspector fields and native Gizmos; Ctrl+D duplicates, and native Undo/Redo and Ctrl+S apply.
 3. The isolated compiler is cancellable and has a configurable 120-second timeout. Incomplete designs can be saved; F5 requires validation of the current model.
-4. Editing the local author scene during F5 pauses actual physics, compiles the combined world and commits atomically. Resume manually after success. Game design buttons send undoable, saveable commands to that same editor scene.
+4. Editing the local author scene during F5 pauses actual physics, compiles the combined world and commits atomically. Resume manually after success. Add/remove models and edit terrain in the editor. Runtime actions change simulation state without writing back design.
 
 MJCF import accepts XML only. Legacy model packages and upgrade paths have been removed. See the [node authoring guide (Chinese)](docs/node-authoring.zh-CN.md).
 

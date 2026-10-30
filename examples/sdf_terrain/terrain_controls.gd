@@ -1,13 +1,18 @@
 extends CanvasLayer
+var slice: CheckBox
 func _ready() -> void:
-	var box:=VBoxContainer.new(); box.position=Vector2(14,14); add_child(box)
-	var panel:=PanelContainer.new(); box.add_child(panel)
-	var bar:=HBoxContainer.new(); panel.add_child(bar)
-	var entities:=CheckBox.new(); entities.text="实体"; entities.button_pressed=true; bar.add_child(entities)
-	var collisions:=CheckBox.new(); collisions.text="SDF 距离切片"; bar.add_child(collisions)
-	var label:=Label.new(); label.text="例程3 · 台阶 / 洼地 / 崎岖路面 · m · seed 20261026"; bar.add_child(label)
-	var help:=Button.new(); help.text="说明 / 帮助"; help.toggle_mode=true; bar.add_child(help)
-	var note:=Label.new(); note.text="默认真实 mjGEOM_SDF（type 8），闭合分块网格；不是凸包。黄色轮廓是原生距离场水平切片，不是视觉三角网格。\n可在插件地图面板导入 assets/terrain.obj，右侧选择碰撞方式、深度参数，保存 / Apply / 重开。"; note.visible=false; box.add_child(note)
-	help.toggled.connect(func(value): note.visible=value)
-	entities.toggled.connect(func(value): get_parent().get_node("Visual").visible=value)
-	collisions.toggled.connect(func(value): get_parent().get_node("CollisionPreview").visible=value)
+	call_deferred("register_viewer")
+func register_viewer(_viewer: Node = null) -> void:
+	var world := get_parent().get_parent()
+	if not is_instance_valid(world.runtime_viewer):
+		if not world.viewer_ready.is_connected(register_viewer): world.viewer_ready.connect(register_viewer,CONNECT_ONE_SHOT)
+		return
+	var box := VBoxContainer.new()
+	slice=CheckBox.new(); slice.text="SDF 距离切片"; box.add_child(slice)
+	slice.toggled.connect(func(value):get_parent().get_node("CollisionPreview").visible=value)
+	world.runtime_viewer.register_extension("sdf_terrain","SDF 地形",box,"默认真实 mjGEOM_SDF（type 8），闭合分块网格；黄色轮廓是原生距离场水平切片。\n在 Godot 编辑器插件地图面板导入 assets/terrain.obj 并修改碰撞方式、深度参数，保存后运行。\n距离切片使用 Godot 诊断显示；当前原生后端不能混合 Godot 3D 覆盖层，无法使用时回退 Godot。")
+
+func _process(_delta: float) -> void:
+	if not is_instance_valid(slice): return
+	slice.disabled=get_parent().get_parent().native_view_active
+	slice.tooltip_text="MuJoCo 原生画面不叠加 Godot 3D 切片；切换 Godot 渲染后可用。" if slice.disabled else "原生距离场的水平采样轮廓"

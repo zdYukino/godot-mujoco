@@ -98,6 +98,8 @@ func command(method: String, argument: Variant = null) -> void:
 
 func _ready() -> void:
 	process_mode=Node.PROCESS_MODE_ALWAYS
+	# Compatibility API for existing scripts. RuntimeViewer owns the visible UI.
+	hide()
 	status=Label.new()
 	add_child(status)
 	add_button("暂停仿真 / Pause",func():command("request_pause",true))

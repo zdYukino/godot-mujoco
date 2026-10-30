@@ -1,5 +1,6 @@
 #include "mj_dictionary_compat.h"
 #include "mj_physics_server.h"
+#include "../viewer/mj_runtime_viewer.h"
 #include <cmath>
 namespace godot {
 namespace {
@@ -29,7 +30,7 @@ int64_t MjPhysicsServer3D::scene_request_world_command(const RID&r,const String&
  int64_t id=next_request_id++;world_commands.push_back({id,r,command,count});return id;
 }
 Dictionary MjPhysicsServer3D::scene_world_command_result(int64_t request){std::lock_guard<std::mutex> lock(requests_mutex);auto it=world_command_results.find(request);if(it==world_command_results.end())return {};Dictionary result=it->second;world_command_results.erase(it);return result;}
-void MjPhysicsServer3D::scene_cancel_world_command(int64_t request){std::lock_guard<std::mutex> lock(requests_mutex);for(auto it=world_commands.begin();it!=world_commands.end();++it)if(it->request==request){world_commands.erase(it);break;}world_command_results.erase(request);}
+void MjPhysicsServer3D::scene_cancel_world_command(int64_t request){std::lock_guard<std::mutex> lock(requests_mutex);for(auto it=viewer_commands.begin();it!=viewer_commands.end();++it)if(it->request==request){auto*s=space(it->space);if(s&&s->viewer&&int64_t(s->revision)==it->revision)for(auto&f:s->viewer->frames)if(f->id==it->frame)f->pins=std::max(0,f->pins-1);viewer_commands.erase(it);break;}for(auto it=world_commands.begin();it!=world_commands.end();++it)if(it->request==request){world_commands.erase(it);break;}world_command_results.erase(request);}
 void MjPhysicsServer3D::process_world_commands(){
  std::deque<WorldCommand> pending;{std::lock_guard<std::mutex> lock(requests_mutex);pending.swap(world_commands);}
  for(auto &request:pending){Dictionary result;result["request"]=request.request;result["command"]=request.command;
@@ -42,19 +43,29 @@ void MjPhysicsServer3D::process_world_commands(){
    String command=request.command;
    if(command=="pause"||command=="resume"){s->paused=command=="pause";s->accumulator=0;return {};}
    if(command=="step"){if(!active||!s->active)return "Single-step requires an active physics space";if(!s->paused)return "Single-step requires a paused simulation";if(request.count<1||request.count>1000)return "Step count must be 1..1000";s->single_steps=request.count;s->pending_step_request=request.request;s->skip_tick=false;return {};}
-   if(command=="capture"){replace_dictionary(s->checkpoint,capture(s->model,s->data));s->skip_tick=true;return {};}
-   if(command!="reset")return "Unknown simulation command";
-   if(s->checkpoint.is_empty())return "No simulation checkpoint; capture one before resetting";
+   if(command=="capture"){replace_dictionary(s->checkpoint,capture(s->model,s->data));gmj_viewer_capture_snapshot(*s);s->skip_tick=true;return {};}
+   if(command=="restore_snapshot"){String error=gmj_viewer_restore_snapshot(*s);if(error.is_empty()){for(auto&entry:bodies)if(entry.second->space==s->rid)read_body(*entry.second);s->skip_tick=true;}return error;}
+   if(command!="reset"&&command!="reset_initial")return "Unknown simulation command";
+   if(command=="reset"&&s->checkpoint.is_empty())return "No simulation checkpoint; capture one before resetting";
+   if(s->viewer)s->viewer->cancel(*s);
    // Candidate data is isolated until validation succeeds; the active data remains intact.
    mjData*candidate=mj_makeData(s->model);if(!candidate)return "Could not allocate reset candidate";
    String error=restore(s->born_state,s->model,candidate);
-   if(error.is_empty())error=restore(s->checkpoint,s->model,candidate);
-   candidate->time=double(s->checkpoint["time"]);
-   // Mocap/kinematic poses are externally controlled design state, not joint
-   // checkpoint state. Keep the live poses so reset cannot resurrect the model's
-   // compile-time mocap pose while Godot still holds the current transform.
-   mju_copy(candidate->mocap_pos,s->data->mocap_pos,3*s->model->nmocap);
-   mju_copy(candidate->mocap_quat,s->data->mocap_quat,4*s->model->nmocap);
+   if(error.is_empty()&&command=="reset")error=restore(s->checkpoint,s->model,candidate);
+   candidate->time=command=="reset"?double(s->checkpoint["time"]):0.;
+   if(command=="reset_initial"){
+    for(auto&entry:s->imported){auto&o=*entry.second;Dictionary initial=o.author_definition.get("initial",Dictionary());
+     for(auto key:initial.keys()){String short_name=key;int j=mj_name2id(s->model,mjOBJ_JOINT,(o.prefix+short_name.utf8().get_data()).c_str());if(j<0)continue;Array values=initial[key];int count=s->model->jnt_type[j]==mjJNT_FREE?7:s->model->jnt_type[j]==mjJNT_BALL?4:1;if(values.size()!=count)continue;auto*p=candidate->qpos+s->model->jnt_qposadr[j];for(int k=0;k<count;k++)p[k]=double(values[k]);if(s->model->jnt_type[j]==mjJNT_FREE){Basis rotation=godot_to_mj(o.pose.basis);Vector3 position=rotation.xform(Vector3(p[0],p[1],p[2]))+godot_to_mj(o.pose.origin);Quaternion q=rotation.get_rotation_quaternion()*Quaternion(p[4],p[5],p[6],p[3]);for(int k=0;k<3;k++)p[k]=position[k];p[3]=q.w;p[4]=q.x;p[5]=q.y;p[6]=q.z;}}
+     Dictionary controls=o.author_definition.get("initial_controls",Dictionary());for(auto key:controls.keys()){String name=key;int a=mj_name2id(s->model,mjOBJ_ACTUATOR,(o.prefix+name.utf8().get_data()).c_str());if(a>=0)candidate->ctrl[a]=double(controls[key]);}
+    }
+    mju_zero(candidate->qvel,s->model->nv);
+   }
+   // Legacy checkpoint reset retains externally controlled mocap poses.
+   // Initial reset uses the compiled design's poses, including paused edits.
+   if(command=="reset"){
+    mju_copy(candidate->mocap_pos,s->data->mocap_pos,3*s->model->nmocap);
+    mju_copy(candidate->mocap_quat,s->data->mocap_quat,4*s->model->nmocap);
+   }
    for(int i=0;i<3*s->model->nmocap;++i)if(!std::isfinite(candidate->mocap_pos[i]))error="Nonfinite reset mocap position";
    for(int i=0;i<4*s->model->nmocap;++i)if(!std::isfinite(candidate->mocap_quat[i]))error="Nonfinite reset mocap orientation";
    if(error.is_empty()){
@@ -66,6 +77,7 @@ void MjPhysicsServer3D::process_world_commands(){
    // No force or warm-start history is restored; contacts are freshly recomputed.
    mju_zero(candidate->qacc_warmstart,s->model->nv);
    mj_deleteData(s->data);s->data=candidate;s->accumulator=0;s->single_steps=0;s->skip_tick=true;
+   if(s->viewer){s->viewer->history_count=0;s->viewer->history_cursor=-1;s->viewer->add_history(*s);}
    for(auto &entry:bodies){auto&b=*entry.second;if(b.space!=s->rid)continue;b.force=Vector3();b.torque=Vector3();b.constant_force=Vector3();b.constant_torque=Vector3();b.sleeping=false;read_body(b);}
    return {};
   };

@@ -122,23 +122,25 @@ func run_scenario() -> void:
 			return settled() and current.get("texture",false) and is_equal_approx(float(current.get("color",[0,0,0,0])[3]),.45)), "live game receives MJCF texture and opacity through debugger"): return
 		if not check(is_equal_approx(float(state().models[0].appearances.rod.color[0]),.2) and state().info.paused, "live appearance keeps color and stays paused until Continue"): return
 		var id: String=model.design_instance_id
-		if not check(await game({"op":"duplicate_model","instance_id":id,"name":"Second"}),"duplicate command acknowledged"): return
-		if not check(await wait_for(func():return duplicate_is_settled(root)),"game Add command creates persistent editor model and runtime instance"): return
+		if not check(not await game({"op":"duplicate_model","instance_id":id,"name":"Second"}) and root.get_node_or_null("Second")==null,"game design request rejected without editor mutation"): return
+		if not check(plugin.execute_editor_design(root,{"op":"duplicate_model","instance_id":id,"name":"Second"}).success,"editor duplicate command accepted"): return
+		if not check(await wait_for(func():return duplicate_is_settled(root)),"editor Add command creates persistent model and runtime instance"): return
 		var second: Node=root.get_node_or_null("Second")
-		if not check(second and second.owner==root and second.design.document_id!=model.design.document_id,"game copy owns independent author source"): return
+		if not check(second and second.owner==root and second.design.document_id!=model.design.document_id,"editor copy owns independent author source"): return
 		var undo: UndoRedo=plugin.get_undo_redo().get_history_undo_redo(plugin.get_undo_redo().get_object_history_id(root))
 		undo.undo()
-		if not check(await wait_for(func():return root.get_node_or_null("Second")==null and state().get("models",[]).size()==1 and settled()),"one editor Undo removes game-created model from physics"): return
+		if not check(await wait_for(func():return root.get_node_or_null("Second")==null and state().get("models",[]).size()==1 and settled()),"one editor Undo removes editor-created model from physics"): return
 		undo.redo()
-		if not check(await wait_for(func():return state().get("models",[]).size()==2 and settled()),"Redo recompiles game copy"): return
-		if not check(await game({"op":"terrain_update","path":"Terrain","index":0,"delta":.1}),"terrain command acknowledged"): return
-		if not check(await wait_for(func():return is_equal_approx(root.get_node("Terrain").design.heights[0],.1) and settled() and is_equal_approx(float(state().terrain.committed.get("heights",[0])[0]),.1)),"game terrain button updates editor source and combined physics"): return
+		if not check(await wait_for(func():return state().get("models",[]).size()==2 and settled()),"Redo recompiles editor copy"): return
+		if not check(not await game({"op":"terrain_update","path":"Terrain","index":0,"delta":.1}) and is_zero_approx(root.get_node("Terrain").design.heights[0]),"game terrain request rejected without design mutation"): return
+		if not check(plugin.execute_editor_design(root,{"op":"terrain_update","path":"Terrain","index":0,"delta":.1}).success,"editor terrain command accepted"): return
+		if not check(await wait_for(func():return is_equal_approx(root.get_node("Terrain").design.heights[0],.1) and settled() and is_equal_approx(float(state().terrain.committed.get("heights",[0])[0]),.1)),"editor terrain operation updates source and combined physics"): return
 		packed=PackedScene.new();packed.pack(root)
-		if not check(ResourceSaver.save(packed,saved_path)==OK,"game requested designs serialize without runtime qpos"): return
+		if not check(ResourceSaver.save(packed,saved_path)==OK,"editor designs serialize without runtime qpos"): return
 		var saved: Node=load(saved_path).instantiate()
 		var saved_ok: bool=saved.get_node_or_null("Second/arm/rod/_Visual")!=null and is_equal_approx(saved.get_node("Terrain").design.heights[0],.1)
 		saved.free()
-		if not check(saved_ok,"saved scene retains game model and terrain design"): return
+		if not check(saved_ok,"saved scene retains editor model and terrain design"): return
 		if not check(await game({"op":"resume"}),"final Continue acknowledged"): return
 		if not check(await wait_for(func():return state().info.time>time),"manual Continue resumes latest valid design"): return
 func finalize_run() -> void:

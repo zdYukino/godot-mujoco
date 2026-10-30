@@ -1,0 +1,22 @@
+{
+  "version": "3.16.0",
+  "binary": "/home/zdyukino/workspace/godot-mujoco/build-linux/_deps/mujoco-src/bin/simulate",
+  "model": "/home/zdyukino/workspace/godot-mujoco/build-runtime-viewer/panels-upstream-final/reference.xml",
+  "requested_width": 1024,
+  "requested_height": 704,
+  "camera_index": 1,
+  "shots": [
+    "default-both.png",
+    "right-only.png",
+    "neither.png",
+    "left-only.png",
+    "f1.png",
+    "f2.png",
+    "f3.png",
+    "f4.png"
+  ],
+  "method": "Official GLFW window, X11 keyboard events to the owned client, original Ctrl+P framebuffer screenshot",
+  "actual_width": 1024,
+  "actual_height": 704,
+  "camera_note": "Copied authored camera pose/FOV/clipping inserted as a reference-only fixed camera; physical model unchanged."
+}

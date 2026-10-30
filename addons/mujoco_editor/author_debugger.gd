@@ -74,11 +74,9 @@ func _capture(message: String, data: Array, session_id: int) -> bool:
 		if Trace.enabled():Trace.event("editor_ack_after",{"session":session_id,"world":info.id,"ack":info.ack_epoch,"request":info.request_epoch,"trace":value.get("_gmj_trace",{})})
 		return true
 	if message == "mujoco_author:request":
-		var node := editor_world(info)
-		var result: Dictionary = plugin.execute_game_design(node, value.get("command", {})) if node else {"success":false, "error":"请在编辑器打开对应的运行场景。"}
+		var result: Dictionary = {"success":false, "error":"运行窗口不允许修改设计；请在 Godot 编辑器执行。"}
 		result.request = value.request
 		send(info, "reply", result)
-		if node: pause_world(node)
 		return true
 	return false
 

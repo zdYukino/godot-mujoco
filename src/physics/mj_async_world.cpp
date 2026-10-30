@@ -14,6 +14,7 @@ struct MjAsyncCandidate {
  uint64_t revision=0;
  mjModel *model=nullptr; mjData *data=nullptr;
  std::string error;
+ String compiled_xml;
  std::vector<std::pair<RID,int>> owners;
  std::map<std::string,std::string> aliases;std::set<std::string> reset;
  ~MjAsyncCandidate(){if(data)mj_deleteData(data);if(model)mj_deleteModel(model);}
@@ -64,7 +65,7 @@ void MjPhysicsServer3D::scene_close_authoring(const RID&r){
  for(auto&entry:s->imported)handles.free(entry.second->rid);
  s->imported.clear();s->committed_bodies.clear();s->committed_shapes.clear();s->committed_areas.clear();s->imported_query_owners.clear();s->geom_owners.clear();s->query_sdf_fields.clear();
  s->born_state.clear();s->checkpoint.clear();s->prepared_owners.clear();
- auto*model=s->model;auto*data=s->data;s->model=nullptr;s->data=nullptr;s->compile_status="closed";s->design_blocked=true;s->dirty=true;
+ auto*model=s->model;auto*data=s->data;s->model=nullptr;s->data=nullptr;s->compiled_xml=String();s->compile_status="closed";s->design_blocked=true;s->dirty=true;
  if(model||data)async_threads.emplace_back([model,data](){gmj_background_worker=true;if(data)mj_deleteData(data);if(model)mj_deleteModel(model);});
 }
 RID MjPhysicsServer3D::scene_stage_author_model(const RID&r,const RID&id,const Dictionary&definition){
@@ -97,7 +98,7 @@ bool MjPhysicsServer3D::scene_submit_async(const RID&r,int64_t revision,const Di
  auto*s=space(r);if(!s||!s->authoring||revision<0||uint64_t(revision)!=s->design_revision)return false;
  String path=result.get("compiled_path",String());Dictionary snapshot=result.get("snapshot",Dictionary()),state=snapshot.get("state",Dictionary());
  Array input=state.get("integration",Array());std::vector<double> integration;for(int i=0;i<input.size();++i){double value=input[i];if(!std::isfinite(value)){s->last_error="Invalid compiled integration state";return false;}integration.push_back(value);}
- auto candidate=std::make_shared<MjAsyncCandidate>();candidate->revision=revision;candidate->owners=s->prepared_owners;{Dictionary aliases=result.get("aliases",Dictionary()),reset=result.get("reset",Dictionary());for(auto key:aliases.keys()){String k=key,v=aliases[key];candidate->aliases[k.utf8().get_data()]=v.utf8().get_data();}for(auto key:reset.keys()){String k=key;candidate->reset.insert(k.utf8().get_data());}}s->candidate=candidate;s->compile_status="loading";
+ auto candidate=std::make_shared<MjAsyncCandidate>();candidate->revision=revision;candidate->compiled_xml=snapshot.get("xml",String());candidate->owners=s->prepared_owners;{Dictionary aliases=result.get("aliases",Dictionary()),reset=result.get("reset",Dictionary());for(auto key:aliases.keys()){String k=key,v=aliases[key];candidate->aliases[k.utf8().get_data()]=v.utf8().get_data();}for(auto key:reset.keys()){String k=key;candidate->reset.insert(k.utf8().get_data());}}s->candidate=candidate;s->compile_status="loading";
  std::string filename=ProjectSettings::get_singleton()->globalize_path(path).utf8().get_data();
  async_threads.emplace_back([candidate,filename,integration=std::move(integration)](){
   gmj_background_worker=true;
@@ -136,7 +137,7 @@ void MjPhysicsServer3D::process_async_worlds(){
    }(*checkpoint)[section]=retained;
   }
   s.author_reset_bodies.clear();
-  auto*old_model=s.model;auto*old_data=s.data;s.model=m;s.data=d;candidate->model=nullptr;candidate->data=nullptr;
+ auto*old_model=s.model;auto*old_data=s.data;s.model=m;s.data=d;s.compiled_xml=candidate->compiled_xml;candidate->model=nullptr;candidate->data=nullptr;
   s.geom_owners=std::move(mapped);s.imported_query_owners=std::move(query_owners);s.query_sdf_fields.clear();s.dirty=false;s.design_blocked=false;s.paused=true;s.last_error="";s.compile_status="ready";s.committed_design_revision=s.design_revision;++s.revision;
   for(auto it=s.imported.begin();it!=s.imported.end();){if(bool(it->second->author_definition.get("removed",false))){handles.free(it->second->rid);it=s.imported.erase(it);}else{if(it->second->has_committed_pose&&(it->second->committed_definition!=it->second->author_definition||it->second->committed_pose!=it->second->pose))++it->second->property_revision;replace_dictionary(it->second->committed_definition,it->second->author_definition.duplicate(true));it->second->committed_pose=it->second->pose;it->second->has_committed_pose=true;++it;}}
   s.committed_bodies.clear();s.committed_shapes.clear();s.committed_areas.clear();

@@ -3,6 +3,7 @@
 #include "mj_world.h"
 #include "mj_editor_document.h"
 #include "physics/mj_physics_server.h"
+#include "viewer/mj_runtime_viewer.h"
 #include <godot_cpp/classes/physics_server3d_manager.hpp>
 #include <godot_cpp/variant/callable_method_pointer.hpp>
 
@@ -15,9 +16,11 @@
 
 #include <mujoco/mujoco.h>
 #include <cstdio>
+#include <mutex>
 namespace godot { extern thread_local bool gmj_background_worker; }
 
 using namespace godot;
+static mjfLogHandler previous_log_handler=nullptr;
 
 // Route MuJoCo's log messages into Godot's console instead of stdout /
 // MUJOCO_LOG.TXT so warnings and errors are visible in the editor Output panel.
@@ -25,8 +28,12 @@ static void gmj_log_handler(const mjLogMessage *msg) {
 	if (msg == nullptr) {
 		return;
 	}
-	if(godot::gmj_background_worker){std::fprintf(stderr,"MuJoCo background: %s %s\n",msg->subject?msg->subject:"",msg->body?msg->body:"");return;}
-	String text = String::utf8(msg->subject);
+	const auto config=mju_getLogConfig();
+	if(msg->level<mjLOG_WARNING&&msg->topic>0&&!(config.topics&(1<<(msg->topic-1))))return;
+	if(config.logto_file){static std::mutex file_mutex;std::lock_guard<std::mutex>lock(file_mutex);if(FILE*f=std::fopen(config.logfile,"a")){std::fprintf(f,"MuJoCo: %s %s\n",msg->subject?msg->subject:"",msg->body?msg->body:"");std::fclose(f);}}
+	if(godot::gmj_background_worker){if(config.logto_console||msg->level>=mjLOG_ERROR)std::fprintf(stderr,"MuJoCo background: %s %s\n",msg->subject?msg->subject:"",msg->body?msg->body:"");return;}
+	if(!config.logto_console&&msg->level<mjLOG_ERROR)return;
+	String text = String::utf8(msg->subject?msg->subject:"");
 	if (msg->body != nullptr && msg->body[0] != '\0') {
 		text += "\n";
 		text += String::utf8(msg->body);
@@ -59,7 +66,8 @@ void initialize_godot_mujoco_module(ModuleInitializationLevel p_level) {
 		return;
 	}
 	// The log handler is process-global; install once at scene init.
-	mju_setLogHandler(gmj_log_handler);
+	previous_log_handler=mju_setLogHandler(gmj_log_handler);
+	gmj_viewer_install_timer();
 	GDREGISTER_CLASS(MjWorld);
 	GDREGISTER_CLASS(MjEditorDocument);
 }
@@ -68,7 +76,9 @@ void uninitialize_godot_mujoco_module(ModuleInitializationLevel p_level) {
 	if (p_level != MODULE_INITIALIZATION_LEVEL_SCENE) {
 		return;
 	}
-	mju_setLogHandler(nullptr);
+	const auto current=mju_setLogHandler(previous_log_handler);
+	if(current!=gmj_log_handler)mju_setLogHandler(current);
+	gmj_viewer_remove_timer();
 }
 
 extern "C" {

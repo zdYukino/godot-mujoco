@@ -8,7 +8,7 @@
 #include <mujoco/mjxmacro.h>
 #include "mj_native_view_budget.h"
 namespace godot {
-Dictionary MjPhysicsServer3D::scene_native_view_snapshot(const RID &rid, int64_t known_revision, bool include_model) const {
+Dictionary MjPhysicsServer3D::scene_native_view_snapshot(const RID &rid, int64_t known_revision, bool include_model,const Dictionary &viewer_options) const {
  Dictionary out;
  auto fail=[&](const char *why){out["error"]=why;return out;};
  if(OS::get_singleton()->get_thread_caller_id()!=OS::get_singleton()->get_main_thread_id() || bool(ProjectSettings::get_singleton()->get_setting("physics/3d/run_on_separate_thread",false))) return fail("Native view requires main-thread physics and snapshot caller");
@@ -56,6 +56,10 @@ Dictionary MjPhysicsServer3D::scene_native_view_snapshot(const RID &rid, int64_t
   PackedByteArray bytes;if(bytes.resize(size)!=OK)return fail("Display model allocation failed");mj_saveModel(m,nullptr,bytes.ptrw(),size);out["model"]=bytes;gmj_display::trace("serialize_end",size,s->revision);
   Array objects;for(const auto &entry:s->imported){Dictionary o;o["rid"]=entry.second->rid;o["prefix"]=String(entry.second->prefix.c_str());objects.append(o);}out["objects"]=objects;
  }
+ Dictionary options=viewer_options.duplicate();options["backend"]="native";
+ Dictionary frame=const_cast<MjPhysicsServer3D*>(this)->scene_viewer_frame(rid,known_revision,options);
+ if(frame.has("pending")||frame.has("error"))return frame;
+ out.merge(frame,true);
  return out;
 }
 }

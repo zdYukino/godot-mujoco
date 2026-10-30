@@ -49,8 +49,12 @@ void MjPhysicsServer3D::_bind_methods(){
  ClassDB::bind_method(D_METHOD("scene_add_box","space","label","pose","size","mass"),&MjPhysicsServer3D::scene_add_box);
  ClassDB::bind_method(D_METHOD("scene_remove","space","object"),&MjPhysicsServer3D::scene_remove);
  ClassDB::bind_method(D_METHOD("scene_info","space"),&MjPhysicsServer3D::scene_info);
+ ClassDB::bind_method(D_METHOD("scene_viewer_request","space","revision","frame","sequence","command"),&MjPhysicsServer3D::scene_viewer_request);
+ ClassDB::bind_method(D_METHOD("scene_viewer_frame","space","known_revision","options"),&MjPhysicsServer3D::scene_viewer_frame);
+ ClassDB::bind_method(D_METHOD("scene_viewer_ack","space","revision","frame"),&MjPhysicsServer3D::scene_viewer_ack);
+ ClassDB::bind_method(D_METHOD("scene_viewer_result","request"),&MjPhysicsServer3D::scene_world_command_result);
 #ifdef GMJ_NATIVE_VIEW_EXPERIMENTAL
- ClassDB::bind_method(D_METHOD("scene_native_view_snapshot","space","known_revision","include_model"),&MjPhysicsServer3D::scene_native_view_snapshot,DEFVAL(true));
+ ClassDB::bind_method(D_METHOD("scene_native_view_snapshot","space","known_revision","include_model","viewer_options"),&MjPhysicsServer3D::scene_native_view_snapshot,DEFVAL(true),DEFVAL(Dictionary()));
 #endif
  ClassDB::bind_method(D_METHOD("scene_collision_stats","space"),&MjPhysicsServer3D::scene_collision_stats);
 #ifdef GMJ_VIEWER_BENCHMARK
