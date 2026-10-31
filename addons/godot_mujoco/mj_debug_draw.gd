@@ -1,3 +1,4 @@
+@icon("res://addons/godot_mujoco/icons/mj_debug.svg")
 class_name MjDebugDraw
 extends Node3D
 

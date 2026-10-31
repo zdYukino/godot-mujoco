@@ -52,7 +52,9 @@ func run() -> void:
 	var camera=preload("res://g1_camera.gd").new(); camera.name="Camera"; camera.fov=50; camera.near=.05; camera.frame_for_count(1); world.add_child(camera); camera.owner=world
 	var controls:=Node.new(); controls.name="DisplayControls"; controls.set_script(preload("res://g1_controls.gd")); controls.collision_definitions=definitions; world.add_child(controls); controls.owner=world
 	assert((await preload("res://addons/godot_mujoco/model/scene_builder.gd").prepare_tree(world)).is_empty())
-	var scene:=PackedScene.new(); var error:=scene.pack(world)
+	var scene_root:=Builder.with_runtime_ui(world,"PassiveG1Gallery")
+	Builder.attach_extension(scene_root,scene_root.get_node("RuntimeViewer"),scene_root.get_node("GodotExtras"),NodePath("DisplayControls"))
+	var scene:=PackedScene.new(); var error:=scene.pack(scene_root)
 	if error==OK: error=ResourceSaver.save(scene,"res://G1.tscn")
-	world.free(); print("PASSIVE_G1_BUILD ",JSON.stringify({"error":error,"robot_model":packed.path}))
+	scene_root.free(); print("PASSIVE_G1_BUILD ",JSON.stringify({"error":error,"robot_model":packed.path}))
 	quit(0 if error==OK else 1)

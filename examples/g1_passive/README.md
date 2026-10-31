@@ -151,3 +151,5 @@ CPU 数差异、MuJoCo 库版本不一致或仅编译 worker pool。开发环境
 
 2026-10-26 后续工作仅整理 [分层缩减复现](../../tests/g1_hot_add_repro/README.md)，
 区分直接热加与前置失败事务，不重复完整盲测；实际 dot 热加仍未通过。
+
+场景显式保存与 `Runtime` 并列的 `RuntimeViewer` 和 `GodotExtras`：前者负责原版面板、F1–F4、相机和扰动；后者独立负责 F11、性能及示例工具。两者各自绑定 World/Host，可单独添加、禁用或删除，仿真与所选渲染继续；只保留 Extras 时由游戏控制相机。布局、Theme、功能和个人偏好分别定制。右侧 MuJoCo 栏的“添加 MuJoCo 运行面板”预设只添加原版组件；Extras 在添加子节点中单独添加。详见插件的 `viewer/README.md`。

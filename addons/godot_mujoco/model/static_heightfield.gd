@@ -1,4 +1,5 @@
 @tool
+@icon("res://addons/godot_mujoco/icons/mj_heightfield.svg")
 class_name MjStaticHeightField
 extends Node3D
 ## Design edits are explicit. Runtime geometry changes only after boundary success.

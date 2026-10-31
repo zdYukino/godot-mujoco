@@ -129,7 +129,7 @@ Keep the repository layout intact so examples can use shared addons and assets. 
 
 ## Choose the F5 renderer
 
-Use **F5 渲染** at the top of the **right-hand MuJoCo dock** to select **Godot** or **MuJoCo 原生**. The **MuJoCo 显示** menu in the 3D viewport offers the same choices. The choice is saved in the current `project.godot` and applies to the next F5 run; stop and restart an existing game. The editing viewport continues to use Godot. The runtime window (F11) reports the actual renderer. A failed native start keeps the Godot picture and displays the fallback reason.
+Use **F5 渲染** at the top of the **right-hand MuJoCo dock** to select **Godot** or **MuJoCo 原生**. The **MuJoCo 显示** menu in the 3D viewport offers the same choices. The choice is saved in the current `project.godot` and applies to the next F5 run; stop and restart an existing game. The editing viewport continues to use Godot. When GodotExtras is installed, its runtime window (F11) reports the actual renderer. A failed native start keeps the Godot picture and displays the fallback reason.
 
 `shape_gallery` selects native MuJoCo initially. Without a built bridge it falls back to Godot; you can also explicitly select Godot in the toolbar. Other projects without a choice retain their scene defaults.
 
@@ -160,13 +160,28 @@ Both renderers use **the same MuJoCo physics world**. Changing the renderer does
 
 Normal GPU texture composition uses the pinned official Godot build. The editor switch does not enable direct-to-screen presentation; that remains a separate [custom-engine experiment](docs/development/native-view-r17/README.md). Device-failure recovery, platform/model support and resource admission remain limited; see the [native-view notes](addons/godot_mujoco/native_view/README.md).
 
-Actual F5 captures of the same `shape_gallery` in its initial paused state. Interaction and initial camera are shared; materials and lighting differ. These are not performance measurements:
+Historical F5 captures from the earlier combined-component implementation of the same `shape_gallery` in its initial paused state. Interaction and initial camera are shared; materials and lighting differ. These are not performance measurements:
 
 | Godot | Native MuJoCo |
 |---|---|
-| [![Godot F5 picture](docs/pics/f5-renderer-godot.png)](docs/pics/f5-renderer-godot.png) | [![Native MuJoCo F5 picture](docs/pics/f5-renderer-native.png)](docs/pics/f5-renderer-native.png) |
+| [![Godot F5 picture](docs/pics/runtime-viewer-component-godot.png)](docs/pics/runtime-viewer-component-godot.png) | [![Native MuJoCo F5 picture](docs/pics/runtime-viewer-component-native.png)](docs/pics/runtime-viewer-component-native.png) |
 
 ## Shared runtime interaction and performance
+
+Runtime UI consists of two independently optional **CanvasLayer** components:
+
+| Component | Responsibility |
+|---|---|
+| `MjRuntimeViewer` | Original MuJoCo sidebars, F1–F4, official shortcuts, camera, picking and perturbation |
+| `MjGodotExtras` | F11, FPS/system metrics, renderer choice, exact steps/snapshots and example widgets |
+
+Each explicitly binds `world` or `environment_host` in the Inspector. `shape_gallery` saves sibling `Runtime`, `RuntimeViewer` and `GodotExtras` nodes under a neutral root. Original-only has no F11 handler; Extras-only keeps F11/tools while gameplay owns the camera; with neither, simulation and the chosen renderer continue without runtime UI. Disabling/removing one does not disable the other or reset physics. Hiding a menu differs from disabling its component.
+
+Select an editable World/Host and press **添加 MuJoCo 运行面板** in the right MuJoCo dock to create, bind and select an original panel sibling with Undo/Redo. An existing same-target panel is selected instead. The preset adds no Extras or example provider. A scene-root target needs an ordinary parent first; the preset does not restructure the scene. Add **MjGodotExtras** separately through Add Child Node.
+
+Each role supports an inherited `.tscn`, Theme, feature configuration, pure editor preview and independent role/component preferences. Only the original viewer owns reserved/overlay 3D layout; Extras owns 2D overlays/windows without camera takeover. Buttons, keys and component commands share authored restrictions. C# uses `ViewerHandle.Bind(viewer)` and `ExtrasHandle.Bind(extras)` separately. Old combined APIs have no compatibility aliases; see the [component contract](addons/godot_mujoco/viewer/README.md).
+
+Example `DisplayControls` scripts remain example-owned. Explicit `ExtensionBinding` routes call `get_viewer_help()` for original F1 text and `register_extras()` for F11 widgets independently. Each route follows its destination's committed World; original-only help constructs no unused tool widgets.
 
 Both renderers use the MuJoCo 3.16 camera, picking and perturbation APIs and the original simulate panel organization. **Tab / Shift+Tab** toggle the left / right native-style panels; Alt+section letter folds the corresponding group. **F1/F2/F3/F4** independently toggle Help / MuJoCo Info / Profiler / Sensors overlays. **F11** opens only the movable, resizable **Godot extras** window: renderer choice, FPS/system metrics, example extensions and additional tools. Visibility changes do not pause simulation. Editor input stays unchanged.
 
@@ -178,9 +193,9 @@ Both renderers use the MuJoCo 3.16 camera, picking and perturbation APIs and the
 
 The Godot performance overlay initially shows **FPS only**, controlled independently by F11 → Performance. **F2 controls MuJoCo Info only**; neither switch changes the other. Every performance metric, including FPS, can be disabled. Optional CPU/RAM/GPU/VRAM use **whole-system/card** counters, with a verified render-device match. Missing counters are disabled with a reason. CPU/GPU milliseconds are labeled separately from utilization; native update FPS is separate from Godot host FPS. Info refreshes at 5 Hz, OS counters at 1 Hz. Personal preferences live under each project's `user://`.
 
-File includes XML/MJB saves and model/data text exports. Simulation includes keyframes, control noise, solver workers and history scrubbing. Keyframe controls follow model capabilities: the existing shared-world composer still rejects source models containing keyframes, with an explicit UI reason. Physics design settings stay read-only; Busy Wait is disabled because Godot owns the host scheduler. Godot controls adapt the pinned simulate definitions; native 3D rendering still uses `mjr_render`. All examples, templates and generated playgrounds install the viewer automatically. Example-specific controls live in F11 → Examples; exact N-step and manual snapshot tools live in F11 → Tools. See the [runtime viewer contract](addons/godot_mujoco/viewer/README.md) for capabilities, C# APIs, budgets and validation.
+File includes XML/MJB saves and model/data text exports. Simulation includes keyframes, control noise, solver workers and history scrubbing. Keyframe controls follow model capabilities: the existing shared-world composer still rejects source models containing keyframes, with an explicit UI reason. Physics design settings stay read-only; Busy Wait is disabled because Godot owns the host scheduler. Godot controls adapt the pinned simulate definitions; native 3D rendering still uses `mjr_render`. All examples, templates and generated playgrounds explicitly compose the viewer component. Example-specific controls live in F11 → Examples; exact N-step and manual snapshot tools live in F11 → Tools. See the [runtime viewer contract](addons/godot_mujoco/viewer/README.md) for capabilities, C# APIs, budgets and validation.
 
-The [validation record](docs/development/runtime-viewer-validation-2026-10-30.json) includes both renderers, the native-GL-disabled build, F5, examples and reload checks, plus p50/p95 frame times and memory samples with the overlay off, FPS only, all metrics and analysis charts. These capped fixture measurements do not establish which renderer is faster. The subsequent panel/F11 separation has its own [control comparison](docs/development/mujoco-simulate-ui-parity.md) and [validation record](docs/development/runtime-panels-validation-2026-10-30.json).
+Earlier shared-interaction [validation](docs/development/runtime-viewer-validation-2026-10-30.json) includes both renderers, the native-GL-disabled build, F5, examples and reload checks, plus p50/p95 frame times and memory samples with the overlay off, FPS only, all metrics and analysis charts. These capped fixture measurements do not establish which renderer is faster. The earlier in-component panel/F11 separation has its own [control comparison](docs/development/mujoco-simulate-ui-parity.md) and [validation record](docs/development/runtime-panels-validation-2026-10-30.json). The [component record](docs/development/runtime-viewer-component-validation-2026-10-31.json) and images above also predate the independent-component split; The independent split has a separate [validation record](docs/development/runtime-ui-split-validation-2026-10-31.json) and [actual captures](addons/godot_mujoco/viewer/README.md#independent-component-captures), with source-qualified Godot/native, GL-OFF, editor preset and F5 scopes.
 
 ## Import and run a model
 

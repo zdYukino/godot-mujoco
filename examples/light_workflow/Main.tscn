@@ -12,6 +12,9 @@
 [ext_resource type="Script" path="res://addons/godot_mujoco/model/static_heightfield.gd" id="8_fpfj3"]
 [ext_resource type="Script" path="res://addons/godot_mujoco/model/heightfield_data.gd" id="9_sc1dx"]
 
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/runtime_viewer.gd" id="viewer_component"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/godot_extras.gd" id="extras_component"]
+
 [sub_resource type="Resource" id="Resource_kjvhd"]
 script = ExtResource("2_wkp8b")
 document_id = "484745f4564d81211f97174824667847"
@@ -544,3 +547,11 @@ current = true
 
 [node name="Sun" type="DirectionalLight3D" parent="." unique_id=550504133]
 transform = Transform3D(0.90630776, 0.34618863, -0.24240388, 0, 0.57357645, 0.81915206, 0.42261827, -0.74240386, 0.5198368, 0, 0, 0)
+
+[node name="RuntimeViewer" type="CanvasLayer" parent="." node_paths=PackedStringArray("world")]
+script = ExtResource("viewer_component")
+world = NodePath("../Environment")
+
+[node name="GodotExtras" type="CanvasLayer" parent="." node_paths=PackedStringArray("world")]
+script = ExtResource("extras_component")
+world = NodePath("../Environment")

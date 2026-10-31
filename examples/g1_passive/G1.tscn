@@ -51,6 +51,11 @@
 [ext_resource type="ArrayMesh" path="res://mujoco_models/visual_cache/83456c93656b4f0404cf911d5ee4412d90bd3f17023ab61bf029c0a61b0b752e.res" id="43_nqou7"]
 [ext_resource type="ArrayMesh" path="res://mujoco_models/visual_cache/2876f7648e47c120791e8846fad8464477685d58380c5f5d4e2d51cefbec6020.res" id="44_sitka"]
 
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/runtime_viewer.gd" id="viewer_component"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/godot_extras.gd" id="extras_component"]
+
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/extension_binding.gd" id="viewer_extension"]
+
 [sub_resource type="Resource" id="Resource_o5bp2"]
 script = ExtResource("2_lqd6l")
 document_id = "cc9c8cb2c7b7237425ef14f3dbfccee4"
@@ -7435,982 +7440,999 @@ script = ExtResource("10_c4kqx")
 heights = PackedFloat32Array(0, 0, 0, 0)
 
 [node name="PassiveG1Gallery" type="Node3D" unique_id=1339871244]
+
+[node name="Runtime" type="Node3D" parent="."]
 script = ExtResource("1_xlmrq")
 world_design = SubResource("Resource_o5bp2")
 
-[node name="Model" type="Node3D" parent="." unique_id=703849969]
+[node name="Model" type="Node3D" parent="Runtime" unique_id=703849969]
 script = ExtResource("3_oufwx")
 design = SubResource("Resource_g6t3a")
 design_instance_id = "9f46a723bdbbd816dcbc440d889e2472"
 
-[node name="floor_geom" type="Node3D" parent="Model" unique_id=1841101554]
+[node name="floor_geom" type="Node3D" parent="Runtime/Model" unique_id=1841101554]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 script = ExtResource("4_8k1wf")
 entity_id = "0ad833e75c21cd5cdbf98f62a2eaa9aa"
 
-[node name="_Visual" type="MeshInstance3D" parent="Model/floor_geom" unique_id=1807476638]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/Model/floor_geom" unique_id=1807476638]
 material_override = SubResource("StandardMaterial3D_i3uh1")
 mesh = ExtResource("5_llnou")
 
-[node name="G1_1" type="Node3D" parent="." unique_id=205651566]
+[node name="G1_1" type="Node3D" parent="Runtime" unique_id=205651566]
 transform = Transform3D(0.9961947, -0.08715574, 0, 0.08715574, 0.9961947, 0, 0, 0, 1, -1.9921205, 1.007184, 0)
 script = ExtResource("3_oufwx")
 design = SubResource("Resource_wp6rk")
 design_instance_id = "946a512f08c7126ecf242531715cba16"
 
-[node name="pelvis" type="Node3D" parent="G1_1" unique_id=97898783]
+[node name="pelvis" type="Node3D" parent="Runtime/G1_1" unique_id=97898783]
 script = ExtResource("6_gttu6")
 entity_id = "b7b07976d4b3afd0cf5cd40cc47257cf"
 
-[node name="floating_base" type="Node3D" parent="G1_1/pelvis" unique_id=2045920321]
+[node name="floating_base" type="Node3D" parent="Runtime/G1_1/pelvis" unique_id=2045920321]
 script = ExtResource("7_d1upe")
 entity_id = "b7ac398810f59d845cb91d430a90420d"
 
-[node name="editor_5_0" type="Node3D" parent="G1_1/pelvis" unique_id=404777537]
+[node name="editor_5_0" type="Node3D" parent="Runtime/G1_1/pelvis" unique_id=404777537]
 script = ExtResource("4_8k1wf")
 entity_id = "60c2e87d5063edd133022d488a78395e"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/editor_5_0" unique_id=940649609]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/editor_5_0" unique_id=940649609]
 transform = Transform3D(0.98273265, 0.18119055, 0.03750127, -0.1822688, 0.98286, 0.027640002, -0.031850398, -0.033998046, 0.9989143, -0.006895956, -0.07926696, -0.00011619491)
 material_override = SubResource("StandardMaterial3D_onffm")
 mesh = ExtResource("8_a77sp")
 
-[node name="left_hip_pitch_link" type="Node3D" parent="G1_1/pelvis" unique_id=1012179218]
+[node name="left_hip_pitch_link" type="Node3D" parent="Runtime/G1_1/pelvis" unique_id=1012179218]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1027, -0.064452)
 script = ExtResource("6_gttu6")
 entity_id = "9c01f48df6c9eb255ca74e5c1179c956"
 
-[node name="left_hip_pitch_joint" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link" unique_id=277966174]
+[node name="left_hip_pitch_joint" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link" unique_id=277966174]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "5e35bcd67f1f08b28134b18102588a96"
 
-[node name="editor_5_1" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link" unique_id=1483178865]
+[node name="editor_5_1" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link" unique_id=1483178865]
 script = ExtResource("4_8k1wf")
 entity_id = "81e39ecff55a7e0b2b66cbb79088ab77"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/left_hip_pitch_link/editor_5_1" unique_id=1302962375]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/editor_5_1" unique_id=1302962375]
 transform = Transform3D(0.98751336, -0.044147205, 0.15122305, 0.12610225, 0.796877, -0.59083414, -0.09442252, 0.6025261, 0.79249376, -0.0008665585, -0.026296131, -0.047110952)
 material_override = SubResource("StandardMaterial3D_o7xc4")
 mesh = ExtResource("9_0wr65")
 
-[node name="editor_5_2" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link" unique_id=847215186]
+[node name="editor_5_2" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link" unique_id=847215186]
 script = ExtResource("4_8k1wf")
 entity_id = "f4f444a46498c62d7172df774856ae02"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/left_hip_pitch_link/editor_5_2" unique_id=126068131]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/editor_5_2" unique_id=126068131]
 transform = Transform3D(0.98751336, -0.044147205, 0.15122305, 0.12610225, 0.796877, -0.59083414, -0.09442252, 0.6025261, 0.79249376, -0.0008665585, -0.026296131, -0.047110952)
 material_override = SubResource("StandardMaterial3D_j2gay")
 mesh = ExtResource("9_0wr65")
 
-[node name="left_hip_roll_link" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link" unique_id=107360541]
+[node name="left_hip_roll_link" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link" unique_id=107360541]
 transform = Transform3D(0.98474395, -0.17400965, 0, 0.17400965, 0.98474395, 0, 0, 0, 1, 0, -0.030465, -0.052)
 script = ExtResource("6_gttu6")
 entity_id = "51a39305ef8520669686cba324536861"
 
-[node name="left_hip_roll_joint" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link" unique_id=458662526]
+[node name="left_hip_roll_joint" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link" unique_id=458662526]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "41a844457428c9b52cf92b26ea22bc5e"
 
-[node name="editor_5_3" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link" unique_id=1767671096]
+[node name="editor_5_3" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link" unique_id=1767671096]
 script = ExtResource("4_8k1wf")
 entity_id = "1a571e89f62d04264395cf72f1f32aa5"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/editor_5_3" unique_id=1532651262]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/editor_5_3" unique_id=1532651262]
 transform = Transform3D(0.9382059, 0.34586418, -0.012149037, -0.3457593, 0.9382706, 0.009935379, 0.014835375, -0.005120789, 0.99987686, 0.03567396, -0.06771372, 0.00036361814)
 material_override = SubResource("StandardMaterial3D_1rfcw")
 mesh = ExtResource("10_3js6y")
 
-[node name="editor_5_4" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link" unique_id=1196295631]
+[node name="editor_5_4" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link" unique_id=1196295631]
 script = ExtResource("4_8k1wf")
 entity_id = "ffcdf52f05ff83210e84d59957626cc1"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/editor_5_4" unique_id=1429088968]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/editor_5_4" unique_id=1429088968]
 transform = Transform3D(0.9382059, 0.34586418, -0.012149037, -0.3457593, 0.9382706, 0.009935379, 0.014835375, -0.005120789, 0.99987686, 0.03567396, -0.06771372, 0.00036361814)
 material_override = SubResource("StandardMaterial3D_uegpm")
 mesh = ExtResource("10_3js6y")
 
-[node name="left_hip_yaw_link" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link" unique_id=1647273071]
+[node name="left_hip_yaw_link" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link" unique_id=1647273071]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.025001, -0.12411997, 0)
 script = ExtResource("6_gttu6")
 entity_id = "88f0d938ff8eccdc44d0efa5a799b896"
 
-[node name="left_hip_yaw_joint" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link" unique_id=770203038]
+[node name="left_hip_yaw_joint" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link" unique_id=770203038]
 script = ExtResource("7_d1upe")
 entity_id = "01f2ce9c2b4bfc193b343d0027805c77"
 
-[node name="editor_5_5" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link" unique_id=1917135905]
+[node name="editor_5_5" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link" unique_id=1917135905]
 script = ExtResource("4_8k1wf")
 entity_id = "51ccc761559ee6fc577829e3fad3bb41"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/editor_5_5" unique_id=27761627]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/editor_5_5" unique_id=27761627]
 transform = Transform3D(-0.061330013, 0.4469183, 0.89247, -0.015731953, 0.8936092, -0.44856995, -0.9979936, -0.041551095, -0.04777417, -0.030698236, -0.09263918, 0.0031575114)
 material_override = SubResource("StandardMaterial3D_sanx5")
 mesh = ExtResource("11_t0t4v")
 
-[node name="editor_5_6" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link" unique_id=1785098982]
+[node name="editor_5_6" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link" unique_id=1785098982]
 script = ExtResource("4_8k1wf")
 entity_id = "5f93a43d58177699157768e71f56b23e"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/editor_5_6" unique_id=696369368]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/editor_5_6" unique_id=696369368]
 transform = Transform3D(-0.061330013, 0.4469183, 0.89247, -0.015731953, 0.8936092, -0.44856995, -0.9979936, -0.041551095, -0.04777417, -0.030698236, -0.09263918, 0.0031575114)
 material_override = SubResource("StandardMaterial3D_5d2kf")
 mesh = ExtResource("11_t0t4v")
 
-[node name="left_knee_link" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link" unique_id=2042059892]
+[node name="left_knee_link" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link" unique_id=2042059892]
 transform = Transform3D(0.98474395, 0.17400965, 0, -0.17400965, 0.98474395, 0, 0, 0, 1, -0.078273, -0.17734, -0.0021488965)
 script = ExtResource("6_gttu6")
 entity_id = "995042de0b83bac01afbfd08d2f463df"
 
-[node name="left_knee_joint" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link" unique_id=157459670]
+[node name="left_knee_joint" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link" unique_id=157459670]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "f5e5de45326710ea7125fc930256ed5e"
 
-[node name="editor_5_7" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link" unique_id=757490361]
+[node name="editor_5_7" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link" unique_id=757490361]
 script = ExtResource("4_8k1wf")
 entity_id = "c62de743f9db721c1bf884456ecfad74"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/editor_5_7" unique_id=392314130]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/editor_5_7" unique_id=392314130]
 transform = Transform3D(0.15099104, 0.026587792, 0.9881775, -0.062577344, 0.9978904, -0.017287465, -0.9865525, -0.059227265, 0.1523363, 0.012290412, -0.1227521, -0.0027294457)
 material_override = SubResource("StandardMaterial3D_y2mxi")
 mesh = ExtResource("12_nq0js")
 
-[node name="editor_5_8" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link" unique_id=995936071]
+[node name="editor_5_8" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link" unique_id=995936071]
 script = ExtResource("4_8k1wf")
 entity_id = "132834b66a3e17924590a2d9c1c352fb"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/editor_5_8" unique_id=1683566543]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/editor_5_8" unique_id=1683566543]
 transform = Transform3D(0.15099104, 0.026587792, 0.9881775, -0.062577344, 0.9978904, -0.017287465, -0.9865525, -0.059227265, 0.1523363, 0.012290412, -0.1227521, -0.0027294457)
 material_override = SubResource("StandardMaterial3D_ht30m")
 mesh = ExtResource("12_nq0js")
 
-[node name="left_ankle_pitch_link" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link" unique_id=1354109972]
+[node name="left_ankle_pitch_link" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link" unique_id=1354109972]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.30001, 9.444356e-05)
 script = ExtResource("6_gttu6")
 entity_id = "77a7ff0c39cab84480abc1a15ec26e83"
 
-[node name="left_ankle_pitch_joint" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link" unique_id=1308362248]
+[node name="left_ankle_pitch_joint" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link" unique_id=1308362248]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "abb4980534baa619b916c1e5fa5b72e5"
 
-[node name="editor_5_9" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link" unique_id=926878115]
+[node name="editor_5_9" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link" unique_id=926878115]
 script = ExtResource("4_8k1wf")
 entity_id = "30c2d8fa1a963024a3f0d54fcd05d522"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/editor_5_9" unique_id=815362288]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/editor_5_9" unique_id=815362288]
 transform = Transform3D(-4.1315554e-05, 0.5554786, 0.83153087, -5.5893513e-05, 0.83153087, -0.5554786, -1, -6.9427086e-05, -3.3075119e-06, -0.004106198, -0.008573532, -5.888194e-05)
 material_override = SubResource("StandardMaterial3D_42ned")
 mesh = ExtResource("13_wjoxu")
 
-[node name="editor_5_10" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link" unique_id=469403909]
+[node name="editor_5_10" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link" unique_id=469403909]
 script = ExtResource("4_8k1wf")
 entity_id = "6d8d7e5bb3850ead74f1550158acb2c2"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/editor_5_10" unique_id=1795971813]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/editor_5_10" unique_id=1795971813]
 transform = Transform3D(-4.1315554e-05, 0.5554786, 0.83153087, -5.5893513e-05, 0.83153087, -0.5554786, -1, -6.9427086e-05, -3.3075119e-06, -0.004106198, -0.008573532, -5.888194e-05)
 material_override = SubResource("StandardMaterial3D_7ofbq")
 mesh = ExtResource("13_wjoxu")
 
-[node name="left_ankle_roll_link" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link" unique_id=1374567765]
+[node name="left_ankle_roll_link" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link" unique_id=1374567765]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.017558038, 0)
 script = ExtResource("6_gttu6")
 entity_id = "dcca9697c9e10807938504afcd3e31b8"
 
-[node name="left_ankle_roll_joint" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link" unique_id=1945582213]
+[node name="left_ankle_roll_joint" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link" unique_id=1945582213]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "be5c5bb901aabc57ef2cdb9d9d9dcd73"
 
-[node name="editor_5_11" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link" unique_id=1763156857]
+[node name="editor_5_11" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link" unique_id=1763156857]
 script = ExtResource("4_8k1wf")
 entity_id = "5b729f45cc39354f6e78e9a57833f685"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link/editor_5_11" unique_id=1824749964]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link/editor_5_11" unique_id=1824749964]
 transform = Transform3D(0.08129078, 0.9966904, 0.00029412057, 0.9966887, -0.08129119, 0.0018274517, 0.0018453132, 0.00014459167, -0.99999815, 0.026464358, -0.014106214, -7.351488e-05)
 material_override = SubResource("StandardMaterial3D_lnorp")
 mesh = ExtResource("14_busyr")
 
-[node name="editor_5_12" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link" unique_id=723170705]
+[node name="editor_5_12" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link" unique_id=723170705]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05, -0.03, -0.025)
 script = ExtResource("4_8k1wf")
 entity_id = "7452cecfd0327f4151a4b52c14275f85"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link/editor_5_12" unique_id=1701435406]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link/editor_5_12" unique_id=1701435406]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7252903e-09, 0, 0)
 material_override = SubResource("StandardMaterial3D_1mtvw")
 mesh = ExtResource("15_0glfy")
 
-[node name="editor_5_13" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link" unique_id=1769449576]
+[node name="editor_5_13" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link" unique_id=1769449576]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05, -0.03, 0.025)
 script = ExtResource("4_8k1wf")
 entity_id = "342b47a3542c2691fcbea3710b5ced62"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link/editor_5_13" unique_id=1948104666]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link/editor_5_13" unique_id=1948104666]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7252903e-09, 0, 0)
 material_override = SubResource("StandardMaterial3D_mprk3")
 mesh = ExtResource("15_0glfy")
 
-[node name="editor_5_14" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link" unique_id=791926492]
+[node name="editor_5_14" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link" unique_id=791926492]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, -0.03, -0.03)
 script = ExtResource("4_8k1wf")
 entity_id = "216f530e04ef42df335ba994cdf34de0"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link/editor_5_14" unique_id=1658558568]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link/editor_5_14" unique_id=1658558568]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.450581e-09, 0, 0)
 material_override = SubResource("StandardMaterial3D_m4fss")
 mesh = ExtResource("15_0glfy")
 
-[node name="editor_5_15" type="Node3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link" unique_id=589300594]
+[node name="editor_5_15" type="Node3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link" unique_id=589300594]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, -0.03, 0.03)
 script = ExtResource("4_8k1wf")
 entity_id = "85a96d6b38ff4be2c8c037f498b84d98"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link/editor_5_15" unique_id=984664425]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/left_hip_pitch_link/left_hip_roll_link/left_hip_yaw_link/left_knee_link/left_ankle_pitch_link/left_ankle_roll_link/editor_5_15" unique_id=984664425]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.450581e-09, 0, 0)
 material_override = SubResource("StandardMaterial3D_va3ut")
 mesh = ExtResource("15_0glfy")
 
-[node name="right_hip_pitch_link" type="Node3D" parent="G1_1/pelvis" unique_id=881254307]
+[node name="right_hip_pitch_link" type="Node3D" parent="Runtime/G1_1/pelvis" unique_id=881254307]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1027, 0.064452)
 script = ExtResource("6_gttu6")
 entity_id = "e38ab75c74a0d71d6ac83c837c862b15"
 
-[node name="right_hip_pitch_joint" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link" unique_id=1563195404]
+[node name="right_hip_pitch_joint" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link" unique_id=1563195404]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "f3037ab5e90dd3d55ed73b347e83639e"
 
-[node name="editor_5_16" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link" unique_id=132778315]
+[node name="editor_5_16" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link" unique_id=132778315]
 script = ExtResource("4_8k1wf")
 entity_id = "f3fdbb934a249e5b7a116f21be943c5c"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/right_hip_pitch_link/editor_5_16" unique_id=390369211]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/editor_5_16" unique_id=390369211]
 transform = Transform3D(0.9875043, -0.04414716, -0.15128224, 0.12614192, 0.7968496, 0.5908627, 0.094464295, -0.60256237, 0.79246134, -0.00086647033, -0.026296623, 0.04711005)
 material_override = SubResource("StandardMaterial3D_gifjq")
 mesh = ExtResource("16_7bch7")
 
-[node name="editor_5_17" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link" unique_id=734631743]
+[node name="editor_5_17" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link" unique_id=734631743]
 script = ExtResource("4_8k1wf")
 entity_id = "a3d5ec0509302e8ab4c18c3d3333287c"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/right_hip_pitch_link/editor_5_17" unique_id=536514290]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/editor_5_17" unique_id=536514290]
 transform = Transform3D(0.9875043, -0.04414716, -0.15128224, 0.12614192, 0.7968496, 0.5908627, 0.094464295, -0.60256237, 0.79246134, -0.00086647033, -0.026296623, 0.04711005)
 material_override = SubResource("StandardMaterial3D_bnq6f")
 mesh = ExtResource("16_7bch7")
 
-[node name="right_hip_roll_link" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link" unique_id=453053899]
+[node name="right_hip_roll_link" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link" unique_id=453053899]
 transform = Transform3D(0.98474395, -0.17400965, 0, 0.17400965, 0.98474395, 0, 0, 0, 1, 0, -0.030465, 0.052)
 script = ExtResource("6_gttu6")
 entity_id = "f3a44ed0347342af2412c84eab2bfb03"
 
-[node name="right_hip_roll_joint" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link" unique_id=1937108482]
+[node name="right_hip_roll_joint" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link" unique_id=1937108482]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "f6d6c6870a2ac5e34dd9042281de2a7e"
 
-[node name="editor_5_18" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link" unique_id=2091488750]
+[node name="editor_5_18" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link" unique_id=2091488750]
 script = ExtResource("4_8k1wf")
 entity_id = "a5d15c69e487d426ba81baddd31f03b6"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/editor_5_18" unique_id=1234025221]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/editor_5_18" unique_id=1234025221]
 transform = Transform3D(0.93821, 0.34586626, 0.011771767, -0.34576535, 0.93826985, -0.0098014455, -0.014435083, 0.005125544, 0.99988264, 0.03567379, -0.06771295, -0.0003616959)
 material_override = SubResource("StandardMaterial3D_2nn5a")
 mesh = ExtResource("17_5lqrr")
 
-[node name="editor_5_19" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link" unique_id=983752487]
+[node name="editor_5_19" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link" unique_id=983752487]
 script = ExtResource("4_8k1wf")
 entity_id = "1cb37b5036ad3a13cee712d11f301f14"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/editor_5_19" unique_id=992421649]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/editor_5_19" unique_id=992421649]
 transform = Transform3D(0.93821, 0.34586626, 0.011771767, -0.34576535, 0.93826985, -0.0098014455, -0.014435083, 0.005125544, 0.99988264, 0.03567379, -0.06771295, -0.0003616959)
 material_override = SubResource("StandardMaterial3D_32mqj")
 mesh = ExtResource("17_5lqrr")
 
-[node name="right_hip_yaw_link" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link" unique_id=1886764713]
+[node name="right_hip_yaw_link" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link" unique_id=1886764713]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.025001, -0.12411997, 0)
 script = ExtResource("6_gttu6")
 entity_id = "bb6c69cfc4057d5df96a878a8c28c3e3"
 
-[node name="right_hip_yaw_joint" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link" unique_id=1687031720]
+[node name="right_hip_yaw_joint" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link" unique_id=1687031720]
 script = ExtResource("7_d1upe")
 entity_id = "5e40736e2097247150cc37d9a2332720"
 
-[node name="editor_5_20" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link" unique_id=2101905177]
+[node name="editor_5_20" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link" unique_id=2101905177]
 script = ExtResource("4_8k1wf")
 entity_id = "3c814537d5cc8fa873311f2e9e0eef0b"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/editor_5_20" unique_id=739737321]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/editor_5_20" unique_id=739737321]
 transform = Transform3D(0.06142114, 0.44691592, 0.89246494, 0.01567581, 0.8936109, -0.44856864, -0.9979889, 0.04154171, 0.047880836, -0.030699663, -0.092639565, -0.0031587258)
 material_override = SubResource("StandardMaterial3D_calm6")
 mesh = ExtResource("18_6o7p2")
 
-[node name="editor_5_21" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link" unique_id=1461437884]
+[node name="editor_5_21" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link" unique_id=1461437884]
 script = ExtResource("4_8k1wf")
 entity_id = "2d521fe67dde9d5f4d62865046a594f0"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/editor_5_21" unique_id=1718642798]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/editor_5_21" unique_id=1718642798]
 transform = Transform3D(0.06142114, 0.44691592, 0.89246494, 0.01567581, 0.8936109, -0.44856864, -0.9979889, 0.04154171, 0.047880836, -0.030699663, -0.092639565, -0.0031587258)
 material_override = SubResource("StandardMaterial3D_15qd8")
 mesh = ExtResource("18_6o7p2")
 
-[node name="right_knee_link" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link" unique_id=2006530732]
+[node name="right_knee_link" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link" unique_id=2006530732]
 transform = Transform3D(0.98474395, 0.17400965, 0, -0.17400965, 0.98474395, 0, 0, 0, 1, -0.078273, -0.17734, 0.0021488965)
 script = ExtResource("6_gttu6")
 entity_id = "54938a85062da2fb640f2679ef996ebf"
 
-[node name="right_knee_joint" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link" unique_id=547368484]
+[node name="right_knee_joint" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link" unique_id=547368484]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "488442f1d0162ee2510df60d198f294e"
 
-[node name="editor_5_22" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link" unique_id=1774797360]
+[node name="editor_5_22" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link" unique_id=1774797360]
 script = ExtResource("4_8k1wf")
 entity_id = "1418d54d1a088b0330af1dfd3ed9d935"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/editor_5_22" unique_id=889174722]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/editor_5_22" unique_id=889174722]
 transform = Transform3D(-0.1511041, 0.026583292, 0.9881602, 0.062559724, 0.9978916, -0.017278789, -0.98653626, 0.059208144, -0.15244853, 0.012290841, -0.12275466, 0.0027284175)
 material_override = SubResource("StandardMaterial3D_s6mlm")
 mesh = ExtResource("19_rj57k")
 
-[node name="editor_5_23" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link" unique_id=1720541524]
+[node name="editor_5_23" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link" unique_id=1720541524]
 script = ExtResource("4_8k1wf")
 entity_id = "6648e99d9dcd1381655e61415cb0019e"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/editor_5_23" unique_id=388910193]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/editor_5_23" unique_id=388910193]
 transform = Transform3D(-0.1511041, 0.026583292, 0.9881602, 0.062559724, 0.9978916, -0.017278789, -0.98653626, 0.059208144, -0.15244853, 0.012290841, -0.12275466, 0.0027284175)
 material_override = SubResource("StandardMaterial3D_62jvg")
 mesh = ExtResource("19_rj57k")
 
-[node name="right_ankle_pitch_link" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link" unique_id=1915007229]
+[node name="right_ankle_pitch_link" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link" unique_id=1915007229]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.30001, -9.444356e-05)
 script = ExtResource("6_gttu6")
 entity_id = "e9d5189169c041d6f6a3e4ac2708336a"
 
-[node name="right_ankle_pitch_joint" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link" unique_id=939908980]
+[node name="right_ankle_pitch_joint" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link" unique_id=939908980]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "995d158a758ca676a81e492119ffcdd2"
 
-[node name="editor_5_24" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link" unique_id=1943840647]
+[node name="editor_5_24" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link" unique_id=1943840647]
 script = ExtResource("4_8k1wf")
 entity_id = "41071951fcc77407a64ff660f61861d1"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/editor_5_24" unique_id=929055021]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/editor_5_24" unique_id=929055021]
 transform = Transform3D(9.638286e-06, 0.55539095, 0.8315892, 0.00011088289, 0.8315892, -0.55539095, -1, 9.756203e-05, -5.356826e-05, -0.0041065947, -0.008573055, 5.9075654e-05)
 material_override = SubResource("StandardMaterial3D_i8m4h")
 mesh = ExtResource("20_81ypt")
 
-[node name="editor_5_25" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link" unique_id=1454153459]
+[node name="editor_5_25" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link" unique_id=1454153459]
 script = ExtResource("4_8k1wf")
 entity_id = "40e0680ebff8e4c04b82f640a01c4fe3"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/editor_5_25" unique_id=1609052234]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/editor_5_25" unique_id=1609052234]
 transform = Transform3D(9.638286e-06, 0.55539095, 0.8315892, 0.00011088289, 0.8315892, -0.55539095, -1, 9.756203e-05, -5.356826e-05, -0.0041065947, -0.008573055, 5.9075654e-05)
 material_override = SubResource("StandardMaterial3D_3igj8")
 mesh = ExtResource("20_81ypt")
 
-[node name="right_ankle_roll_link" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link" unique_id=2668502]
+[node name="right_ankle_roll_link" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link" unique_id=2668502]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.017558038, 0)
 script = ExtResource("6_gttu6")
 entity_id = "18f71452062b0b7c59c67ef5881a1ddc"
 
-[node name="right_ankle_roll_joint" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link" unique_id=131720724]
+[node name="right_ankle_roll_joint" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link" unique_id=131720724]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "b33e1520a5f3dc97b96b1a952a852d9c"
 
-[node name="editor_5_26" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link" unique_id=48242338]
+[node name="editor_5_26" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link" unique_id=48242338]
 script = ExtResource("4_8k1wf")
 entity_id = "4cfa9141205f598e210c3018d4fa150e"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link/editor_5_26" unique_id=1895410972]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link/editor_5_26" unique_id=1895410972]
 transform = Transform3D(0.08129479, 0.99669003, -0.00032177716, 0.9966885, -0.08129524, -0.0017722743, -0.001792567, -0.0001766349, -0.9999984, 0.02646948, -0.014106393, 7.266551e-05)
 material_override = SubResource("StandardMaterial3D_ddgci")
 mesh = ExtResource("21_gytt8")
 
-[node name="editor_5_27" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link" unique_id=1580190819]
+[node name="editor_5_27" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link" unique_id=1580190819]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05, -0.03, -0.025)
 script = ExtResource("4_8k1wf")
 entity_id = "f61792dc0a420e826e5aab35cef5f41b"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link/editor_5_27" unique_id=1500432929]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link/editor_5_27" unique_id=1500432929]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7252903e-09, 0, 0)
 material_override = SubResource("StandardMaterial3D_7qoqb")
 mesh = ExtResource("15_0glfy")
 
-[node name="editor_5_28" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link" unique_id=1577301013]
+[node name="editor_5_28" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link" unique_id=1577301013]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.05, -0.03, 0.025)
 script = ExtResource("4_8k1wf")
 entity_id = "ca243720482bff29dbf0c0cc6c481499"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link/editor_5_28" unique_id=109927509]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link/editor_5_28" unique_id=109927509]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.7252903e-09, 0, 0)
 material_override = SubResource("StandardMaterial3D_rdwny")
 mesh = ExtResource("15_0glfy")
 
-[node name="editor_5_29" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link" unique_id=1472375436]
+[node name="editor_5_29" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link" unique_id=1472375436]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, -0.03, -0.03)
 script = ExtResource("4_8k1wf")
 entity_id = "010b3a061606aae49bc82650a3d93a1b"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link/editor_5_29" unique_id=475511197]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link/editor_5_29" unique_id=475511197]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.450581e-09, 0, 0)
 material_override = SubResource("StandardMaterial3D_sw2rb")
 mesh = ExtResource("15_0glfy")
 
-[node name="editor_5_30" type="Node3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link" unique_id=966370295]
+[node name="editor_5_30" type="Node3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link" unique_id=966370295]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.12, -0.03, 0.03)
 script = ExtResource("4_8k1wf")
 entity_id = "a81a5dc6c55d1ac7eeb45130f5b4845c"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link/editor_5_30" unique_id=1167778099]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/right_hip_pitch_link/right_hip_roll_link/right_hip_yaw_link/right_knee_link/right_ankle_pitch_link/right_ankle_roll_link/editor_5_30" unique_id=1167778099]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.450581e-09, 0, 0)
 material_override = SubResource("StandardMaterial3D_25oxd")
 mesh = ExtResource("15_0glfy")
 
-[node name="waist_yaw_link" type="Node3D" parent="G1_1/pelvis" unique_id=103737639]
+[node name="waist_yaw_link" type="Node3D" parent="Runtime/G1_1/pelvis" unique_id=103737639]
 script = ExtResource("6_gttu6")
 entity_id = "1a34feff089715945ad6c121a9ea12f0"
 
-[node name="waist_yaw_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link" unique_id=466256160]
+[node name="waist_yaw_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link" unique_id=466256160]
 script = ExtResource("7_d1upe")
 entity_id = "480124d85965b6c979adf80c48a3d08c"
 
-[node name="editor_5_31" type="Node3D" parent="G1_1/pelvis/waist_yaw_link" unique_id=409893639]
+[node name="editor_5_31" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link" unique_id=409893639]
 script = ExtResource("4_8k1wf")
 entity_id = "04e7b389ad1ee3f60e459c72270d5a10"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/editor_5_31" unique_id=1354020987]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/editor_5_31" unique_id=1354020987]
 transform = Transform3D(-0.11956359, 0.9928259, 0.0011579113, 0.99282646, 0.11956398, -0.00027909188, -0.00041553416, 0.0011162359, -0.9999993, 0.0038216219, 0.015615161, 3.0689793e-05)
 material_override = SubResource("StandardMaterial3D_db1uj")
 mesh = ExtResource("22_k4ibw")
 
-[node name="waist_roll_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link" unique_id=1830233575]
+[node name="waist_roll_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link" unique_id=1830233575]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0039635, 0.044, 0)
 script = ExtResource("6_gttu6")
 entity_id = "258106eb2204afeafdfc6b9dccce3243"
 
-[node name="waist_roll_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link" unique_id=441418473]
+[node name="waist_roll_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link" unique_id=441418473]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "baef8e33ce24aa5884a33fc7ea030aea"
 
-[node name="editor_5_32" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link" unique_id=255051868]
+[node name="editor_5_32" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link" unique_id=255051868]
 script = ExtResource("4_8k1wf")
 entity_id = "bc56b5f38991175bd61d8d748894ea4c"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/editor_5_32" unique_id=470527670]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/editor_5_32" unique_id=470527670]
 transform = Transform3D(-0.00019042095, 1, -4.371139e-08, 0, -4.371139e-08, -1, -1, -0.00019042095, 8.323564e-12, 0, 0, -1.3107122e-07)
 material_override = SubResource("StandardMaterial3D_vi8wv")
 mesh = ExtResource("23_w6wae")
 
-[node name="torso_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link" unique_id=1564145440]
+[node name="torso_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link" unique_id=1564145440]
 script = ExtResource("6_gttu6")
 entity_id = "1827c92027d187618bcb39e4e3096eb8"
 
-[node name="waist_pitch_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=1622107108]
+[node name="waist_pitch_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=1622107108]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "115ba7eb8b6235af6e27db320a7c697c"
 
-[node name="editor_5_33" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=1663395292]
+[node name="editor_5_33" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=1663395292]
 script = ExtResource("4_8k1wf")
 entity_id = "c5fc8f7e40a8ad4156b28a14e0e14bbf"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/editor_5_33" unique_id=1060743992]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/editor_5_33" unique_id=1060743992]
 transform = Transform3D(0.9999497, 0.00911227, 0.0041763345, -0.009096433, 0.9999514, -0.0037950927, -0.0042107133, 0.0037569124, 0.9999841, 0.0048597693, 0.14751264, -0.0021098247)
 material_override = SubResource("StandardMaterial3D_qofyv")
 mesh = ExtResource("24_3vq0n")
 
-[node name="editor_5_34" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=948826013]
+[node name="editor_5_34" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=948826013]
 script = ExtResource("4_8k1wf")
 entity_id = "076082d9e2c794f38444cb85a0339807"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/editor_5_34" unique_id=589870006]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/editor_5_34" unique_id=589870006]
 transform = Transform3D(0.9999497, 0.00911227, 0.0041763345, -0.009096433, 0.9999514, -0.0037950927, -0.0042107133, 0.0037569124, 0.9999841, 0.0048597693, 0.14751264, -0.0021098247)
 material_override = SubResource("StandardMaterial3D_vwesf")
 mesh = ExtResource("24_3vq0n")
 
-[node name="left_shoulder_pitch_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=1429464542]
+[node name="left_shoulder_pitch_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=1429464542]
 transform = Transform3D(1, -3.219721e-10, -0.00019931408, -5.4948898e-05, 0.96124613, -0.27569154, 0.00019158998, 0.27569157, 0.96124613, 0.0039562997, 0.24778, -0.10022)
 script = ExtResource("6_gttu6")
 entity_id = "dac7264a09aecebf95ddf8ffece86285"
 
-[node name="left_shoulder_pitch_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link" unique_id=1518046605]
+[node name="left_shoulder_pitch_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link" unique_id=1518046605]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "84179faf2835c0c2aefd2f2cef8d7501"
 
-[node name="editor_5_39" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link" unique_id=990678913]
+[node name="editor_5_39" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link" unique_id=990678913]
 script = ExtResource("4_8k1wf")
 entity_id = "69a44cef61f2fd62652341689fa2ad39"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/editor_5_39" unique_id=2078014937]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/editor_5_39" unique_id=2078014937]
 transform = Transform3D(0.055448424, -0.008237356, 0.9984274, 0.5562971, 0.8306356, -0.024041362, -0.8291314, 0.5567555, 0.05063985, -2.5241607e-05, -0.008909196, -0.034542203)
 material_override = SubResource("StandardMaterial3D_p7y8g")
 mesh = ExtResource("25_51aee")
 
-[node name="editor_5_40" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link" unique_id=62923261]
+[node name="editor_5_40" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link" unique_id=62923261]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, -0.01, -0.04)
 script = ExtResource("4_8k1wf")
 entity_id = "8943b78572a517d57a0825e19b2b3ca3"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/editor_5_40" unique_id=1877551840]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/editor_5_40" unique_id=1877551840]
 transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.275958e-12, 0)
 material_override = SubResource("StandardMaterial3D_vhmud")
 mesh = ExtResource("26_7406h")
 
-[node name="left_shoulder_roll_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link" unique_id=9267215]
+[node name="left_shoulder_roll_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link" unique_id=9267215]
 transform = Transform3D(1, -4.7659654e-12, 1.4551915e-11, -3.637979e-12, 0.96126235, 0.27563527, 0, -0.27563527, 0.9612623, 0, -0.01383099, -0.038000017)
 script = ExtResource("6_gttu6")
 entity_id = "ec7b500bfe5bf3915a3ae8a13eeb79d8"
 
-[node name="left_shoulder_roll_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link" unique_id=78674720]
+[node name="left_shoulder_roll_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link" unique_id=78674720]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "51cdf48ddaf3399631f626147acc9385"
 
-[node name="editor_5_41" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link" unique_id=365050116]
+[node name="editor_5_41" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link" unique_id=365050116]
 script = ExtResource("4_8k1wf")
 entity_id = "4ec923377c886939b3f5cb439db48d13"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/editor_5_41" unique_id=2131433568]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/editor_5_41" unique_id=2131433568]
 transform = Transform3D(0.0006443678, 0.0034226228, 0.9999939, 0.07933068, 0.9968423, -0.0034629542, -0.9968481, 0.07933244, 0.00037081414, 3.0788666e-05, -0.037506223, -0.007747248)
 material_override = SubResource("StandardMaterial3D_j8fc7")
 mesh = ExtResource("27_wy7xx")
 
-[node name="editor_5_42" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link" unique_id=1067814757]
+[node name="editor_5_42" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link" unique_id=1067814757]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.004, -0.053, -0.006)
 script = ExtResource("4_8k1wf")
 entity_id = "236f1e9291b130a424701ff227655d5e"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/editor_5_42" unique_id=1809292976]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/editor_5_42" unique_id=1809292976]
 transform = Transform3D(1, -2.5108804e-12, 0, 2.5108804e-12, 1, 0, 0, 0, 1, 0, -1.4901161e-08, -1.4901161e-08)
 material_override = SubResource("StandardMaterial3D_82nry")
 mesh = ExtResource("28_6iaxo")
 
-[node name="left_shoulder_yaw_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link" unique_id=1819802883]
+[node name="left_shoulder_yaw_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link" unique_id=1819802883]
 transform = Transform3D(1, -1.1279866e-12, 0, 2.5108804e-12, 1, 3.637979e-12, 0, 0, 1, 7.275958e-12, -0.10320002, -0.0062399954)
 script = ExtResource("6_gttu6")
 entity_id = "8b4b7fbea9ad9cc95553775ea6148101"
 
-[node name="left_shoulder_yaw_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link" unique_id=1671607561]
+[node name="left_shoulder_yaw_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link" unique_id=1671607561]
 script = ExtResource("7_d1upe")
 entity_id = "3771ab7db85074ebb238ad492e5fbb37"
 
-[node name="editor_5_43" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link" unique_id=1702990478]
+[node name="editor_5_43" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link" unique_id=1702990478]
 script = ExtResource("4_8k1wf")
 entity_id = "c67457c6bd5acf5e9d29abbb29b17081"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/editor_5_43" unique_id=596337432]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/editor_5_43" unique_id=596337432]
 transform = Transform3D(-0.09842262, -0.24715143, 0.96396536, -0.13159914, 0.96339375, 0.23356837, -0.9864049, -0.1038686, -0.12734465, 0.008049665, -0.048209906, 0.0042017996)
 material_override = SubResource("StandardMaterial3D_k26qs")
 mesh = ExtResource("29_t7d8e")
 
-[node name="editor_5_44" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link" unique_id=230476855]
+[node name="editor_5_44" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link" unique_id=230476855]
 script = ExtResource("4_8k1wf")
 entity_id = "182f128727b10226e55a18be3a057409"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/editor_5_44" unique_id=1683774780]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/editor_5_44" unique_id=1683774780]
 transform = Transform3D(-0.09842262, -0.24715143, 0.96396536, -0.13159914, 0.96339375, 0.23356837, -0.9864049, -0.1038686, -0.12734465, 0.008049665, -0.048209906, 0.0042017996)
 material_override = SubResource("StandardMaterial3D_iplcr")
 mesh = ExtResource("29_t7d8e")
 
-[node name="left_elbow_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link" unique_id=1917723864]
+[node name="left_elbow_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link" unique_id=1917723864]
 transform = Transform3D(1, -1.1279866e-12, 0, 2.5108804e-12, 1, 3.637979e-12, 0, 0, 1, 0.015782999, -0.080518, 0)
 script = ExtResource("6_gttu6")
 entity_id = "61865fff0abdd42fb169f4a3ba41b33c"
 
-[node name="left_elbow_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link" unique_id=1751575301]
+[node name="left_elbow_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link" unique_id=1751575301]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "fbca880dd343f474518f540f2cf87b09"
 
-[node name="editor_5_45" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link" unique_id=501031267]
+[node name="editor_5_45" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link" unique_id=501031267]
 script = ExtResource("4_8k1wf")
 entity_id = "6bdd95947789f24894d2420740cb0293"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/editor_5_45" unique_id=1790711748]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/editor_5_45" unique_id=1790711748]
 transform = Transform3D(0.32731423, 0.94076777, -0.0884383, 0.058184877, -0.11348275, -0.99183476, -0.9431224, 0.3194959, -0.09188298, 0.05357424, -0.008537754, -0.008583814)
 material_override = SubResource("StandardMaterial3D_do7yc")
 mesh = ExtResource("30_p0kd1")
 
-[node name="editor_5_46" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link" unique_id=71655668]
+[node name="editor_5_46" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link" unique_id=71655668]
 script = ExtResource("4_8k1wf")
 entity_id = "d005653078b18eb27c88d2981e6c96f3"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/editor_5_46" unique_id=247124183]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/editor_5_46" unique_id=247124183]
 transform = Transform3D(0.32731423, 0.94076777, -0.0884383, 0.058184877, -0.11348275, -0.99183476, -0.9431224, 0.3194959, -0.09188298, 0.05357424, -0.008537754, -0.008583814)
 material_override = SubResource("StandardMaterial3D_5c6ky")
 mesh = ExtResource("30_p0kd1")
 
-[node name="left_wrist_roll_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link" unique_id=1299581899]
+[node name="left_wrist_roll_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link" unique_id=1299581899]
 transform = Transform3D(1, -1.1279866e-12, 0, 2.5108804e-12, 1, 3.637979e-12, 0, 0, 1, 0.10000001, -0.00999999, -0.0018879175)
 script = ExtResource("6_gttu6")
 entity_id = "306c8bc653ea321c7d69b439c2d59c02"
 
-[node name="left_wrist_roll_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link" unique_id=1006217797]
+[node name="left_wrist_roll_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link" unique_id=1006217797]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "5432802ddfe1fcc491d89b89a33690f1"
 
-[node name="editor_5_47" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link" unique_id=1023113189]
+[node name="editor_5_47" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link" unique_id=1023113189]
 script = ExtResource("4_8k1wf")
 entity_id = "f8efe394bd6f33610913f8cb1bdf1d7f"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/editor_5_47" unique_id=32367548]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/editor_5_47" unique_id=32367548]
 transform = Transform3D(-2.4830533e-05, -0.061479945, 0.9981083, 1, -0.000100417936, 1.8692203e-05, 9.907878e-05, 0.9981083, 0.06147995, 0.019787915, 7.4505806e-07, -0.0003514886)
 material_override = SubResource("StandardMaterial3D_yd6x1")
 mesh = ExtResource("31_aw3ax")
 
-[node name="editor_5_48" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link" unique_id=212988719]
+[node name="editor_5_48" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link" unique_id=212988719]
 script = ExtResource("4_8k1wf")
 entity_id = "07de2fb9236b905449b8bad8942a2dcd"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/editor_5_48" unique_id=67698359]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/editor_5_48" unique_id=67698359]
 transform = Transform3D(-2.4830533e-05, -0.061479945, 0.9981083, 1, -0.000100417936, 1.8692203e-05, 9.907878e-05, 0.9981083, 0.06147995, 0.019787915, 7.4505806e-07, -0.0003514886)
 material_override = SubResource("StandardMaterial3D_vybrv")
 mesh = ExtResource("31_aw3ax")
 
-[node name="left_wrist_pitch_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link" unique_id=258010733]
+[node name="left_wrist_pitch_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link" unique_id=258010733]
 transform = Transform3D(1, -1.1279866e-12, 0, 2.5108804e-12, 1, 3.637979e-12, 0, 0, 1, 0.037999995, 0, 1.4901161e-08)
 script = ExtResource("6_gttu6")
 entity_id = "b363fede7f1bc9bf470de0659af761b5"
 
-[node name="left_wrist_pitch_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link" unique_id=2129999666]
+[node name="left_wrist_pitch_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link" unique_id=2129999666]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "e491059488bd9401a760b92cf0310e0f"
 
-[node name="editor_5_49" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link" unique_id=1596698572]
+[node name="editor_5_49" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link" unique_id=1596698572]
 script = ExtResource("4_8k1wf")
 entity_id = "6976ce67d5cac4077ef07c811374de0f"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/editor_5_49" unique_id=1861959667]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/editor_5_49" unique_id=1861959667]
 transform = Transform3D(-0.019452214, 0.9996519, 0.017821973, 0.042416554, 0.018634416, -0.9989262, -0.99891067, -0.018675415, -0.042764273, 0.025494426, 0.0005415678, 0.0005406141)
 material_override = SubResource("StandardMaterial3D_mbbj3")
 mesh = ExtResource("32_xefdf")
 
-[node name="editor_5_50" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link" unique_id=407682622]
+[node name="editor_5_50" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link" unique_id=407682622]
 script = ExtResource("4_8k1wf")
 entity_id = "3e49180534b10f3a75fa669716b6c567"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/editor_5_50" unique_id=262279987]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/editor_5_50" unique_id=262279987]
 transform = Transform3D(-0.019452214, 0.9996519, 0.017821973, 0.042416554, 0.018634416, -0.9989262, -0.99891067, -0.018675415, -0.042764273, 0.025494426, 0.0005415678, 0.0005406141)
 material_override = SubResource("StandardMaterial3D_xsa3l")
 mesh = ExtResource("32_xefdf")
 
-[node name="left_wrist_yaw_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link" unique_id=15327780]
+[node name="left_wrist_yaw_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link" unique_id=15327780]
 transform = Transform3D(1, -1.1279866e-12, 0, 2.5108804e-12, 1, 3.637979e-12, 0, 0, 1, 0.051000014, 0, -1.4901161e-08)
 script = ExtResource("6_gttu6")
 entity_id = "e0b98b464cfcc89a670117e7eea2cc46"
 
-[node name="left_wrist_yaw_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/left_wrist_yaw_link" unique_id=1424903074]
+[node name="left_wrist_yaw_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/left_wrist_yaw_link" unique_id=1424903074]
 script = ExtResource("7_d1upe")
 entity_id = "98cf6617058c5ba98a90eb11f321d346"
 
-[node name="editor_5_51" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/left_wrist_yaw_link" unique_id=499847189]
+[node name="editor_5_51" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/left_wrist_yaw_link" unique_id=499847189]
 script = ExtResource("4_8k1wf")
 entity_id = "d0fd5c460086f90fc3c020673131d888"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/left_wrist_yaw_link/editor_5_51" unique_id=116142868]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/left_wrist_yaw_link/editor_5_51" unique_id=116142868]
 transform = Transform3D(0.00030580297, 0.046334278, 0.99892586, 0.00013268602, 0.9989259, -0.046334323, -0.99999994, 0.00014671267, 0.00029932658, 0.015588328, -0.00030320138, 5.438924e-06)
 material_override = SubResource("StandardMaterial3D_35hbn")
 mesh = ExtResource("33_mxhnj")
 
-[node name="editor_5_52" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/left_wrist_yaw_link" unique_id=1446295046]
+[node name="editor_5_52" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/left_wrist_yaw_link" unique_id=1446295046]
 script = ExtResource("4_8k1wf")
 entity_id = "ab5fdfa12bfeaa7767892ffce98830e0"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/left_wrist_yaw_link/editor_5_52" unique_id=32429563]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/left_wrist_yaw_link/editor_5_52" unique_id=32429563]
 transform = Transform3D(0.00030580297, 0.046334278, 0.99892586, 0.00013268602, 0.9989259, -0.046334323, -0.99999994, 0.00014671267, 0.00029932658, 0.015588328, -0.00030320138, 5.438924e-06)
 material_override = SubResource("StandardMaterial3D_mn7im")
 mesh = ExtResource("33_mxhnj")
 
-[node name="editor_5_53" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/left_wrist_yaw_link" unique_id=884157178]
+[node name="editor_5_53" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/left_wrist_yaw_link" unique_id=884157178]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0415, 0, -0.003)
 script = ExtResource("4_8k1wf")
 entity_id = "e894c5c8ebfac9d26c7eef2ef1df14fa"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/left_wrist_yaw_link/editor_5_53" unique_id=126971063]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/left_shoulder_pitch_link/left_shoulder_roll_link/left_shoulder_yaw_link/left_elbow_link/left_wrist_roll_link/left_wrist_pitch_link/left_wrist_yaw_link/editor_5_53" unique_id=126971063]
 transform = Transform3D(0.26122153, 0.9650408, -0.021435376, 0.042656057, -0.03372535, -0.99852043, -0.9643359, 0.25992066, -0.049974624, 0.06463009, 0.0030999333, 0.00668478)
 material_override = SubResource("StandardMaterial3D_wwe1a")
 mesh = ExtResource("34_c81yu")
 
-[node name="right_shoulder_pitch_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=2095878795]
+[node name="right_shoulder_pitch_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=2095878795]
 transform = Transform3D(1, -3.219721e-10, 0.00019931408, -5.4948898e-05, 0.96124613, 0.27569154, -0.00019158998, -0.27569157, 0.96124613, 0.0039562997, 0.24778, 0.10021)
 script = ExtResource("6_gttu6")
 entity_id = "069aa88418769835d0e20bf40811d9e4"
 
-[node name="right_shoulder_pitch_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link" unique_id=1746937174]
+[node name="right_shoulder_pitch_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link" unique_id=1746937174]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "44f9d5bc32e643b03b03d8fd16f76baf"
 
-[node name="editor_5_54" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link" unique_id=65016617]
+[node name="editor_5_54" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link" unique_id=65016617]
 script = ExtResource("4_8k1wf")
 entity_id = "264636569949469a5582bde02ee58e39"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/editor_5_54" unique_id=2115698287]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/editor_5_54" unique_id=2115698287]
 transform = Transform3D(-0.055959456, -0.008025594, 0.99840075, -0.55627453, 0.8306373, -0.024501644, -0.8291123, -0.5567561, -0.05094644, -2.4137098e-05, -0.008909136, 0.034543246)
 material_override = SubResource("StandardMaterial3D_rgegf")
 mesh = ExtResource("35_ymgvs")
 
-[node name="editor_5_55" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link" unique_id=758369952]
+[node name="editor_5_55" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link" unique_id=758369952]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, -0.01, 0.04)
 script = ExtResource("4_8k1wf")
 entity_id = "dfeca9df29b8856401873bd8012e5d4a"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/editor_5_55" unique_id=162133324]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/editor_5_55" unique_id=162133324]
 transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 1, -1.4901161e-08, 3.637979e-12, -1.4901161e-08)
 material_override = SubResource("StandardMaterial3D_djtgb")
 mesh = ExtResource("26_7406h")
 
-[node name="right_shoulder_roll_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link" unique_id=1512788191]
+[node name="right_shoulder_roll_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link" unique_id=1512788191]
 transform = Transform3D(1, -4.7659654e-12, -1.4551915e-11, -3.637979e-12, 0.96126235, -0.27563527, 0, 0.27563527, 0.9612623, 0, -0.01383096, 0.038000017)
 script = ExtResource("6_gttu6")
 entity_id = "41033bd0b8015934a888fa701d1eb69a"
 
-[node name="right_shoulder_roll_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link" unique_id=716041246]
+[node name="right_shoulder_roll_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link" unique_id=716041246]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "271ba61ad966ee06b4777e6b639363e5"
 
-[node name="editor_5_56" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link" unique_id=641416810]
+[node name="editor_5_56" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link" unique_id=641416810]
 script = ExtResource("4_8k1wf")
 entity_id = "e4cbdee23e9bf8b8901455ea149c9fc9"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/editor_5_56" unique_id=1060923082]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/editor_5_56" unique_id=1060923082]
 transform = Transform3D(-0.000539541, 0.0033953853, 0.9999939, -0.0793242, 0.99684286, -0.0034274848, -0.99684864, -0.07932558, -0.00026850143, 3.0647723e-05, -0.037505984, 0.00774689)
 material_override = SubResource("StandardMaterial3D_m31nq")
 mesh = ExtResource("36_mptwi")
 
-[node name="editor_5_57" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link" unique_id=255615359]
+[node name="editor_5_57" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link" unique_id=255615359]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.004, -0.053, 0.006)
 script = ExtResource("4_8k1wf")
 entity_id = "dc9cc856c512f6fc9026591773ed417d"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/editor_5_57" unique_id=1490828605]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/editor_5_57" unique_id=1490828605]
 transform = Transform3D(1, -2.5108804e-12, 0, 2.5108804e-12, 1, 0, 0, 0, 1, 0, -1.4901161e-08, 0)
 material_override = SubResource("StandardMaterial3D_brslf")
 mesh = ExtResource("28_6iaxo")
 
-[node name="right_shoulder_yaw_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link" unique_id=1861118575]
+[node name="right_shoulder_yaw_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link" unique_id=1861118575]
 transform = Transform3D(1, -1.1279866e-12, 0, 2.5108804e-12, 1, -3.637979e-12, 0, 0, 1, 3.637979e-12, -0.10320002, 0.0062399954)
 script = ExtResource("6_gttu6")
 entity_id = "93eea7aa2cd2b7ac404112112adf0aa3"
 
-[node name="right_shoulder_yaw_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link" unique_id=1435086824]
+[node name="right_shoulder_yaw_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link" unique_id=1435086824]
 script = ExtResource("7_d1upe")
 entity_id = "ea4b7b6fa89f4c459556b2b294b87c53"
 
-[node name="editor_5_58" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link" unique_id=249936281]
+[node name="editor_5_58" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link" unique_id=249936281]
 script = ExtResource("4_8k1wf")
 entity_id = "be54946158896507ad45c424d5ea3204"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/editor_5_58" unique_id=211354489]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/editor_5_58" unique_id=211354489]
 transform = Transform3D(0.09831776, -0.24720268, 0.9639629, 0.1315269, 0.96338624, 0.23363994, -0.986425, 0.10381609, 0.12723178, 0.008049569, -0.048210055, -0.004202813)
 material_override = SubResource("StandardMaterial3D_obp4e")
 mesh = ExtResource("37_2lhry")
 
-[node name="editor_5_59" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link" unique_id=1299420053]
+[node name="editor_5_59" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link" unique_id=1299420053]
 script = ExtResource("4_8k1wf")
 entity_id = "c632071a271e1f01d20673d9a78bb458"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/editor_5_59" unique_id=146049783]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/editor_5_59" unique_id=146049783]
 transform = Transform3D(0.09831776, -0.24720268, 0.9639629, 0.1315269, 0.96338624, 0.23363994, -0.986425, 0.10381609, 0.12723178, 0.008049569, -0.048210055, -0.004202813)
 material_override = SubResource("StandardMaterial3D_njoyt")
 mesh = ExtResource("37_2lhry")
 
-[node name="right_elbow_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link" unique_id=582154130]
+[node name="right_elbow_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link" unique_id=582154130]
 transform = Transform3D(1, -1.1279866e-12, 0, 2.5108804e-12, 1, -3.637979e-12, 0, 0, 1, 0.015782999, -0.080518, 0)
 script = ExtResource("6_gttu6")
 entity_id = "a26df5e91223d3ed008d552eb2210a4c"
 
-[node name="right_elbow_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link" unique_id=119324237]
+[node name="right_elbow_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link" unique_id=119324237]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "691d68fba0a9b4b0a4f393d15b49cd7a"
 
-[node name="editor_5_60" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link" unique_id=1190908792]
+[node name="editor_5_60" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link" unique_id=1190908792]
 script = ExtResource("4_8k1wf")
 entity_id = "d87da3b05fce32a63d0b6905e017ad9d"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/editor_5_60" unique_id=278556295]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/editor_5_60" unique_id=278556295]
 transform = Transform3D(-0.3272904, 0.9407779, -0.088419355, -0.058275323, -0.11349096, -0.9918285, -0.9431251, -0.31946322, 0.09196863, 0.05357442, -0.008536562, 0.008582294)
 material_override = SubResource("StandardMaterial3D_f4w6k")
 mesh = ExtResource("38_nolhc")
 
-[node name="editor_5_61" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link" unique_id=618303839]
+[node name="editor_5_61" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link" unique_id=618303839]
 script = ExtResource("4_8k1wf")
 entity_id = "9c73bb4194adfd0410702760240e36cf"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/editor_5_61" unique_id=989199889]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/editor_5_61" unique_id=989199889]
 transform = Transform3D(-0.3272904, 0.9407779, -0.088419355, -0.058275323, -0.11349096, -0.9918285, -0.9431251, -0.31946322, 0.09196863, 0.05357442, -0.008536562, 0.008582294)
 material_override = SubResource("StandardMaterial3D_okgfd")
 mesh = ExtResource("38_nolhc")
 
-[node name="right_wrist_roll_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link" unique_id=1813625579]
+[node name="right_wrist_roll_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link" unique_id=1813625579]
 transform = Transform3D(1, -1.1279866e-12, 0, 2.5108804e-12, 1, -3.637979e-12, 0, 0, 1, 0.10000001, -0.00999999, 0.0018879175)
 script = ExtResource("6_gttu6")
 entity_id = "cd3bb340787e3151349d64f2198039b0"
 
-[node name="right_wrist_roll_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link" unique_id=1793323163]
+[node name="right_wrist_roll_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link" unique_id=1793323163]
 transform = Transform3D(0, 1, 0, -1, 0, 0, 0, 0, 1, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "2a0cb91e3c9c579b17dc240e585c99ea"
 
-[node name="editor_5_62" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link" unique_id=1712064450]
+[node name="editor_5_62" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link" unique_id=1712064450]
 script = ExtResource("4_8k1wf")
 entity_id = "c3853f444af19f6bb3c663c9804aae0c"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/editor_5_62" unique_id=1066484516]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/editor_5_62" unique_id=1066484516]
 transform = Transform3D(2.4830524e-05, 0.06147991, 0.9981083, 1, -0.000100417936, -1.8692197e-05, 9.907878e-05, 0.9981083, -0.061479915, 0.019787915, -7.4505806e-07, 0.0003514886)
 material_override = SubResource("StandardMaterial3D_lnil5")
 mesh = ExtResource("39_ho2wg")
 
-[node name="editor_5_63" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link" unique_id=2016720705]
+[node name="editor_5_63" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link" unique_id=2016720705]
 script = ExtResource("4_8k1wf")
 entity_id = "c2457987343d45deed96e5a320e3bb76"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/editor_5_63" unique_id=1037655474]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/editor_5_63" unique_id=1037655474]
 transform = Transform3D(2.4830524e-05, 0.06147991, 0.9981083, 1, -0.000100417936, -1.8692197e-05, 9.907878e-05, 0.9981083, -0.061479915, 0.019787915, -7.4505806e-07, 0.0003514886)
 material_override = SubResource("StandardMaterial3D_bw7pp")
 mesh = ExtResource("39_ho2wg")
 
-[node name="right_wrist_pitch_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link" unique_id=637085885]
+[node name="right_wrist_pitch_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link" unique_id=637085885]
 transform = Transform3D(1, -1.1279866e-12, 0, 2.5108804e-12, 1, -3.637979e-12, 0, 0, 1, 0.03800001, 0, -1.4901161e-08)
 script = ExtResource("6_gttu6")
 entity_id = "5e4a3f284ada45afa63a3305f5a03ec5"
 
-[node name="right_wrist_pitch_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link" unique_id=24920701]
+[node name="right_wrist_pitch_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link" unique_id=24920701]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 script = ExtResource("7_d1upe")
 entity_id = "b88115f97ba271eed67299db20c4acf3"
 
-[node name="editor_5_64" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link" unique_id=178186848]
+[node name="editor_5_64" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link" unique_id=178186848]
 script = ExtResource("4_8k1wf")
 entity_id = "1f17edef61972638ace592c9f14ea2f3"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/editor_5_64" unique_id=1520448078]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/editor_5_64" unique_id=1520448078]
 transform = Transform3D(0.019452184, 0.99965197, -0.017821971, 0.042416554, -0.018634416, -0.99892616, -0.99891067, 0.018675387, -0.04276427, 0.025494412, -0.00054157525, -0.0005406141)
 material_override = SubResource("StandardMaterial3D_c3gf2")
 mesh = ExtResource("40_1cxqc")
 
-[node name="editor_5_65" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link" unique_id=2111769627]
+[node name="editor_5_65" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link" unique_id=2111769627]
 script = ExtResource("4_8k1wf")
 entity_id = "2a43623c003200571f91f394b2517b37"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/editor_5_65" unique_id=1931763467]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/editor_5_65" unique_id=1931763467]
 transform = Transform3D(0.019452184, 0.99965197, -0.017821971, 0.042416554, -0.018634416, -0.99892616, -0.99891067, 0.018675387, -0.04276427, 0.025494412, -0.00054157525, -0.0005406141)
 material_override = SubResource("StandardMaterial3D_qi2i5")
 mesh = ExtResource("40_1cxqc")
 
-[node name="right_wrist_yaw_link" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link" unique_id=1698116334]
+[node name="right_wrist_yaw_link" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link" unique_id=1698116334]
 transform = Transform3D(1, -1.1279866e-12, 0, 2.5108804e-12, 1, -3.637979e-12, 0, 0, 1, 0.051, 0, 1.4901161e-08)
 script = ExtResource("6_gttu6")
 entity_id = "972aafec00c02e9e62b1075840023ad4"
 
-[node name="right_wrist_yaw_joint" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/right_wrist_yaw_link" unique_id=998324467]
+[node name="right_wrist_yaw_joint" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/right_wrist_yaw_link" unique_id=998324467]
 script = ExtResource("7_d1upe")
 entity_id = "c53a61ab944042a0366d115b2acf9c51"
 
-[node name="editor_5_66" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/right_wrist_yaw_link" unique_id=1877316045]
+[node name="editor_5_66" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/right_wrist_yaw_link" unique_id=1877316045]
 script = ExtResource("4_8k1wf")
 entity_id = "a64b444965516d2ddd898d8459907f17"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/right_wrist_yaw_link/editor_5_66" unique_id=507947049]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/right_wrist_yaw_link/editor_5_66" unique_id=507947049]
 transform = Transform3D(-0.0003057712, -0.046334274, 0.9989259, 0.00013268605, 0.9989259, 0.046334323, -0.99999994, 0.00014671123, -0.00029929486, 0.015588328, 0.00030320138, -5.4240227e-06)
 material_override = SubResource("StandardMaterial3D_lswoo")
 mesh = ExtResource("41_4fnkj")
 
-[node name="editor_5_67" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/right_wrist_yaw_link" unique_id=1078611267]
+[node name="editor_5_67" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/right_wrist_yaw_link" unique_id=1078611267]
 script = ExtResource("4_8k1wf")
 entity_id = "239f8c8e0ee8f2fcebb4d3081b21126c"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/right_wrist_yaw_link/editor_5_67" unique_id=2004952305]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/right_wrist_yaw_link/editor_5_67" unique_id=2004952305]
 transform = Transform3D(-0.0003057712, -0.046334274, 0.9989259, 0.00013268605, 0.9989259, 0.046334323, -0.99999994, 0.00014671123, -0.00029929486, 0.015588328, 0.00030320138, -5.4240227e-06)
 material_override = SubResource("StandardMaterial3D_kxr4h")
 mesh = ExtResource("41_4fnkj")
 
-[node name="editor_5_68" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/right_wrist_yaw_link" unique_id=1575447421]
+[node name="editor_5_68" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/right_wrist_yaw_link" unique_id=1575447421]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0415, 0, 0.003)
 script = ExtResource("4_8k1wf")
 entity_id = "e6a8d1364f14b0e232557299f92e1769"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/right_wrist_yaw_link/editor_5_68" unique_id=49903147]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/right_shoulder_pitch_link/right_shoulder_roll_link/right_shoulder_yaw_link/right_elbow_link/right_wrist_roll_link/right_wrist_pitch_link/right_wrist_yaw_link/editor_5_68" unique_id=49903147]
 transform = Transform3D(-0.2612111, 0.9650435, -0.02144471, -0.042632863, -0.033728197, -0.9985213, -0.9643398, -0.25991058, 0.04995275, 0.064627826, 0.0030997843, -0.006684184)
 material_override = SubResource("StandardMaterial3D_nxn4o")
 mesh = ExtResource("42_ky514")
 
-[node name="editor_5_35" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=99939655]
+[node name="editor_5_35" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=99939655]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0039635, -0.044, 0)
 script = ExtResource("4_8k1wf")
 entity_id = "91b4c68482691937e9b3c3abf8472e10"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/editor_5_35" unique_id=744283430]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/editor_5_35" unique_id=744283430]
 transform = Transform3D(0.0038712996, 0.99757385, 0.069508865, 0.9999924, -0.0038508514, -0.00042818015, -0.00015947303, 0.069510005, -0.99758124, -0.0009444083, 0.2714604, -0.0011127783)
 material_override = SubResource("StandardMaterial3D_x1sy1")
 mesh = ExtResource("43_nqou7")
 
-[node name="editor_5_36" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=1254695695]
+[node name="editor_5_36" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=1254695695]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0039635, -0.044, 0)
 script = ExtResource("4_8k1wf")
 entity_id = "bb7930319413e6737f40555c375809f5"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/editor_5_36" unique_id=1554413040]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/editor_5_36" unique_id=1554413040]
 transform = Transform3D(0.0038712996, 0.99757385, 0.069508865, 0.9999924, -0.0038508514, -0.00042818015, -0.00015947303, 0.069510005, -0.99758124, -0.0009444083, 0.2714604, -0.0011127783)
 material_override = SubResource("StandardMaterial3D_g2ur4")
 mesh = ExtResource("43_nqou7")
 
-[node name="editor_5_37" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=1858883425]
+[node name="editor_5_37" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=1858883425]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0039635, -0.044, 0)
 script = ExtResource("4_8k1wf")
 entity_id = "739a27877ce8d72ff27d3fcbfb2ef946"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/editor_5_37" unique_id=514646030]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/editor_5_37" unique_id=514646030]
 transform = Transform3D(0.99896073, 0.045575846, 0.00010844301, -0.045575842, 0.99896073, -2.9134118e-05, -0.00010965812, 2.4161458e-05, 1, 0.0036874423, 0.4291318, -2.481425e-05)
 material_override = SubResource("StandardMaterial3D_odo4i")
 mesh = ExtResource("44_sitka")
 
-[node name="editor_5_38" type="Node3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=761363156]
+[node name="editor_5_38" type="Node3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link" unique_id=761363156]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0039635, -0.044, 0)
 script = ExtResource("4_8k1wf")
 entity_id = "4d68415f8108bb9d1ffb785364131c34"
 
-[node name="_Visual" type="MeshInstance3D" parent="G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/editor_5_38" unique_id=1915837912]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/G1_1/pelvis/waist_yaw_link/waist_roll_link/torso_link/editor_5_38" unique_id=1915837912]
 transform = Transform3D(0.99896073, 0.045575846, 0.00010844301, -0.045575842, 0.99896073, -2.9134118e-05, -0.00010965812, 2.4161458e-05, 1, 0.0036874423, 0.4291318, -2.481425e-05)
 material_override = SubResource("StandardMaterial3D_yxo8m")
 mesh = ExtResource("44_sitka")
 
-[node name="Camera" type="Camera3D" parent="." unique_id=1939554655]
+[node name="Camera" type="Camera3D" parent="Runtime" unique_id=1939554655]
 transform = Transform3D(1, 0, 0, 0, 0.7960838, -0.6051864, 0, 0.6051864, 0.7960838, -1.8, 2.3865964, 2.5474682)
 fov = 50.0
 script = ExtResource("8_camera")
 
-[node name="PolyHavenSky" type="WorldEnvironment" parent="." unique_id=1725586761]
+[node name="PolyHavenSky" type="WorldEnvironment" parent="Runtime" unique_id=1725586761]
 environment = SubResource("Environment_5vvyt")
 
-[node name="Sun" type="DirectionalLight3D" parent="." unique_id=405375781]
+[node name="Sun" type="DirectionalLight3D" parent="Runtime" unique_id=405375781]
 transform = Transform3D(0.81915206, 0.43938503, -0.36868784, 0, 0.64278764, 0.76604444, 0.57357645, -0.62750685, 0.5265408, 0, 5.033901, 0)
 light_energy = 1.3
 shadow_enabled = true
 
-[node name="DisplayControls" type="Node" parent="." unique_id=1311712285]
+[node name="DisplayControls" type="Node" parent="Runtime" unique_id=1311712285]
 script = ExtResource("6_axh8q")
 collision_definitions = ExtResource("7_6kll8")
 
-[node name="Heightfield" type="Node3D" parent="." unique_id=1156055065]
+
+[node name="Heightfield" type="Node3D" parent="Runtime" unique_id=1156055065]
 process_mode = 3
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.91473174, 1.2373375)
 script = ExtResource("9_52wb0")
 design = SubResource("Resource_axh8q")
 
-[node name="@Node3D@26311" type="Node3D" parent="Heightfield" unique_id=2067214357]
+[node name="@Node3D@26311" type="Node3D" parent="Runtime/Heightfield" unique_id=2067214357]
 process_mode = 3
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2429996, -0.2732746, 0)
 script = ExtResource("9_52wb0")
 design = SubResource("Resource_6kll8")
+
+[node name="RuntimeViewer" type="CanvasLayer" parent="." node_paths=PackedStringArray("world")]
+script = ExtResource("viewer_component")
+world = NodePath("../Runtime")
+
+[node name="ExtensionBinding" type="Node" parent="." node_paths=PackedStringArray("viewer", "extras")]
+script = ExtResource("viewer_extension")
+viewer = NodePath("../RuntimeViewer")
+extras = NodePath("../GodotExtras")
+provider_path = NodePath("DisplayControls")
+
+[node name="GodotExtras" type="CanvasLayer" parent="." node_paths=PackedStringArray("world")]
+script = ExtResource("extras_component")
+world = NodePath("../Runtime")

@@ -8,6 +8,11 @@
 [ext_resource type="Script" path="res://addons/godot_mujoco/model/geom_node.gd" id="6_20pc6"]
 [ext_resource type="CapsuleMesh" path="res://mujoco_models/visual_cache/d1ca746726d89e9976750f6fef7a43f4d994b4476cb8e934ced9d2e8298984e2.res" id="7_5vvyt"]
 
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/runtime_viewer.gd" id="viewer_component"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/godot_extras.gd" id="extras_component"]
+
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/extension_binding.gd" id="viewer_extension"]
+
 [sub_resource type="Resource" id="Resource_c6i3y"]
 script = ExtResource("2_lgr22")
 document_id = "8ec64aa5d178a59cf76e7f4e8b458e56"
@@ -455,51 +460,67 @@ radius = 0.07
 height = 0.14
 
 [node name="Main" type="Node3D" unique_id=800249550]
+
+[node name="Runtime" type="Node3D" parent="."]
 script = ExtResource("1")
 world_design = SubResource("Resource_c6i3y")
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=756301683]
+[node name="Camera3D" type="Camera3D" parent="Runtime" unique_id=756301683]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 3)
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1138651433]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Runtime" unique_id=1138651433]
 transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 3, 0)
 shadow_enabled = true
 
-[node name="Ground" type="MeshInstance3D" parent="." unique_id=1878586393]
+[node name="Ground" type="MeshInstance3D" parent="Runtime" unique_id=1878586393]
 mesh = SubResource("Plane1")
 
-[node name="UI" type="CanvasLayer" parent="." unique_id=1638041875]
+[node name="UI" type="CanvasLayer" parent="Runtime" unique_id=1638041875]
 
-[node name="Status" type="Label" parent="UI" unique_id=1897765592]
+[node name="Status" type="Label" parent="Runtime/UI" unique_id=1897765592]
 offset_left = 16.0
 offset_top = 12.0
 offset_right = 640.0
 offset_bottom = 40.0
 text = "Starting..."
 
-[node name="Model" type="Node3D" parent="." unique_id=1079502163]
+[node name="Model" type="Node3D" parent="Runtime" unique_id=1079502163]
 script = ExtResource("3_trn2v")
 design = SubResource("Resource_c2ibq")
 
-[node name="pendulum" type="Node3D" parent="Model" unique_id=756357600]
+[node name="pendulum" type="Node3D" parent="Runtime/Model" unique_id=756357600]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 script = ExtResource("4_03owx")
 entity_id = "9b7fb3396f95a6ae5df893c30ff3c19a"
 
-[node name="hinge" type="Node3D" parent="Model/pendulum" unique_id=667947534]
+[node name="hinge" type="Node3D" parent="Runtime/Model/pendulum" unique_id=667947534]
 transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0)
 script = ExtResource("5_wkp8b")
 entity_id = "f0c49a83be4494e27ab149b77468bb4c"
 
-[node name="geom_37a485da38" type="Node3D" parent="Model/pendulum" unique_id=445494412]
+[node name="geom_37a485da38" type="Node3D" parent="Runtime/Model/pendulum" unique_id=445494412]
 transform = Transform3D(-1, 0, 0, 0, -1, 0, 0, 0, 1, 0, -0.3, 0)
 script = ExtResource("6_20pc6")
 entity_id = "37a485da38a70f7c8a2f2dda449eb3ed"
 
-[node name="_Visual" type="MeshInstance3D" parent="Model/pendulum/geom_37a485da38" unique_id=898604528]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/Model/pendulum/geom_37a485da38" unique_id=898604528]
 material_override = SubResource("Mat1")
 mesh = ExtResource("7_5vvyt")
 
-[node name="Pivot" type="MeshInstance3D" parent="Model/pendulum" unique_id=1903066282]
+[node name="Pivot" type="MeshInstance3D" parent="Runtime/Model/pendulum" unique_id=1903066282]
 material_override = SubResource("Mat2")
 mesh = SubResource("Sph1")
+
+[node name="RuntimeViewer" type="CanvasLayer" parent="." node_paths=PackedStringArray("world")]
+script = ExtResource("viewer_component")
+world = NodePath("../Runtime")
+
+[node name="ExtensionBinding" type="Node" parent="." node_paths=PackedStringArray("viewer", "extras")]
+script = ExtResource("viewer_extension")
+viewer = NodePath("../RuntimeViewer")
+extras = NodePath("../GodotExtras")
+provider_path = NodePath(".")
+
+[node name="GodotExtras" type="CanvasLayer" parent="." node_paths=PackedStringArray("world")]
+script = ExtResource("extras_component")
+world = NodePath("../Runtime")

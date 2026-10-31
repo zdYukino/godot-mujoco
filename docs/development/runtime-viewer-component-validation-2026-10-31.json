@@ -1,0 +1,1763 @@
+{
+  "status": "passed",
+  "verified_scopes": {
+    "full_godot": {
+      "artifact_directory": "build-runtime-viewer/component-full-godot-final-14",
+      "report_file": "report-godot.json",
+      "report_sha256": "c278c8d610417f29b429bc28d254d13daf20f688ee8861f6263bf5c41d1fa682",
+      "scope": "full",
+      "passed": 871,
+      "failed": 0,
+      "display": "X11",
+      "native": false,
+      "native_gl_build": true,
+      "godot": "4.7.2-stable (official)",
+      "mujoco_abi": 3016000,
+      "source_hashes_file": "build-runtime-viewer/component-full-godot-final-14/source-hashes.json",
+      "source_hashes_file_sha256": "3eb064ae39913a200e1574533393b3a7fc56457514c6c28d8f83c53b0f561d82",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "54d070ad4077bc56823cf7e1d23312706dacb8573f1d73c600e681a42347a813",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "ff92499ed76a97373632e6dee568280e4624a4c673be4e21e6ccf5c7f5e80910",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "b172a015c2e75ab2d98f12783720a3a6deb1ae9181853a5034bc473367236d43",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "281bce7743824c5c4b590123168a3067486e93b34db9806a9efce9e02a823cda"
+      },
+      "wrapper_exit_code": 0
+    },
+    "full_native": {
+      "artifact_directory": "build-runtime-viewer/component-full-native-final-13",
+      "report_file": "report-native.json",
+      "report_sha256": "bdee5c7f0637d5a66ac08f625195678a5dc7bcdbbe841d21eccd5e4afc96e833",
+      "scope": "full",
+      "passed": 876,
+      "failed": 0,
+      "display": "X11",
+      "native": true,
+      "native_gl_build": true,
+      "godot": "4.7.2-stable (official)",
+      "mujoco_abi": 3016000,
+      "source_hashes_file": "build-runtime-viewer/component-full-native-final-13/source-hashes.json",
+      "source_hashes_file_sha256": "8d322d06cda6eb584fd1ac8fc72fee8675a942fadcbc2f874ec0b919575f6885",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/model/environment_host.gd": "5b41341e80a5ca5d2a320306fc8d9a657184a5976a7f309b2a54d1903a80e417",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "54d070ad4077bc56823cf7e1d23312706dacb8573f1d73c600e681a42347a813",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "ff92499ed76a97373632e6dee568280e4624a4c673be4e21e6ccf5c7f5e80910",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "b172a015c2e75ab2d98f12783720a3a6deb1ae9181853a5034bc473367236d43",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "281bce7743824c5c4b590123168a3067486e93b34db9806a9efce9e02a823cda"
+      },
+      "wrapper_exit_code": 0
+    },
+    "full_headless": {
+      "artifact_directory": "build-runtime-viewer/component-full-headless-final-root",
+      "report_file": "report-godot.json",
+      "report_sha256": "712fa0aee60dff5d1dfb6f24afea5d23699e9c0e9d1b7699c81985008a5c9552",
+      "scope": "full",
+      "passed": 798,
+      "failed": 0,
+      "display": "headless",
+      "native": false,
+      "native_gl_build": true,
+      "godot": "4.7.2-stable (official)",
+      "mujoco_abi": 3016000,
+      "source_hashes_file": "build-runtime-viewer/component-full-headless-final-root/source-hashes.json",
+      "source_hashes_file_sha256": "8d322d06cda6eb584fd1ac8fc72fee8675a942fadcbc2f874ec0b919575f6885",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/model/environment_host.gd": "5b41341e80a5ca5d2a320306fc8d9a657184a5976a7f309b2a54d1903a80e417",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "54d070ad4077bc56823cf7e1d23312706dacb8573f1d73c600e681a42347a813",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "ff92499ed76a97373632e6dee568280e4624a4c673be4e21e6ccf5c7f5e80910",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "b172a015c2e75ab2d98f12783720a3a6deb1ae9181853a5034bc473367236d43",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "281bce7743824c5c4b590123168a3067486e93b34db9806a9efce9e02a823cda"
+      },
+      "wrapper_exit_code": 0
+    },
+    "headless_lifecycle": {
+      "artifact_directory": "build-runtime-viewer/component-lifecycle-headless-final-root",
+      "report_file": "report-godot.json",
+      "report_sha256": "b454e71822cc7950559e87cd20410bd691b24e674fc7edcc9ba6e1c9a0482784",
+      "scope": "component-only",
+      "passed": 77,
+      "failed": 0,
+      "display": "headless",
+      "native": false,
+      "native_gl_build": true,
+      "godot": "4.7.2-stable (official)",
+      "mujoco_abi": 3016000,
+      "source_hashes_file": "build-runtime-viewer/component-lifecycle-headless-final-root/source-hashes.json",
+      "source_hashes_file_sha256": "8d322d06cda6eb584fd1ac8fc72fee8675a942fadcbc2f874ec0b919575f6885",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/model/environment_host.gd": "5b41341e80a5ca5d2a320306fc8d9a657184a5976a7f309b2a54d1903a80e417",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "54d070ad4077bc56823cf7e1d23312706dacb8573f1d73c600e681a42347a813",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "ff92499ed76a97373632e6dee568280e4624a4c673be4e21e6ccf5c7f5e80910",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "b172a015c2e75ab2d98f12783720a3a6deb1ae9181853a5034bc473367236d43",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "281bce7743824c5c4b590123168a3067486e93b34db9806a9efce9e02a823cda"
+      },
+      "wrapper_exit_code": 0
+    },
+    "saved_scene_data": {
+      "artifact_directory": "build-runtime-viewer/component-saved-scenes-root-2",
+      "report_file": "report-godot.json",
+      "report_sha256": "9592aaea181eb5c9bf41b87ddceb4ea6da33fb7415db6eefada9b5bbd546a2ef",
+      "scope": "saved-scenes-only",
+      "passed": 10,
+      "failed": 0,
+      "display": "headless",
+      "native": false,
+      "native_gl_build": true,
+      "godot": "4.7.2-stable (official)",
+      "mujoco_abi": 0,
+      "source_hashes_file": "build-runtime-viewer/component-saved-scenes-root-2/source-hashes.json",
+      "source_hashes_file_sha256": "a86047b55a0ffad332c1e8abfb34a82caced6e0d7732f2029e2eb2c36b6b494c",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "d10a2c6d05bc87ff537978f269839c3e410ec7fd1392a902d4c1c3a43fae6ed8",
+        "addons/godot_mujoco/model/environment_host.gd": "5b41341e80a5ca5d2a320306fc8d9a657184a5976a7f309b2a54d1903a80e417",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "54d070ad4077bc56823cf7e1d23312706dacb8573f1d73c600e681a42347a813",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "9a52920742ad866a946dec8631449fb43070a8a52162b4e98e84885d044af193",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "b172a015c2e75ab2d98f12783720a3a6deb1ae9181853a5034bc473367236d43",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "ab30a7c5a5804ec069d10a881e5cd606cbd43f3b54255d94fe3624a27fe40f64"
+      },
+      "wrapper_exit_code": 0,
+      "physics_used": false
+    },
+    "external_camera_cpp": {
+      "artifact_directory": "build-runtime-viewer/component-camera-cpp-3",
+      "report_file": "report.json",
+      "report_sha256": "92f53136d8c4b7b6f0aa58c667945bfaaada70b0aec2d554b7a14ebbb95b4b66",
+      "scope": "isolated actual PhysicsServer C++ camera commands, headless; not graphical component acceptance",
+      "passed": 79,
+      "failed": 0,
+      "source_hashes_file": "build-runtime-viewer/component-camera-cpp-3/source-hashes.json",
+      "source_hashes_file_sha256": "dfc85acbc6c711d84c30f4790c62b8641670174b29d32e47b6e32abcd13d9ad7",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "b172a015c2e75ab2d98f12783720a3a6deb1ae9181853a5034bc473367236d43"
+      },
+      "wrapper_exit_code": 0
+    },
+    "clock_and_csharp": {
+      "artifact_directory": "build-runtime-viewer/component-clock-root-6",
+      "report_file": "results.json",
+      "report_sha256": "ff7fe03ea0b07b73a5ab1ad4ff017ba8da3ee99523b508a649bc20ef374b8158",
+      "scope": "clock_and_csharp",
+      "passed": 130,
+      "failed": 0,
+      "wrapper_exit_code": 0
+    },
+    "freebase_physics": {
+      "artifact_directory": "build-runtime-viewer/component-freebase-root-7",
+      "report_file": "results.json",
+      "report_sha256": "53563ce8307834188467578f649fd73ec3ff6e736fe9329481a7ef974522df85",
+      "scope": "freebase_physics",
+      "passed": 52,
+      "failed": 0,
+      "wrapper_exit_code": 0
+    },
+    "custom_godot": {
+      "artifact_directory": "build-runtime-viewer/component-contract-godot-final-36",
+      "report_file": "report-godot.json",
+      "report_sha256": "16c4f54d00cbf7303ca69a4442d43ebaab838a9701f1d05281108fa6fbb18b5b",
+      "scope": "contract-only",
+      "passed": 151,
+      "failed": 0,
+      "wrapper_exit_code": 0,
+      "display": "X11",
+      "native_gl_build": true,
+      "source_hashes_file": "build-runtime-viewer/component-contract-godot-final-36/source-hashes.json",
+      "source_hashes_file_sha256": "f8ad989b9e9c0b9843b1cf9dd2dd1f47273baa14b8a97af8ce83ec76ec106fcd",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "21adfbd4d19f3351a94b0019fbea54727b431f5302de7ab2bb1f1637a0633235",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "aeb30d78f9a23210d801f5c554978ba3f49526b5ba7dfacf1b8fc34b8e09952d",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "72592393296c1d9f776c060c13d3166c3352da7cc8a8012a7c43de4750d8c151"
+      }
+    },
+    "custom_native": {
+      "artifact_directory": "build-runtime-viewer/component-contract-native-final-37",
+      "report_file": "report-native.json",
+      "report_sha256": "1b3ed7b67dde8046f5f544c71c99e80e9fadc47411ef82990bdd7ef2d3047891",
+      "scope": "contract-only",
+      "passed": 151,
+      "failed": 0,
+      "wrapper_exit_code": 0,
+      "display": "X11",
+      "native_gl_build": true,
+      "source_hashes_file": "build-runtime-viewer/component-contract-native-final-37/source-hashes.json",
+      "source_hashes_file_sha256": "815de9528d62a7fff0c48a34e7c4637f4cdcb4a30347865ebfe492968ffcf626",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "21adfbd4d19f3351a94b0019fbea54727b431f5302de7ab2bb1f1637a0633235",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "aeb30d78f9a23210d801f5c554978ba3f49526b5ba7dfacf1b8fc34b8e09952d",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "72592393296c1d9f776c060c13d3166c3352da7cc8a8012a7c43de4750d8c151"
+      }
+    },
+    "f5_on": {
+      "artifact_directory": "build-runtime-viewer/component-f5-on-final-root-2",
+      "scope": "f5_on",
+      "stages": [
+        {
+          "stage": "import",
+          "ok": true,
+          "returncode": 0,
+          "reports": [],
+          "baseline_errors": [],
+          "unexpected_errors": []
+        },
+        {
+          "stage": "preview",
+          "ok": true,
+          "returncode": 0,
+          "reports": [
+            {
+              "failed": 0,
+              "passed": 13
+            }
+          ],
+          "baseline_errors": [],
+          "unexpected_errors": []
+        },
+        {
+          "stage": "f5",
+          "ok": true,
+          "returncode": 0,
+          "reports": [
+            {
+              "failed": 0,
+              "passed": 29
+            }
+          ],
+          "baseline_errors": [],
+          "unexpected_errors": []
+        },
+        {
+          "stage": "reopen",
+          "ok": true,
+          "returncode": 0,
+          "reports": [
+            {
+              "failed": 0,
+              "passed": 3
+            }
+          ],
+          "baseline_errors": [],
+          "unexpected_errors": []
+        },
+        {
+          "stage": "fallback",
+          "ok": true,
+          "returncode": 0,
+          "reports": [
+            {
+              "failed": 0,
+              "passed": 8
+            }
+          ],
+          "baseline_errors": [],
+          "unexpected_errors": []
+        }
+      ],
+      "source_hashes_file": "build-runtime-viewer/component-f5-on-final-root-2/source-hashes.json",
+      "source_hashes_file_sha256": "3f0f67ab6547a9dba9e5902e260b30d7892a0806436d1960c2bc89f988020fde",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "281bce7743824c5c4b590123168a3067486e93b34db9806a9efce9e02a823cda",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "2b387df7648d624b1d3050c293e278f888549fd51a0aada678b932f361cb1a13",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "f246ecdafb99f514bf055e5867a61d0d68572887618e0068219b86eaf5898598",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4"
+      },
+      "wrapper_exit_code": 0
+    },
+    "f5_off": {
+      "artifact_directory": "build-runtime-viewer/component-f5-off-final-root",
+      "scope": "f5_off",
+      "stages": [
+        {
+          "stage": "import",
+          "ok": true,
+          "returncode": 0,
+          "reports": [],
+          "baseline_errors": [],
+          "unexpected_errors": []
+        },
+        {
+          "stage": "preview",
+          "ok": true,
+          "returncode": 0,
+          "reports": [
+            {
+              "failed": 0,
+              "passed": 13
+            }
+          ],
+          "baseline_errors": [],
+          "unexpected_errors": []
+        },
+        {
+          "stage": "f5",
+          "ok": true,
+          "returncode": 0,
+          "reports": [
+            {
+              "failed": 0,
+              "passed": 30
+            }
+          ],
+          "baseline_errors": [],
+          "unexpected_errors": []
+        },
+        {
+          "stage": "reopen",
+          "ok": true,
+          "returncode": 0,
+          "reports": [
+            {
+              "failed": 0,
+              "passed": 4
+            }
+          ],
+          "baseline_errors": [],
+          "unexpected_errors": []
+        },
+        {
+          "stage": "fallback",
+          "ok": true,
+          "returncode": 0,
+          "reports": [
+            {
+              "failed": 0,
+              "passed": 8
+            }
+          ],
+          "baseline_errors": [],
+          "unexpected_errors": []
+        }
+      ],
+      "source_hashes_file": "build-runtime-viewer/component-f5-off-final-root/source-hashes.json",
+      "source_hashes_file_sha256": "e54034a797527bb79157e00f3b44a429be3d6459f6197254190939085ecd2487",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "281bce7743824c5c4b590123168a3067486e93b34db9806a9efce9e02a823cda",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "2b387df7648d624b1d3050c293e278f888549fd51a0aada678b932f361cb1a13",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "caf0cab43b52b254cd53fcc18bb8742662f9830317e5511600cdc0346999c702",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "0d6d20b4a74117364f023719386918dd1a242043db1018323bebe3493aaffa4c",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4"
+      },
+      "wrapper_exit_code": 0
+    },
+    "editor_preview": {
+      "artifact_directory": "build-runtime-viewer/component-editor-preview-final-root-3",
+      "scope": "editor_preview",
+      "stages": [
+        {
+          "stage": "import",
+          "ok": true,
+          "returncode": 0,
+          "reports": [],
+          "baseline_errors": [],
+          "unexpected_errors": []
+        },
+        {
+          "stage": "preview",
+          "ok": true,
+          "returncode": 0,
+          "reports": [
+            {
+              "failed": 0,
+              "passed": 18
+            }
+          ],
+          "baseline_errors": [],
+          "unexpected_errors": []
+        }
+      ],
+      "source_hashes_file": "build-runtime-viewer/component-editor-preview-final-root-3/source-hashes.json",
+      "source_hashes_file_sha256": "81c84a7040e320107b554233ed9b596630b9505e706f05e62af17353b352809d",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "72592393296c1d9f776c060c13d3166c3352da7cc8a8012a7c43de4750d8c151",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "21adfbd4d19f3351a94b0019fbea54727b431f5302de7ab2bb1f1637a0633235",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "c3b327e24909d7ad4f62fdbfe8bb78e3e6dc1f13df3f7c81d31128c7b21d8daa",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4"
+      },
+      "wrapper_exit_code": 0
+    },
+    "bindings_godot": {
+      "artifact_directory": "build-runtime-viewer/component-bindings-godot-final-23",
+      "report_file": "report-godot.json",
+      "passed": 120,
+      "failed": 0,
+      "scope": "bindings-only",
+      "display": "X11",
+      "native_gl_build": true,
+      "source_hashes_file": "build-runtime-viewer/component-bindings-godot-final-23/source-hashes.json",
+      "source_hashes_file_sha256": "1c41fcd640a5cee9449f26eab1964e1de68c851be656eb7a419486318cfbadbb",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "21adfbd4d19f3351a94b0019fbea54727b431f5302de7ab2bb1f1637a0633235",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "aeb30d78f9a23210d801f5c554978ba3f49526b5ba7dfacf1b8fc34b8e09952d",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "72592393296c1d9f776c060c13d3166c3352da7cc8a8012a7c43de4750d8c151"
+      },
+      "report_sha256": "1c0dace851843e91bbc41ba0606d435496c42d3a904beaaac2b2ff8faac41b87",
+      "wrapper_exit_code": 0
+    },
+    "bindings_native": {
+      "artifact_directory": "build-runtime-viewer/component-bindings-native-final-22",
+      "report_file": "report-native.json",
+      "passed": 123,
+      "failed": 0,
+      "scope": "bindings-only",
+      "display": "X11",
+      "native_gl_build": true,
+      "source_hashes_file": "build-runtime-viewer/component-bindings-native-final-22/source-hashes.json",
+      "source_hashes_file_sha256": "1c41fcd640a5cee9449f26eab1964e1de68c851be656eb7a419486318cfbadbb",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "21adfbd4d19f3351a94b0019fbea54727b431f5302de7ab2bb1f1637a0633235",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "aeb30d78f9a23210d801f5c554978ba3f49526b5ba7dfacf1b8fc34b8e09952d",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "72592393296c1d9f776c060c13d3166c3352da7cc8a8012a7c43de4750d8c151"
+      },
+      "report_sha256": "f9af9c098c451a6651fe7b2d2457f1b691cb3d62ae90b81a719b726803fdc733",
+      "wrapper_exit_code": 0
+    },
+    "contract_off": {
+      "artifact_directory": "build-runtime-viewer/component-contract-off-final-24",
+      "report_file": "report-godot.json",
+      "passed": 151,
+      "failed": 0,
+      "scope": "contract-only",
+      "display": "X11",
+      "native_gl_build": false,
+      "source_hashes_file": "build-runtime-viewer/component-contract-off-final-24/source-hashes.json",
+      "source_hashes_file_sha256": "f7c0d44c0785d808a837fea85a7c2b5bfd1357f57a32c0aafa399af52243151b",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "0d6d20b4a74117364f023719386918dd1a242043db1018323bebe3493aaffa4c",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "21adfbd4d19f3351a94b0019fbea54727b431f5302de7ab2bb1f1637a0633235",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "aeb30d78f9a23210d801f5c554978ba3f49526b5ba7dfacf1b8fc34b8e09952d",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "72592393296c1d9f776c060c13d3166c3352da7cc8a8012a7c43de4750d8c151"
+      },
+      "report_sha256": "9cc1d36f2316d868b24dce7d88b6197472b5eed84c878772b9ac57a2fd746510",
+      "wrapper_exit_code": 0
+    },
+    "lifecycle_off": {
+      "artifact_directory": "build-runtime-viewer/component-lifecycle-off-final-25",
+      "report_file": "report-godot.json",
+      "passed": 117,
+      "failed": 0,
+      "scope": "component-only",
+      "display": "X11",
+      "native_gl_build": false,
+      "source_hashes_file": "build-runtime-viewer/component-lifecycle-off-final-25/source-hashes.json",
+      "source_hashes_file_sha256": "f7c0d44c0785d808a837fea85a7c2b5bfd1357f57a32c0aafa399af52243151b",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "0d6d20b4a74117364f023719386918dd1a242043db1018323bebe3493aaffa4c",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "21adfbd4d19f3351a94b0019fbea54727b431f5302de7ab2bb1f1637a0633235",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "aeb30d78f9a23210d801f5c554978ba3f49526b5ba7dfacf1b8fc34b8e09952d",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "72592393296c1d9f776c060c13d3166c3352da7cc8a8012a7c43de4750d8c151"
+      },
+      "report_sha256": "d724677f6df110a7fde47a7991173333ab2485305919959c82072096ab1fa3d8",
+      "wrapper_exit_code": 0
+    },
+    "graphical_gl_off_full": {
+      "artifact_directory": "build-runtime-viewer/component-full-off-final-29",
+      "report_file": "report-godot.json",
+      "passed": 886,
+      "failed": 0,
+      "scope": "full",
+      "display": "X11",
+      "native_gl_build": false,
+      "source_hashes_file": "build-runtime-viewer/component-full-off-final-29/source-hashes.json",
+      "source_hashes_file_sha256": "14e66ab26594f02f203c6359ffae598eb170a33dfcb77e9b7330f8021a62f2f4",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "0d6d20b4a74117364f023719386918dd1a242043db1018323bebe3493aaffa4c",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "21adfbd4d19f3351a94b0019fbea54727b431f5302de7ab2bb1f1637a0633235",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "aeb30d78f9a23210d801f5c554978ba3f49526b5ba7dfacf1b8fc34b8e09952d",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "72592393296c1d9f776c060c13d3166c3352da7cc8a8012a7c43de4750d8c151"
+      },
+      "report_sha256": "7537a95b5c95b400ffe81444bb6bf04e5cffb194c6ff8579d17f813610834677",
+      "wrapper_exit_code": 0
+    },
+    "examples_godot": {
+      "artifact_directory": "build-runtime-viewer/component-entries-godot-final-26",
+      "scope": "six shipped projects, eight unique saved graphical scenes; C# typed self-test recorded separately",
+      "wrapper_exit_code": 0,
+      "project_results": {
+        "shape_gallery": {
+          "failed": 0,
+          "passed": 33
+        },
+        "g1_passive": {
+          "failed": 0,
+          "passed": 35
+        },
+        "sdf_terrain": {
+          "failed": 0,
+          "passed": 35
+        },
+        "pendulum": {
+          "failed": 0,
+          "passed": 77
+        },
+        "light_workflow": {
+          "passed": 19,
+          "failed": 0
+        },
+        "new_project": {
+          "failed": 0,
+          "passed": 23
+        }
+      },
+      "runtime_checks": 222,
+      "graphical_scenes": 8,
+      "graphics_file": "build-runtime-viewer/component-entries-godot-final-26/graphics.json",
+      "source_hashes_file": "build-runtime-viewer/component-entries-godot-final-26/source-hashes.json",
+      "source_hashes_file_sha256": "41ad8f70810e916aa790617129e2df793214bc1b7af810a6a6406aa2682ac418",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/csharp/MuJoCoViewer.cs": "92c34dbf4238f12757141f4a2b27871f6f0183c6f488b1667b1e6feb0942f8e2",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "21adfbd4d19f3351a94b0019fbea54727b431f5302de7ab2bb1f1637a0633235",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "aeb30d78f9a23210d801f5c554978ba3f49526b5ba7dfacf1b8fc34b8e09952d",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "72592393296c1d9f776c060c13d3166c3352da7cc8a8012a7c43de4750d8c151"
+      }
+    },
+    "examples_native": {
+      "artifact_directory": "build-runtime-viewer/component-entries-native-final-27",
+      "scope": "six shipped projects, eight unique saved graphical scenes; C# typed self-test recorded separately",
+      "wrapper_exit_code": 0,
+      "project_results": {
+        "shape_gallery": {
+          "failed": 0,
+          "passed": 37
+        },
+        "g1_passive": {
+          "failed": 0,
+          "passed": 56
+        },
+        "sdf_terrain": {
+          "failed": 0,
+          "passed": 39
+        },
+        "pendulum": {
+          "failed": 0,
+          "passed": 89
+        },
+        "light_workflow": {
+          "passed": 21,
+          "failed": 0
+        },
+        "new_project": {
+          "failed": 0,
+          "passed": 27
+        }
+      },
+      "runtime_checks": 269,
+      "graphical_scenes": 8,
+      "graphics_file": "build-runtime-viewer/component-entries-native-final-27/graphics.json",
+      "source_hashes_file": "build-runtime-viewer/component-entries-native-final-27/source-hashes.json",
+      "source_hashes_file_sha256": "9b946ffb2f6a0ccf64ee9460981916b77c446878f0a50bb7af99f2e93bb32ce8",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/csharp/MuJoCoViewer.cs": "92c34dbf4238f12757141f4a2b27871f6f0183c6f488b1667b1e6feb0942f8e2",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "21adfbd4d19f3351a94b0019fbea54727b431f5302de7ab2bb1f1637a0633235",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "aeb30d78f9a23210d801f5c554978ba3f49526b5ba7dfacf1b8fc34b8e09952d",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "72592393296c1d9f776c060c13d3166c3352da7cc8a8012a7c43de4750d8c151"
+      }
+    },
+    "freebase_gui_godot": {
+      "artifact_directory": "build-runtime-viewer/component-freebase-godot-final-33",
+      "scope": "headless baseline plus actual mouse-driven game GUI; exact saved contact fixtures, solver material coefficients, 1000-step batches, snapshot and reload",
+      "wrapper_exit_code": 0,
+      "headless_checks": 52,
+      "gui_result": {
+        "mouse_exit": 0,
+        "game_exit": 0,
+        "passed": 95,
+        "failed": 0,
+        "diagnostics": []
+      },
+      "measurements": {
+        "model_com_travel": {
+          "low": 3.8239069506526,
+          "high": 0.687145881354809,
+          "barrier": 0.274499587714672
+        },
+        "solver_contact_friction": {
+          "low": {
+            "minimum": 0.00100000004749745,
+            "maximum": 0.00100000004749745
+          },
+          "high": {
+            "minimum": 1.0,
+            "maximum": 1.0
+          },
+          "barrier": {
+            "minimum": 0.00100000004749745,
+            "maximum": 0.00100000004749745
+          }
+        },
+        "gravity_m_s2": [
+          2,
+          0,
+          -9.8
+        ],
+        "initial_velocity": "zero; transient document qvel is not a saved design field",
+        "comparison": "passive articulated tipping does not imply monotonic travel"
+      },
+      "source_hashes_file": "build-runtime-viewer/component-freebase-godot-final-33/gui/source-hashes.json",
+      "source_hashes_file_sha256": "47d0e789fa4e360eaba3a7c8ce45df8c9d0074a6dab0ac3db4943980bcbf3753",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/csharp/MuJoCoViewer.cs": "92c34dbf4238f12757141f4a2b27871f6f0183c6f488b1667b1e6feb0942f8e2",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "21adfbd4d19f3351a94b0019fbea54727b431f5302de7ab2bb1f1637a0633235",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "aeb30d78f9a23210d801f5c554978ba3f49526b5ba7dfacf1b8fc34b8e09952d",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "72592393296c1d9f776c060c13d3166c3352da7cc8a8012a7c43de4750d8c151"
+      }
+    },
+    "freebase_gui_native": {
+      "artifact_directory": "build-runtime-viewer/component-freebase-native-final-34",
+      "scope": "headless baseline plus actual mouse-driven game GUI; exact saved contact fixtures, solver material coefficients, 1000-step batches, snapshot and reload",
+      "wrapper_exit_code": 0,
+      "headless_checks": 52,
+      "gui_result": {
+        "mouse_exit": 0,
+        "game_exit": 0,
+        "passed": 99,
+        "failed": 0,
+        "diagnostics": []
+      },
+      "measurements": {
+        "model_com_travel": {
+          "low": 3.8239069506526,
+          "high": 0.687145881354809,
+          "barrier": 0.274499587714672
+        },
+        "solver_contact_friction": {
+          "low": {
+            "minimum": 0.00100000004749745,
+            "maximum": 0.00100000004749745
+          },
+          "high": {
+            "minimum": 1.0,
+            "maximum": 1.0
+          },
+          "barrier": {
+            "minimum": 0.00100000004749745,
+            "maximum": 0.00100000004749745
+          }
+        },
+        "gravity_m_s2": [
+          2,
+          0,
+          -9.8
+        ],
+        "initial_velocity": "zero; transient document qvel is not a saved design field",
+        "comparison": "passive articulated tipping does not imply monotonic travel"
+      },
+      "source_hashes_file": "build-runtime-viewer/component-freebase-native-final-34/gui/source-hashes.json",
+      "source_hashes_file_sha256": "6f95908749702a0beabbff03565ddefc25a5aad5320f1f2657ca440863aea211",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/csharp/MuJoCoViewer.cs": "92c34dbf4238f12757141f4a2b27871f6f0183c6f488b1667b1e6feb0942f8e2",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "21adfbd4d19f3351a94b0019fbea54727b431f5302de7ab2bb1f1637a0633235",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "aeb30d78f9a23210d801f5c554978ba3f49526b5ba7dfacf1b8fc34b8e09952d",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "72592393296c1d9f776c060c13d3166c3352da7cc8a8012a7c43de4750d8c151"
+      }
+    },
+    "node_authoring": {
+      "artifact_directory": "build-runtime-viewer/component-node-authoring-final-root",
+      "wrapper_exit_code": 0,
+      "scope": "actual author/appearance/collision/runtime/editor and live F5; six assertion stages plus import",
+      "failed": 0,
+      "checks_by_log_marker": {
+        "NODE_APPEARANCE_RESULT": 38,
+        "NODE_AUTHORING_RESULT": 40,
+        "NODE_COLLISION_RESULT": 49,
+        "NODE_EDITOR_RESULT": 36,
+        "NODE_LIVE_RESULT": 26,
+        "NODE_RUNTIME_RESULT": 33
+      },
+      "passed": 222
+    },
+    "shape_gallery": {
+      "artifact_directory": "build-runtime-viewer/component-shape-root-3",
+      "wrapper_exit_code": 0,
+      "scope": "shipped/generated/missing-XML shared physics and real editor preservation",
+      "results": {
+        "failed": 0,
+        "floor_contacts": {
+          "box_geom": true,
+          "capsule_geom": true,
+          "cone_geom": true,
+          "cylinder_geom": true,
+          "ellipsoid_geom": true,
+          "floor_geom": true,
+          "sphere_geom": true
+        },
+        "passed": 110,
+        "scope": "actual shared MuJoCo physics; GUI acceptance separate",
+        "shipped.log": {
+          "failed": 0,
+          "floor_contacts": {
+            "box_geom": true,
+            "capsule_geom": true,
+            "cylinder_geom": true,
+            "ellipsoid_geom": true,
+            "floor_geom": true,
+            "probe_geom": true
+          },
+          "passed": 97,
+          "scope": "actual shared MuJoCo physics; GUI acceptance separate"
+        },
+        "missing-source.log": {
+          "failed": 0,
+          "floor_contacts": {
+            "box_geom": true,
+            "capsule_geom": true,
+            "cone_geom": true,
+            "cylinder_geom": true,
+            "ellipsoid_geom": true,
+            "floor_geom": true,
+            "sphere_geom": true
+          },
+          "passed": 110,
+          "scope": "actual shared MuJoCo physics; GUI acceptance separate"
+        },
+        "editor": {
+          "failed": 0,
+          "passed": 10
+        }
+      }
+    },
+    "final_component_godot": {
+      "artifact_directory": "build-runtime-viewer/component-lifecycle-godot-final-38",
+      "report_file": "report-godot.json",
+      "report_sha256": "460e1c6f5df1b3ea2ef271a5cd4e4a6bb3db463cdc57a541a58421b687def4e5",
+      "scope": "component-only",
+      "passed": 123,
+      "failed": 0,
+      "wrapper_exit_code": 0,
+      "import_exit_code": 0,
+      "runtime_exit_code": 0,
+      "display": "X11",
+      "native": false,
+      "native_gl_build": true,
+      "source_hashes_file": "build-runtime-viewer/component-lifecycle-godot-final-38/source-hashes.json",
+      "source_hashes_file_sha256": "815de9528d62a7fff0c48a34e7c4637f4cdcb4a30347865ebfe492968ffcf626",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "21adfbd4d19f3351a94b0019fbea54727b431f5302de7ab2bb1f1637a0633235",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "aeb30d78f9a23210d801f5c554978ba3f49526b5ba7dfacf1b8fc34b8e09952d",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "72592393296c1d9f776c060c13d3166c3352da7cc8a8012a7c43de4750d8c151"
+      }
+    },
+    "final_component_native": {
+      "artifact_directory": "build-runtime-viewer/component-lifecycle-native-final-39",
+      "report_file": "report-native.json",
+      "report_sha256": "5340cc098881c237d21b12cfcba712d77938f809abd04be46bc4b5ed45954547",
+      "scope": "component-only",
+      "passed": 131,
+      "failed": 0,
+      "wrapper_exit_code": 0,
+      "import_exit_code": 0,
+      "runtime_exit_code": 0,
+      "display": "X11",
+      "native": true,
+      "native_gl_build": true,
+      "source_hashes_file": "build-runtime-viewer/component-lifecycle-native-final-39/source-hashes.json",
+      "source_hashes_file_sha256": "815de9528d62a7fff0c48a34e7c4637f4cdcb4a30347865ebfe492968ffcf626",
+      "effective_core_hashes": {
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+        "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+        "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+        "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+        "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+        "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+        "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+        "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+        "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+        "addons/godot_mujoco/viewer/runtime_viewer.gd": "21adfbd4d19f3351a94b0019fbea54727b431f5302de7ab2bb1f1637a0633235",
+        "addons/godot_mujoco/viewer/viewer_session.gd": "aeb30d78f9a23210d801f5c554978ba3f49526b5ba7dfacf1b8fc34b8e09952d",
+        "addons/godot_mujoco/viewer/viewer_ui.gd": "72592393296c1d9f776c060c13d3166c3352da7cc8a8012a7c43de4750d8c151"
+      }
+    },
+    "documentation_and_source_review": {
+      "scope": "CN/EN README, component API/migration/customization contract, six actual capture assets and clean legacy-call removal",
+      "status": "passed",
+      "formal_review": "Trellis2.2"
+    }
+  },
+  "pending_final_scopes": [],
+  "schema_version": 1,
+  "validation_date": "2026-10-31",
+  "task": "runtime-viewer-component",
+  "branch": "codex/runtime-viewer-component",
+  "baseline_commit": "063b69d67c91710786fb1f0449e9ddfca8decd65",
+  "environment": {
+    "Godot": "4.7.2.stable.mono.official.ed1daf0bf",
+    "MuJoCo": "3.16.0",
+    "mujoco_abi": 3016000,
+    "actual_display": "X11 :1 on existing Linux desktop",
+    "builds": {
+      "atomic_updated": [
+        "addons/godot_mujoco/bin/libgodot_mujoco.linux.template_debug.x86_64.so"
+      ],
+      "on": {
+        "native_view/bin/bridge.gdextension": "ebdf3a578865f737474d11e2d48b4d18a15c7360d83d2cc5742acb625e788e7d",
+        "native_view/bin/libgmj_shared_native_view.so": "40a24adbb9e09f5b053d8fad5acd650ceebcea028422090a6c4f6322c4da7acb",
+        "bin/libmujoco.so.3.16.0": "d89b5532a1ec9c4ca8744449d648233a2f7ae5d9e7b2ccddd692e11955f6cb04",
+        "bin/libmujoco.so": "d89b5532a1ec9c4ca8744449d648233a2f7ae5d9e7b2ccddd692e11955f6cb04",
+        "bin/libgodot_mujoco.linux.template_debug.x86_64.so": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf"
+      },
+      "off": {
+        "bin/libmujoco.so.3.16.0": "d89b5532a1ec9c4ca8744449d648233a2f7ae5d9e7b2ccddd692e11955f6cb04",
+        "bin/libmujoco.so": "d89b5532a1ec9c4ca8744449d648233a2f7ae5d9e7b2ccddd692e11955f6cb04",
+        "bin/libgodot_mujoco.linux.template_debug.x86_64.so": "0d6d20b4a74117364f023719386918dd1a242043db1018323bebe3493aaffa4c"
+      }
+    }
+  },
+  "verification_policy": {
+    "wrapper_and_runtime": "Require successful entire runner exit, zero failed assertions, and raw logs free of unexpected diagnostics. A report with failed=0 alone is insufficient.",
+    "native": "Only actual active native bridge and presented frames satisfy native coverage. Explicit unavailable/budget fallback is separate evidence.",
+    "source_snapshots": "Each run retains its own source manifest. Earlier full ON/headless runs predate late narrow lifecycle/policy/UI-preview fixes; final focused runs cover those deltas. No universal assertion count is formed from overlapping suites.",
+    "performance": "Only the serialized final component samples count as idle-comparison evidence. Older full-suite performance files may overlap other tests and are diagnostic only.",
+    "staging_default_restored": "After all sampling, cmake configure-only restored build-linux GMJ_ADDON_BIN and GMJ_NATIVE_VIEW_BIN to the root addon paths with native ON; exit0, no build or in-place staging."
+  },
+  "current_core_source_hashes": {
+    "addons/godot_mujoco/viewer/runtime_viewer.gd": "21adfbd4d19f3351a94b0019fbea54727b431f5302de7ab2bb1f1637a0633235",
+    "addons/godot_mujoco/viewer/viewer_session.gd": "aeb30d78f9a23210d801f5c554978ba3f49526b5ba7dfacf1b8fc34b8e09952d",
+    "addons/godot_mujoco/viewer/viewer_ui.gd": "96c70e4f1615cff3ceba5e1d184bb17e1935e5983b320160a06ed75872548de3",
+    "addons/godot_mujoco/viewer/default_ui.tscn": "0d2237142661a4b6c7d68f38bd96c5c55d82eccdbc2a66841887c5277d8bd9f7",
+    "addons/godot_mujoco/viewer/configuration.gd": "b93ddce1b1fcc22f74a5338c4cfe4e6ea654384aab21baaf081cac95dbc24fb1",
+    "addons/godot_mujoco/viewer/extension_binding.gd": "675b5e7a600ad3c6ab5c11f31f3f08e03aa102a3a76e3fb38c244002aa84defb",
+    "addons/godot_mujoco/model/runtime_world.gd": "2c7f03cc87e6c6e1e097a42e114411cdc36c945d9a294690e2fcbb45c10696e4",
+    "addons/godot_mujoco/model/environment_host.gd": "092bce644adcf22613a8dacdb8e2fc6fae33f9b5fbd501ef4f55940cad08cbcd",
+    "addons/godot_mujoco/model/saved_scene_loader.gd": "afcc90aa2973d1fdd1e5f2ce1e4ddc35c935dc0b6b1a741f0a42a8b17dc56d9a",
+    "addons/godot_mujoco/model/scene_builder.gd": "ef20af98c887d2eeae64ccc4241ba9b6a943a12f7d1b826cc4da9d7bf16acca0",
+    "addons/godot_mujoco/native_view/runtime_view.gd": "2376dcbf1d982ed325fc29a652f7491f4eec4c401017a7dd28e5b283655fabc3",
+    "addons/godot_mujoco/csharp/MuJoCoViewer.cs": "92c34dbf4238f12757141f4a2b27871f6f0183c6f488b1667b1e6feb0942f8e2",
+    "src/viewer/mj_runtime_viewer.cpp": "3448285c3b2a33480e11862355d14aac109f62f6cfd16a9b66d9f6b4e1321087",
+    "src/viewer/mj_runtime_viewer.h": "55cec4e25f332e9d6503c64e5f81d3857a34df5579407baa425b4b3d1c226a70"
+  },
+  "raw_log_scan": {
+    "full_godot": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "full_native": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "full_headless": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "headless_lifecycle": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": [
+        "ERROR: MjRuntimeViewer: This target viewport already has an interactive viewer",
+        "ERROR: MjRuntimeViewer: Target is not an MjRuntimeWorld.",
+        "ERROR: MjRuntimeViewer: UI scene must declare a valid render_region Control.",
+        "ERROR: MjRuntimeViewer: UI render_region must be a positive rectangle inside the target viewport."
+      ]
+    },
+    "saved_scene_data": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "external_camera_cpp": {
+      "files": 1,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "clock_and_csharp": {
+      "files": 4,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "freebase_physics": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "custom_godot": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "custom_native": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "f5_on": {
+      "files": 5,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "f5_off": {
+      "files": 5,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "editor_preview": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "bindings_godot": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "bindings_native": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "contract_off": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "lifecycle_off": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": [
+        "ERROR: MjRuntimeViewer: This target viewport already has an interactive viewer",
+        "ERROR: MjRuntimeViewer: Target is not an MjRuntimeWorld.",
+        "ERROR: MjRuntimeViewer: UI scene must declare a valid render_region Control.",
+        "ERROR: MjRuntimeViewer: UI render_region must be a positive rectangle inside the target viewport."
+      ]
+    },
+    "graphical_gl_off_full": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "examples_godot": {
+      "files": 14,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "examples_native": {
+      "files": 14,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "freebase_gui_godot": {
+      "files": 6,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "freebase_gui_native": {
+      "files": 6,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "node_authoring": {
+      "files": 7,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "shape_gallery": {
+      "files": 6,
+      "unexpected_diagnostics": [],
+      "expected_rejections": []
+    },
+    "final_component_godot": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": [
+        "ERROR: MjRuntimeViewer: This target viewport already has an interactive viewer",
+        "ERROR: MjRuntimeViewer: Target is not an MjRuntimeWorld.",
+        "ERROR: MjRuntimeViewer: UI scene must declare a valid render_region Control.",
+        "ERROR: MjRuntimeViewer: UI render_region must be a positive rectangle inside the target viewport."
+      ]
+    },
+    "final_component_native": {
+      "files": 2,
+      "unexpected_diagnostics": [],
+      "expected_rejections": [
+        "ERROR: MjRuntimeViewer: This target viewport already has an interactive viewer",
+        "ERROR: MjRuntimeViewer: Target is not an MjRuntimeWorld.",
+        "ERROR: MjRuntimeViewer: UI scene must declare a valid render_region Control.",
+        "ERROR: MjRuntimeViewer: UI render_region must be a positive rectangle inside the target viewport."
+      ]
+    }
+  },
+  "authored_scene_preservation": {
+    "scope": "raw preservation of preexisting user-authored shape_gallery subresources during neutral-root migration; not graphical acceptance",
+    "subresources_preserved": 17,
+    "missing": [],
+    "changed": [],
+    "runtime_sibling": true,
+    "existing_node_property_blocks_preserved": 48,
+    "node_content_changes_except_parent_path": {}
+  },
+  "known_limits": [
+    "Existing native platform, model and resource admission limits remain unchanged. G1 actual native capture uses explicit existing 192 MiB opt-in after testing the default 64 MiB fallback.",
+    "No model-composition support expansion for keyframes, mocap or userdata; unavailable original controls stay visible with their reason.",
+    "Editor documentation captures show the visible portion of the actual 2D editor at its current zoom; runtime captures show the full custom layout.",
+    "Freebase migration checks the actual committed saved fixture and solver friction. Passive articulated G1 tipping does not imply monotonic COM travel; no such invariant is claimed.",
+    "Short capped performance samples are not uncapped throughput, production benchmarks or proof that one renderer is faster."
+  ],
+  "acceptance_evidence": {
+    "A01": {
+      "status": "passed",
+      "scope_ids": [
+        "f5_on",
+        "f5_off",
+        "node_authoring",
+        "shape_gallery"
+      ]
+    },
+    "A02": {
+      "status": "passed",
+      "scope_ids": [
+        "final_component_godot",
+        "final_component_native",
+        "lifecycle_off",
+        "external_camera_cpp"
+      ]
+    },
+    "A03": {
+      "status": "passed",
+      "scope_ids": [
+        "final_component_godot",
+        "final_component_native",
+        "lifecycle_off",
+        "full_native",
+        "full_godot"
+      ]
+    },
+    "A04": {
+      "status": "passed",
+      "scope_ids": [
+        "custom_native",
+        "contract_off",
+        "lifecycle_off",
+        "bindings_native",
+        "bindings_godot"
+      ]
+    },
+    "A05": {
+      "status": "passed",
+      "scope_ids": [
+        "bindings_native",
+        "bindings_godot",
+        "saved_scene_data",
+        "freebase_gui_godot",
+        "freebase_gui_native"
+      ]
+    },
+    "A06": {
+      "status": "passed",
+      "scope_ids": [
+        "custom_native",
+        "custom_godot",
+        "editor_preview",
+        "contract_off"
+      ]
+    },
+    "A07": {
+      "status": "passed",
+      "scope_ids": [
+        "custom_native",
+        "contract_off",
+        "clock_and_csharp",
+        "examples_native",
+        "examples_godot"
+      ]
+    },
+    "A08": {
+      "status": "passed",
+      "scope_ids": [
+        "custom_native",
+        "custom_godot",
+        "contract_off",
+        "full_native",
+        "full_godot"
+      ]
+    },
+    "A09": {
+      "status": "passed",
+      "scope_ids": [
+        "editor_preview",
+        "f5_on",
+        "f5_off"
+      ]
+    },
+    "A10": {
+      "status": "passed",
+      "scope_ids": [
+        "custom_native",
+        "custom_godot",
+        "contract_off",
+        "lifecycle_off"
+      ]
+    },
+    "A11": {
+      "status": "passed",
+      "scope_ids": [
+        "examples_native",
+        "examples_godot",
+        "clock_and_csharp",
+        "freebase_gui_native",
+        "freebase_gui_godot",
+        "shape_gallery"
+      ]
+    },
+    "A12": {
+      "status": "passed",
+      "scope_ids": [
+        "full_native",
+        "full_godot",
+        "graphical_gl_off_full",
+        "f5_on",
+        "f5_off",
+        "examples_native"
+      ]
+    },
+    "A13": {
+      "status": "passed",
+      "scope_ids": [
+        "final_component_godot",
+        "final_component_native",
+        "lifecycle_off",
+        "full_native",
+        "full_godot"
+      ]
+    },
+    "A14": {
+      "status": "passed",
+      "scope_ids": [
+        "documentation_and_source_review"
+      ]
+    }
+  },
+  "excluded_iterations": [
+    {
+      "artifacts": "component-full-godot-entries9 / component-crash-gdb-1",
+      "reason": "Saved reload reproduced an engine SIGSEGV when deep-loading executing Scripts. Scoped cached-Script loader fixed it; later full/saved-resource runs pass."
+    },
+    {
+      "artifacts": "component-full-godot-entries10",
+      "reason": "Transient post-commit container rectangle rejected during reflow; layout epoch handling fixed and strict stable invalid rectangles still reject."
+    },
+    {
+      "artifacts": "component-contract-native-final-16",
+      "reason": "Restricted static-camera reattach could not bootstrap a new native display. Forced external-camera resync fixed it; native17 passes."
+    },
+    {
+      "artifacts": "component-bindings-godot-final-18 / component-bindings-native-final-20 / component-bindings-native-final-21",
+      "reason": "Observer fixture had nil/freed widget references or captured the old camera before its intended bind boundary. The entire wrappers were rejected, not counted as zero-failure success. Strict deterministic22/23 pass."
+    },
+    {
+      "artifacts": "component-full-off-final-28",
+      "reason": "Fixture duplicate local variable parse error before runtime; corrected29 passes."
+    },
+    {
+      "artifacts": "component-f5-on-final-root first attempt",
+      "reason": "Observer dereferenced an idle nullable compiler worker; corrected idle/readiness condition and whole root2 wrapper pass."
+    },
+    {
+      "artifacts": "component-node-authoring-root first attempt",
+      "reason": "Actual F5 child had no display; final-root reruns with actual X11 and passes all stages."
+    },
+    {
+      "artifacts": "component-freebase-root-1 through6",
+      "reason": "Obsolete fixture waits/body-container/unsaved-velocity assumptions, invalid monotonic articulated-friction assertion, then fixture parse issue. Actual saved stimuli, solver contact coefficients and body-child poses replace those assumptions; root7 and both GUI wrappers pass."
+    },
+    {
+      "artifacts": "component-freebase-godot-final-30 / component-freebase-input-diagnostic-32",
+      "reason": "Mouse observer omitted OS window origin or clicked a fixture behind F11. Final33/34 use actual screen coordinates and verify selected saved scene before reload; no physics/product changes."
+    },
+    {
+      "artifacts": "component-editor-preview-final-35",
+      "reason": "Optional editor navigation/capture attempt stalled switching scenes and was stopped. Its owned process shutdown diagnostics are excluded. Known-green root3 editor evidence is used."
+    }
+  ],
+  "screenshots": {
+    "verification": "All six public assets visually inspected; public bytes match the actual captured source without edits. Editor images show its current visible canvas region.",
+    "sources": [
+      {
+        "public_path": "docs/pics/runtime-viewer-component-godot.png",
+        "raw_source": "build-runtime-viewer/component-f5-on-final-root-2/godot-9419295.png",
+        "scope": "F5 actual Godot ShapeGallery; paused",
+        "sha256": "a6458b0a193c6b1efeec4b446208fe254e44aac9c2cd77316ee96770f0a37a53",
+        "source_hash_manifest": "build-runtime-viewer/component-f5-on-final-root-2/source-hashes.json",
+        "transform": "none; byte-for-byte copy"
+      },
+      {
+        "public_path": "docs/pics/runtime-viewer-component-native.png",
+        "raw_source": "build-runtime-viewer/component-f5-on-final-root-2/native-5678695.png",
+        "scope": "F5 actual native MuJoCo ShapeGallery; paused",
+        "sha256": "c4654c5c182786a4a5513f196aaf356c6b5fe31cfd75503127ed4a0d2fb0a06d",
+        "source_hash_manifest": "build-runtime-viewer/component-f5-on-final-root-2/source-hashes.json",
+        "transform": "none; byte-for-byte copy"
+      },
+      {
+        "public_path": "docs/pics/runtime-viewer-component-editor-default.png",
+        "raw_source": "build-runtime-viewer/component-editor-preview-final-root-3/editor-component-default.png",
+        "scope": "actual editor; visible canvas at native zoom; no runtime services",
+        "sha256": "6d94e0629be5e1e2d81bdb7fa6d5a06c1f53ba326392b4f2a1245623ca83a6e4",
+        "source_hash_manifest": "build-runtime-viewer/component-editor-preview-final-root-3/source-hashes.json",
+        "transform": "none; byte-for-byte copy"
+      },
+      {
+        "public_path": "docs/pics/runtime-viewer-component-editor-custom.png",
+        "raw_source": "build-runtime-viewer/component-editor-preview-final-root-3/editor-component-custom.png",
+        "scope": "actual custom editor; visible canvas at native zoom; no runtime services",
+        "sha256": "4329530a63711b40451594f9401542bded5100a72b990ce1fa97ebfc9c592d47",
+        "source_hash_manifest": "build-runtime-viewer/component-editor-preview-final-root-3/source-hashes.json",
+        "transform": "none; byte-for-byte copy"
+      },
+      {
+        "public_path": "docs/pics/runtime-viewer-component-custom-godot.png",
+        "raw_source": "build-runtime-viewer/component-contract-godot-final-36/component-custom-panels.png",
+        "scope": "actual Godot inherited custom UI and Theme, complete reserved viewport",
+        "sha256": "f122a18cb03aaee7b389113e296e530448925920642a7d8cb2eff00f1635522f",
+        "source_hash_manifest": "build-runtime-viewer/component-contract-godot-final-36/source-hashes.json",
+        "transform": "none; byte-for-byte copy"
+      },
+      {
+        "public_path": "docs/pics/runtime-viewer-component-custom-native.png",
+        "raw_source": "build-runtime-viewer/component-contract-native-final-37/component-custom-panels.png",
+        "scope": "actual native inherited custom UI and Theme, complete reserved viewport",
+        "sha256": "c15b216f4bcd10e68138c5c1b6021b14923b8ba43e628e03d2215d53b675428e",
+        "source_hash_manifest": "build-runtime-viewer/component-contract-native-final-37/source-hashes.json",
+        "transform": "none; byte-for-byte copy"
+      }
+    ]
+  },
+  "performance": {
+    "scope": "Serialized final actual graphical component runs on the same desktop, VSync off and 120 host FPS cap, paused physics. No other agent test/build/GUI jobs ran during these samples. Existing user desktop/editor/game processes remained running.",
+    "units": {
+      "frame_ms_p50": "milliseconds of actual host frame interval",
+      "frame_ms_p95": "milliseconds of actual host frame interval",
+      "rss_kib": "process resident set KiB; distinct from whole-system RAM overlay",
+      "cpu": "whole-system utilization percent",
+      "gpu": "matched current renderer GPU utilization percent",
+      "ram": "system used memory bytes",
+      "ram_total": "system total memory bytes",
+      "vram": "matched GPU used memory bytes",
+      "vram_total": "matched GPU total memory bytes"
+    },
+    "limitations": "Short capped fixture samples do not establish uncapped throughput or renderer superiority. host_fps is a cached engine snapshot, renderer_fps is a presentation-session snapshot; neither is the reciprocal of the frame-interval percentile. Absent/disabled Godot sessions need not update a hidden viewer FPS snapshot.",
+    "backends": {
+      "godot": {
+        "artifact": "build-runtime-viewer/component-lifecycle-godot-final-38/component-performance.json",
+        "sha256": "6b9e555ae69ab49860ad176025970471295012eed405f62af9a90a817b9cc3e8",
+        "metric_unavailability_reasons": {
+          "cpu": "",
+          "fps": "",
+          "gpu": "",
+          "ram": "",
+          "timing": "",
+          "vram": ""
+        },
+        "samples": [
+          {
+            "fps_cap": 120,
+            "frame_ms_p50": 8.371,
+            "frame_ms_p95": 8.803,
+            "frame_slots": 2,
+            "history_bytes": 1296000,
+            "host_fps": 52.0,
+            "measurement": "capped host frame interval milliseconds",
+            "metrics": {
+              "cpu": false,
+              "fps": true,
+              "gpu": false,
+              "ram": false,
+              "timing": false,
+              "vram": false
+            },
+            "mode": "default-fps",
+            "physics_paused": true,
+            "renderer_fps": 115.308151093439,
+            "rss_kib": 456624,
+            "simulation_time": 0.0,
+            "system_samples": {}
+          },
+          {
+            "fps_cap": 120,
+            "frame_ms_p50": 8.545,
+            "frame_ms_p95": 8.749,
+            "frame_slots": 2,
+            "history_bytes": 1296000,
+            "host_fps": 114.0,
+            "measurement": "capped host frame interval milliseconds",
+            "metrics": {
+              "cpu": false,
+              "fps": true,
+              "gpu": false,
+              "ram": false,
+              "timing": false,
+              "vram": false
+            },
+            "mode": "overlay-off",
+            "physics_paused": true,
+            "renderer_fps": 120.0,
+            "rss_kib": 456624,
+            "simulation_time": 0.0,
+            "system_samples": {}
+          },
+          {
+            "fps_cap": 120,
+            "frame_ms_p50": 8.563,
+            "frame_ms_p95": 8.768,
+            "frame_slots": 2,
+            "history_bytes": 1296000,
+            "host_fps": 120.0,
+            "measurement": "capped host frame interval milliseconds",
+            "metrics": {
+              "cpu": true,
+              "fps": true,
+              "gpu": true,
+              "ram": true,
+              "timing": true,
+              "vram": true
+            },
+            "mode": "all-metrics",
+            "physics_paused": true,
+            "renderer_fps": 119.760479041916,
+            "rss_kib": 456648,
+            "simulation_time": 0.0,
+            "system_samples": {
+              "cpu": 17.9796696315121,
+              "gpu": 19.0,
+              "ram": 5280559104.0,
+              "ram_total": 12240629760.0,
+              "vram": 683151360.0,
+              "vram_total": 4294967296.0
+            }
+          },
+          {
+            "fps_cap": 120,
+            "frame_ms_p50": 8.329,
+            "frame_ms_p95": 8.767,
+            "frame_slots": 2,
+            "history_bytes": 1296000,
+            "host_fps": 105.0,
+            "measurement": "capped host frame interval milliseconds",
+            "metrics": {
+              "cpu": true,
+              "fps": true,
+              "gpu": true,
+              "ram": true,
+              "timing": true,
+              "vram": true
+            },
+            "mode": "full-analysis",
+            "physics_paused": true,
+            "renderer_fps": 116.831683168317,
+            "rss_kib": 457856,
+            "simulation_time": 0.0,
+            "system_samples": {
+              "cpu": 18.8168659534298,
+              "gpu": 19.0,
+              "ram": 5255323648.0,
+              "ram_total": 12240629760.0,
+              "vram": 683151360.0,
+              "vram_total": 4294967296.0
+            }
+          },
+          {
+            "fps_cap": 120,
+            "frame_ms_p50": 8.5,
+            "frame_ms_p95": 8.773,
+            "frame_slots": 2,
+            "history_bytes": 1296000,
+            "host_fps": 105.0,
+            "measurement": "capped host frame interval milliseconds",
+            "metrics": {},
+            "mode": "disabled",
+            "physics_paused": true,
+            "renderer_fps": 116.831683168317,
+            "rss_kib": 457848,
+            "simulation_time": 0.0,
+            "system_samples": {}
+          },
+          {
+            "fps_cap": 120,
+            "frame_ms_p50": 8.566,
+            "frame_ms_p95": 8.77,
+            "frame_slots": 2,
+            "history_bytes": 1296000,
+            "host_fps": 105.0,
+            "measurement": "capped host frame interval milliseconds",
+            "metrics": {},
+            "mode": "absent",
+            "physics_paused": true,
+            "renderer_fps": 116.831683168317,
+            "rss_kib": 460764,
+            "simulation_time": 0.0,
+            "system_samples": {}
+          }
+        ],
+        "profiler_stop_evidence": {
+          "artifact": "build-runtime-viewer/component-lifecycle-godot-final-38/profiler-consumer-stop.json",
+          "sha256": "215d92c4c356a9ecd745bfc4447f482c784478e1ca5f903547c235b0f2e417a8"
+        },
+        "committed_reload_teardown_evidence": {
+          "artifact": "build-runtime-viewer/component-lifecycle-godot-final-38/committed-reload-lifecycle.json",
+          "sha256": "dec83fbed7cec3b4c7de4782c4f1781cb4c441780daeefd250a6be9e25580c29"
+        }
+      },
+      "native": {
+        "artifact": "build-runtime-viewer/component-lifecycle-native-final-39/component-performance.json",
+        "sha256": "0ac9688b74ae36918a94f820ef2ec1c98b1ac2ed83c5708453d7321703cc4593",
+        "metric_unavailability_reasons": {
+          "cpu": "",
+          "fps": "",
+          "gpu": "",
+          "ram": "",
+          "timing": "",
+          "vram": ""
+        },
+        "samples": [
+          {
+            "fps_cap": 120,
+            "frame_ms_p50": 8.281,
+            "frame_ms_p95": 8.421,
+            "frame_slots": 3,
+            "history_bytes": 1296000,
+            "host_fps": 52.0,
+            "measurement": "capped host frame interval milliseconds",
+            "metrics": {
+              "cpu": false,
+              "fps": true,
+              "gpu": false,
+              "ram": false,
+              "timing": false,
+              "vram": false
+            },
+            "mode": "default-fps",
+            "physics_paused": true,
+            "renderer_fps": 108.695652173913,
+            "rss_kib": 466596,
+            "simulation_time": 0.0,
+            "system_samples": {}
+          },
+          {
+            "fps_cap": 120,
+            "frame_ms_p50": 8.27,
+            "frame_ms_p95": 8.431,
+            "frame_slots": 3,
+            "history_bytes": 1296000,
+            "host_fps": 112.0,
+            "measurement": "capped host frame interval milliseconds",
+            "metrics": {
+              "cpu": false,
+              "fps": true,
+              "gpu": false,
+              "ram": false,
+              "timing": false,
+              "vram": false
+            },
+            "mode": "overlay-off",
+            "physics_paused": true,
+            "renderer_fps": 120.0,
+            "rss_kib": 466600,
+            "simulation_time": 0.0,
+            "system_samples": {}
+          },
+          {
+            "fps_cap": 120,
+            "frame_ms_p50": 8.275,
+            "frame_ms_p95": 8.423,
+            "frame_slots": 3,
+            "history_bytes": 1296000,
+            "host_fps": 120.0,
+            "measurement": "capped host frame interval milliseconds",
+            "metrics": {
+              "cpu": true,
+              "fps": true,
+              "gpu": true,
+              "ram": true,
+              "timing": true,
+              "vram": true
+            },
+            "mode": "all-metrics",
+            "physics_paused": true,
+            "renderer_fps": 120.0,
+            "rss_kib": 466860,
+            "simulation_time": 0.0,
+            "system_samples": {
+              "cpu": 14.3310082435003,
+              "gpu": 20.0,
+              "ram": 5139374080.0,
+              "ram_total": 12240629760.0,
+              "vram": 692654080.0,
+              "vram_total": 4294967296.0
+            }
+          },
+          {
+            "fps_cap": 120,
+            "frame_ms_p50": 8.292,
+            "frame_ms_p95": 8.429,
+            "frame_slots": 3,
+            "history_bytes": 1296000,
+            "host_fps": 109.0,
+            "measurement": "capped host frame interval milliseconds",
+            "metrics": {
+              "cpu": true,
+              "fps": true,
+              "gpu": true,
+              "ram": true,
+              "timing": true,
+              "vram": true
+            },
+            "mode": "full-analysis",
+            "physics_paused": true,
+            "renderer_fps": 117.296222664016,
+            "rss_kib": 469300,
+            "simulation_time": 0.0,
+            "system_samples": {
+              "cpu": 19.350732017823,
+              "gpu": 21.0,
+              "ram": 5120925696.0,
+              "ram_total": 12240629760.0,
+              "vram": 692654080.0,
+              "vram_total": 4294967296.0
+            }
+          },
+          {
+            "fps_cap": 120,
+            "frame_ms_p50": 8.294,
+            "frame_ms_p95": 8.418,
+            "frame_slots": 3,
+            "history_bytes": 1296000,
+            "host_fps": 120.0,
+            "measurement": "capped host frame interval milliseconds",
+            "metrics": {},
+            "mode": "disabled",
+            "physics_paused": true,
+            "renderer_fps": 120.0,
+            "rss_kib": 469620,
+            "simulation_time": 0.0,
+            "system_samples": {}
+          },
+          {
+            "fps_cap": 120,
+            "frame_ms_p50": 8.304,
+            "frame_ms_p95": 8.41,
+            "frame_slots": 3,
+            "history_bytes": 1296000,
+            "host_fps": 118.0,
+            "measurement": "capped host frame interval milliseconds",
+            "metrics": {},
+            "mode": "absent",
+            "physics_paused": true,
+            "renderer_fps": 116.600790513834,
+            "rss_kib": 472524,
+            "simulation_time": 0.0,
+            "system_samples": {}
+          }
+        ],
+        "profiler_stop_evidence": {
+          "artifact": "build-runtime-viewer/component-lifecycle-native-final-39/profiler-consumer-stop.json",
+          "sha256": "6a84160f32b367319b4f3d3b6afa0c20cd4e2c3401edc17ab3301ba9b4745948"
+        },
+        "committed_reload_teardown_evidence": {
+          "artifact": "build-runtime-viewer/component-lifecycle-native-final-39/committed-reload-lifecycle.json",
+          "sha256": "d6fb82aa1e4bde0bf71a128d66051e9d77a58821e88830080c9827ee5a5b17cb"
+        }
+      }
+    }
+  },
+  "focused_semantic_supplements": {
+    "artifact": "build-runtime-viewer/component-review-lifecycle/focused-final-report.json",
+    "sha256": "6fda552417ea9f13f447226f5848c21d08a16b132125ed19baea3cf9ce42f552",
+    "scope": "15 individually scoped passing headless guard/lifecycle runs; no native graphical claim; final graphical supplements are separate."
+  },
+  "post_acceptance_formatting": [
+    {
+      "path": "addons/godot_mujoco/viewer/viewer_ui.gd",
+      "change": "Remove one extra blank line at EOF only; no executable text changes. Found by prospective staged-diff check of the new file.",
+      "before_sha256": "72592393296c1d9f776c060c13d3166c3352da7cc8a8012a7c43de4750d8c151",
+      "after_sha256": "96c70e4f1615cff3ceba5e1d184bb17e1935e5983b320160a06ed75872548de3",
+      "validation_scope": "Functional runs and screenshots retain their exact before-hash. This final whitespace-only normalization does not change parsed GDScript or require rerunning semantic GUI acceptance."
+    }
+  ],
+  "entry_agent_receipt": {
+    "artifact": "build-runtime-viewer/component-entries-final-receipt.json",
+    "sha256": "61ed96ce82b1752ddc9a99e06a52bfd80a37cbcae1f82dc025a8cf4ffc7d2a8f",
+    "scope": "Final per-run wrapper/stage exits, source snapshots, screenshot byte identities and serialized six-mode measurements."
+  },
+  "quality_gates": {
+    "build_native_on": "passed",
+    "build_native_gl_off": "passed",
+    "full_backend_and_component_matrix": "passed",
+    "prospective_selected_diff_check": {
+      "status": "passed",
+      "files": 80,
+      "real_index_unchanged": true,
+      "temporary_index_only": true
+    },
+    "formal_full_scope_review": "passed"
+  },
+  "delivery_status": "implementation_and_acceptance_complete; local commit awaits one-shot user confirmation",
+  "formal_review": {
+    "phase": "Trellis2.2",
+    "status": "PASS",
+    "open_findings": 0,
+    "scope": "backend/frontend,C++,GDScript,C#,all entries,tests,documentation; D1-D9 and A01-A14",
+    "record": ".trellis/tasks/10-30-runtime-viewer-component/research/check-review-notes.md",
+    "record_sha256": "b05511061b61268e07e9ffc3719424e7218e70eb823bc1812d9d3e04ced35a63",
+    "post_acceptance_formatting_reviewed": true
+  }
+}

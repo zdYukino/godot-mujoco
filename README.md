@@ -129,7 +129,7 @@ godot-mujoco/
 
 ## F5 选择 Godot 或 MuJoCo 原生渲染
 
-在 **右侧 MuJoCo 面板顶部 → F5 渲染** 下拉框中选择 **Godot** 或 **MuJoCo 原生**。也可使用 **3D 视图顶部 → MuJoCo 显示 → F5 渲染** 菜单。选择会保存到当前工程的 `project.godot`，下次 F5 生效；切换后需停止并重新运行。编辑视图始终由 Godot 绘制。运行浮窗（F11）的状态会标明实际使用的渲染方式；原生启动失败时保留 Godot 画面并显示回退原因。
+在 **右侧 MuJoCo 面板顶部 → F5 渲染** 下拉框中选择 **Godot** 或 **MuJoCo 原生**。也可使用 **3D 视图顶部 → MuJoCo 显示 → F5 渲染** 菜单。选择会保存到当前工程的 `project.godot`，下次 F5 生效；切换后需停止并重新运行。编辑视图始终由 Godot 绘制。已添加 GodotExtras 时，运行浮窗（F11）的状态会标明实际使用的渲染方式；原生启动失败时保留 Godot 画面并显示回退原因。
 
 `shape_gallery` 预选 MuJoCo 原生；尚未构建原生桥时会回退到 Godot，也可在工具栏中明确选择 Godot。其他工程未设置时沿用场景默认值。
 
@@ -160,13 +160,28 @@ cmake --build build-linux --parallel 2
 
 普通 GPU 纹理合成使用仓库锁定的官方 Godot，无需替换引擎。编辑器开关不启用“直出屏幕”；后者仍需[自定义 Godot 补丁](docs/development/native-view-r17/README.md)。原生视图仍有设备故障恢复、平台和模型资源限制，详见[原生视图说明](addons/godot_mujoco/native_view/README.md)。
 
-下图为同一 `shape_gallery` 的 F5 实拍；两种渲染共用交互和初始相机，材质与灯光不同，不作为性能比较：
+以下为拆分前组合组件的同一 `shape_gallery` F5 实拍；两种渲染共用交互和初始相机，材质与灯光不同。这些截图用于画面对比，不作为性能比较或独立组件验收证据。
 
 | Godot | MuJoCo 原生 |
 |---|---|
-| [![Godot F5 画面](docs/pics/f5-renderer-godot.png)](docs/pics/f5-renderer-godot.png) | [![MuJoCo 原生 F5 画面](docs/pics/f5-renderer-native.png)](docs/pics/f5-renderer-native.png) |
+| [![Godot F5 画面](docs/pics/runtime-viewer-component-godot.png)](docs/pics/runtime-viewer-component-godot.png) | [![MuJoCo 原生 F5 画面](docs/pics/runtime-viewer-component-native.png)](docs/pics/runtime-viewer-component-native.png) |
 
 ## 统一运行操作与性能显示
+
+运行界面由两个可单独添加、单独启停的 **CanvasLayer** 组件组成：
+
+| 组件 | 职责 |
+|---|---|
+| `MjRuntimeViewer` | 原版 MuJoCo 左右面板、F1–F4、官方快捷键、相机、拾取与扰动 |
+| `MjGodotExtras` | F11、FPS/系统指标、渲染选择、精确步进/快照和示例工具 |
+
+两者各自在 Inspector 指定 `world` 或 `environment_host`，不依赖对方。`shape_gallery` 的 `Runtime`、`RuntimeViewer`、`GodotExtras` 是普通根节点下的同级节点。只添加原版组件时没有 F11；只添加 Extras 时保留 F11 和工具，游戏自行控制相机；两个都不添加时，仿真与所选渲染照常运行。禁用或删除其中一个不关闭另一个，也不重置物理。菜单显隐和组件停用是不同操作。
+
+选中可编辑的 World/Host，在右侧 MuJoCo 栏点击 **添加 MuJoCo 运行面板**，即可创建、绑定并选中原版组件；已有同目标面板时只选中它，支持 Undo/Redo。该预设不添加 Extras 或示例控件。目标本身是场景根节点时会提示先提供普通父节点，不会自动改造场景。Extras 可通过“添加子节点”搜索 **MjGodotExtras** 单独添加。
+
+两个组件分别支持可继承 `.tscn`、Theme、功能配置和纯编辑器预览，个人偏好按角色与组件隔离。原版组件拥有占位/叠加 3D 布局；Extras 只提供 2D 叠加与浮窗，不接管相机。按钮、快捷键和组件命令遵守场景功能限制。C# 分别使用 `ViewerHandle.Bind(viewer)` 与 `ExtrasHandle.Bind(extras)`；旧混合接口不保留兼容层。详见[组件说明](addons/godot_mujoco/viewer/README.md)。
+
+示例 `DisplayControls` 保持示例自有脚本。显式 `ExtensionBinding` 的 Viewer 路由调用 `get_viewer_help()` 取得 F1 文本，Extras 路由调用 `register_extras()` 注册 F11 控件；两条路由可单独配置，并跟随各自提交成功的 World。只使用原版帮助时不会创建闲置工具控件。
 
 两种渲染均使用 MuJoCo 3.16 的相机、拾取和扰动 API，并按原版 simulate 组织左右面板。**Tab** 显隐左侧原版菜单，**Shift+Tab** 显隐右侧 Joint / Control / Equality；Alt+分组字母折叠对应组。**F1 / F2 / F3 / F4** 分别开关原版 Help / Info / Profiler / Sensors 叠加。**F11** 仅打开可拖动、缩放的 **Godot 附加功能**浮窗，提供渲染后端、FPS/系统性能、示例扩展和附加工具。菜单显隐不暂停仿真；编辑器原有操作不变。
 
@@ -178,9 +193,9 @@ cmake --build build-linux --parallel 2
 
 Godot 性能叠加首次默认只显示 **FPS**，由 F11 → Performance 独立控制；**F2 只控制 MuJoCo Info**，与 FPS/系统性能开关互不影响。所有性能指标包括 FPS 都可关闭。可选 CPU / 内存 / GPU / 显存采用**整机 / 整卡**口径，GPU 采样必须匹配实际渲染设备；不可用时明确禁用。CPU/GPU 毫秒耗时单独标注。原生帧更新率与 Godot 宿主 FPS 分开显示。信息约 5 Hz 刷新，系统占用约 1 Hz 采样，偏好保存在各项目的 `user://`。
 
-原版 File 提供 XML / MJB 保存和模型/数据文本输出；Simulation 提供关键帧、控制噪声、线程数和历史拖动。关键帧控件按模型能力启用；当前共享世界组合仍不接受含 keyframe 的来源模型，界面会明确说明。Physics 设计参数保持只读；Busy Wait 由 Godot 主循环管理，因此禁用并解释限制。面板采用 Godot 控件适配固定版本定义，原生渲染仍通过 `mjr_render` 绘制三维画面。所有示例、模板与生成的 playground 自动接入，示例专用运行控件位于 F11 → Examples，精确 N 步和手动快照位于 F11 → Tools。完整能力、C# 接口、资源预算及验收方法见[运行查看器说明](addons/godot_mujoco/viewer/README.md)。
+原版 File 提供 XML / MJB 保存和模型/数据文本输出；Simulation 提供关键帧、控制噪声、线程数和历史拖动。关键帧控件按模型能力启用；当前共享世界组合仍不接受含 keyframe 的来源模型，界面会明确说明。Physics 设计参数保持只读；Busy Wait 由 Godot 主循环管理，因此禁用并解释限制。面板采用 Godot 控件适配固定版本定义，原生渲染仍通过 `mjr_render` 绘制三维画面。所有示例、模板与生成的 playground 都通过显式组件接入，示例专用运行控件位于 F11 → Examples，精确 N 步和手动快照位于 F11 → Tools。完整能力、C# 接口、资源预算及验收方法见[运行查看器说明](addons/godot_mujoco/viewer/README.md)。
 
-[本次验收记录](docs/development/runtime-viewer-validation-2026-10-30.json)包含双后端、原生 GL 关闭构建、F5、示例与重载检查，以及关闭叠加 / 仅 FPS / 全部指标 / 分析图表四种配置的 p50/p95 帧耗时和内存样本。限帧测试不能用于证明哪种后端更快。原版面板与 F11 拆分的新一轮验收另见[界面对照](docs/development/mujoco-simulate-ui-parity.md)和[验收记录](docs/development/runtime-panels-validation-2026-10-30.json)。
+此前统一交互的[验收记录](docs/development/runtime-viewer-validation-2026-10-30.json)包含双后端、原生 GL 关闭构建、F5、示例与重载检查，以及关闭叠加 / 仅 FPS / 全部指标 / 分析图表四种配置的 p50/p95 帧耗时和内存样本。限帧测试不能用于证明哪种后端更快。此前同一组件内部的原版面板 / F11 分区验收见[界面对照](docs/development/mujoco-simulate-ui-parity.md)和[验收记录](docs/development/runtime-panels-validation-2026-10-30.json)。[组件验收记录](docs/development/runtime-viewer-component-validation-2026-10-31.json)及上方截图仍属于拆分前的组合组件；独立组件的[新验收记录](docs/development/runtime-ui-split-validation-2026-10-31.json)和[实际截图](addons/godot_mujoco/viewer/README.md#independent-component-captures)单独记录双后端、GL-OFF、编辑器预设和 F5 的验证范围与源码版本。
 
 ## 导入模型并运行
 

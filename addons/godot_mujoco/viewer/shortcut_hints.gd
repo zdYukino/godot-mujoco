@@ -1,3 +1,4 @@
+@tool
 extends Control
 ## Show each native control's shortcut in place while the UI right button is held.
 var panel: Control

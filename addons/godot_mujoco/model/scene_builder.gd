@@ -47,6 +47,42 @@ static func save(model: MjAuthorResource, path: String) -> Error:
 	if error != OK: return error
 	return ResourceSaver.save(scene,path)
 
+static func attach_viewer(parent: Node, target: Node) -> CanvasLayer:
+	var viewer := preload("../viewer/runtime_viewer.gd").new()
+	viewer.name="RuntimeViewer"
+	if target is MjEnvironmentHost: viewer.environment_host=target
+	elif target is MjRuntimeWorld: viewer.world=target
+	else:
+		viewer.free(); push_error("RuntimeViewer requires an explicit World or EnvironmentHost"); return null
+	parent.add_child(viewer)
+	viewer.owner=parent.owner if parent.owner else parent
+	return viewer
+
+static func attach_extras(parent: Node, target: Node) -> CanvasLayer:
+	var extras := preload("../viewer/godot_extras.gd").new()
+	extras.name="GodotExtras"
+	if target is MjEnvironmentHost: extras.environment_host=target
+	elif target is MjRuntimeWorld: extras.world=target
+	else:
+		extras.free(); push_error("GodotExtras requires an explicit World or EnvironmentHost"); return null
+	parent.add_child(extras)
+	extras.owner=parent.owner if parent.owner else parent
+	return extras
+
+static func attach_extension(parent: Node, viewer: CanvasLayer, extras: CanvasLayer, provider_path: NodePath) -> Node:
+	var binding := preload("../viewer/extension_binding.gd").new()
+	binding.name="ExtensionBinding";binding.viewer=viewer;binding.extras=extras;binding.provider_path=provider_path
+	parent.add_child(binding);binding.owner=parent.owner if parent.owner else parent
+	return binding
+
+static func with_runtime_ui(world: Node3D, scene_name: String) -> Node3D:
+	var root := Node3D.new(); root.name=scene_name
+	world.name="Runtime"; root.add_child(world); world.owner=root
+	attach_viewer(root,world)
+	attach_extras(root,world)
+	for node in world.find_children("*","Node",true,false): node.owner=root
+	return root
+
 static func playground(environment: PackedScene) -> Control:
 	var root := HBoxContainer.new()
 	root.name="SimulationPlayground"
@@ -58,11 +94,8 @@ static func playground(environment: PackedScene) -> Control:
 	host.size_flags_vertical=Control.SIZE_EXPAND_FILL
 	host.custom_minimum_size=Vector2(640,480)
 	root.add_child(host);host.owner=root
-	# Retain the named controller API for saved scenes; its legacy UI is hidden.
-	var controls := preload("simulation_controls.gd").new()
-	controls.name="SimulationControls"
-	controls.environment_host=host
-	root.add_child(controls);controls.owner=root
+	attach_viewer(root,host)
+	attach_extras(root,host)
 	return root
 
 static func save_playground(model: MjAuthorResource,path: String) -> Error:

@@ -13,7 +13,7 @@ const VISUAL_NAMES := {"headlight.active": "Active", "headlight.ambient": "Ambie
 static func shortcut_hints() -> String:
 	var text := "MuJoCo panels: Tab left · Shift+Tab right\n"
 	for title in LEFT+RIGHT: text+="Alt+%s  %s\n" % [SECTION_KEYS[title],title]
-	return text+"F1 Help · F2 Info · F3 Profiler · F4 Sensors\nF11 Godot extras"
+	return text+"F1 Help · F2 Info · F3 Profiler · F4 Sensors"
 
 static func style(color: Color, border := Color(0,0,0,0)) -> StyleBoxFlat:
 	var box := StyleBoxFlat.new(); box.bg_color=color; box.border_color=border

@@ -10,7 +10,19 @@ for script in prepare_playground prepare_gui_contacts; do
  timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/project" --script "res://$script.gd" > "$OUT/$script.log" 2>&1
 done
 mkdir "$OUT/gui"
-timeout --kill-after=5 240 "$GODOT_BIN" --path "$OUT/project" --rendering-method gl_compatibility --audio-driver Dummy --resolution 1600x1000 --script res://gui_probe.gd -- --probe-dir="$OUT/gui" > "$OUT/gui/runtime.log" 2>&1 &
+python3 - "$ROOT" "$OUT" <<'HASH_SOURCES'
+import hashlib,json,pathlib,sys
+root,out=map(pathlib.Path,sys.argv[1:]);project=out/'project'
+suffixes={'.gd','.cs','.godot','.tscn','.tres','.gdextension','.so'}
+paths=[path for path in project.rglob('*') if path.is_file() and path.suffix in suffixes and '.godot' not in path.relative_to(project).parts]
+hashes={str(path.relative_to(project)):hashlib.sha256(path.read_bytes()).hexdigest() for path in sorted(paths)}
+for relative in ('tests/freebase/gui_acceptance.py','tests/freebase/run_gui.sh','tests/node_authoring/desktop.py'):
+ hashes['@runner/'+relative]=hashlib.sha256((root/relative).read_bytes()).hexdigest()
+(out/'gui/source-hashes.json').write_text(json.dumps(hashes,indent=2)+'\n')
+HASH_SOURCES
+viewer_args=(--probe-dir="$OUT/gui")
+if [[ "${GMJ_FREEBASE_NATIVE:-0}" == 1 ]]; then viewer_args+=(--native); fi
+timeout --kill-after=5 240 "$GODOT_BIN" --path "$OUT/project" --rendering-method gl_compatibility --audio-driver Dummy --resolution 1600x1000 --script res://gui_probe.gd -- "${viewer_args[@]}" > "$OUT/gui/runtime.log" 2>&1 &
 game_pid=$!
 trap 'kill "$game_pid" 2>/dev/null || true' EXIT
 set +e

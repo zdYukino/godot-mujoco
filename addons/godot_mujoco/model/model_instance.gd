@@ -1,4 +1,5 @@
 @tool
+@icon("res://addons/godot_mujoco/icons/mj_instance.svg")
 class_name MjModelInstance
 extends Node3D
 const AuthorScene = preload("author_scene.gd")

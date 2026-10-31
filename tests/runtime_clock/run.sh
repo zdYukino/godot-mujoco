@@ -19,6 +19,7 @@ p=pathlib.Path(sys.argv[1]);s=(p/'runtime.log').read_text()
 r=json.loads(next(x.removeprefix('CLOCK_RESULT ') for x in s.splitlines() if x.startswith('CLOCK_RESULT ')))
 assert r['failed']==0,r
 assert 'CLOCK CSHARP PASS' in (p/'csharp.log').read_text()
+assert 'CLOCK EXTRAS CSHARP PASS' in (p/'csharp.log').read_text()
 for f in p.glob('*.log'):
  s=f.read_text();assert 'ERROR:' not in s and 'leaked' not in s,f
 (p/'results.json').write_text(json.dumps(r,indent=2)+'\n')

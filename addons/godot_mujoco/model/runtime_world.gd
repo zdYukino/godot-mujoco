@@ -1,4 +1,5 @@
 @tool
+@icon("res://addons/godot_mujoco/icons/mj_world.svg")
 class_name MjRuntimeWorld
 extends Node3D
 const AuthorBridge = preload("author_live_bridge.gd")
@@ -14,11 +15,13 @@ var native_view_active := false
 var native_view_error := ""
 var native_view: Control
 var native_view_autostart_armed := false
-var runtime_viewer: Node
-var viewer_deferred := false
+var _view_session: Node
+var _presentation_suspended := false
 var space := RID()
 var last_error := ""
 var ready_for_models := false
+## Committed direct saved-world replacement; optional UI observes without activating.
+signal runtime_replaced(world: Node3D, host: Node)
 signal command_finished(result: Dictionary)
 var command_request := 0
 var game_elapsed := 0.0
@@ -29,7 +32,6 @@ var author_started := false
 var resume_after_capture := false
 var manual_resume_required := false
 signal world_ready
-signal viewer_ready(viewer: Node)
 signal editor_connection_changed(connected: bool)
 signal design_request_finished(result: Dictionary)
 var author_live_id := ""
@@ -87,14 +89,13 @@ func _ready() -> void:
 		native_view_autostart_armed = native_view_experimental
 		if native_view_autostart_armed and not world_ready.is_connected(_start_native_view_when_ready):
 			world_ready.connect(_start_native_view_when_ready, CONNECT_ONE_SHOT)
-		if not viewer_deferred: call_deferred("activate_runtime_viewer")
+		_ensure_view_session()
 		return
 
 func _exit_tree() -> void:
 	if Engine.is_editor_hint(): return
-	if is_instance_valid(runtime_viewer) and runtime_viewer.runtime_world==self:
-		runtime_viewer.queue_free()
-	runtime_viewer=null
+	if is_instance_valid(_view_session): _view_session.shutdown()
+	_view_session=null
 	native_view_autostart_armed = false
 	if world_ready.is_connected(_start_native_view_when_ready): world_ready.disconnect(_start_native_view_when_ready)
 	if is_instance_valid(native_view): native_view.stop("World removed"); native_view.queue_free(); native_view=null
@@ -152,16 +153,17 @@ func reset_initial() -> bool:
 func restore_snapshot() -> bool:
 	return request_command("restore_snapshot")
 
-func activate_runtime_viewer(existing: Node = null) -> void:
-	if Engine.is_editor_hint() or not ready_for_models: return
-	viewer_deferred=false
-	if is_instance_valid(existing):
-		runtime_viewer=existing
-	elif not is_instance_valid(runtime_viewer):
-		runtime_viewer=preload("../viewer/runtime_viewer.gd").new()
-		runtime_viewer.runtime_world=self
-		get_tree().root.add_child(runtime_viewer)
-	viewer_ready.emit(runtime_viewer)
+func _ensure_view_session() -> Node:
+	if Engine.is_editor_hint() or not ready_for_models: return null
+	if not is_instance_valid(_view_session):
+		_view_session=preload("../viewer/viewer_session.gd").new()
+		_view_session.runtime_world=self
+		add_child(_view_session,false,Node.INTERNAL_MODE_BACK)
+	return _view_session
+
+func _activate_presentation() -> void:
+	_presentation_suspended=false
+	_ensure_view_session()
 	if author_started and native_view_autostart_armed: _start_native_view_when_ready()
 
 func _process(delta: float) -> void:
@@ -398,7 +400,7 @@ func restore_world_snapshot(snapshot: Dictionary) -> void:
 			if node.has_method("author_definition") and node.author_scene: node.author_scene.queue_compile()
 
 func _start_native_view_when_ready() -> void:
-	if native_view_autostart_armed and is_inside_tree() and not viewer_deferred:
+	if native_view_autostart_armed and is_inside_tree() and not _presentation_suspended:
 		native_view_autostart_armed = false
 		if not start_native_view(): push_warning("MuJoCo 原生渲染未启动，继续使用 Godot："+native_view_error)
 
@@ -406,6 +408,8 @@ func start_native_view() -> bool:
 	if Engine.is_editor_hint() or not native_view_experimental or not ready_for_models: return false
 	if info().get("compile_status", "") == "closed":
 		last_error = "Shared world is closed"; native_view_error=last_error; return false
+	var session: Node=_ensure_view_session()
+	if not is_instance_valid(session): native_view_error="Presentation session unavailable"; return false
 	if is_instance_valid(native_view):
 		native_view.request_direct_to_screen=native_view_direct_experimental
 		var started: bool = not native_view.stopped or native_view.start_for(self)

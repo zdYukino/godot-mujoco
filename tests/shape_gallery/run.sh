@@ -19,7 +19,7 @@ shutil.copytree(sys.argv[1], sys.argv[2], dirs_exist_ok=True,
                 ignore=shutil.ignore_patterns("addons", ".godot", ".godot.*"))
 PYCOPY
 cp -a "$ROOT/addons" "$OUT/project/"
-cp "$ROOT/tests/shape_gallery/acceptance.gd" "$OUT/project/"
+cp "$ROOT/tests/shape_gallery/acceptance.gd" "$ROOT/tests/runtime_viewer/custom_ui.tscn" "$OUT/project/"
 timeout --kill-after=5 120 bash "$ROOT/scripts/import_headless.sh" "$OUT/project" > "$OUT/import.log" 2>&1
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/project" --script res://acceptance.gd > "$OUT/shipped.log" 2>&1
 timeout --kill-after=5 120 "$GODOT_BIN" --headless --path "$OUT/project" --script res://prepare.gd > "$OUT/prepare.log" 2>&1

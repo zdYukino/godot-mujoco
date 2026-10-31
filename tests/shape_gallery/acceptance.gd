@@ -14,15 +14,19 @@ func command_settle(world) -> void:
 		await physics_frame; await process_frame
 		if world.author_started and world.command_request==0: return
 func viewer_command(viewer: Node, command: Dictionary) -> void:
-	check(viewer.request_action(command),"queue shared viewer "+str(command.action))
+	var arguments := command.duplicate(); arguments.erase("action")
+	var request: int=viewer.execute(str(command.action),arguments)
+	check(request>0,"queue component "+str(command.action))
 	var deadline := Time.get_ticks_msec()+10000
-	while viewer.command_request!=0 and Time.get_ticks_msec()<deadline: await process_frame
-	check(viewer.command_request==0 and viewer.last_error.is_empty(),"shared viewer completes "+str(command.action))
+	while viewer.action_result(request).is_empty() and Time.get_ticks_msec()<deadline: await process_frame
+	var result: Dictionary=viewer.action_result(request)
+	check(result.get("success",false),"component completes "+str(command.action)+": "+str(result.get("error","")))
 	await process_frame; await process_frame
 func _initialize() -> void: call_deferred("run")
 func run() -> void:
+	if DisplayServer.get_name()=="headless":root.size=Vector2i(1100,760)
 	var scene: PackedScene=load("res://Main.tscn")
-	var world=scene.instantiate(); world.start_paused=true; root.add_child(world)
+	var game_root=scene.instantiate(); var world=game_root.get_node("Runtime"); world.start_paused=true; root.add_child(game_root)
 	await process_frame
 	await command_settle(world)
 	var model=world.get_node("Model")
@@ -50,25 +54,26 @@ func run() -> void:
 	var materials:= {}
 	for name in model.visuals: materials[name]=model.visuals[name].material_override
 	var controls=world.get_node("DisplayControls")
-	var viewer: Node=world.runtime_viewer
-	while viewer.frame.is_empty(): await process_frame
-	while not viewer.preference_queue.is_empty() or not viewer.pending.is_empty(): await process_frame
-	check(not viewer.windows.help.visible and not viewer.controls.visible,"runtime help and F11 controls start collapsed")
+	var viewer: Node=game_root.get_node("RuntimeViewer")
+	var extras: Node=game_root.get_node("GodotExtras")
+	while viewer._session.frame.is_empty(): await process_frame
+	while not viewer._preference_commands.is_empty() or not viewer._session.pending.is_empty(): await process_frame
+	check(not viewer.ui.windows.help.visible and not extras.ui.controls.visible,"runtime help and F11 controls start collapsed")
 	for i in 5:
-		viewer.toggle_auxiliary("help")
-		check(viewer.windows.help.visible,"F1 action opens shared help")
-		check(viewer.windows.help is Control and not viewer.windows.help is Window,"F1 is the original scene overlay")
-		viewer.toggle_auxiliary("help")
-		check(not viewer.windows.help.visible,"F1 action closes original help for repeat use")
+		viewer.execute("help")
+		check(viewer.ui.windows.help.visible,"F1 action opens shared help")
+		check(viewer.ui.windows.help is Control and not viewer.ui.windows.help is Window,"F1 is the original scene overlay")
+		viewer.execute("help")
+		check(not viewer.ui.windows.help.visible,"F1 action closes original help for repeat use")
 	check(model.state().joints==before,"help interactions preserve physical state")
 	var window_size:=root.size
 	for size in [Vector2i(1280,800),Vector2i(900,600)]:
 		root.size=size; await process_frame; await process_frame
-		viewer.set_controls_visible(true); await process_frame
-		var bounds := Rect2(Vector2(viewer.controls.position),Vector2(viewer.controls.size))
+		extras.show_extras(true); await process_frame
+		var bounds := Rect2(Vector2(extras.ui.controls.position),Vector2(extras.ui.controls.size))
 		check(bounds.position.x>=0 and bounds.end.x<=root.get_visible_rect().size.x and bounds.end.y<=root.get_visible_rect().size.y,"F11 floating controls fit window "+str(size))
-		viewer.set_controls_visible(false)
-		check(not viewer.controls.visible,"F11 controls close in resized window")
+		extras.show_extras(false)
+		check(not extras.ui.controls.visible,"F11 controls close in resized window")
 	root.size=window_size; await process_frame
 	var floor: MeshInstance3D
 	for name in model.visuals:
@@ -90,12 +95,12 @@ func run() -> void:
 	check(controls.grid_material==retained_material and model.visuals.values().filter(func(mesh): return mesh.material_override==retained_material).size()==1,"runtime visual rebuild reapplies cached grid only to floor")
 	materials.clear()
 	for name in model.visuals: materials[name]=model.visuals[name].material_override
-	viewer.cache_geometry() # Rebind mesh visibility after the explicit visual rebuild above.
+	viewer._session.cache_geometry() # Rebind mesh visibility after the explicit visual rebuild above.
 	for visual in [true,false]:
 		for diagnostic in [true,false]:
 			await viewer_command(viewer,{"action":"group","name":"geom","id":0,"value":visual})
 			await viewer_command(viewer,{"action":"vis","id":2,"value":diagnostic})
-			check(model.visuals.values().all(func(mesh): return mesh.visible==visual) and bool(viewer.frame.settings.vis[2])==diagnostic,"runtime group and official diagnostics %s/%s" % [visual,diagnostic])
+			check(model.visuals.values().all(func(mesh): return mesh.visible==visual) and bool(viewer._session.frame.settings.vis[2])==diagnostic,"runtime group and official diagnostics %s/%s" % [visual,diagnostic])
 			var rgba_ok:=true
 			for full_name in model.visuals:
 				for name in colors:
@@ -145,11 +150,13 @@ func run() -> void:
 		var tint_visual=preload("res://addons/godot_mujoco/model/model_visual.gd").create(tint_geoms[0])
 		check(tint_visual.material_override.albedo_color.is_equal_approx(Color(.13,.27,.61,.37)),"runtime visual receives non-unit RGBA without fallback")
 		tint_visual.free()
-	viewer.toggle_auxiliary("help")
-	world.free(); await process_frame
-	world=scene.instantiate(); world.start_paused=true; root.add_child(world); await command_settle(world)
-	check(not world.runtime_viewer.windows.help.visible and not world.runtime_viewer.controls.visible,"saved scene reopen defaults to hidden help/controls")
+	viewer.execute("help")
+	game_root.free(); await process_frame
+	game_root=scene.instantiate(); world=game_root.get_node("Runtime"); world.start_paused=true; root.add_child(game_root); await command_settle(world)
+	viewer=game_root.get_node("RuntimeViewer")
+	extras=game_root.get_node("GodotExtras")
+	check(not viewer.ui.windows.help.visible and not extras.ui.controls.visible,"saved scene reopen defaults to hidden help/controls")
 	check(world.get_node("Model").state().joints==before,"saved scene reopen reproduces initial state")
-	world.free(); await process_frame
+	game_root.free(); await process_frame
 	print("SHAPE_GALLERY_RESULT ",JSON.stringify({"passed":passed,"failed":failed,"floor_contacts":contacts,"scope":"actual shared MuJoCo physics; GUI acceptance separate"}))
 	quit(0 if failed==0 else 1)

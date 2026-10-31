@@ -5,6 +5,7 @@ const Commands = preload("res://addons/godot_mujoco/model/author_commands.gd")
 const Xml = preload("res://addons/godot_mujoco/model/author_xml.gd")
 var test
 var viewer: Node
+var extras: Node
 var world: Node3D
 var robot: Node
 var observations: Array = []
@@ -14,23 +15,23 @@ func check(ok: bool, label: String) -> void:
 	test.check(ok,label)
 
 func ready() -> bool:
-	return not viewer.frame.is_empty() and viewer.presented_frame_id>0 and viewer.presented_layout==viewer.layout_generation and viewer.pending.is_empty()
+	return is_instance_valid(viewer._session) and not viewer._session.frame.is_empty() and viewer._session.presented_frame_id>0 and viewer._session.presented_layout==viewer._session.layout_generation and viewer._session.pending.is_empty()
 
 func widgets_ready() -> bool:
-	return not viewer.details.get("joints",[]).is_empty() and viewer.fields.has("control:0") and viewer.fields.has("equality:0") and viewer.fields.has("joint:%d" % int(viewer.details.joints[0].id))
+	return is_instance_valid(viewer._session) and is_instance_valid(viewer.ui) and not viewer._session.details.get("joints",[]).is_empty() and viewer.ui.fields.has("control:0") and viewer.ui.fields.has("equality:0") and viewer.ui.fields.has("joint:%d" % int(viewer._session.details.joints[0].id))
 
 func widgets() -> Dictionary:
-	var joint: int=viewer.details.joints[0].id
-	return {"joint":viewer.fields["joint:%d" % joint],"joint_slider":viewer.fields["joint:%d:slider" % joint],"control":viewer.fields["control:0"],"control_slider":viewer.fields["control:0:slider"],"equality":viewer.fields["equality:0"],"joint_row":viewer.fields["joint:%d:row" % joint],"control_row":viewer.fields["control:0:row"]}
+	var joint: int=viewer._session.details.joints[0].id
+	return {"camera":viewer.ui.fields.camera_choice,"joint":viewer.ui.fields["joint:%d" % joint],"joint_slider":viewer.ui.fields["joint:%d:slider" % joint],"control":viewer.ui.fields["control:0"],"control_slider":viewer.ui.fields["control:0:slider"],"equality":viewer.ui.fields["equality:0"],"joint_row":viewer.ui.fields["joint:%d:row" % joint],"control_row":viewer.ui.fields["control:0:row"]}
 
 func identity(values: Dictionary) -> Dictionary:
 	var ids := {}
-	for key in values: ids[key]=values[key].get_instance_id()
+	for key in values: ids[key]=values[key].get_instance_id() if is_instance_valid(values[key]) else 0
 	return ids
 
 func focus_edit(values: Dictionary) -> LineEdit:
 	var line: LineEdit=values.control.get_line_edit()
-	viewer.right_panel.ensure_control_visible(line)
+	viewer.ui.right_panel.ensure_control_visible(line)
 	await test.process_frame; await test.process_frame
 	var point := line.get_global_rect().get_center()
 	var click := InputEventMouseButton.new(); click.button_index=MOUSE_BUTTON_LEFT; click.pressed=true; click.position=point; click.global_position=point
@@ -47,29 +48,33 @@ func focus_edit(values: Dictionary) -> LineEdit:
 	return line
 
 func retired(values: Dictionary, focused: LineEdit, phase: String) -> void:
-	for key in ["joint","joint_slider","control","control_slider","equality"]:
-		var item: Control=values[key]
+	for key in ["joint","joint_slider","control","control_slider","equality","camera"]:
+		var item: Variant=values[key]
 		check(is_instance_valid(item) and item.is_blocking_signals() and not item.is_inside_tree() and not item.is_visible_in_tree(),phase+": old "+key+" is synchronously blocked and detached")
+		if not is_instance_valid(item):continue
 		check(item.disabled if item is BaseButton else not item.editable,phase+": old "+key+" is disabled")
 	check(not focused.has_focus() and int(focused.get_meta("probe_focus_outs",0))==1,phase+": real focus-exited fires before a pending text commit")
-	check(viewer.fields.keys().all(func(key):return not str(key).begins_with("joint:") and not str(key).begins_with("control:") and not str(key).begins_with("equality:")),phase+": old integer-ID fields are removed before refresh")
-	var pending_before: int=viewer.pending.size()
+	check(viewer.ui.fields.keys().all(func(key):return not str(key).begins_with("joint:") and not str(key).begins_with("control:") and not str(key).begins_with("equality:")),phase+": old integer-ID fields are removed before refresh")
+	var observed_session: Node=viewer._session if is_instance_valid(viewer._session) else world._view_session
+	var pending_before: int=observed_session.pending.size()
 	values.control.value=.84; values.control_slider.value=-.74
 	values.joint.value=.63; values.joint_slider.value=-.52
 	values.equality.button_pressed=true
 	values.control.emit_signal("value_changed",.91)
 	values.equality.emit_signal("toggled",true)
-	check(viewer.pending.size()==pending_before,phase+": stale drag, click and text signals cannot enqueue new-world commands")
-	observations.append({"phase":phase,"space":viewer.runtime_world.space.get_id(),"revision":viewer.frame.get("revision",-1),"old_ids":identity(values),"pending_before":pending_before,"pending_after":viewer.pending.size(),"old_focus_released":not focused.has_focus()})
+	if is_instance_valid(values.camera):values.camera.emit_signal("item_selected",0)
+	check(not viewer.ui.fields.has("camera_choice"),phase+": old model camera ID field is removed synchronously")
+	check(observed_session.pending.size()==pending_before,phase+": stale drag, camera, click and text signals cannot enqueue new-world commands")
+	observations.append({"phase":phase,"space":world.space.get_id(),"revision":observed_session.frame.get("revision",-1),"old_ids":identity(values),"pending_before":pending_before,"pending_after":observed_session.pending.size(),"old_focus_released":not focused.has_focus()})
 
 func current_control(name: String, value: float) -> bool:
-	return absf(float(robot.state().controls.get(name,1000))-value)<1e-8 and absf(float(viewer.fields["control:0"].value)-value)<1e-8
+	return absf(float(robot.state().controls.get(name,1000))-value)<1e-8 and absf(float(viewer.ui.fields["control:0"].value)-value)<1e-8
 
 func fresh_controls(old_ids: Dictionary, joint_name: String, control_name: String, equality_name: String, phase: String) -> void:
 	check(await test.wait_for(widgets_ready),phase+": first fresh inspection repopulates model controls")
 	var fresh := widgets()
-	check(fresh.control.get_instance_id()!=old_ids.control and fresh.joint.get_instance_id()!=old_ids.joint and fresh.equality.get_instance_id()!=old_ids.equality,phase+": replacements are fresh widget instances")
-	check(str(viewer.details.controls[0].name).ends_with(control_name) and str(viewer.details.joints[0].name).ends_with(joint_name) and str(viewer.details.equalities[0].name).ends_with(equality_name),phase+": controls bind the new model names at overlapping IDs")
+	check(fresh.control.get_instance_id()!=old_ids.control and fresh.joint.get_instance_id()!=old_ids.joint and fresh.equality.get_instance_id()!=old_ids.equality and fresh.camera.get_instance_id()!=old_ids.camera,phase+": replacements are fresh widget instances")
+	check(str(viewer._session.details.controls[0].name).ends_with(control_name) and str(viewer._session.details.joints[0].name).ends_with(joint_name) and str(viewer._session.details.equalities[0].name).ends_with(equality_name),phase+": controls bind the new model names at overlapping IDs")
 	check(not fresh.control.is_blocking_signals() and fresh.control.editable and not fresh.equality.disabled,phase+": fresh controls are interactive")
 	var baseline: float=robot.state().controls[control_name]
 	fresh.control.value=.31
@@ -77,40 +82,49 @@ func fresh_controls(old_ids: Dictionary, joint_name: String, control_name: Strin
 	await test.issue({"action":"control","id":0,"value":baseline})
 
 func run(tree) -> void:
-	test=tree; viewer=tree.viewer; world=tree.world; robot=world.get_node("Robot")
-	viewer.set_controls_visible(true); viewer.extras_sections.Tools.button.button_pressed=true
-	var output: LineEdit=viewer.fields.output_edit; output.grab_focus()
+	test=tree; viewer=tree.viewer; extras=tree.extras; world=tree.world; robot=world.get_node("Robot")
+	extras.show_extras(true); extras.ui.extras_sections.Tools.button.button_pressed=true
+	var output: LineEdit=extras.ui.fields.step_count.get_line_edit(); output.grab_focus()
 	await test.process_frame
 	var context: PopupMenu=output.get_menu(); context.popup()
 	await test.process_frame
 	check(context.visible,"real LineEdit context menu opens in the Godot extras viewport")
 	await test.key(KEY_F11)
-	check(not context.visible and not viewer.controls.visible,"F11 closes Godot extras and the focused built-in text context menu")
-	context.hide(); viewer.set_controls_visible(false)
-	for title in ["Joint","Control","Equality"]: viewer.sections[title].button.button_pressed=true
+	check(not context.visible and not extras.ui.controls.visible,"F11 closes Godot extras and the focused built-in text context menu")
+	context.hide(); extras.show_extras(false)
+	for title in ["Joint","Control","Equality"]: viewer.ui.sections[title].button.button_pressed=true
 	check(await test.wait_for(func():return ready() and widgets_ready()),"binding probe starts with displayed typed Joint/Control/Equality controls")
 	await test.issue({"action":"control","id":0,"value":.2})
-	await test.issue({"action":"joint","id":int(viewer.details.joints[0].id),"value":.15})
+	await test.issue({"action":"joint","id":int(viewer._session.details.joints[0].id),"value":.15})
 	var stable := identity(widgets())
 	await test.backend_roundtrip()
 	check(await test.wait_for(func():return ready() and widgets_ready()),"same-model backend refresh finishes with current controls")
-	check(identity(widgets())==stable,"same-model backend refresh preserves the valid widget instances")
+	var after_backend := identity(widgets());after_backend.erase("camera");stable.erase("camera")
+	check(after_backend==stable,"same-model backend refresh preserves the valid numeric widget instances")
 	# Same-world rebind follows the public display stop/bind/start lifecycle.
 	if test.native:
 		world.stop_native_view()
-		check(await test.wait_for(func():return ready() and viewer.last_backend=="godot"),"native transport stops before same-world bind")
-	var old := widgets(); var old_ids := identity(old); var focus: LineEdit=await focus_edit(old)
-	viewer.bind_world(world)
+		# Presentation can resume before the separate 5 Hz inspector rebuild.
+		# Capture widgets only once both real delivery boundaries have completed.
+		check(await test.wait_for(func():return ready() and widgets_ready() and viewer._session.last_backend=="godot"),"native transport stops before same-world bind")
+	var old := widgets(); var focus: LineEdit=await focus_edit(old)
+	old.camera=viewer.ui.fields.camera_choice
+	check(is_instance_valid(old.camera),"same-world camera reference is current immediately before target detachment")
+	var old_ids := identity(old)
+	viewer.world=null;viewer.world=world
 	retired(old,focus,"same-world bind")
 	if test.native: check(world.start_native_view(),"native transport restarts after same-world bind")
 	check(await test.wait_for(ready),"same-world rebind presents a fresh frame")
 	await fresh_controls(old_ids,"hinge","drive","hold","same-world bind")
 	# Stage a genuine authored revision with the SAME integer IDs and different
 	# semantic targets. Hold automatic delivery to inspect the pre-5 Hz window.
-	old=widgets(); old_ids=identity(old); focus=await focus_edit(old)
-	var previous_revision: int=viewer.frame.revision
-	var previous_joint_id: int=viewer.details.joints[0].id
-	viewer.set_process(false)
+	old=widgets(); focus=await focus_edit(old)
+	old.camera=viewer.ui.fields.camera_choice
+	check(is_instance_valid(old.camera),"current camera reference is captured after real text focus settles")
+	old_ids=identity(old)
+	var previous_revision: int=viewer._session.frame.revision
+	var previous_joint_id: int=viewer._session.details.joints[0].id
+	viewer.set_process(false);viewer._session.set_process(false)
 	var adapter: Node=world.native_view if test.native else null
 	if is_instance_valid(adapter): adapter.set_process(false)
 	for row in [["joint","hinge","hinge_v2"],["actuator","drive","drive_v2"],["equality","hold","hold_v2"]]:
@@ -153,7 +167,7 @@ func run(tree) -> void:
 	print("BINDING_STAGE ",JSON.stringify({"elapsed_ms":diagnostic.elapsed_ms,"stage_return":diagnostic.stage_return,"status":committed_info.get("compile_status"),"revision":committed_info.get("revision"),"error":committed_info.get("last_error"),"view_handshake":view_handshake}))
 	if not actual_commit:
 		await abort_probe(adapter); return
-	var opts: Dictionary=viewer.frame_options("native" if test.native else "godot"); opts.inspect=true
+	var opts: Dictionary=viewer._session.frame_options("native" if test.native else "godot"); opts.inspect=true
 	var packet: Dictionary=PhysicsServer3D.call("scene_viewer_frame",world.space,-1,opts)
 	check(packet.has("inspect") and int(packet.get("revision",0))>previous_revision,"new revision inspection is from the actual PhysicsServer frozen frame")
 	if not packet.has("inspect"):
@@ -166,21 +180,30 @@ func run(tree) -> void:
 	var committed_equality: bool=packet.get("inspect",{}).get("equalities",[{"value":false}])[0].value
 	commit_evidence={"source":"actual scene_stage_author_model compiler commit and scene_viewer_frame delivery","space":world.space.get_id(),"old_revision":previous_revision,"new_revision":packet.revision,"joint_id":previous_joint_id,"control_id":packet.inspect.controls[0].id,"equality_id":packet.inspect.equalities[0].id,"joint_name":packet.inspect.joints[0].name,"control_name":packet.inspect.controls[0].name,"equality_name":packet.inspect.equalities[0].name,"replacement_actuator_uid":true,"replacement_equality_body":"arm","baseline_control":committed_control,"baseline_joint":committed_joint,"baseline_equality":committed_equality}
 	check(is_instance_valid(old.control) and old.control.is_inside_tree(),"old widgets remain available immediately before new packet delivery")
-	viewer.accept_frame(packet)
+	viewer._session.accept_frame(packet)
 	retired(old,focus,"actual model revision")
 	await test.physics_frame; await test.physics_frame
 	check(absf(robot.state().controls.get("drive_v2",1000)-committed_control)<1e-8 and absf(robot.state().joints.get("hinge_v2",{}).get("qpos",[1000])[0]-committed_joint)<1e-8,"stale controls do not change the new revision's actual actuator or joint state")
-	viewer.set_process(true)
+	viewer.set_process(true);viewer._session.set_process(true)
 	if is_instance_valid(adapter): adapter.set_process(true)
 	check(await test.wait_for(ready),"new model revision resumes actual display")
 	await fresh_controls(old_ids,"hinge_v2","drive_v2","hold_v2","actual model revision")
-	check(viewer.details.equalities[0].value==committed_equality,"stale equality click does not change the new revision's real constraint")
+	check(viewer._session.details.equalities[0].value==committed_equality,"stale equality click does not change the new revision's real constraint")
 	commit_evidence["control_after_stale_input"]=robot.state().controls.drive_v2
 	commit_evidence["joint_after_stale_input"]=robot.state().joints.hinge_v2.qpos[0]
-	commit_evidence["equality_after_stale_input"]=viewer.details.equalities[0].value
+	commit_evidence["equality_after_stale_input"]=viewer._session.details.equalities[0].value
 	# A saved-scene reload creates a different world/space. Observe bind itself,
 	# before deferred deletion or the first new-world inspection can occur.
-	old=widgets(); old_ids=identity(old); focus=await focus_edit(old)
+	old=widgets(); focus=await focus_edit(old)
+	old.camera=viewer.ui.fields.camera_choice
+	check(is_instance_valid(old.camera),"current camera reference is captured after real text focus settles")
+	old_ids=identity(old)
+	# Hold old-world display delivery during the async candidate build. Native
+	# suspension can otherwise legitimately rebuild the old camera dropdown
+	# before the world-bind boundary this probe is specifically inspecting.
+	viewer.set_process(false); viewer._session.set_process(false)
+	adapter=world.native_view if test.native else null
+	if is_instance_valid(adapter): adapter.set_process(false)
 	var previous_world_id: int=world.get_instance_id()
 	var previous_space: RID=world.space
 	var observed := {"bound":false}
@@ -188,22 +211,23 @@ func run(tree) -> void:
 		if new_world.get_instance_id()==previous_world_id: return
 		observed.bound=true
 		retired(old,focus,"different-world bind")
-	viewer.world_changed.connect(on_world)
-	viewer.reload_saved()
-	check(await test.wait_for(func():return observed.bound and not viewer.rebuilding and viewer.runtime_world.get_instance_id()!=previous_world_id,120),"saved-source reload performs an actual different-world bind")
-	viewer.world_changed.disconnect(on_world)
-	world=viewer.runtime_world; test.world=world; robot=world.get_node("Robot")
+	viewer.target_changed.connect(on_world)
+	await test.issue({"action":"reload"})
+	viewer.set_process(true)
+	check(await test.wait_for(func():return observed.bound and viewer._pending_reload.is_empty() and viewer.bound_world.get_instance_id()!=previous_world_id,120),"saved-source reload performs an actual different-world bind")
+	viewer.target_changed.disconnect(on_world)
+	world=viewer.bound_world; test.world=world; robot=world.get_node("Robot")
 	check(world.space!=previous_space and await test.wait_for(ready),"replacement world owns a different authority space and displays a valid frame")
 	await fresh_controls(old_ids,"hinge","drive","hold","different-world bind")
-	check(absf(robot.state().controls.drive)<1e-8 and absf(robot.state().joints.hinge.qpos[0])<1e-8 and not viewer.details.equalities[0].value,"stale input leaves the new saved world's actual initial controls, joint and equality unchanged")
-	FileAccess.open(OS.get_environment("GMJ_VIEWER_OUT").path_join("binding-observations.json"),FileAccess.WRITE).store_string(JSON.stringify({"native":test.native,"scope":"real same-world bind; actual same-space author revision delivery; saved-source different-world reload","observations":observations,"commit":commit_evidence,"final_space":world.space.get_id(),"final_revision":viewer.frame.revision},"  "))
+	check(absf(robot.state().controls.drive)<1e-8 and absf(robot.state().joints.hinge.qpos[0])<1e-8 and not viewer._session.details.equalities[0].value,"stale input leaves the new saved world's actual initial controls, joint and equality unchanged")
+	FileAccess.open(OS.get_environment("GMJ_VIEWER_OUT").path_join("binding-observations.json"),FileAccess.WRITE).store_string(JSON.stringify({"native":test.native,"scope":"real same-world bind; actual same-space author revision delivery; saved-source different-world reload","observations":observations,"commit":commit_evidence,"final_space":world.space.get_id(),"final_revision":viewer._session.frame.revision},"  "))
 	world.stop_native_view()
 	if is_instance_valid(viewer.environment_host): viewer.environment_host.queue_free()
-	else: world.queue_free()
+	test.game_root.queue_free()
 	for unused in 5: await test.process_frame
 
 func abort_probe(adapter: Node) -> void:
-	viewer.set_process(true)
+	viewer.set_process(true);viewer._session.set_process(true)
 	if is_instance_valid(adapter): adapter.set_process(true)
-	world.stop_native_view(); world.queue_free()
+	world.stop_native_view(); test.game_root.queue_free()
 	for unused in 5: await test.process_frame

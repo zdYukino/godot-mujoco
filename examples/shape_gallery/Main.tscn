@@ -19,6 +19,10 @@
 [ext_resource type="SphereMesh" uid="uid://e24x17b0pod0" path="res://mujoco_models/visual_cache/4b1df3283cc905f0abbbb26e2308e4c332181c5324d2be32296eb3b6b325e6b6.res" id="15_sqvbp"]
 [ext_resource type="BoxMesh" uid="uid://cg4ni6c54gng" path="res://mujoco_models/visual_cache/22510fa75da5220e4786ee4d0fc32735340270171bff4cd52c3d2fe3609395bd.res" id="16_hri7i"]
 [ext_resource type="CylinderMesh" uid="uid://b8v4hah7jx2p" path="res://mujoco_models/visual_cache/1f01a50b6f958a9d7c01c4df29627c7527671be49da033391ec733a77c850d88.res" id="17_w3rk5"]
+[ext_resource type="Script" uid="uid://bnxyfu2lq21jp" path="res://addons/godot_mujoco/viewer/configuration.gd" id="21_3b0ty"]
+[ext_resource type="Script" uid="uid://oiq62name8i5" path="res://addons/godot_mujoco/viewer/runtime_viewer.gd" id="viewer_component"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/godot_extras.gd" id="extras_component"]
+[ext_resource type="Script" uid="uid://8443avn0yo3a" path="res://addons/godot_mujoco/viewer/extension_binding.gd" id="viewer_extension"]
 
 [sub_resource type="Resource" id="Resource_hri7i"]
 script = ExtResource("2_fpfj3")
@@ -1739,7 +1743,8 @@ collision_geometry = [{
 "transform": Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.353105, 3.687312, 0),
 "type": 5
 }]
-cache_path = "/home/zdyukino/.local/share/godot/app_userdata/MuJoCo 动态形状示例/mujoco_compile/dac7f808fc6cfa840d60f049/34/result.bin"
+cache_path = "/home/zdyukino/.local/share/godot/app_userdata/MuJoCo 动态形状示例/mujoco_compile/8172dd2880abccf0271c3cd3/1/result.bin"
+validated_context = "7cb458f7abb5f211da77ae77c543e3e131f94ffe766fa506aff5e7324953f9c8"
 compiled_snapshot = {
 "format": 1,
 "source": "",
@@ -1811,7 +1816,7 @@ compiled_snapshot = {
 "
 }
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_5tuhn"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bg4s2"]
 render_priority = 0
 shader = ExtResource("5_sc1dx")
 shader_parameter/base_color = Color(0.25, 0.28, 0.32, 1)
@@ -1819,47 +1824,47 @@ shader_parameter/line_color = Color(0.34, 0.37, 0.41, 1)
 shader_parameter/spacing_m = 1.0
 shader_parameter/line_width_m = 0.015
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5tuhn"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hhcpw"]
 albedo_color = Color(0.9, 0.25, 0.18, 1)
 roughness = 0.85
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2gh4u"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mxvw5"]
 albedo_color = Color(0.2, 0.55, 0.95, 1)
 roughness = 0.85
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_devvj"]
-albedo_color = Color(0.25, 0.8, 0.4, 1)
-roughness = 0.85
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3b0ty"]
-albedo_color = Color(0.25, 0.8, 0.4, 1)
-roughness = 0.85
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bg4s2"]
-albedo_color = Color(0.95, 0.6, 0.12, 1)
-roughness = 0.85
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hhcpw"]
-albedo_color = Color(0.65, 0.3, 0.9, 1)
-roughness = 0.85
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mxvw5"]
-albedo_color = Color(0.15, 0.8, 0.8, 1)
-roughness = 0.85
-
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_xrxkg"]
-albedo_color = Color(1, 0.8, 0.65, 1)
+albedo_color = Color(0.25, 0.8, 0.4, 1)
 roughness = 0.85
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sqvbp"]
-albedo_color = Color(0.5, 0.5, 0.5, 1)
+albedo_color = Color(0.25, 0.8, 0.4, 1)
 roughness = 0.85
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hri7i"]
-albedo_color = Color(0.5, 0.5, 0.5, 1)
+albedo_color = Color(0.95, 0.6, 0.12, 1)
 roughness = 0.85
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w3rk5"]
+albedo_color = Color(0.65, 0.3, 0.9, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5mvff"]
+albedo_color = Color(0.15, 0.8, 0.8, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_oye8v"]
+albedo_color = Color(1, 0.8, 0.65, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_40n85"]
+albedo_color = Color(0.5, 0.5, 0.5, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gb15f"]
+albedo_color = Color(0.5, 0.5, 0.5, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sph85"]
 albedo_color = Color(0.2524592, 0.3254453, 0.49554223, 1)
 roughness = 0.85
 
@@ -1875,208 +1880,217 @@ sky = SubResource("Sky_20pc6")
 ambient_light_source = 3
 ambient_light_energy = 0.65
 
+[sub_resource type="Resource" id="Resource_o7g6l"]
+script = ExtResource("21_3b0ty")
+disabled_groups = PackedStringArray()
+disabled_actions = PackedStringArray()
+allowed_preferences = PackedStringArray("layout", "visibility", "metrics", "display", "output", "style")
+allowed_metrics = PackedStringArray("fps", "cpu", "ram", "gpu", "vram", "timing")
+
 [node name="ShapeGallery" type="Node3D" unique_id=522929155]
+
+[node name="Runtime" type="Node3D" parent="." unique_id=1993607762]
 script = ExtResource("1_fos0i")
 world_design = SubResource("Resource_hri7i")
 metadata/example = "One shared MuJoCo space; 7 freejoint rigid bodies. Cone = compiled convex mesh, not native cone or SDF."
 
-[node name="Model" type="Node3D" parent="." unique_id=334945183]
+[node name="Model" type="Node3D" parent="Runtime" unique_id=334945183]
 script = ExtResource("3_lgr22")
 design = SubResource("Resource_w3rk5")
 design_instance_id = "7484f06a39a917a6afbc820deb640af3"
 
-[node name="floor_geom" type="Node3D" parent="Model" unique_id=613615939]
+[node name="floor_geom" type="Node3D" parent="Runtime/Model" unique_id=613615939]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.1, 0)
 script = ExtResource("4_sc1dx")
 entity_id = "5cd3503202a80c8a694d32ea5ca77b71"
 
-[node name="_Visual" type="MeshInstance3D" parent="Model/floor_geom" unique_id=1702523057]
-material_override = SubResource("ShaderMaterial_5tuhn")
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/Model/floor_geom" unique_id=1876678295]
+material_override = SubResource("ShaderMaterial_bg4s2")
 mesh = ExtResource("6_2gh4u")
 
-[node name="sphere" type="Node3D" parent="Model" unique_id=1355337365]
+[node name="sphere" type="Node3D" parent="Runtime/Model" unique_id=1355337365]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 2, 0)
 script = ExtResource("6_5tuhn")
 entity_id = "07a0b63f6cc56bb5f57189f50797b40e"
 
-[node name="sphere_free" type="Node3D" parent="Model/sphere" unique_id=1598517610]
+[node name="sphere_free" type="Node3D" parent="Runtime/Model/sphere" unique_id=1598517610]
 script = ExtResource("7_2gh4u")
 entity_id = "9bffaff985920b73fadd2bb4d392c1c5"
 
-[node name="sphere_geom" type="Node3D" parent="Model/sphere" unique_id=9430026]
+[node name="sphere_geom" type="Node3D" parent="Runtime/Model/sphere" unique_id=9430026]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.56298625)
 script = ExtResource("4_sc1dx")
 entity_id = "824b4464e6cd7f6f77d764c017317221"
 
-[node name="_Visual" type="MeshInstance3D" parent="Model/sphere/sphere_geom" unique_id=1260870825]
-material_override = SubResource("StandardMaterial3D_5tuhn")
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/Model/sphere/sphere_geom" unique_id=711059224]
+material_override = SubResource("StandardMaterial3D_hhcpw")
 mesh = ExtResource("9_devvj")
 
-[node name="box" type="Node3D" parent="Model" unique_id=667754698]
+[node name="box" type="Node3D" parent="Runtime/Model" unique_id=667754698]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 2.6, 1.3312273)
 script = ExtResource("6_5tuhn")
 entity_id = "2bca0a6c15f4372fddcfbd832a38f596"
 
-[node name="box_free" type="Node3D" parent="Model/box" unique_id=526272654]
+[node name="box_free" type="Node3D" parent="Runtime/Model/box" unique_id=526272654]
 script = ExtResource("7_2gh4u")
 entity_id = "963c669fe7932a2f257a42c4c0c16028"
 
-[node name="box_geom" type="Node3D" parent="Model/box" unique_id=1784656454]
+[node name="box_geom" type="Node3D" parent="Runtime/Model/box" unique_id=1784656454]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.1874897)
 script = ExtResource("4_sc1dx")
 entity_id = "523600d1d6011c04bac78fe27bdbc2f9"
 
-[node name="_Visual" type="MeshInstance3D" parent="Model/box/box_geom" unique_id=579872920]
-material_override = SubResource("StandardMaterial3D_2gh4u")
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/Model/box/box_geom" unique_id=487499358]
+material_override = SubResource("StandardMaterial3D_mxvw5")
 mesh = ExtResource("10_3b0ty")
 
-[node name="cylinder" type="Node3D" parent="Model" unique_id=663692153]
+[node name="cylinder" type="Node3D" parent="Runtime/Model" unique_id=663692153]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
 script = ExtResource("6_5tuhn")
 entity_id = "07ad54d8faba5cd5045dece051efc958"
 
-[node name="cylinder_free" type="Node3D" parent="Model/cylinder" unique_id=1386302844]
+[node name="cylinder_free" type="Node3D" parent="Runtime/Model/cylinder" unique_id=1386302844]
 script = ExtResource("7_2gh4u")
 entity_id = "69bd0586f3c734ba8a41598e9ff992a9"
 
-[node name="cylinder_geom" type="Node3D" parent="Model/cylinder" unique_id=38892428]
+[node name="cylinder_geom" type="Node3D" parent="Runtime/Model/cylinder" unique_id=38892428]
 transform = Transform3D(0.48174852, -0.8763095, 0, 0.8763095, 0.48174852, 0, 0, 0, 1, -0.3748808, 0, 1.8046052)
 script = ExtResource("4_sc1dx")
 entity_id = "47d1c35320528cf2dd47153624fab36a"
 
-[node name="_Visual" type="MeshInstance3D" parent="Model/cylinder/cylinder_geom" unique_id=1360458975]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/Model/cylinder/cylinder_geom" unique_id=1369437592]
 transform = Transform3D(1, 2.9802322e-08, 0, -2.9802322e-08, 1, 0, 0, 0, 1, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_devvj")
+material_override = SubResource("StandardMaterial3D_xrxkg")
 mesh = ExtResource("11_bg4s2")
 
-[node name="cylinder_geom_copy" type="Node3D" parent="Model/cylinder" unique_id=621092214]
+[node name="cylinder_geom_copy" type="Node3D" parent="Runtime/Model/cylinder" unique_id=621092214]
 transform = Transform3D(0.48174852, -0.8763095, 0, 0.8763095, 0.48174852, 0, 0, 0, 1, -0.3748808, 0, 0)
 script = ExtResource("4_sc1dx")
 entity_id = "8a62b7909ff2b3017d9a73d3b8a5e698"
 
-[node name="_Visual" type="MeshInstance3D" parent="Model/cylinder/cylinder_geom_copy" unique_id=178061535]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/Model/cylinder/cylinder_geom_copy" unique_id=1670475203]
 transform = Transform3D(1, 2.9802322e-08, 0, -2.9802322e-08, 1, 0, 0, 0, 1, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_3b0ty")
+material_override = SubResource("StandardMaterial3D_sqvbp")
 mesh = ExtResource("11_bg4s2")
 
-[node name="cone" type="Node3D" parent="Model" unique_id=1954788214]
+[node name="cone" type="Node3D" parent="Runtime/Model" unique_id=1954788214]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3, 3.8, 0)
 script = ExtResource("6_5tuhn")
 entity_id = "277f1355d93450085190b350d802e15b"
 
-[node name="cone_free" type="Node3D" parent="Model/cone" unique_id=517645533]
+[node name="cone_free" type="Node3D" parent="Runtime/Model/cone" unique_id=517645533]
 script = ExtResource("7_2gh4u")
 entity_id = "4505b907046581f575d80edc86bd0f13"
 
-[node name="cone_geom" type="Node3D" parent="Model/cone" unique_id=1538353712]
+[node name="cone_geom" type="Node3D" parent="Runtime/Model/cone" unique_id=1538353712]
 script = ExtResource("4_sc1dx")
 entity_id = "17496b5181434c2a8ed4d02213669f69"
 
-[node name="_Visual" type="MeshInstance3D" parent="Model/cone/cone_geom" unique_id=464946398]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/Model/cone/cone_geom" unique_id=1212565158]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.2249999, 6.2327465e-19)
-material_override = SubResource("StandardMaterial3D_bg4s2")
+material_override = SubResource("StandardMaterial3D_hri7i")
 mesh = ExtResource("12_hhcpw")
 
-[node name="capsule" type="Node3D" parent="Model" unique_id=1441721871]
+[node name="capsule" type="Node3D" parent="Runtime/Model" unique_id=1441721871]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.6, 4.4, 0)
 script = ExtResource("6_5tuhn")
 entity_id = "ed87578753bf4988fb31408ae045c04b"
 
-[node name="capsule_free" type="Node3D" parent="Model/capsule" unique_id=423015083]
+[node name="capsule_free" type="Node3D" parent="Runtime/Model/capsule" unique_id=423015083]
 script = ExtResource("7_2gh4u")
 entity_id = "183bd71ed3ad286b90b80d76684bb4ca"
 
-[node name="capsule_geom" type="Node3D" parent="Model/capsule" unique_id=1809852405]
+[node name="capsule_geom" type="Node3D" parent="Runtime/Model/capsule" unique_id=1809852405]
 script = ExtResource("4_sc1dx")
 entity_id = "6f8cde46b3d620837b6924cd6e8f02bf"
 
-[node name="_Visual" type="MeshInstance3D" parent="Model/capsule/capsule_geom" unique_id=1564950194]
-material_override = SubResource("StandardMaterial3D_hhcpw")
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/Model/capsule/capsule_geom" unique_id=1782259883]
+material_override = SubResource("StandardMaterial3D_w3rk5")
 mesh = ExtResource("13_mxvw5")
 
-[node name="ellipsoid" type="Node3D" parent="Model" unique_id=1227975478]
+[node name="ellipsoid" type="Node3D" parent="Runtime/Model" unique_id=1227975478]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.8, 3, 0)
 script = ExtResource("6_5tuhn")
 entity_id = "6ac82f3e12abadbd17d2bf3dc1990f47"
 
-[node name="ellipsoid_free" type="Node3D" parent="Model/ellipsoid" unique_id=1309856687]
+[node name="ellipsoid_free" type="Node3D" parent="Runtime/Model/ellipsoid" unique_id=1309856687]
 script = ExtResource("7_2gh4u")
 entity_id = "3dd60139ed729f5d928a277ca819d449"
 
-[node name="ellipsoid_geom" type="Node3D" parent="Model/ellipsoid" unique_id=1448869213]
+[node name="ellipsoid_geom" type="Node3D" parent="Runtime/Model/ellipsoid" unique_id=1448869213]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5454578, 0, 0)
 script = ExtResource("4_sc1dx")
 entity_id = "05e1a14c5bc97fcb792dacea8cc0cedc"
 
-[node name="_Visual" type="MeshInstance3D" parent="Model/ellipsoid/ellipsoid_geom" unique_id=2047111526]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/Model/ellipsoid/ellipsoid_geom" unique_id=724499168]
 transform = Transform3D(0.4, 0, 0, 0, 0.22, 0, 0, 0, 0.28, 0, 0, 0)
-material_override = SubResource("StandardMaterial3D_mxvw5")
+material_override = SubResource("StandardMaterial3D_5mvff")
 mesh = ExtResource("14_xrxkg")
 
-[node name="probe" type="Node3D" parent="Model" unique_id=350647359]
+[node name="probe" type="Node3D" parent="Runtime/Model" unique_id=350647359]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 4.8, 0)
 script = ExtResource("6_5tuhn")
 entity_id = "3c85183c5479ea584f2d1d8f95036b95"
 
-[node name="probe_free" type="Node3D" parent="Model/probe" unique_id=798946604]
+[node name="probe_free" type="Node3D" parent="Runtime/Model/probe" unique_id=798946604]
 script = ExtResource("7_2gh4u")
 entity_id = "a2f9103d375333de8458b19e5d5063b6"
 
-[node name="probe_geom" type="Node3D" parent="Model/probe" unique_id=207214928]
+[node name="probe_geom" type="Node3D" parent="Runtime/Model/probe" unique_id=207214928]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, -0.38949227)
 script = ExtResource("4_sc1dx")
 entity_id = "7a7fc0557f099c17cb2fe805280e0d34"
 
-[node name="_Visual" type="MeshInstance3D" parent="Model/probe/probe_geom" unique_id=1669857381]
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/Model/probe/probe_geom" unique_id=1019549413]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9604645e-08, 0, 0)
-material_override = SubResource("StandardMaterial3D_xrxkg")
+material_override = SubResource("StandardMaterial3D_oye8v")
 mesh = ExtResource("15_sqvbp")
 
-[node name="body" type="Node3D" parent="Model" unique_id=1714979065]
+[node name="body" type="Node3D" parent="Runtime/Model" unique_id=1714979065]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3401675, 2.6761312, 0)
 script = ExtResource("6_5tuhn")
 entity_id = "7936dd4a38ee5487e54b358dc5ee9fd5"
 
-[node name="joint" type="Node3D" parent="Model/body" unique_id=958617628]
+[node name="joint" type="Node3D" parent="Runtime/Model/body" unique_id=958617628]
 script = ExtResource("7_2gh4u")
 entity_id = "38bd466545080ba6bce1767875593922"
 
-[node name="ageom" type="Node3D" parent="Model/body" unique_id=2007193519]
+[node name="ageom" type="Node3D" parent="Runtime/Model/body" unique_id=2007193519]
 script = ExtResource("4_sc1dx")
 entity_id = "0b9d80c2cca398f6f4eb661bc3a9fbea"
 
-[node name="_Visual" type="MeshInstance3D" parent="Model/body/ageom" unique_id=1063763172]
-material_override = SubResource("StandardMaterial3D_sqvbp")
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/Model/body/ageom" unique_id=1007856724]
+material_override = SubResource("StandardMaterial3D_40n85")
 mesh = ExtResource("16_hri7i")
 
-[node name="body_2" type="Node3D" parent="Model/body" unique_id=808569201]
+[node name="body_2" type="Node3D" parent="Runtime/Model/body" unique_id=808569201]
 script = ExtResource("6_5tuhn")
 entity_id = "cdc876fb6c0c14fd1cba9ff4ca514ebb"
 
-[node name="joint_2" type="Node3D" parent="Model/body/body_2" unique_id=10473284]
+[node name="joint_2" type="Node3D" parent="Runtime/Model/body/body_2" unique_id=10473284]
 script = ExtResource("7_2gh4u")
 entity_id = "142507360c4a0938df0ab63b879d0bd6"
 
-[node name="geom" type="Node3D" parent="Model/body/body_2" unique_id=2123035102]
+[node name="geom" type="Node3D" parent="Runtime/Model/body/body_2" unique_id=2123035102]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98706234, 1.0111806, 0)
 script = ExtResource("4_sc1dx")
 entity_id = "4afce7a375290eeea4e826a16b8420f8"
 
-[node name="_Visual" type="MeshInstance3D" parent="Model/body/body_2/geom" unique_id=1532451127]
-material_override = SubResource("StandardMaterial3D_hri7i")
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/Model/body/body_2/geom" unique_id=291853820]
+material_override = SubResource("StandardMaterial3D_gb15f")
 mesh = ExtResource("17_w3rk5")
 
-[node name="geom_2" type="Node3D" parent="Model" unique_id=2115346227]
+[node name="geom_2" type="Node3D" parent="Runtime/Model" unique_id=2115346227]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3917552, 1.6635416, 0)
 script = ExtResource("4_sc1dx")
 entity_id = "d8c5c82148520cc3e05052b308ffd85f"
 
-[node name="_Visual" type="MeshInstance3D" parent="Model/geom_2" unique_id=648737604]
-material_override = SubResource("StandardMaterial3D_w3rk5")
+[node name="_Visual" type="MeshInstance3D" parent="Runtime/Model/geom_2" unique_id=1740311312]
+material_override = SubResource("StandardMaterial3D_sph85")
 mesh = ExtResource("16_hri7i")
 
-[node name="Camera" type="Camera3D" parent="." unique_id=1717046568]
-transform = Transform3D(0.8, -0.22283442, 0.55708605, 0, 0.9284767, 0.3713907, -0.6, -0.29711255, 0.74278134, 8, 6, 10)
+[node name="DisplayControls" type="Node" parent="Runtime" unique_id=554201486]
+script = ExtResource("5_03owx")
 
 [node name="PolyHavenSky" type="WorldEnvironment" parent="." unique_id=1516321280]
 environment = SubResource("Environment_5vvyt")
@@ -2086,5 +2100,19 @@ transform = Transform3D(0.81915206, 0.43938506, -0.36868784, 0, 0.64278764, 0.76
 light_energy = 1.3
 shadow_enabled = true
 
-[node name="DisplayControls" type="Node" parent="." unique_id=554201486]
-script = ExtResource("5_03owx")
+[node name="RuntimeViewer" type="CanvasLayer" parent="." unique_id=89992465 node_paths=PackedStringArray("world")]
+process_mode = 3
+layer = 80
+script = ExtResource("viewer_component")
+world = NodePath("../Runtime")
+configuration = SubResource("Resource_o7g6l")
+
+[node name="ExtensionBinding" type="Node" parent="." unique_id=935946915 node_paths=PackedStringArray("viewer", "extras")]
+script = ExtResource("viewer_extension")
+viewer = NodePath("../RuntimeViewer")
+extras = NodePath("../GodotExtras")
+provider_path = NodePath("DisplayControls")
+
+[node name="GodotExtras" type="CanvasLayer" parent="." node_paths=PackedStringArray("world")]
+script = ExtResource("extras_component")
+world = NodePath("../Runtime")

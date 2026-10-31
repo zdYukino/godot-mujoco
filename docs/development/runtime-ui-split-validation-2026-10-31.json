@@ -1,0 +1,1346 @@
+{
+  "date": "2026-10-31",
+  "status": "passed",
+  "subject": "Independent MuJoCo original panel and Godot Extras components",
+  "baseline_commit": "063b69d67c91710786fb1f0449e9ddfca8decd65",
+  "versions": {
+    "godot": "4.7.2",
+    "mujoco": "3.16",
+    "abi": 3016000
+  },
+  "implementation": {
+    "original": "MjRuntimeViewer: original panels, F1–F4, camera, picking, perturbation and official actions",
+    "extras": "MjGodotExtras: F11, renderer selection, FPS/system metrics, exact steps, snapshots and example tools",
+    "shared": "Named abstract MjRuntimeUiClient and one World-owned session; separate client roles; neither creates the other",
+    "preset": "Right MuJoCo dock adds original panel only for an explicit editable World/Host; UndoRedo and save/reopen"
+  },
+  "native_library_sha256": {
+    "on": "100ba5884a64e4b30edf33be3c8dfe2c95925f225aacb0899f0d7514a299a6cf",
+    "off": "0d6d20b4a74117364f023719386918dd1a242043db1018323bebe3493aaffa4c"
+  },
+  "graphical_scopes": [
+    {
+      "scope": "presence",
+      "backend": "godot",
+      "directory": "build-runtime-viewer/split-presence-godot-final-1",
+      "report": "report-godot.json",
+      "passed": 149,
+      "failed": 0,
+      "display": "X11",
+      "native": false,
+      "wrapper_exit": 0,
+      "report_sha256": "a6f0243457dc347f83c1ed7799b2432c89e45d716e4ead0923a29a5116d6274c",
+      "source_manifest": {
+        "path": "build-runtime-viewer/split-presence-godot-final-1/source-hashes.json",
+        "sha256": "0470c2ecc584d67789cc713d9f59f652df1cf6b4d2af6eb4621f6d39ff1db1af"
+      },
+      "expected_diagnostics": [
+        {
+          "message": "ERROR: MjGodotExtras: This target viewport already has Godot Extras",
+          "count": 1,
+          "assertion": "duplicate Extras reports failure without hijacking either active role"
+        }
+      ]
+    },
+    {
+      "scope": "presence",
+      "backend": "native",
+      "directory": "build-runtime-viewer/split-presence-native-final-1",
+      "report": "report-native.json",
+      "passed": 154,
+      "failed": 0,
+      "display": "X11",
+      "native": true,
+      "wrapper_exit": 0,
+      "report_sha256": "4cde8ae0485bcc0ded3d4cf27a0b984fd72ba3b1bae9c2a8eef2aa7fdc4316b3",
+      "source_manifest": {
+        "path": "build-runtime-viewer/split-presence-native-final-1/source-hashes.json",
+        "sha256": "0470c2ecc584d67789cc713d9f59f652df1cf6b4d2af6eb4621f6d39ff1db1af"
+      },
+      "expected_diagnostics": [
+        {
+          "message": "ERROR: MjGodotExtras: This target viewport already has Godot Extras",
+          "count": 1,
+          "assertion": "duplicate Extras reports failure without hijacking either active role"
+        }
+      ]
+    },
+    {
+      "scope": "presence",
+      "backend": "off",
+      "directory": "build-runtime-viewer/split-presence-off-final-1",
+      "report": "report-godot.json",
+      "passed": 149,
+      "failed": 0,
+      "display": "X11",
+      "native": false,
+      "wrapper_exit": 0,
+      "report_sha256": "0eb062f419b38dcbfe54ca507be0f06cd58ca2ba926423bc142ffead6441f0ac",
+      "source_manifest": {
+        "path": "build-runtime-viewer/split-presence-off-final-1/source-hashes.json",
+        "sha256": "b1239fa22a92758334d83587611415128ab71d3589e629d73cd99323da0fe014"
+      },
+      "expected_diagnostics": [
+        {
+          "message": "ERROR: MjGodotExtras: This target viewport already has Godot Extras",
+          "count": 1,
+          "assertion": "duplicate Extras reports failure without hijacking either active role"
+        }
+      ]
+    },
+    {
+      "scope": "contract",
+      "backend": "godot",
+      "directory": "build-runtime-viewer/split-contract-godot-final-2",
+      "report": "report-godot.json",
+      "passed": 514,
+      "failed": 0,
+      "display": "X11",
+      "native": false,
+      "wrapper_exit": 0,
+      "report_sha256": "302d09ccb938584a47dd4ef611533e760f7d6867ea6ec7320c535145ee913cb7",
+      "source_manifest": {
+        "path": "build-runtime-viewer/split-contract-godot-final-2/source-hashes.json",
+        "sha256": "0470c2ecc584d67789cc713d9f59f652df1cf6b4d2af6eb4621f6d39ff1db1af"
+      },
+      "expected_diagnostics": []
+    },
+    {
+      "scope": "contract",
+      "backend": "native",
+      "directory": "build-runtime-viewer/split-contract-native-final-2",
+      "report": "report-native.json",
+      "passed": 514,
+      "failed": 0,
+      "display": "X11",
+      "native": true,
+      "wrapper_exit": 0,
+      "report_sha256": "7a06e6b9ba8eae064749118f9fc49f60e8d45cee000034aa42e5bb197df0923b",
+      "source_manifest": {
+        "path": "build-runtime-viewer/split-contract-native-final-2/source-hashes.json",
+        "sha256": "0470c2ecc584d67789cc713d9f59f652df1cf6b4d2af6eb4621f6d39ff1db1af"
+      },
+      "expected_diagnostics": []
+    },
+    {
+      "scope": "contract",
+      "backend": "off",
+      "directory": "build-runtime-viewer/split-contract-off-final-2",
+      "report": "report-godot.json",
+      "passed": 514,
+      "failed": 0,
+      "display": "X11",
+      "native": false,
+      "wrapper_exit": 0,
+      "report_sha256": "54b46ab37c483dc8f5b6d65a59c254748985923368d870ce0bd5af047f3ed515",
+      "source_manifest": {
+        "path": "build-runtime-viewer/split-contract-off-final-2/source-hashes.json",
+        "sha256": "b1239fa22a92758334d83587611415128ab71d3589e629d73cd99323da0fe014"
+      },
+      "expected_diagnostics": []
+    },
+    {
+      "scope": "full",
+      "backend": "godot",
+      "directory": "build-runtime-viewer/split-full-godot-final-2",
+      "report": "report-godot.json",
+      "passed": 888,
+      "failed": 0,
+      "display": "X11",
+      "native": false,
+      "wrapper_exit": 0,
+      "report_sha256": "13bed687786911097c2ebe6af0f0dc42cecdde631d5ef185144d5327bc373a16",
+      "source_manifest": {
+        "path": "build-runtime-viewer/split-full-godot-final-2/source-hashes.json",
+        "sha256": "0470c2ecc584d67789cc713d9f59f652df1cf6b4d2af6eb4621f6d39ff1db1af"
+      },
+      "expected_diagnostics": []
+    },
+    {
+      "scope": "full",
+      "backend": "native",
+      "directory": "build-runtime-viewer/split-full-native-final-2",
+      "report": "report-native.json",
+      "passed": 893,
+      "failed": 0,
+      "display": "X11",
+      "native": true,
+      "wrapper_exit": 0,
+      "report_sha256": "66eca35ffda0abddbb6128cd25204828e884866fceb8ccaf9b7089323a7ab8d3",
+      "source_manifest": {
+        "path": "build-runtime-viewer/split-full-native-final-2/source-hashes.json",
+        "sha256": "0470c2ecc584d67789cc713d9f59f652df1cf6b4d2af6eb4621f6d39ff1db1af"
+      },
+      "expected_diagnostics": []
+    },
+    {
+      "scope": "full",
+      "backend": "off",
+      "directory": "build-runtime-viewer/split-full-off-final-2",
+      "report": "report-godot.json",
+      "passed": 888,
+      "failed": 0,
+      "display": "X11",
+      "native": false,
+      "wrapper_exit": 0,
+      "report_sha256": "a172b52ebcbe48a523cfe041f163163374dd00d2a60cdfa159d2096238fd4ef0",
+      "source_manifest": {
+        "path": "build-runtime-viewer/split-full-off-final-2/source-hashes.json",
+        "sha256": "b1239fa22a92758334d83587611415128ab71d3589e629d73cd99323da0fe014"
+      },
+      "expected_diagnostics": []
+    },
+    {
+      "scope": "component",
+      "backend": "godot",
+      "directory": "build-runtime-viewer/split-component-godot-final-2",
+      "report": "report-godot.json",
+      "passed": 130,
+      "failed": 0,
+      "display": "X11",
+      "native": false,
+      "wrapper_exit": 0,
+      "report_sha256": "4bd76fdd100ab4a73f68147c1c65cb766287a261d9ede5d61f515b178f30ed95",
+      "source_manifest": {
+        "path": "build-runtime-viewer/split-component-godot-final-2/source-hashes.json",
+        "sha256": "0470c2ecc584d67789cc713d9f59f652df1cf6b4d2af6eb4621f6d39ff1db1af"
+      },
+      "expected_diagnostics": [
+        {
+          "message": "ERROR: MjRuntimeViewer: This target viewport already has an interactive viewer",
+          "count": 1,
+          "assertion": "duplicate target reports failure without hijacking the active component"
+        },
+        {
+          "message": "ERROR: MjRuntimeViewer: Target is not an MjRuntimeWorld.",
+          "count": 1,
+          "assertion": "wrong explicit target reports a reason without hijacking the active component"
+        },
+        {
+          "message": "ERROR: MjRuntimeViewer: UI scene must declare a valid render_region Control.",
+          "count": 1,
+          "assertion": "missing custom render region is rejected without silent default UI"
+        },
+        {
+          "message": "ERROR: MjRuntimeViewer: UI render_region must be a positive rectangle inside the target viewport.",
+          "count": 1,
+          "assertion": "out-of-bounds custom region is rejected without silent default UI"
+        }
+      ]
+    },
+    {
+      "scope": "component",
+      "backend": "native",
+      "directory": "build-runtime-viewer/split-component-native-final-2",
+      "report": "report-native.json",
+      "passed": 137,
+      "failed": 0,
+      "display": "X11",
+      "native": true,
+      "wrapper_exit": 0,
+      "report_sha256": "29565ef39005b0c6970e73082011efee8eca69fa08f3c4d79d930909ef710714",
+      "source_manifest": {
+        "path": "build-runtime-viewer/split-component-native-final-2/source-hashes.json",
+        "sha256": "0470c2ecc584d67789cc713d9f59f652df1cf6b4d2af6eb4621f6d39ff1db1af"
+      },
+      "expected_diagnostics": [
+        {
+          "message": "ERROR: MjRuntimeViewer: This target viewport already has an interactive viewer",
+          "count": 1,
+          "assertion": "duplicate target reports failure without hijacking the active component"
+        },
+        {
+          "message": "ERROR: MjRuntimeViewer: Target is not an MjRuntimeWorld.",
+          "count": 1,
+          "assertion": "wrong explicit target reports a reason without hijacking the active component"
+        },
+        {
+          "message": "ERROR: MjRuntimeViewer: UI scene must declare a valid render_region Control.",
+          "count": 1,
+          "assertion": "missing custom render region is rejected without silent default UI"
+        },
+        {
+          "message": "ERROR: MjRuntimeViewer: UI render_region must be a positive rectangle inside the target viewport.",
+          "count": 1,
+          "assertion": "out-of-bounds custom region is rejected without silent default UI"
+        }
+      ]
+    },
+    {
+      "scope": "component",
+      "backend": "off",
+      "directory": "build-runtime-viewer/split-component-off-final-2",
+      "report": "report-godot.json",
+      "passed": 130,
+      "failed": 0,
+      "display": "X11",
+      "native": false,
+      "wrapper_exit": 0,
+      "report_sha256": "487b53eaedb96c3723822974969c8efc99a2f0aae2ed2574b6c26ccfe2476d82",
+      "source_manifest": {
+        "path": "build-runtime-viewer/split-component-off-final-2/source-hashes.json",
+        "sha256": "b1239fa22a92758334d83587611415128ab71d3589e629d73cd99323da0fe014"
+      },
+      "expected_diagnostics": [
+        {
+          "message": "ERROR: MjRuntimeViewer: This target viewport already has an interactive viewer",
+          "count": 1,
+          "assertion": "duplicate target reports failure without hijacking the active component"
+        },
+        {
+          "message": "ERROR: MjRuntimeViewer: Target is not an MjRuntimeWorld.",
+          "count": 1,
+          "assertion": "wrong explicit target reports a reason without hijacking the active component"
+        },
+        {
+          "message": "ERROR: MjRuntimeViewer: UI scene must declare a valid render_region Control.",
+          "count": 1,
+          "assertion": "missing custom render region is rejected without silent default UI"
+        },
+        {
+          "message": "ERROR: MjRuntimeViewer: UI render_region must be a positive rectangle inside the target viewport.",
+          "count": 1,
+          "assertion": "out-of-bounds custom region is rejected without silent default UI"
+        }
+      ]
+    },
+    {
+      "scope": "bindings",
+      "backend": "godot",
+      "directory": "build-runtime-viewer/split-bindings-godot-final-2",
+      "report": "report-godot.json",
+      "passed": 120,
+      "failed": 0,
+      "display": "X11",
+      "native": false,
+      "wrapper_exit": 0,
+      "report_sha256": "1c0dace851843e91bbc41ba0606d435496c42d3a904beaaac2b2ff8faac41b87",
+      "source_manifest": {
+        "path": "build-runtime-viewer/split-bindings-godot-final-2/source-hashes.json",
+        "sha256": "0470c2ecc584d67789cc713d9f59f652df1cf6b4d2af6eb4621f6d39ff1db1af"
+      },
+      "expected_diagnostics": []
+    },
+    {
+      "scope": "bindings",
+      "backend": "native",
+      "directory": "build-runtime-viewer/split-bindings-native-final-3",
+      "report": "report-native.json",
+      "passed": 123,
+      "failed": 0,
+      "display": "X11",
+      "native": true,
+      "wrapper_exit": 0,
+      "report_sha256": "f9af9c098c451a6651fe7b2d2457f1b691cb3d62ae90b81a719b726803fdc733",
+      "source_manifest": {
+        "path": "build-runtime-viewer/split-bindings-native-final-3/source-hashes.json",
+        "sha256": "4ab98832d5caf5c3ed326400df9a13b447dbc843f6406fbd20b7fdea0c020828"
+      },
+      "expected_diagnostics": []
+    }
+  ],
+  "authoring_receipt": {
+    "path": "build-runtime-viewer/split-preset-contract-receipt.json",
+    "sha256": "ca08fcc457c122251ec523e27c2606281a06a323709157dbc6a24c56bee27be4",
+    "accepted_final": [
+      "split-add-node-preset-04: actual CreateDialog/preset53, separate-process reopen6",
+      "split-full-f5-on-warm-03: editor35, actual native/Godot31, reopen3, unavailable fallback8",
+      "split-full-f5-off-warm-02: editor35, actual Godot/saved-native fallback32, reopen4, unavailable fallback8"
+    ],
+    "source_qualification": "CreateDialog snapshot has five later runtime/presenter deltas; F5 has three later FPS deltas. Named-base registration and preset unchanged. Current graphical suites cover runtime deltas; these historical manifests are not relabeled."
+  },
+  "all_entries": {
+    "godot": {
+      "directory": "build-runtime-viewer/split-entries-godot-final-1",
+      "runtime_passed": 247,
+      "csharp_graphical_passed": 12
+    },
+    "native": {
+      "directory": "build-runtime-viewer/split-entries-native-final-1",
+      "runtime_passed": 294,
+      "csharp_graphical_passed": 12
+    },
+    "coverage": "Six projects, eight unique saved scenes; C# selftest is not a ninth unique scene. G1 default64MiB fallback and existing192MiB native re-admission are separate.",
+    "source_qualification": "Six later runtime component changes are covered by current graphical suites; entry scenes and C# migration unchanged."
+  },
+  "other_regressions": {
+    "shape": {
+      "directory": "build-runtime-viewer/split-shape-1",
+      "shipped": 97,
+      "generated": 110,
+      "missing_xml": 110,
+      "editor": 10
+    },
+    "clock": {
+      "directory": "build-runtime-viewer/split-runtime-clock-3",
+      "passed": 130,
+      "csharp": "Shipped wrappers compiled with zero warnings/errors; fresh World with no original Viewer, Extras-only steps/snapshot/F11/wrong-role/cancel/dispose passed",
+      "qualification": "Predates passive reload follow and later UI guards; final lifecycle/presence suites cover those changes."
+    },
+    "freebase": {
+      "godot": {
+        "directory": "build-runtime-viewer/split-freebase-godot-final-3",
+        "physics_passed": 52,
+        "gui": {
+          "mouse_exit": 0,
+          "game_exit": 0,
+          "passed": 95,
+          "failed": 0,
+          "diagnostics": []
+        },
+        "wrapper_exit": 0,
+        "source_manifest_sha256": "eaf21876573f5cae479f54e80d2e4de9890faeb5b90e82211e34fa47cf15c470"
+      },
+      "native": {
+        "directory": "build-runtime-viewer/split-freebase-native-final-3",
+        "physics_passed": 52,
+        "gui": {
+          "mouse_exit": 0,
+          "game_exit": 0,
+          "passed": 99,
+          "failed": 0,
+          "diagnostics": []
+        },
+        "wrapper_exit": 0,
+        "source_manifest_sha256": "e36dfdb99efbb30eb53d683666d889f4eee453f1861bdfe729d3bfcdcf4ed96c"
+      }
+    }
+  },
+  "performance": {
+    "godot": {
+      "display": "X11",
+      "native": false,
+      "samples": [
+        {
+          "extras_active": true,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.266,
+          "frame_ms_p95": 8.799,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 67.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {
+            "cpu": false,
+            "fps": true,
+            "gpu": false,
+            "ram": false,
+            "timing": false,
+            "vram": false
+          },
+          "mode": "default-fps",
+          "original_active": true,
+          "physics_paused": true,
+          "renderer_fps": 114.0,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 464784,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        },
+        {
+          "extras_active": true,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.402,
+          "frame_ms_p95": 8.771,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 83.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {
+            "cpu": false,
+            "fps": true,
+            "gpu": false,
+            "ram": false,
+            "timing": false,
+            "vram": false
+          },
+          "mode": "overlay-off",
+          "original_active": true,
+          "physics_paused": true,
+          "renderer_fps": 120.0,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 464784,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        },
+        {
+          "extras_active": true,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.565,
+          "frame_ms_p95": 8.801,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 120.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {
+            "cpu": true,
+            "fps": true,
+            "gpu": true,
+            "ram": true,
+            "timing": true,
+            "vram": true
+          },
+          "mode": "all-metrics",
+          "original_active": true,
+          "physics_paused": true,
+          "renderer_fps": 120.0,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 464768,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {
+            "cpu": 21.8551461245235,
+            "gpu": 17.0,
+            "ram": 6309801984.0,
+            "ram_total": 12240629760.0,
+            "vram": 588865536.0,
+            "vram_total": 4294967296.0
+          }
+        },
+        {
+          "extras_active": true,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.313,
+          "frame_ms_p95": 8.961,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 108.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {
+            "cpu": true,
+            "fps": true,
+            "gpu": true,
+            "ram": true,
+            "timing": true,
+            "vram": true
+          },
+          "mode": "full-analysis",
+          "original_active": true,
+          "physics_paused": true,
+          "renderer_fps": 119.047619047619,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 464960,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {
+            "cpu": 19.7201017811705,
+            "gpu": 16.0,
+            "ram": 6281117696.0,
+            "ram_total": 12240629760.0,
+            "vram": 588865536.0,
+            "vram_total": 4294967296.0
+          }
+        },
+        {
+          "extras_active": false,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.164,
+          "frame_ms_p95": 8.783,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 120.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {},
+          "mode": "original-only",
+          "original_active": true,
+          "physics_paused": true,
+          "renderer_fps": 120.0,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 464960,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        },
+        {
+          "extras_active": true,
+          "fps_cap": 120,
+          "frame_context": "last cached snapshot, not a currently displayed frozen frame or live allocation count",
+          "frame_ms_p50": 8.628,
+          "frame_ms_p95": 8.825,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 104.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {
+            "cpu": false,
+            "fps": true,
+            "gpu": false,
+            "ram": false,
+            "timing": false,
+            "vram": false
+          },
+          "mode": "extras-only",
+          "original_active": false,
+          "physics_paused": true,
+          "renderer_fps": 120.0,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 465144,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        },
+        {
+          "extras_active": false,
+          "fps_cap": 120,
+          "frame_context": "last cached snapshot, not a currently displayed frozen frame or live allocation count",
+          "frame_ms_p50": 8.554,
+          "frame_ms_p95": 8.82,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 117.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {},
+          "mode": "disabled",
+          "original_active": false,
+          "physics_paused": true,
+          "renderer_fps": 0.0,
+          "renderer_fps_context": "no Godot backend counter consumer; do not interpret as actual display rate",
+          "renderer_fps_observed": false,
+          "rss_kib": 465796,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        },
+        {
+          "extras_active": false,
+          "fps_cap": 120,
+          "frame_context": "last cached snapshot, not a currently displayed frozen frame or live allocation count",
+          "frame_ms_p50": 8.533,
+          "frame_ms_p95": 8.802,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 119.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {},
+          "mode": "absent",
+          "original_active": false,
+          "physics_paused": true,
+          "renderer_fps": 0.0,
+          "renderer_fps_context": "no Godot backend counter consumer; do not interpret as actual display rate",
+          "renderer_fps_observed": false,
+          "rss_kib": 467788,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        }
+      ]
+    },
+    "native": {
+      "display": "X11",
+      "native": true,
+      "samples": [
+        {
+          "extras_active": true,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.265,
+          "frame_ms_p95": 8.473,
+          "frame_slots": 3,
+          "history_bytes": 1296000,
+          "host_fps": 66.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {
+            "cpu": false,
+            "fps": true,
+            "gpu": false,
+            "ram": false,
+            "timing": false,
+            "vram": false
+          },
+          "mode": "default-fps",
+          "original_active": true,
+          "physics_paused": true,
+          "renderer_fps": 106.508875739645,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 469336,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        },
+        {
+          "extras_active": true,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.27,
+          "frame_ms_p95": 8.481,
+          "frame_slots": 3,
+          "history_bytes": 1296000,
+          "host_fps": 84.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {
+            "cpu": false,
+            "fps": true,
+            "gpu": false,
+            "ram": false,
+            "timing": false,
+            "vram": false
+          },
+          "mode": "overlay-off",
+          "original_active": true,
+          "physics_paused": true,
+          "renderer_fps": 120.0,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 469336,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        },
+        {
+          "extras_active": true,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.276,
+          "frame_ms_p95": 8.472,
+          "frame_slots": 3,
+          "history_bytes": 1296000,
+          "host_fps": 120.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {
+            "cpu": true,
+            "fps": true,
+            "gpu": true,
+            "ram": true,
+            "timing": true,
+            "vram": true
+          },
+          "mode": "all-metrics",
+          "original_active": true,
+          "physics_paused": true,
+          "renderer_fps": 120.0,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 469316,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {
+            "cpu": 21.6730038022814,
+            "gpu": 19.0,
+            "ram": 6284185600.0,
+            "ram_total": 12240629760.0,
+            "vram": 601145344.0,
+            "vram_total": 4294967296.0
+          }
+        },
+        {
+          "extras_active": true,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.299,
+          "frame_ms_p95": 8.494,
+          "frame_slots": 3,
+          "history_bytes": 1296000,
+          "host_fps": 109.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {
+            "cpu": true,
+            "fps": true,
+            "gpu": true,
+            "ram": true,
+            "timing": true,
+            "vram": true
+          },
+          "mode": "full-analysis",
+          "original_active": true,
+          "physics_paused": true,
+          "renderer_fps": 97.609561752988,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 470532,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {
+            "cpu": 22.6582278481013,
+            "gpu": 19.0,
+            "ram": 6270803968.0,
+            "ram_total": 12240629760.0,
+            "vram": 595836928.0,
+            "vram_total": 4294967296.0
+          }
+        },
+        {
+          "extras_active": false,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.28,
+          "frame_ms_p95": 8.476,
+          "frame_slots": 3,
+          "history_bytes": 1296000,
+          "host_fps": 120.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {},
+          "mode": "original-only",
+          "original_active": true,
+          "physics_paused": true,
+          "renderer_fps": 120.0,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 470532,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        },
+        {
+          "extras_active": true,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.327,
+          "frame_ms_p95": 8.451,
+          "frame_slots": 3,
+          "history_bytes": 1296000,
+          "host_fps": 104.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {
+            "cpu": false,
+            "fps": true,
+            "gpu": false,
+            "ram": false,
+            "timing": false,
+            "vram": false
+          },
+          "mode": "extras-only",
+          "original_active": false,
+          "physics_paused": true,
+          "renderer_fps": 120.07874015748,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 471004,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        },
+        {
+          "extras_active": false,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.29,
+          "frame_ms_p95": 8.46,
+          "frame_slots": 3,
+          "history_bytes": 1296000,
+          "host_fps": 116.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {},
+          "mode": "disabled",
+          "original_active": false,
+          "physics_paused": true,
+          "renderer_fps": 114.0,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 471552,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        },
+        {
+          "extras_active": false,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.306,
+          "frame_ms_p95": 8.423,
+          "frame_slots": 3,
+          "history_bytes": 1296000,
+          "host_fps": 118.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {},
+          "mode": "absent",
+          "original_active": false,
+          "physics_paused": true,
+          "renderer_fps": 120.0,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 474260,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        }
+      ]
+    },
+    "off": {
+      "display": "X11",
+      "native": false,
+      "samples": [
+        {
+          "extras_active": true,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.384,
+          "frame_ms_p95": 8.781,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 65.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {
+            "cpu": false,
+            "fps": true,
+            "gpu": false,
+            "ram": false,
+            "timing": false,
+            "vram": false
+          },
+          "mode": "default-fps",
+          "original_active": true,
+          "physics_paused": true,
+          "renderer_fps": 115.079365079365,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 458316,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        },
+        {
+          "extras_active": true,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.509,
+          "frame_ms_p95": 8.769,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 94.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {
+            "cpu": false,
+            "fps": true,
+            "gpu": false,
+            "ram": false,
+            "timing": false,
+            "vram": false
+          },
+          "mode": "overlay-off",
+          "original_active": true,
+          "physics_paused": true,
+          "renderer_fps": 120.07874015748,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 458316,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        },
+        {
+          "extras_active": true,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.508,
+          "frame_ms_p95": 8.747,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 120.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {
+            "cpu": true,
+            "fps": true,
+            "gpu": true,
+            "ram": true,
+            "timing": true,
+            "vram": true
+          },
+          "mode": "all-metrics",
+          "original_active": true,
+          "physics_paused": true,
+          "renderer_fps": 120.0,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 458300,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {
+            "cpu": 20.3785488958991,
+            "gpu": 17.0,
+            "ram": 6303580160.0,
+            "ram_total": 12240629760.0,
+            "vram": 588865536.0,
+            "vram_total": 4294967296.0
+          }
+        },
+        {
+          "extras_active": true,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.335,
+          "frame_ms_p95": 8.751,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 108.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {
+            "cpu": true,
+            "fps": true,
+            "gpu": true,
+            "ram": true,
+            "timing": true,
+            "vram": true
+          },
+          "mode": "full-analysis",
+          "original_active": true,
+          "physics_paused": true,
+          "renderer_fps": 117.764471057884,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 458876,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {
+            "cpu": 21.9543147208122,
+            "gpu": 17.0,
+            "ram": 6258163712.0,
+            "ram_total": 12240629760.0,
+            "vram": 588865536.0,
+            "vram_total": 4294967296.0
+          }
+        },
+        {
+          "extras_active": false,
+          "fps_cap": 120,
+          "frame_context": "active presentation snapshot",
+          "frame_ms_p50": 8.542,
+          "frame_ms_p95": 8.764,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 120.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {},
+          "mode": "original-only",
+          "original_active": true,
+          "physics_paused": true,
+          "renderer_fps": 120.0,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 458876,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        },
+        {
+          "extras_active": true,
+          "fps_cap": 120,
+          "frame_context": "last cached snapshot, not a currently displayed frozen frame or live allocation count",
+          "frame_ms_p50": 8.535,
+          "frame_ms_p95": 8.751,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 105.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {
+            "cpu": false,
+            "fps": true,
+            "gpu": false,
+            "ram": false,
+            "timing": false,
+            "vram": false
+          },
+          "mode": "extras-only",
+          "original_active": false,
+          "physics_paused": true,
+          "renderer_fps": 120.0,
+          "renderer_fps_context": "actual backend updates",
+          "renderer_fps_observed": true,
+          "rss_kib": 459188,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        },
+        {
+          "extras_active": false,
+          "fps_cap": 120,
+          "frame_context": "last cached snapshot, not a currently displayed frozen frame or live allocation count",
+          "frame_ms_p50": 8.588,
+          "frame_ms_p95": 8.803,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 104.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {},
+          "mode": "disabled",
+          "original_active": false,
+          "physics_paused": true,
+          "renderer_fps": 0.0,
+          "renderer_fps_context": "no Godot backend counter consumer; do not interpret as actual display rate",
+          "renderer_fps_observed": false,
+          "rss_kib": 459352,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        },
+        {
+          "extras_active": false,
+          "fps_cap": 120,
+          "frame_context": "last cached snapshot, not a currently displayed frozen frame or live allocation count",
+          "frame_ms_p50": 8.633,
+          "frame_ms_p95": 9.08,
+          "frame_slots": 2,
+          "history_bytes": 1296000,
+          "host_fps": 119.0,
+          "measurement": "capped host frame interval milliseconds",
+          "metrics": {},
+          "mode": "absent",
+          "original_active": false,
+          "physics_paused": true,
+          "renderer_fps": 0.0,
+          "renderer_fps_context": "no Godot backend counter consumer; do not interpret as actual display rate",
+          "renderer_fps_observed": false,
+          "rss_kib": 462040,
+          "sample_count": 90,
+          "simulation_time": 0.0,
+          "system_samples": {}
+        }
+      ]
+    }
+  },
+  "captures": [
+    {
+      "source": "build-runtime-viewer/split-full-godot-final-1/ui/sidebars-11.png",
+      "published": "docs/pics/runtime-ui-split-godot.png",
+      "sha256": "83937a2e84c734cb35cac9769bb2809e54d6dce71d1d86e3d647d33c391f27ed"
+    },
+    {
+      "source": "build-runtime-viewer/split-full-native-final-1/ui/sidebars-11.png",
+      "published": "docs/pics/runtime-ui-split-native.png",
+      "sha256": "99be1bf9fb725a41fdd71793c8c8165e2a4a5da4263f7ed62cf30c01d613f831"
+    },
+    {
+      "source": "build-runtime-viewer/split-full-godot-final-1/ui/godot-extras.png",
+      "published": "docs/pics/runtime-ui-split-extras.png",
+      "sha256": "acecdd1221c69e519ac9b2b7b1951cb8c1254d01fabfdde4c684a458fc93be86"
+    },
+    {
+      "source": "build-runtime-viewer/split-preview-03/editor-component-default.png",
+      "published": "docs/pics/runtime-ui-split-editor-original.png",
+      "sha256": "ca5c24351d4ce68b3510cf72711b0696e902abf4994288e0670d9166419fc761"
+    },
+    {
+      "source": "build-runtime-viewer/split-preview-03/editor-extras-default.png",
+      "published": "docs/pics/runtime-ui-split-editor-extras.png",
+      "sha256": "f5790279922a0f7f3dfa4224f35a693c00fc18642b87e2f0ad08ff12aa541d92"
+    },
+    {
+      "source": "build-runtime-viewer/split-preset-05/editor-runtime-panel-preset.png",
+      "published": "docs/pics/runtime-ui-split-preset.png",
+      "sha256": "af7eaf32ea99a285e9a465f602327823c559eec8ede6a885c673d453772131ef"
+    },
+    {
+      "source": "build-runtime-viewer/split-add-node-preset-04/editor-add-node-MjGodotExtras.png",
+      "published": "docs/pics/runtime-ui-split-add-node.png",
+      "sha256": "f986a3e86bfeab1625ee823734db5d403ead6f0589fc095f0874e6b9303502cc"
+    }
+  ],
+  "fixes_verified": [
+    "Renderer-completion callback disable/reentrant request lifetime safety",
+    "Partial authored UI remains optional, 12 saved inherited variants",
+    "Named abstract shared base restores public components in actual CreateDialog",
+    "Conditional SubViewport target FPS unavailable explicitly, host FPS not misreported as target",
+    "Shared keyboard-owner scope for original/Extras peers; root-only mouse ownership; disabled/freed owner fallback"
+  ],
+  "excluded_iterations": [
+    "split-freebase-godot-final-1: relative OUT invocation; output write failure and GUI timeout, not accepted",
+    "split-bindings-native-final-2: wrapper rejected script errors despite assertion summary; fixture now waits for both rendered frame and 5Hz widget readiness; final3 passes",
+    "split-entries-headless-1: freed Binding provider reference errors; fixed, graphical final1 passes",
+    "split-freebase-native-final-1: intermittent F11 reopen timeout after original Run/Pause, actual native active and logs clean; unchanged retry final2 passed, missing shared keyboard-owner scope then fixed",
+    "split-keyboard-headless-1: assertions152/0 but wrapper rejected missing-meta diagnostics; has_meta guard fixed, current graphical supplement required"
+  ],
+  "limitations": [
+    "Godot controls adapt pinned MuJoCo simulate definitions; no GLFW simulate main loop is embedded.",
+    "Conditional SubViewport update modes have no reliable target draw count; HUD identifies host FPS and unavailable target FPS.",
+    "Native actual activity is required; fallback never counts as native success. Existing platform/model/resource budgets remain unchanged.",
+    "Short paused capped samples are not uncapped throughput, backend superiority or proof of long-term leak freedom.",
+    "Raw build evidence is local; public record retains exact report and source-manifest hashes."
+  ],
+  "performance_note": "Eight modes,90 host interval samples each,120FPS cap,VSync off,paused physics. Absent mode removes original node and disables Extras (both inactive); cached presentation metadata is not live allocation count.",
+  "user_changes": {
+    "excluded_unchanged_sha256": {
+      ".gitattributes": "554c80a722ea1b4dac03d136570c632c9878aba563be6e4c11c4bd418d13db70",
+      ".gitignore": "909be96b877d1e8d090c82bcdad8b805324e071667b617041f102433624d97cb",
+      "addons/godot_mujoco/model/author_trace.gd.uid": "2d112194ed93b20a45782467a739077f0ed23ad01aad64be0d5c1cb87c897324"
+    },
+    "shape_gallery": "Retains user-authored edits. Initial17subresources/48node property blocks preserved; pre-split68 sections retain67 byte-identical, only explicit ExtensionBinding route/topology changed.",
+    "also_excluded": "Unrelated concurrent .archify/tree-remote-branches-20261031-relationships/ outputs, not modified or deleted"
+  },
+  "acceptance_mapping": {
+    "A01": [
+      "actual preset/CreateDialog and warmed F5",
+      "Shape preservation"
+    ],
+    "A02": [
+      "component",
+      "presence"
+    ],
+    "A03": [
+      "component",
+      "full"
+    ],
+    "A04": [
+      "contract",
+      "component",
+      "presence"
+    ],
+    "A05": [
+      "bindings",
+      "component",
+      "presence"
+    ],
+    "A06": [
+      "contract",
+      "actual preview/F5"
+    ],
+    "A07": [
+      "contract",
+      "full",
+      "clock C#"
+    ],
+    "A08": [
+      "contract",
+      "full"
+    ],
+    "A09": [
+      "actual preview/F5"
+    ],
+    "A10": [
+      "contract",
+      "presence"
+    ],
+    "A11": [
+      "all_entries",
+      "shape",
+      "clock",
+      "Freebase final3 both backends"
+    ],
+    "A12": [
+      "full",
+      "actual F5 fallback",
+      "graphical off"
+    ],
+    "A13": [
+      "component performance",
+      "full reload/lifecycle"
+    ],
+    "A14": [
+      "CN/EN/component docs",
+      "captures",
+      "source review"
+    ],
+    "A15": [
+      "presence",
+      "clock fresh Extras-only"
+    ],
+    "A16": [
+      "actual CreateDialog/preset/reopen",
+      "actual dual-backend F5"
+    ],
+    "A17": [
+      "contract",
+      "presence",
+      "bindings",
+      "pure editor preview"
+    ],
+    "A18": [
+      "all_entries",
+      "full",
+      "Freebase final3 both backends"
+    ]
+  },
+  "source_delta_after_final_matrix": {
+    "files": [
+      "addons/godot_mujoco/viewer/runtime_client.gd",
+      "addons/godot_mujoco/viewer/runtime_viewer.gd",
+      "addons/godot_mujoco/viewer/godot_extras.gd"
+    ],
+    "reason": "Shared keyboard ownership and root-coordinate scoping; no physics, display, layout, resource or command changes",
+    "qualification": "Earlier full/contract/component and binding reports are retained at their exact original hashes; current presence, UI keyboard and Freebase supplements are recorded separately."
+  },
+  "keyboard_supplement": [
+    {
+      "directory": "build-runtime-viewer/split-presence-godot-final-2",
+      "report": "report-godot.json",
+      "passed": 155,
+      "failed": 0,
+      "native": false,
+      "display": "X11",
+      "wrapper_exit": 0,
+      "report_sha256": "18e299941d25fe52adb7c13f84dfcd5e3f037d543b4f3e2d9e2f7ec38c95bacd",
+      "source_manifest_sha256": "28aa125d4b4b3fcc70713394aff173f7e04084a7f648ee3a704066a2147eda2e"
+    },
+    {
+      "directory": "build-runtime-viewer/split-presence-native-final-2",
+      "report": "report-native.json",
+      "passed": 162,
+      "failed": 0,
+      "native": true,
+      "display": "X11",
+      "wrapper_exit": 0,
+      "report_sha256": "ffb666479dc4e391edd36efc36f79d180ed1c4d12162db38a09355ef25283359",
+      "source_manifest_sha256": "29ee01ed2363fb5ff4be838bf2d7425cbffca3fd87a318544819bcb65b3b8ce9"
+    },
+    {
+      "directory": "build-runtime-viewer/split-presence-off-final-2",
+      "report": "report-godot.json",
+      "passed": 157,
+      "failed": 0,
+      "native": false,
+      "display": "X11",
+      "wrapper_exit": 0,
+      "report_sha256": "d035dcc90dfec8d4bdaa1203b37314a9b53b5fc2e6cb51fe379e70045004f221",
+      "source_manifest_sha256": "baa9d22c02d248c945e9fe202744f2b0e6602d6f6d34b6a905b5946166ef307c"
+    },
+    {
+      "directory": "build-runtime-viewer/split-keyboard-ui-godot-final-1",
+      "report": "report-godot.json",
+      "passed": 267,
+      "failed": 0,
+      "native": false,
+      "display": "X11",
+      "wrapper_exit": 0,
+      "report_sha256": "50a1ac07e1979eb902c5f6bc5f4c7cc867a60395410e4c9e9db9d45b174c4d63",
+      "source_manifest_sha256": "29ee01ed2363fb5ff4be838bf2d7425cbffca3fd87a318544819bcb65b3b8ce9"
+    },
+    {
+      "directory": "build-runtime-viewer/split-keyboard-ui-native-final-1",
+      "report": "report-native.json",
+      "passed": 268,
+      "failed": 0,
+      "native": true,
+      "display": "X11",
+      "wrapper_exit": 0,
+      "report_sha256": "4334d683b0e608c1e18c679262f3fddb6392c5196d23c2b74c3c6a6a9243e151",
+      "source_manifest_sha256": "29ee01ed2363fb5ff4be838bf2d7425cbffca3fd87a318544819bcb65b3b8ce9"
+    },
+    {
+      "directory": "build-runtime-viewer/split-keyboard-ui-off-final-1",
+      "report": "report-godot.json",
+      "passed": 267,
+      "failed": 0,
+      "native": false,
+      "display": "X11",
+      "wrapper_exit": 0,
+      "report_sha256": "e0865a3e990e6b43d6e786fe04ecb3df7aab8c19c7e17280e682952688caae60",
+      "source_manifest_sha256": "baa9d22c02d248c945e9fe202744f2b0e6602d6f6d34b6a905b5946166ef307c"
+    }
+  ],
+  "keyboard_test_qualification": "All use current product sources. Godot presence155 predates two additional fixture-only disabled/freed-owner assertions; native162 and OFF157 include them. Foreign-owner predicate uses an isolated live off-tree client; actual same-session routing uses the committed SubViewport. The UI-only scopes supplement keyboard routing and do not replace earlier full simulation acceptance.",
+  "final_formatting_delta": {
+    "path": "addons/godot_mujoco/viewer/default_ui.tscn",
+    "change": "Remove one trailing empty EOF line found by complete temporary-index diff check; no scene semantics changed",
+    "sha256": "dfef4448ec1163494fb9d68e202673985d34fa4eabab417573fb723d49ee02d0"
+  },
+  "review": {
+    "status": "PASS",
+    "scope": "Full A01–A18 source/spec/dataflow/lifetime/API/editor/entry/acceptance review",
+    "local_artifact": ".trellis/tasks/10-30-runtime-viewer-component/research/split-check-review.md",
+    "sha256": "db1fbc5da56a3db6e9fc1866d8ae7c2d1ececc9516c1563b1845ef3ad35dadf3",
+    "unresolved_findings": 0,
+    "commit_executed": false
+  }
+}

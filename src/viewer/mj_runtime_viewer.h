@@ -41,7 +41,7 @@ struct MjViewerState {
   double noise_std = 0, noise_rate = 0;
   double paused_cpu_ms = 0;
   bool pause_update = false;
-  bool seeded = false, profiler_enabled = false;
+  bool profiler_enabled = false;
   bool native_backend = false;
   // A bounded cancellation latch survives input/result queue saturation.
   int64_t cancel_sequence = 0;

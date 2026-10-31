@@ -2,7 +2,8 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
+    <Nullable>enable</Nullable>
     <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
   </PropertyGroup>
-  <ItemGroup><Compile Include="ClockBinding.cs" /></ItemGroup>
+  <ItemGroup><Compile Include="ClockBinding.cs" /><Compile Include="addons/godot_mujoco/csharp/*.cs" /></ItemGroup>
 </Project>

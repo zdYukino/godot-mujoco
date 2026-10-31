@@ -1,7 +1,14 @@
+@tool
 extends HBoxContainer
 ## mjITEM_RADIO adaptation: equal-width mutually exclusive buttons.
 signal item_selected(index: int)
 var buttons: Array[Button] = []
+func _ready() -> void:
+	# Authored scenes serialize buttons; bind their signals without recreating them.
+	if not buttons.is_empty(): return
+	for child in get_children():
+		if child is Button:
+			var id := buttons.size();buttons.append(child);child.pressed.connect(func():item_selected.emit(id))
 func setup(options: Array, selected: int) -> void:
 	var group := ButtonGroup.new()
 	for index in options.size():

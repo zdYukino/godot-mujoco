@@ -1,0 +1,1790 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/viewer_ui.gd" id="1_t8qim"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/simulate_radio.gd" id="2_13kgq"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/plot.gd" id="3_6jguk"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/shortcut_hints.gd" id="4_hnin1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v1cuw"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.15, 0.15, 0.15, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.3, 0.3, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xg3mm"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.7, 0.7, 0.85, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_itw4c"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.18, 0.18, 0.18, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.6, 0.6, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aqfvt"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.07, 0.07, 0.07, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.6, 0.4, 0.4, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+
+[sub_resource type="Image" id="Image_t7q5f"]
+data = {
+"data": PackedByteArray(0, 0, 0, 0),
+"format": "RGBA8",
+"height": 1,
+"mipmaps": false,
+"width": 1
+}
+
+[sub_resource type="ImageTexture" id="ImageTexture_uwxar"]
+image = SubResource("Image_t7q5f")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b0kyn"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.09, 0.09, 0.09, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.3, 0.3, 0.3, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uuykt"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.09, 0.09, 0.09, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.4, 0.7, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e8msn"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.4, 0.4, 0.7, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.4, 0.7, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n1vbd"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.09, 0.09, 0.09, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.4, 0.7, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rpdaa"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.4, 0.4, 0.7, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.4, 0.7, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yp4k4"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.48, 0.29, 0.5, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6w7ap"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.58, 0.37, 0.6, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nrimx"]
+content_margin_left = 5.0
+content_margin_top = 11.0
+content_margin_right = 5.0
+content_margin_bottom = 11.0
+bg_color = Color(0.28, 0.18, 0.3, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b08ns"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.1875, 0.1875, 0.1875, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.5125, 0.5125, 0.5125, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_glia1"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.1875, 0.1875, 0.1875, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gg05q"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.2, 0.3, 0.2, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.6, 0.4, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7tb0v"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.07, 0.07, 0.07, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.6, 0.4, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mhyrb"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.4, 0.6, 0.4, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.4, 0.6, 0.4, 1)
+
+[sub_resource type="Gradient" id="Gradient_p180d"]
+colors = PackedColorArray(0.6, 0.2, 0.2, 1, 0.1, 0.07, 0.07, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_fmrr8"]
+gradient = SubResource("Gradient_p180d")
+width = 8
+height = 32
+fill_to = Vector2(0, 1)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_4ewv3"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+texture = SubResource("GradientTexture2D_fmrr8")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p8m8v"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.1, 0.1, 0.1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8n4xd"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.1, 0.1, 0.1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hucsh"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.1, 0.1, 0.1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n6ylb"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.1, 0.1, 0.1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vlt1c"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.4, 0.6, 0.6, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f2gbd"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.4, 0.6, 0.6, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1cirn"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.4, 0.6, 0.6, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_80x3c"]
+content_margin_left = 5.0
+content_margin_top = 2.0
+content_margin_right = 5.0
+content_margin_bottom = 2.0
+bg_color = Color(0.25, 0.25, 0.25, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0, 0, 0, 0)
+
+[sub_resource type="Theme" id="Theme_yc7ej"]
+default_font_size = 14
+Button/colors/font_color = Color(0.9, 0.9, 0.9, 1)
+Button/colors/font_disabled_color = Color(0.45, 0.45, 0.45, 1)
+Button/colors/font_hover_color = Color(0.9, 0.9, 0.9, 1)
+Button/colors/font_pressed_color = Color(0.9, 0.9, 0.9, 1)
+Button/styles/disabled = SubResource("StyleBoxFlat_v1cuw")
+Button/styles/focus = SubResource("StyleBoxFlat_xg3mm")
+Button/styles/hover = SubResource("StyleBoxFlat_itw4c")
+Button/styles/normal = SubResource("StyleBoxFlat_aqfvt")
+Button/styles/pressed = SubResource("StyleBoxFlat_itw4c")
+CheckBox/colors/font_color = Color(0.9, 0.9, 0.9, 1)
+CheckBox/colors/font_disabled_color = Color(0.45, 0.45, 0.45, 1)
+CheckBox/colors/font_hover_color = Color(0.9, 0.9, 0.9, 1)
+CheckBox/colors/font_pressed_color = Color(0.9, 0.9, 0.9, 1)
+CheckBox/constants/h_separation = 3
+CheckBox/icons/checked = SubResource("ImageTexture_uwxar")
+CheckBox/icons/checked_disabled = SubResource("ImageTexture_uwxar")
+CheckBox/icons/unchecked = SubResource("ImageTexture_uwxar")
+CheckBox/icons/unchecked_disabled = SubResource("ImageTexture_uwxar")
+CheckBox/styles/disabled = SubResource("StyleBoxFlat_b0kyn")
+CheckBox/styles/hover = SubResource("StyleBoxFlat_uuykt")
+CheckBox/styles/hover_pressed = SubResource("StyleBoxFlat_e8msn")
+CheckBox/styles/normal = SubResource("StyleBoxFlat_n1vbd")
+CheckBox/styles/pressed = SubResource("StyleBoxFlat_rpdaa")
+HSlider/icons/grabber = SubResource("ImageTexture_uwxar")
+HSlider/icons/grabber_disabled = SubResource("ImageTexture_uwxar")
+HSlider/icons/grabber_highlight = SubResource("ImageTexture_uwxar")
+HSlider/styles/grabber_area = SubResource("StyleBoxFlat_yp4k4")
+HSlider/styles/grabber_area_highlight = SubResource("StyleBoxFlat_6w7ap")
+HSlider/styles/slider = SubResource("StyleBoxFlat_nrimx")
+Label/colors/font_color = Color(0.9, 0.9, 0.9, 1)
+Label/colors/font_disabled_color = Color(0.45, 0.45, 0.45, 1)
+Label/colors/font_hover_color = Color(0.9, 0.9, 0.9, 1)
+Label/colors/font_pressed_color = Color(0.9, 0.9, 0.9, 1)
+LineEdit/colors/font_color = Color(0.9, 0.9, 0.9, 1)
+LineEdit/colors/font_disabled_color = Color(0.45, 0.45, 0.45, 1)
+LineEdit/colors/font_hover_color = Color(0.9, 0.9, 0.9, 1)
+LineEdit/colors/font_pressed_color = Color(0.9, 0.9, 0.9, 1)
+LineEdit/styles/normal = SubResource("StyleBoxFlat_b08ns")
+LineEdit/styles/read_only = SubResource("StyleBoxFlat_glia1")
+MuJoCoRadio/base_type = &"Button"
+MuJoCoRadio/styles/hover = SubResource("StyleBoxFlat_gg05q")
+MuJoCoRadio/styles/normal = SubResource("StyleBoxFlat_7tb0v")
+MuJoCoRadio/styles/pressed = SubResource("StyleBoxFlat_mhyrb")
+MuJoCoSection/base_type = &"Button"
+MuJoCoSection/styles/hover = SubResource("StyleBoxTexture_4ewv3")
+MuJoCoSection/styles/hover_pressed = SubResource("StyleBoxTexture_4ewv3")
+MuJoCoSection/styles/normal = SubResource("StyleBoxTexture_4ewv3")
+MuJoCoSection/styles/pressed = SubResource("StyleBoxTexture_4ewv3")
+MuJoCoSubsection/base_type = &"Button"
+MuJoCoSubsection/styles/hover = SubResource("StyleBoxFlat_p8m8v")
+MuJoCoSubsection/styles/hover_pressed = SubResource("StyleBoxFlat_8n4xd")
+MuJoCoSubsection/styles/normal = SubResource("StyleBoxFlat_hucsh")
+MuJoCoSubsection/styles/pressed = SubResource("StyleBoxFlat_n6ylb")
+OptionButton/colors/font_color = Color(0.9, 0.9, 0.9, 1)
+OptionButton/colors/font_disabled_color = Color(0.45, 0.45, 0.45, 1)
+OptionButton/colors/font_hover_color = Color(0.9, 0.9, 0.9, 1)
+OptionButton/colors/font_pressed_color = Color(0.9, 0.9, 0.9, 1)
+OptionButton/styles/hover = SubResource("StyleBoxFlat_vlt1c")
+OptionButton/styles/normal = SubResource("StyleBoxFlat_f2gbd")
+OptionButton/styles/pressed = SubResource("StyleBoxFlat_1cirn")
+ScrollContainer/styles/panel = SubResource("StyleBoxFlat_80x3c")
+SpinBox/colors/font_color = Color(0.9, 0.9, 0.9, 1)
+SpinBox/colors/font_disabled_color = Color(0.45, 0.45, 0.45, 1)
+SpinBox/colors/font_hover_color = Color(0.9, 0.9, 0.9, 1)
+SpinBox/colors/font_pressed_color = Color(0.9, 0.9, 0.9, 1)
+VBoxContainer/constants/separation = 2
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_v64ky"]
+
+[node name="ViewerUI" type="Control" unique_id=1236176487]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("1_t8qim")
+render_region = NodePath("MainLayout/RenderRegion")
+
+[node name="MainLayout" type="HBoxContainer" parent="." unique_id=766532643]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="MuJoCoLeftPanel" type="ScrollContainer" parent="MainLayout" unique_id=1637847243]
+custom_minimum_size = Vector2(270, 0)
+layout_mode = 2
+theme = SubResource("Theme_yc7ej")
+follow_focus = true
+horizontal_scroll_mode = 0
+metadata/viewer_role = "left_panel"
+
+[node name="@MarginContainer@6" type="MarginContainer" parent="MainLayout/MuJoCoLeftPanel" unique_id=1254800069]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_right = 5
+
+[node name="@VBoxContainer@7" type="VBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6" unique_id=1850633429]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="FileSection" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=1339784469]
+layout_mode = 2
+tooltip_text = "Alt+F"
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+button_pressed = true
+action_mode = 0
+text = "File"
+alignment = 0
+clip_text = true
+metadata/mujoco_section = "File"
+metadata/mujoco_name = "File"
+metadata/mujoco_item = "SECTION"
+metadata/mujoco_shortcut = "Alt+F"
+metadata/viewer_section = {
+"extra": false,
+"name": "File",
+"role": "button"
+}
+
+[node name="@Label@8" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/FileSection" unique_id=425863846]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "▼"
+metadata/viewer_section = {
+"extra": false,
+"name": "File",
+"role": "triangle"
+}
+
+[node name="FileContents" type="VBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=1468206984]
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": false,
+"name": "File",
+"role": "box"
+}
+
+[node name="@GridContainer@47" type="GridContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/FileContents" unique_id=985323825]
+layout_mode = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 3
+columns = 2
+
+[node name="@Button@48" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/FileContents/@GridContainer@47" unique_id=1805871961]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Save xml"
+clip_text = true
+metadata/mujoco_section = "File"
+metadata/mujoco_name = "Save xml"
+metadata/mujoco_item = "BUTTON"
+metadata/mujoco_shortcut = ""
+metadata/viewer_field = "file:save_xml"
+
+[node name="@Button@49" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/FileContents/@GridContainer@47" unique_id=1243063660]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Save mjb"
+clip_text = true
+metadata/mujoco_section = "File"
+metadata/mujoco_name = "Save mjb"
+metadata/mujoco_item = "BUTTON"
+metadata/mujoco_shortcut = ""
+metadata/viewer_field = "file:save_mjb"
+
+[node name="@Button@50" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/FileContents/@GridContainer@47" unique_id=873788994]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Print model"
+clip_text = true
+metadata/mujoco_section = "File"
+metadata/mujoco_name = "Print model"
+metadata/mujoco_item = "BUTTON"
+metadata/mujoco_shortcut = "Ctrl+M"
+metadata/viewer_field = "file:print_model"
+
+[node name="@Button@51" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/FileContents/@GridContainer@47" unique_id=650717816]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Print data"
+clip_text = true
+metadata/mujoco_section = "File"
+metadata/mujoco_name = "Print data"
+metadata/mujoco_item = "BUTTON"
+metadata/mujoco_shortcut = "Ctrl+D"
+metadata/viewer_field = "file:print_data"
+
+[node name="@Button@52" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/FileContents/@GridContainer@47" unique_id=40110076]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Quit"
+clip_text = true
+metadata/mujoco_section = "File"
+metadata/mujoco_name = "Quit"
+metadata/mujoco_item = "BUTTON"
+metadata/mujoco_shortcut = "Ctrl+Q"
+metadata/viewer_field = "file:quit"
+
+[node name="@Button@53" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/FileContents/@GridContainer@47" unique_id=1976900559]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Screenshot"
+clip_text = true
+metadata/mujoco_section = "File"
+metadata/mujoco_name = "Screenshot"
+metadata/mujoco_item = "BUTTON"
+metadata/mujoco_shortcut = "Ctrl+P"
+metadata/viewer_field = "file:screenshot"
+
+[node name="OptionSection" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=742898897]
+layout_mode = 2
+tooltip_text = "Alt+O"
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+button_pressed = true
+action_mode = 0
+text = "Option"
+alignment = 0
+clip_text = true
+metadata/mujoco_section = "Option"
+metadata/mujoco_name = "Option"
+metadata/mujoco_item = "SECTION"
+metadata/mujoco_shortcut = "Alt+O"
+metadata/viewer_section = {
+"extra": false,
+"name": "Option",
+"role": "button"
+}
+
+[node name="@Label@9" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionSection" unique_id=201748304]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "▼"
+metadata/viewer_section = {
+"extra": false,
+"name": "Option",
+"role": "triangle"
+}
+
+[node name="OptionContents" type="VBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=1327676272]
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": false,
+"name": "Option",
+"role": "box"
+}
+
+[node name="@GridContainer@54" type="GridContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents" unique_id=742944425]
+layout_mode = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 3
+columns = 2
+
+[node name="@CheckBox@55" type="CheckBox" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents/@GridContainer@54" unique_id=2075922447]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Help"
+clip_text = true
+metadata/mujoco_section = "Option"
+metadata/mujoco_name = "Help"
+metadata/mujoco_item = "CHECK"
+metadata/mujoco_shortcut = "F1"
+metadata/viewer_field = "option:help"
+
+[node name="@CheckBox@56" type="CheckBox" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents/@GridContainer@54" unique_id=546157940]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Info"
+clip_text = true
+metadata/mujoco_section = "Option"
+metadata/mujoco_name = "Info"
+metadata/mujoco_item = "CHECK"
+metadata/mujoco_shortcut = "F2"
+metadata/viewer_field = "option:info"
+
+[node name="@CheckBox@57" type="CheckBox" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents/@GridContainer@54" unique_id=18233671]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Profiler"
+clip_text = true
+metadata/mujoco_section = "Option"
+metadata/mujoco_name = "Profiler"
+metadata/mujoco_item = "CHECK"
+metadata/mujoco_shortcut = "F3"
+metadata/viewer_field = "option:profiler"
+
+[node name="@CheckBox@58" type="CheckBox" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents/@GridContainer@54" unique_id=56796308]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Sensor"
+clip_text = true
+metadata/mujoco_section = "Option"
+metadata/mujoco_name = "Sensor"
+metadata/mujoco_item = "CHECK"
+metadata/mujoco_shortcut = "F4"
+metadata/viewer_field = "option:sensors"
+
+[node name="@CheckBox@59" type="CheckBox" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents/@GridContainer@54" unique_id=1766589750]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Pause update"
+clip_text = true
+metadata/mujoco_section = "Option"
+metadata/mujoco_name = "Pause update"
+metadata/mujoco_item = "CHECK"
+metadata/viewer_field = &"pause_update"
+
+[node name="@CheckBox@60" type="CheckBox" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents/@GridContainer@54" unique_id=499707139]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Fullscreen"
+clip_text = true
+metadata/mujoco_section = "Option"
+metadata/mujoco_name = "Fullscreen"
+metadata/mujoco_item = "CHECK"
+metadata/viewer_field = &"fullscreen"
+
+[node name="@CheckBox@61" type="CheckBox" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents/@GridContainer@54" unique_id=1745584375]
+layout_mode = 2
+size_flags_horizontal = 3
+button_pressed = true
+text = "Vertical Sync"
+clip_text = true
+metadata/mujoco_section = "Option"
+metadata/mujoco_name = "Vertical Sync"
+metadata/mujoco_item = "CHECK"
+metadata/viewer_field = &"vsync"
+
+[node name="@CheckBox@62" type="CheckBox" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents/@GridContainer@54" unique_id=1959498082]
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Godot owns the event/render loop; simulate's busy-wait scheduler is not used."
+disabled = true
+text = "Busy Wait"
+clip_text = true
+metadata/mujoco_section = "Option"
+metadata/mujoco_name = "Busy Wait"
+metadata/mujoco_item = "CHECK"
+
+[node name="@HBoxContainer@63" type="HBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents" unique_id=1816873249]
+layout_mode = 2
+
+[node name="@Label@64" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents/@HBoxContainer@63" unique_id=476342475]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Spacing"
+
+[node name="@OptionButton@75" type="OptionButton" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents/@HBoxContainer@63" unique_id=1099018770]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+clip_text = true
+selected = 0
+item_count = 2
+popup/item_0/text = "Tight"
+popup/item_0/id = 0
+popup/item_1/text = "Wide"
+popup/item_1/id = 1
+metadata/mujoco_section = "Option"
+metadata/mujoco_name = "Spacing"
+metadata/mujoco_item = "SELECT"
+
+[node name="@HBoxContainer@76" type="HBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents" unique_id=94203429]
+layout_mode = 2
+
+[node name="@Label@77" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents/@HBoxContainer@76" unique_id=1351368666]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Color"
+
+[node name="@OptionButton@88" type="OptionButton" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents/@HBoxContainer@76" unique_id=1048703291]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+clip_text = true
+selected = 0
+item_count = 4
+popup/item_0/text = "Default"
+popup/item_0/id = 0
+popup/item_1/text = "Orange"
+popup/item_1/id = 1
+popup/item_2/text = "White"
+popup/item_2/id = 2
+popup/item_3/text = "Black"
+popup/item_3/id = 3
+metadata/mujoco_section = "Option"
+metadata/mujoco_name = "Color"
+metadata/mujoco_item = "SELECT"
+
+[node name="@HBoxContainer@89" type="HBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents" unique_id=738109747]
+layout_mode = 2
+
+[node name="@Label@90" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents/@HBoxContainer@89" unique_id=2024730770]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Font"
+
+[node name="@OptionButton@101" type="OptionButton" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/OptionContents/@HBoxContainer@89" unique_id=1816219219]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+clip_text = true
+selected = 1
+item_count = 6
+popup/item_0/text = "50 %"
+popup/item_0/id = 0
+popup/item_1/text = "100 %"
+popup/item_1/id = 1
+popup/item_2/text = "150 %"
+popup/item_2/id = 2
+popup/item_3/text = "200 %"
+popup/item_3/id = 3
+popup/item_4/text = "250 %"
+popup/item_4/id = 4
+popup/item_5/text = "300 %"
+popup/item_5/id = 5
+metadata/mujoco_section = "Option"
+metadata/mujoco_name = "Font"
+metadata/mujoco_item = "SELECT"
+
+[node name="SimulationSection" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=1334878998]
+layout_mode = 2
+tooltip_text = "Alt+S"
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+button_pressed = true
+action_mode = 0
+text = "Simulation"
+alignment = 0
+clip_text = true
+metadata/mujoco_section = "Simulation"
+metadata/mujoco_name = "Simulation"
+metadata/mujoco_item = "SECTION"
+metadata/mujoco_shortcut = "Alt+S"
+metadata/viewer_section = {
+"extra": false,
+"name": "Simulation",
+"role": "button"
+}
+
+[node name="@Label@10" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationSection" unique_id=273598324]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "▼"
+metadata/viewer_section = {
+"extra": false,
+"name": "Simulation",
+"role": "triangle"
+}
+
+[node name="SimulationContents" type="VBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=8397779]
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": false,
+"name": "Simulation",
+"role": "box"
+}
+
+[node name="@HBoxContainer@102" type="HBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents" unique_id=1457945404]
+layout_mode = 2
+script = ExtResource("2_13kgq")
+metadata/mujoco_section = "Simulation"
+metadata/mujoco_name = ""
+metadata/mujoco_item = "RADIO"
+metadata/viewer_field = &"run"
+
+[node name="@Button@103" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@HBoxContainer@102" unique_id=729719454]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"MuJoCoRadio"
+toggle_mode = true
+button_group = SubResource("ButtonGroup_v64ky")
+text = "Pause"
+
+[node name="@Button@104" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@HBoxContainer@102" unique_id=58580945]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_type_variation = &"MuJoCoRadio"
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_v64ky")
+text = "Run"
+
+[node name="@HBoxContainer@105" type="HBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents" unique_id=1065289266]
+layout_mode = 2
+
+[node name="@Label@106" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@HBoxContainer@105" unique_id=1568032623]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Num threads"
+
+[node name="@HSlider@107" type="HSlider" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@HBoxContainer@105" unique_id=2062287184]
+custom_minimum_size = Vector2(70, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 10.0
+metadata/mujoco_section = "Simulation"
+metadata/mujoco_name = "Num threads"
+metadata/mujoco_item = "SLIDER"
+metadata/viewer_field = &"threads"
+
+[node name="@Label@108" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@HBoxContainer@105/@HSlider@107" unique_id=1386233258]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_right = 5.0
+text = "0.0"
+metadata/viewer_value_label = true
+
+[node name="@GridContainer@109" type="GridContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents" unique_id=1228005070]
+layout_mode = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 3
+columns = 2
+
+[node name="@Button@110" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@GridContainer@109" unique_id=2056274665]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Reset"
+clip_text = true
+metadata/mujoco_section = "Simulation"
+metadata/mujoco_name = "Reset"
+metadata/mujoco_item = "BUTTON"
+
+[node name="@Button@111" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@GridContainer@109" unique_id=427906077]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Reload"
+clip_text = true
+metadata/mujoco_section = "Simulation"
+metadata/mujoco_name = "Reload"
+metadata/mujoco_item = "BUTTON"
+
+[node name="@Button@112" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@GridContainer@109" unique_id=1893595824]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Align"
+clip_text = true
+metadata/mujoco_section = "Simulation"
+metadata/mujoco_name = "Align"
+metadata/mujoco_item = "BUTTON"
+
+[node name="@Button@113" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@GridContainer@109" unique_id=1154540630]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Copy state"
+clip_text = true
+metadata/mujoco_section = "Simulation"
+metadata/mujoco_name = "Copy state"
+metadata/mujoco_item = "BUTTON"
+
+[node name="@HBoxContainer@114" type="HBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents" unique_id=2129828759]
+layout_mode = 2
+
+[node name="@Label@115" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@HBoxContainer@114" unique_id=759944561]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Key"
+
+[node name="@HSlider@116" type="HSlider" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@HBoxContainer@114" unique_id=2108485342]
+custom_minimum_size = Vector2(70, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 0.0
+metadata/mujoco_section = "Simulation"
+metadata/mujoco_name = "Key"
+metadata/mujoco_item = "SLIDER"
+metadata/viewer_field = &"key"
+
+[node name="@Label@117" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@HBoxContainer@114/@HSlider@116" unique_id=158989504]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_right = 5.0
+text = "0.0"
+metadata/viewer_value_label = true
+
+[node name="@GridContainer@118" type="GridContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents" unique_id=1170615414]
+layout_mode = 2
+theme_override_constants/h_separation = 4
+theme_override_constants/v_separation = 3
+columns = 2
+
+[node name="@Button@119" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@GridContainer@118" unique_id=441899763]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Load key"
+clip_text = true
+metadata/mujoco_section = "Simulation"
+metadata/mujoco_name = "Load key"
+metadata/mujoco_item = "BUTTON"
+metadata/viewer_field = &"key_load"
+
+[node name="@Button@120" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@GridContainer@118" unique_id=1981044910]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Save key"
+clip_text = true
+metadata/mujoco_section = "Simulation"
+metadata/mujoco_name = "Save key"
+metadata/mujoco_item = "BUTTON"
+metadata/viewer_field = &"key_save"
+
+[node name="@HBoxContainer@121" type="HBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents" unique_id=863121695]
+layout_mode = 2
+
+[node name="@Label@122" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@HBoxContainer@121" unique_id=1493171532]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Noise scale"
+
+[node name="@HSlider@123" type="HSlider" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@HBoxContainer@121" unique_id=2143837345]
+custom_minimum_size = Vector2(70, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 1.0
+step = 0.01
+metadata/mujoco_section = "Simulation"
+metadata/mujoco_name = "Noise scale"
+metadata/mujoco_item = "SLIDER"
+metadata/viewer_field = "noise_std"
+
+[node name="@Label@124" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@HBoxContainer@121/@HSlider@123" unique_id=917571545]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_right = 5.0
+text = "0.0"
+metadata/viewer_value_label = true
+
+[node name="@HBoxContainer@125" type="HBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents" unique_id=136410439]
+layout_mode = 2
+
+[node name="@Label@126" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@HBoxContainer@125" unique_id=2017448466]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+text = "Noise rate"
+
+[node name="@HSlider@127" type="HSlider" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@HBoxContainer@125" unique_id=1904247802]
+custom_minimum_size = Vector2(70, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 4.0
+step = 0.01
+metadata/mujoco_section = "Simulation"
+metadata/mujoco_name = "Noise rate"
+metadata/mujoco_item = "SLIDER"
+metadata/viewer_field = "noise_rate"
+
+[node name="@Label@128" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@HBoxContainer@125/@HSlider@127" unique_id=1708531383]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_right = 5.0
+text = "0.0"
+metadata/viewer_value_label = true
+
+[node name="@Button@129" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents" unique_id=1611428806]
+layout_mode = 2
+theme_type_variation = &"MuJoCoSubsection"
+toggle_mode = true
+button_pressed = true
+action_mode = 0
+text = "History"
+alignment = 0
+clip_text = true
+metadata/mujoco_section = "Simulation"
+metadata/mujoco_name = "History"
+metadata/mujoco_item = "SEPARATOR"
+
+[node name="@VBoxContainer@130" type="VBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents" unique_id=1145045747]
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_subsection = "Simulation"
+
+[node name="@HBoxContainer@131" type="HBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@VBoxContainer@130" unique_id=127723053]
+layout_mode = 2
+
+[node name="@HSlider@132" type="HSlider" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@VBoxContainer@130/@HBoxContainer@131" unique_id=1218354187]
+custom_minimum_size = Vector2(70, 24)
+layout_mode = 2
+size_flags_horizontal = 3
+max_value = 0.0
+metadata/mujoco_section = "Simulation"
+metadata/mujoco_name = ""
+metadata/mujoco_item = "SLIDER"
+metadata/viewer_field = &"history"
+
+[node name="@Label@133" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/SimulationContents/@VBoxContainer@130/@HBoxContainer@131/@HSlider@132" unique_id=1138337274]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 5.0
+offset_right = 5.0
+text = "0.0"
+metadata/viewer_value_label = true
+
+[node name="WatchSection" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=1773695543]
+layout_mode = 2
+tooltip_text = "Alt+W"
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+action_mode = 0
+text = "Watch"
+alignment = 0
+clip_text = true
+metadata/mujoco_section = "Watch"
+metadata/mujoco_name = "Watch"
+metadata/mujoco_item = "SECTION"
+metadata/mujoco_shortcut = "Alt+W"
+metadata/viewer_section = {
+"extra": false,
+"name": "Watch",
+"role": "button"
+}
+
+[node name="@Label@11" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/WatchSection" unique_id=262415452]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "◀"
+metadata/viewer_section = {
+"extra": false,
+"name": "Watch",
+"role": "triangle"
+}
+
+[node name="WatchContents" type="VBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=703009766]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": false,
+"name": "Watch",
+"role": "box"
+}
+
+[node name="@HBoxContainer@134" type="HBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/WatchContents" unique_id=310344021]
+layout_mode = 2
+
+[node name="@Label@135" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/WatchContents/@HBoxContainer@134" unique_id=1937166990]
+layout_mode = 2
+text = "Field"
+
+[node name="@LineEdit@136" type="LineEdit" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/WatchContents/@HBoxContainer@134" unique_id=2119168504]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "qpos"
+placeholder_text = "mjData numeric field"
+metadata/mujoco_section = "Watch"
+metadata/mujoco_name = "Field"
+metadata/mujoco_item = "EDITTXT"
+metadata/viewer_field = &"watch_edit"
+
+[node name="@SpinBox@139" type="SpinBox" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/WatchContents" unique_id=1897378698]
+layout_mode = 2
+max_value = 100000000.0
+prefix = "Index "
+metadata/mujoco_section = "Watch"
+metadata/mujoco_name = "Index"
+metadata/mujoco_item = "EDITINT"
+
+[node name="@Label@140" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/WatchContents" unique_id=382559043]
+layout_mode = 2
+autowrap_mode = 3
+clip_text = true
+metadata/mujoco_section = "Watch"
+metadata/mujoco_name = "Value"
+metadata/mujoco_item = "STATIC"
+metadata/viewer_role = "watch_label"
+
+[node name="PhysicsSection" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=2095929546]
+layout_mode = 2
+tooltip_text = "Alt+P"
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+action_mode = 0
+text = "Physics"
+alignment = 0
+clip_text = true
+metadata/mujoco_section = "Physics"
+metadata/mujoco_name = "Physics"
+metadata/mujoco_item = "SECTION"
+metadata/mujoco_shortcut = "Alt+P"
+metadata/viewer_section = {
+"extra": false,
+"name": "Physics",
+"role": "button"
+}
+
+[node name="@Label@12" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/PhysicsSection" unique_id=1803694240]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "◀"
+metadata/viewer_section = {
+"extra": false,
+"name": "Physics",
+"role": "triangle"
+}
+
+[node name="PhysicsContents" type="VBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=1396226040]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": false,
+"name": "Physics",
+"role": "box"
+}
+
+[node name="@Label@141" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/PhysicsContents" unique_id=146662386]
+layout_mode = 2
+text = "Read-only design. Edit in Godot editor."
+autowrap_mode = 3
+
+[node name="RenderingSection" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=179435516]
+layout_mode = 2
+tooltip_text = "Alt+R"
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+action_mode = 0
+text = "Rendering"
+alignment = 0
+clip_text = true
+metadata/mujoco_section = "Rendering"
+metadata/mujoco_name = "Rendering"
+metadata/mujoco_item = "SECTION"
+metadata/mujoco_shortcut = "Alt+R"
+metadata/viewer_section = {
+"extra": false,
+"name": "Rendering",
+"role": "button"
+}
+
+[node name="@Label@13" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/RenderingSection" unique_id=1246067281]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "◀"
+metadata/viewer_section = {
+"extra": false,
+"name": "Rendering",
+"role": "triangle"
+}
+
+[node name="RenderingContents" type="VBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=1260366691]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": false,
+"name": "Rendering",
+"role": "box"
+}
+
+[node name="Catalog" type="VBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/RenderingContents"]
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_catalog_slot = "Rendering"
+
+[node name="VisualizationSection" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=1952057283]
+layout_mode = 2
+tooltip_text = "Alt+V"
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+action_mode = 0
+text = "Visualization"
+alignment = 0
+clip_text = true
+metadata/mujoco_section = "Visualization"
+metadata/mujoco_name = "Visualization"
+metadata/mujoco_item = "SECTION"
+metadata/mujoco_shortcut = "Alt+V"
+metadata/viewer_section = {
+"extra": false,
+"name": "Visualization",
+"role": "button"
+}
+
+[node name="@Label@14" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/VisualizationSection" unique_id=1756871260]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "◀"
+metadata/viewer_section = {
+"extra": false,
+"name": "Visualization",
+"role": "triangle"
+}
+
+[node name="VisualizationContents" type="VBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=946460679]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": false,
+"name": "Visualization",
+"role": "box"
+}
+
+[node name="Catalog" type="VBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/VisualizationContents"]
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_catalog_slot = "Visualization"
+
+[node name="GroupenableSection" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=664661349]
+layout_mode = 2
+tooltip_text = "Alt+G"
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+action_mode = 0
+text = "Group enable"
+alignment = 0
+clip_text = true
+metadata/mujoco_section = "Group enable"
+metadata/mujoco_name = "Group enable"
+metadata/mujoco_item = "SECTION"
+metadata/mujoco_shortcut = "Alt+G"
+metadata/viewer_section = {
+"extra": false,
+"name": "Group enable",
+"role": "button"
+}
+
+[node name="@Label@15" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/GroupenableSection" unique_id=1375035440]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "◀"
+metadata/viewer_section = {
+"extra": false,
+"name": "Group enable",
+"role": "triangle"
+}
+
+[node name="GroupenableContents" type="VBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=1704571037]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": false,
+"name": "Group enable",
+"role": "box"
+}
+
+[node name="Catalog" type="VBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/GroupenableContents"]
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_catalog_slot = "Group enable"
+
+[node name="LoggingSection" type="Button" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=571056363]
+layout_mode = 2
+tooltip_text = "Alt+L"
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+action_mode = 0
+text = "Logging"
+alignment = 0
+clip_text = true
+metadata/mujoco_section = "Logging"
+metadata/mujoco_name = "Logging"
+metadata/mujoco_item = "SECTION"
+metadata/mujoco_shortcut = "Alt+L"
+metadata/viewer_section = {
+"extra": false,
+"name": "Logging",
+"role": "button"
+}
+
+[node name="@Label@16" type="Label" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7/LoggingSection" unique_id=735567941]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "◀"
+metadata/viewer_section = {
+"extra": false,
+"name": "Logging",
+"role": "triangle"
+}
+
+[node name="LoggingContents" type="VBoxContainer" parent="MainLayout/MuJoCoLeftPanel/@MarginContainer@6/@VBoxContainer@7" unique_id=2011081671]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": false,
+"name": "Logging",
+"role": "box"
+}
+
+[node name="RenderRegion" type="Control" parent="MainLayout" unique_id=373874167]
+layout_mode = 2
+size_flags_horizontal = 3
+metadata/viewer_role = "render_region"
+
+[node name="MuJoCoRightPanel" type="ScrollContainer" parent="MainLayout" unique_id=18189499]
+custom_minimum_size = Vector2(270, 0)
+layout_mode = 2
+theme = SubResource("Theme_yc7ej")
+follow_focus = true
+horizontal_scroll_mode = 0
+metadata/viewer_role = "right_panel"
+
+[node name="@MarginContainer@19" type="MarginContainer" parent="MainLayout/MuJoCoRightPanel" unique_id=299708964]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_right = 5
+
+[node name="@VBoxContainer@20" type="VBoxContainer" parent="MainLayout/MuJoCoRightPanel/@MarginContainer@19" unique_id=1758935279]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="JointSection" type="Button" parent="MainLayout/MuJoCoRightPanel/@MarginContainer@19/@VBoxContainer@20" unique_id=1744257620]
+layout_mode = 2
+tooltip_text = "Alt+J"
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+action_mode = 0
+text = "Joint"
+alignment = 0
+clip_text = true
+metadata/mujoco_section = "Joint"
+metadata/mujoco_name = "Joint"
+metadata/mujoco_item = "SECTION"
+metadata/mujoco_shortcut = "Alt+J"
+metadata/viewer_section = {
+"extra": false,
+"name": "Joint",
+"role": "button"
+}
+
+[node name="@Label@21" type="Label" parent="MainLayout/MuJoCoRightPanel/@MarginContainer@19/@VBoxContainer@20/JointSection" unique_id=1543780804]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "◀"
+metadata/viewer_section = {
+"extra": false,
+"name": "Joint",
+"role": "triangle"
+}
+
+[node name="JointContents" type="VBoxContainer" parent="MainLayout/MuJoCoRightPanel/@MarginContainer@19/@VBoxContainer@20" unique_id=409211102]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": false,
+"name": "Joint",
+"role": "box"
+}
+
+[node name="ControlSection" type="Button" parent="MainLayout/MuJoCoRightPanel/@MarginContainer@19/@VBoxContainer@20" unique_id=1009259006]
+layout_mode = 2
+tooltip_text = "Alt+C"
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+action_mode = 0
+text = "Control"
+alignment = 0
+clip_text = true
+metadata/mujoco_section = "Control"
+metadata/mujoco_name = "Control"
+metadata/mujoco_item = "SECTION"
+metadata/mujoco_shortcut = "Alt+C"
+metadata/viewer_section = {
+"extra": false,
+"name": "Control",
+"role": "button"
+}
+
+[node name="@Label@22" type="Label" parent="MainLayout/MuJoCoRightPanel/@MarginContainer@19/@VBoxContainer@20/ControlSection" unique_id=1448496715]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "◀"
+metadata/viewer_section = {
+"extra": false,
+"name": "Control",
+"role": "triangle"
+}
+
+[node name="ControlContents" type="VBoxContainer" parent="MainLayout/MuJoCoRightPanel/@MarginContainer@19/@VBoxContainer@20" unique_id=954479348]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": false,
+"name": "Control",
+"role": "box"
+}
+
+[node name="@Button@142" type="Button" parent="MainLayout/MuJoCoRightPanel/@MarginContainer@19/@VBoxContainer@20/ControlContents" unique_id=1655176616]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Clear all"
+clip_text = true
+metadata/mujoco_section = "Control"
+metadata/mujoco_name = "Clear all"
+metadata/mujoco_item = "BUTTON"
+
+[node name="EqualitySection" type="Button" parent="MainLayout/MuJoCoRightPanel/@MarginContainer@19/@VBoxContainer@20" unique_id=489457812]
+layout_mode = 2
+tooltip_text = "Alt+E"
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+action_mode = 0
+text = "Equality"
+alignment = 0
+clip_text = true
+metadata/mujoco_section = "Equality"
+metadata/mujoco_name = "Equality"
+metadata/mujoco_item = "SECTION"
+metadata/mujoco_shortcut = "Alt+E"
+metadata/viewer_section = {
+"extra": false,
+"name": "Equality",
+"role": "button"
+}
+
+[node name="@Label@23" type="Label" parent="MainLayout/MuJoCoRightPanel/@MarginContainer@19/@VBoxContainer@20/EqualitySection" unique_id=783885753]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "◀"
+metadata/viewer_section = {
+"extra": false,
+"name": "Equality",
+"role": "triangle"
+}
+
+[node name="EqualityContents" type="VBoxContainer" parent="MainLayout/MuJoCoRightPanel/@MarginContainer@19/@VBoxContainer@20" unique_id=951625665]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": false,
+"name": "Equality",
+"role": "box"
+}
+
+[node name="MuJoCoHelpOverlay" type="Control" parent="." unique_id=834879717]
+visible = false
+clip_contents = true
+anchors_preset = 0
+mouse_filter = 2
+metadata/viewer_overlay = &"help"
+
+[node name="@VBoxContainer@34" type="VBoxContainer" parent="MuJoCoHelpOverlay" unique_id=320282908]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="@HBoxContainer@35" type="HBoxContainer" parent="MuJoCoHelpOverlay/@VBoxContainer@34" unique_id=316530456]
+layout_mode = 2
+mouse_filter = 2
+theme_override_constants/separation = 12
+
+[node name="@Label@36" type="Label" parent="MuJoCoHelpOverlay/@VBoxContainer@34/@HBoxContainer@35" unique_id=1093613084]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Play / Pause
+Speed Up / Down
+Step Back / Forward
+Toggle Left / Right UI
+Cycle cameras
+Free camera
+Select
+Select parent
+Center camera
+Tracking camera
+Zoom
+View Orbit
+View Pan
+Object Rotate
+Object Translate
+Help / Info
+Profiler / Sensors
+Full screen
+Show UI shortcuts
+Expand/collapse all
+Reset / Reload
+Align / Copy state
+Print model / data
+Screenshot / Quit
+Godot extras"
+metadata/viewer_field = "help_actions"
+
+[node name="@Label@37" type="Label" parent="MuJoCoHelpOverlay/@VBoxContainer@34/@HBoxContainer@35" unique_id=1159895610]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "Space
+= / -
+Left / Right arrow
+Tab / Shift+Tab
+[ / ]
+Esc
+Double-click
+Page Up
+Right double-click
+Ctrl+Right double-click
+Scroll / middle drag
+[Shift] left drag
+[Shift] right drag
+Ctrl+[Shift] left drag
+Ctrl+[Shift] right drag
+F1 / F2
+F3 / F4
+F5 (standalone)
+UI right-button hold
+UI title double-click
+Backspace / Ctrl+L
+Ctrl+A / Ctrl+[Shift]+C
+Ctrl+M / Ctrl+D
+Ctrl+P / Ctrl+Q
+F11"
+metadata/viewer_field = "help_shortcuts"
+
+[node name="@Label@38" type="Label" parent="MuJoCoHelpOverlay/@VBoxContainer@34" unique_id=498398231]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = "
+0–5 Geom groups · Shift+0–5 Site groups · Alt+letter sections.
+` Body Tree · F6 Frames · F7 Labels. Alt swaps left/right mouse.
+F2: MuJoCo Info. FPS / system metrics: Godot F11.
+Godot: authored materials/lighting. Native: MuJoCo visuals.
+Runtime edits do not change saved scene/MJCF.
+嵌入 GameView 全屏由编辑器管理；F8 停止保留。"
+autowrap_mode = 3
+metadata/viewer_role = "help_label"
+
+[node name="MuJoCoInfoOverlay" type="Control" parent="." unique_id=1846675582]
+visible = false
+clip_contents = true
+anchors_preset = 0
+mouse_filter = 2
+metadata/viewer_overlay = &"info"
+
+[node name="MuJoCoInfo" type="Label" parent="MuJoCoInfoOverlay" unique_id=238591065]
+layout_mode = 0
+metadata/viewer_field = &"info_label"
+
+[node name="MuJoCoProfilerOverlay" type="Control" parent="." unique_id=544573612]
+visible = false
+clip_contents = true
+anchors_preset = 0
+mouse_filter = 2
+metadata/viewer_overlay = &"profiler"
+
+[node name="@VBoxContainer@39" type="VBoxContainer" parent="MuJoCoProfilerOverlay" unique_id=794402105]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_constants/separation = 0
+
+[node name="@Control@40" type="Control" parent="MuJoCoProfilerOverlay/@VBoxContainer@39" unique_id=554722840]
+custom_minimum_size = Vector2(100, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+script = ExtResource("3_6jguk")
+metadata/viewer_profiler = 0
+
+[node name="@Control@41" type="Control" parent="MuJoCoProfilerOverlay/@VBoxContainer@39" unique_id=1773684236]
+custom_minimum_size = Vector2(100, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+script = ExtResource("3_6jguk")
+metadata/viewer_profiler = 1
+
+[node name="@Control@42" type="Control" parent="MuJoCoProfilerOverlay/@VBoxContainer@39" unique_id=1360718927]
+custom_minimum_size = Vector2(100, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+script = ExtResource("3_6jguk")
+metadata/viewer_profiler = 2
+
+[node name="@Control@43" type="Control" parent="MuJoCoProfilerOverlay/@VBoxContainer@39" unique_id=1540107433]
+custom_minimum_size = Vector2(100, 60)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+mouse_filter = 2
+script = ExtResource("3_6jguk")
+metadata/viewer_profiler = 3
+
+[node name="MuJoCoSensorsOverlay" type="Control" parent="." unique_id=1302744043]
+visible = false
+clip_contents = true
+anchors_preset = 0
+mouse_filter = 2
+metadata/viewer_overlay = &"sensors"
+
+[node name="@VBoxContainer@44" type="VBoxContainer" parent="MuJoCoSensorsOverlay" unique_id=1319612403]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="@Control@45" type="Control" parent="MuJoCoSensorsOverlay/@VBoxContainer@44" unique_id=667326272]
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 2
+script = ExtResource("3_6jguk")
+metadata/viewer_role = "sensor_plot"
+
+[node name="@VBoxContainer@46" type="VBoxContainer" parent="MuJoCoSensorsOverlay/@VBoxContainer@44" unique_id=484497388]
+layout_mode = 2
+mouse_filter = 2
+metadata/viewer_role = "sensor_images"
+
+[node name="MuJoCoFeedback" type="Label" parent="." unique_id=1310819126]
+visible = false
+layout_mode = 0
+theme_override_colors/font_color = Color(1, 0.85, 0.5, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+autowrap_mode = 3
+metadata/viewer_role = "feedback_label"
+
+[node name="@Label@173" type="Label" parent="." unique_id=1810691082]
+layout_mode = 0
+theme_override_font_sizes/font_size = 28
+metadata/viewer_role = "run_label"
+
+[node name="@Label@174" type="Label" parent="." unique_id=1487272497]
+layout_mode = 0
+metadata/viewer_role = "speed_label"
+
+[node name="@Label@175" type="Label" parent="." unique_id=1470353169]
+visible = false
+layout_mode = 0
+metadata/viewer_role = "help_hint"
+
+[node name="@Control@176" type="Control" parent="." unique_id=55988205]
+visible = false
+clip_contents = true
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("4_hnin1")
+metadata/viewer_hints = 0
+
+[node name="@Control@177" type="Control" parent="." unique_id=1791883861]
+visible = false
+clip_contents = true
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("4_hnin1")
+metadata/viewer_hints = 1

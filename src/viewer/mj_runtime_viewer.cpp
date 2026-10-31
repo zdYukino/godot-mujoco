@@ -926,6 +926,12 @@ void MjPhysicsServer3D::process_viewer_commands() {
   for (auto &r : pending) {
     Dictionary result;
     result["request"] = r.request;
+    // Completion identity belongs to the submitted command, even before the
+    // first visualization frame exists or after its model was replaced.
+    result["space"] = int64_t(r.space.get_id());
+    result["revision"] = r.revision;
+    result["frame_id"] = r.frame;
+    result["sequence"] = r.sequence;
     String action = r.command.get("action", String());
     result["command"] = action;
     bool deferred = false;
@@ -970,14 +976,20 @@ void MjPhysicsServer3D::process_viewer_commands() {
         v->cancel(*s);
         return "Displayed frame expired";
       }
-      if (action == "seed_camera") {
-        if (v->seeded)
-          return {};
+      if (action == "sync_external_camera") {
         Transform3D t = cmd.get("transform", Transform3D());
-        if (!t.is_finite())
-          return "Invalid authored camera";
+        if (!t.is_finite() || !t.basis.is_orthogonal() ||
+            t.basis.determinant() <= 0)
+          return "Invalid source camera transform";
         Vector3 p = godot_to_mj(t.origin),
                 forward = godot_to_mj(-t.basis.get_column(2)).normalized();
+        Vector3 up = godot_to_mj(t.basis.get_column(1)).normalized();
+        if (!forward.is_finite() || !up.is_finite() ||
+            forward.length_squared() < .5 || up.length_squared() < .5)
+          return "Invalid source camera basis";
+        for (int k = 0; k < 3; k++)
+          if (std::abs(double(p[k])) > std::numeric_limits<float>::max())
+            return "Source camera position exceeds rendering range";
         double distance = cmd.get("distance", v->camera.distance);
         if (!std::isfinite(distance) || distance <= 0)
           distance = std::max(1., v->model->stat.extent);
@@ -993,6 +1005,15 @@ void MjPhysicsServer3D::process_viewer_commands() {
             2 * near * std::tan(fovy * Math_PI / 360));
         if (!std::isfinite(height) || height <= 0 || height > std::numeric_limits<float>::max())
           return "Invalid authored projection";
+        if (std::abs(-height / 2 + offset.y) > std::numeric_limits<float>::max() ||
+            std::abs(height / 2 + offset.y) > std::numeric_limits<float>::max())
+          return "Source camera frustum exceeds rendering range";
+        // External game cameras are sampled continuously by the presentation
+        // session, including while paused and when there is no viewer UI.
+        // This never changes simulation state or installs input ownership.
+        v->camera.type = mjCAMERA_FREE;
+        v->camera.fixedcamid = -1;
+        v->camera.trackbodyid = -1;
         for (int k = 0; k < 3; k++)
           v->camera.lookat[k] = p[k] + forward[k] * distance;
         v->camera.distance = distance;
@@ -1001,9 +1022,9 @@ void MjPhysicsServer3D::process_viewer_commands() {
             std::atan2(forward.z, std::hypot(forward.x, forward.y)) * 180 /
             Math_PI;
         v->camera.orthographic = orthographic;
+        v->model->vis.global.orthographic = orthographic;
         v->model->vis.global.fovy = fovy;
         auto &c = v->authored_camera;
-        Vector3 up = godot_to_mj(t.basis.get_column(1)).normalized();
         for (int k = 0; k < 3; k++) {
           c.pos[k] = p[k];
           c.forward[k] = forward[k];
@@ -1018,7 +1039,6 @@ void MjPhysicsServer3D::process_viewer_commands() {
         v->model->vis.map.znear = c.frustum_near / v->model->stat.extent;
         v->model->vis.map.zfar = c.frustum_far / v->model->stat.extent;
         v->authored_camera_active = true;
-        v->seeded = true;
         return {};
       }
       if (action == "move") {
@@ -1191,7 +1211,6 @@ void MjPhysicsServer3D::process_viewer_commands() {
           v->camera.fixedcamid = fixed;
         } else
           mjv_defaultFreeCamera(v->model, &v->camera);
-        v->seeded = true;
         return {};
       }
       if (action == "track_body") {
@@ -1454,6 +1473,7 @@ void MjPhysicsServer3D::process_viewer_commands() {
     result["error"] = error;
     auto *s = space(r.space);
     if (s && s->data) {
+      result["current_revision"] = int64_t(s->revision);
       result["time"] = s->data->time;
       result["paused"] = s->paused;
     }

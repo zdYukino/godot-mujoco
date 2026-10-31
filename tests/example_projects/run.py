@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Verify the projects opened directly from examples/, in an isolated repo layout."""
 import argparse
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -38,6 +39,19 @@ for name in names:
         ignore=shutil.ignore_patterns('.godot', '.godot.*', '__pycache__'),
     )
 
+# Hash the exact isolated source/binary snapshot used by every entry. Per-project
+# settings are deliberately rewritten below and included again after all stages.
+def record_sources():
+    suffixes = {'.gd', '.cs', '.tscn', '.tres', '.godot', '.gdextension', '.so', '.csproj', '.json'}
+    paths = [path for path in repo.rglob('*') if path.is_file() and path.suffix in suffixes
+             and '.godot' not in path.relative_to(repo).parts and not path.is_symlink()]
+    hashes = {str(path.relative_to(repo)): hashlib.sha256(path.read_bytes()).hexdigest()
+              for path in sorted(paths)}
+    hashes['@runner/run.py'] = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
+    hashes['@fixture/acceptance.gd'] = hashlib.sha256((source/'tests/example_projects/acceptance.gd').read_bytes()).hexdigest()
+    (out/'source-hashes.json').write_text(json.dumps(hashes, indent=2)+'\n')
+
+record_sources()
 results = {}
 graphics = {}
 for name in names:
@@ -78,7 +92,7 @@ for name in names:
         ('import', ['--editor', '--import', '--frame-delay', '1000']),
         ('runtime', ['--fixed-fps', '60', '--script', 'res://example_project_acceptance.gd']),
     ]
-    if args.graphical and name == 'light_workflow':
+    if (args.graphical or args.native) and name == 'light_workflow':
         # Exercise the normal C# main scene's real Godot picture separately,
         # while retaining its typed-operation self-test as the runtime stage.
         stages.insert(1, ('graphics', ['--fixed-fps', '60', '--script', 'res://example_project_acceptance.gd', '--', '--graphics-probe']))
@@ -115,8 +129,9 @@ for name in names:
             assert results[name]['failed'] == 0, results[name]
         print(f'PASS {name} {step}', flush=True)
 (out / 'results.json').write_text(json.dumps(results, indent=2) + '\n')
-if args.graphical:
+if args.graphical or args.native:
     assert set(graphics) == set(names), 'Missing actual Godot pictures for one or more entry projects'
     assert sum(map(len, graphics.values())) == 8, 'Expected all eight scene entry points across six projects'
     (out / 'graphics.json').write_text(json.dumps(graphics, indent=2) + '\n')
+record_sources()
 print('DIRECT EXAMPLE PROJECTS PASS', json.dumps(results), flush=True)

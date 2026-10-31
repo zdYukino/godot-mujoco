@@ -10,20 +10,23 @@ func run() -> void:
 	var packed: Dictionary=await Package.save_document(doc,"res://models","dynamic_shapes")
 	if not packed.error.is_empty(): printerr(packed.error); quit(1); return
 	var model: Resource=load(packed.path)
-	var world:=Builder.create(model); world.name="ShapeGallery"
+	var scene_root:=Node3D.new(); scene_root.name="ShapeGallery"
+	var world:=Builder.create(model); world.name="Runtime"; scene_root.add_child(world); world.owner=scene_root
 	world.set_meta("example","One shared MuJoCo space; 7 freejoint rigid bodies. Cone = compiled convex mesh, not native cone or SDF.")
-	var camera:=Camera3D.new(); camera.name="Camera"; camera.position=Vector3(8,6,10); camera.look_at_from_position(camera.position,Vector3(.5,1,0)); world.add_child(camera); camera.owner=world
+	var camera:=Camera3D.new(); camera.name="Camera"; camera.position=Vector3(8,6,10); camera.look_at_from_position(camera.position,Vector3(.5,1,0)); scene_root.add_child(camera); camera.owner=scene_root
 	var environment:=WorldEnvironment.new(); environment.name="PolyHavenSky"; environment.environment=Environment.new()
 	var sky:=Sky.new(); var material:=PanoramaSkyMaterial.new(); material.panorama=load("res://assets/kloofendal_43d_clear_puresky_4k.hdr")
 	sky.sky_material=material; environment.environment.sky=sky; environment.environment.background_mode=Environment.BG_SKY
 	environment.environment.ambient_light_source=Environment.AMBIENT_SOURCE_SKY; environment.environment.ambient_light_energy=.65
-	world.add_child(environment); environment.owner=world
-	var sun:=DirectionalLight3D.new(); sun.name="Sun"; sun.rotation_degrees=Vector3(-50,-35,0); sun.light_energy=1.3; sun.shadow_enabled=true; world.add_child(sun); sun.owner=world
+	scene_root.add_child(environment); environment.owner=scene_root
+	var sun:=DirectionalLight3D.new(); sun.name="Sun"; sun.rotation_degrees=Vector3(-50,-35,0); sun.light_energy=1.3; sun.shadow_enabled=true; scene_root.add_child(sun); sun.owner=scene_root
 	var controls:=Node.new(); controls.name="DisplayControls"; controls.set_script(preload("gallery.gd")); world.add_child(controls); controls.owner=world
+	Builder.attach_extension(scene_root,Builder.attach_viewer(scene_root,world),Builder.attach_extras(scene_root,world),NodePath("DisplayControls"))
+	for node in scene_root.find_children("*","Node",true,false): node.owner=scene_root
 	var scene:=PackedScene.new()
-	assert((await preload("res://addons/godot_mujoco/model/scene_builder.gd").prepare_tree(world)).is_empty())
-	var error:=scene.pack(world)
+	assert((await preload("res://addons/godot_mujoco/model/scene_builder.gd").prepare_tree(scene_root)).is_empty())
+	var error:=scene.pack(scene_root)
 	if error==OK: error=ResourceSaver.save(scene,"res://Main.tscn")
-	world.free()
+	scene_root.free()
 	print("SHAPE_GALLERY_BUILD ",JSON.stringify({"error":error,"model":packed.path,"floor":"original world-space grid on existing floor; 1 m spacing"}))
 	quit(0 if error==OK else 1)

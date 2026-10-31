@@ -53,8 +53,10 @@ func run() -> void:
 		var visual:=MeshInstance3D.new(); var sphere_mesh:=SphereMesh.new(); sphere_mesh.radius=.12; sphere_mesh.height=.24; visual.mesh=sphere_mesh
 		var material:=StandardMaterial3D.new(); material.albedo_color=Color(.95,.65,.12); visual.material_override=material; ball.add_child(visual); scene.add_child(ball)
 	session.own_scene(scene,world)
+	var scene_root:=preload("res://addons/godot_mujoco/model/scene_builder.gd").with_runtime_ui(world,"SdfTerrainWorld")
+	preload("res://addons/godot_mujoco/model/scene_builder.gd").attach_extension(scene_root,scene_root.get_node("RuntimeViewer"),scene_root.get_node("GodotExtras"),NodePath("Map/DisplayControls"))
 	var packed:=PackedScene.new()
-	if packed.pack(world)!=OK or ResourceSaver.save(packed,"res://Main.tscn")!=OK: push_error("Failed to save terrain example"); world.free(); session.close(); quit(1); return
+	if packed.pack(scene_root)!=OK or ResourceSaver.save(packed,"res://Main.tscn")!=OK: push_error("Failed to save terrain example"); scene_root.free(); session.close(); quit(1); return
 	var report:=FileAccess.open("res://assets/sdf_manifest.json",FileAccess.WRITE); report.store_string(JSON.stringify({"chunks":manifest,"package":packaged.path,"default_collision":"sdf","octree_maxdepth":6},"\t")); report.close()
 	print("SDF_TERRAIN_PREPARED ",JSON.stringify({"chunks":manifest.size(),"package":packaged.path}))
-	world.free(); session.close(); quit(0)
+	scene_root.free(); session.close(); quit(0)

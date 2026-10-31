@@ -1,0 +1,304 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/extras_ui.gd" id="1_extras"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/viewer_window.gd" id="5_nnbv0"]
+
+[node name="ExtrasUI" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+script = ExtResource("1_extras")
+
+[node name="GodotPerformanceOverlay" type="Label" parent="." unique_id=860229497]
+layout_mode = 0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+metadata/viewer_role = "hud"
+
+[node name="@Window@24" type="Window" parent="." unique_id=1720244226]
+title = "Godot 附加功能 · F11"
+position = Vector2i(40, 50)
+size = Vector2i(560, 700)
+visible = false
+min_size = Vector2i(360, 240)
+script = ExtResource("5_nnbv0")
+metadata/viewer_role = "controls"
+
+[node name="@ScrollContainer@27" type="ScrollContainer" parent="@Window@24" unique_id=623196604]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+follow_focus = true
+
+[node name="@VBoxContainer@28" type="VBoxContainer" parent="@Window@24/@ScrollContainer@27" unique_id=1443238499]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="@Label@29" type="Label" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28" unique_id=910078223]
+layout_mode = 2
+autowrap_mode = 3
+metadata/viewer_role = "status"
+
+[node name="RendererSection" type="Button" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28" unique_id=1611134949]
+layout_mode = 2
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+button_pressed = true
+action_mode = 0
+text = "Renderer"
+alignment = 0
+metadata/viewer_section = {
+"extra": true,
+"name": "Renderer",
+"role": "button"
+}
+
+[node name="@Label@30" type="Label" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/RendererSection" unique_id=278899164]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "▼"
+metadata/viewer_section = {
+"extra": true,
+"name": "Renderer",
+"role": "triangle"
+}
+
+[node name="RendererContents" type="VBoxContainer" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28" unique_id=1771970589]
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": true,
+"name": "Renderer",
+"role": "box"
+}
+
+[node name="@HBoxContainer@143" type="HBoxContainer" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/RendererContents" unique_id=1608439932]
+layout_mode = 2
+
+[node name="@Label@144" type="Label" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/RendererContents/@HBoxContainer@143" unique_id=680292551]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Requested backend"
+
+[node name="@OptionButton@155" type="OptionButton" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/RendererContents/@HBoxContainer@143" unique_id=1002167244]
+custom_minimum_size = Vector2(110, 0)
+layout_mode = 2
+selected = 0
+item_count = 2
+popup/item_0/text = "Godot"
+popup/item_0/id = 0
+popup/item_1/text = "MuJoCo native"
+popup/item_1/id = 1
+metadata/viewer_field = &"backend_choice"
+
+[node name="@Label@156" type="Label" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/RendererContents" unique_id=727260299]
+layout_mode = 2
+text = "Both backends share one MuJoCo simulation. Add MjRuntimeViewer for original camera and selection controls. Godot keeps authored materials and lighting."
+autowrap_mode = 3
+
+[node name="PerformanceSection" type="Button" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28" unique_id=2046494857]
+layout_mode = 2
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+button_pressed = true
+action_mode = 0
+text = "Performance"
+alignment = 0
+metadata/viewer_section = {
+"extra": true,
+"name": "Performance",
+"role": "button"
+}
+
+[node name="@Label@31" type="Label" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/PerformanceSection" unique_id=2143871856]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "▼"
+metadata/viewer_section = {
+"extra": true,
+"name": "Performance",
+"role": "triangle"
+}
+
+[node name="PerformanceContents" type="VBoxContainer" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28" unique_id=886801480]
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": true,
+"name": "Performance",
+"role": "box"
+}
+
+[node name="@CheckBox@157" type="CheckBox" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/PerformanceContents" unique_id=209636468]
+layout_mode = 2
+size_flags_horizontal = 3
+button_pressed = true
+text = "Godot 性能叠加（独立于 F2 Info）"
+metadata/viewer_role = "overlay_check"
+
+[node name="@CheckBox@158" type="CheckBox" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/PerformanceContents" unique_id=150027849]
+layout_mode = 2
+size_flags_horizontal = 3
+button_pressed = true
+text = "渲染 FPS"
+metadata/viewer_metric = "fps"
+
+[node name="@CheckBox@159" type="CheckBox" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/PerformanceContents" unique_id=53131651]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "整机 CPU %"
+metadata/viewer_metric = "cpu"
+
+[node name="@CheckBox@160" type="CheckBox" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/PerformanceContents" unique_id=2033861232]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "系统内存"
+metadata/viewer_metric = "ram"
+
+[node name="@CheckBox@161" type="CheckBox" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/PerformanceContents" unique_id=226847590]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "整卡 GPU %"
+metadata/viewer_metric = "gpu"
+
+[node name="@CheckBox@162" type="CheckBox" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/PerformanceContents" unique_id=2054063901]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "整卡显存"
+metadata/viewer_metric = "vram"
+
+[node name="@CheckBox@163" type="CheckBox" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/PerformanceContents" unique_id=130744417]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "CPU/GPU 耗时 ms"
+metadata/viewer_metric = "timing"
+
+[node name="@Label@164" type="Label" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/PerformanceContents" unique_id=1487276639]
+layout_mode = 2
+text = "CPU/RAM: whole system. GPU/VRAM: matched rendering GPU. Utilization % and frame cost ms are separate. Missing driver counters need no extra tools."
+autowrap_mode = 3
+
+[node name="ToolsSection" type="Button" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28" unique_id=347851974]
+layout_mode = 2
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+button_pressed = true
+action_mode = 0
+text = "Tools"
+alignment = 0
+metadata/viewer_section = {
+"extra": true,
+"name": "Tools",
+"role": "button"
+}
+
+[node name="@Label@32" type="Label" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/ToolsSection" unique_id=1286094190]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "▼"
+metadata/viewer_section = {
+"extra": true,
+"name": "Tools",
+"role": "triangle"
+}
+
+[node name="ToolsContents" type="VBoxContainer" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28" unique_id=398743064]
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": true,
+"name": "Tools",
+"role": "box"
+}
+
+[node name="@SpinBox@167" type="SpinBox" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/ToolsContents" unique_id=1225414011]
+layout_mode = 2
+min_value = 1.0
+max_value = 1000.0
+value = 1.0
+prefix = "Steps "
+
+[node name="@Button@168" type="Button" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/ToolsContents" unique_id=1620709292]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Godot: 精确步进 N 次"
+
+[node name="@Button@169" type="Button" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/ToolsContents" unique_id=113446366]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Godot: 记录完整快照"
+
+[node name="@Button@170" type="Button" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/ToolsContents" unique_id=1073898542]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Godot: 恢复完整快照"
+
+[node name="ExamplesSection" type="Button" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28" unique_id=1830297461]
+layout_mode = 2
+theme_type_variation = &"MuJoCoSection"
+toggle_mode = true
+button_pressed = true
+action_mode = 0
+text = "Examples"
+alignment = 0
+metadata/viewer_section = {
+"extra": true,
+"name": "Examples",
+"role": "button"
+}
+
+[node name="@Label@33" type="Label" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28/ExamplesSection" unique_id=1338965299]
+layout_mode = 0
+anchor_left = 1.0
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+offset_left = -16.0
+offset_top = -7.0
+offset_right = -2.0
+offset_bottom = 7.0
+text = "▼"
+metadata/viewer_section = {
+"extra": true,
+"name": "Examples",
+"role": "triangle"
+}
+
+[node name="ExamplesContents" type="VBoxContainer" parent="@Window@24/@ScrollContainer@27/@VBoxContainer@28" unique_id=407747285]
+layout_mode = 2
+theme_override_constants/separation = 2
+metadata/viewer_section = {
+"extra": true,
+"name": "Examples",
+"role": "box"
+}
+[node name="ExtrasFeedback" type="Label" parent="."]
+visible = false
+mouse_filter = 2
+theme_override_colors/font_color = Color(1, 0.85, 0.5, 1)
+autowrap_mode = 3
+metadata/viewer_role = "feedback_label"

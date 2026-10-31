@@ -16,6 +16,7 @@ var renderer_choice: OptionButton
 var renderer_note: Label
 var renderer_row: HBoxContainer
 var renderer_error := ""
+var runtime_panel_preset: VBoxContainer
 var overlay_root: Node3D
 var hidden_visuals: Array[MeshInstance3D] = []
 var signature := ""
@@ -46,6 +47,10 @@ func _ready() -> void:
 	renderer_note=Label.new();renderer_note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART
 	plugin.dock.add_child(renderer_note);plugin.dock.move_child(renderer_note,2)
 	renderer_choice.item_selected.connect(func(index): set_renderer(renderer_choice.get_item_id(index)))
+	runtime_panel_preset = preload("runtime_viewer_preset.gd").new()
+	runtime_panel_preset.plugin = plugin
+	plugin.dock.add_child(runtime_panel_preset)
+	plugin.dock.move_child(runtime_panel_preset, 3)
 	refresh_renderer()
 	overlay_root=plugin.create_preview_root("SceneCollisionOverlay")
 	apply_modes()
@@ -66,7 +71,7 @@ func refresh_renderer() -> void:
 	var reason := RenderSettings.unavailable_reason()
 	renderer_choice.set_item_disabled(1,not reason.is_empty())
 	menu.get_popup().set_item_disabled(menu.get_popup().get_item_index(11),not reason.is_empty())
-	renderer_choice.tooltip_text="保存到当前工程，下次 F5 生效；编辑视图保持 Godot。\nMuJoCo 原生支持旋转、缩放，暂不支持原生选择、跟踪或拖拽施力。"
+	renderer_choice.tooltip_text="保存到当前工程，下次 F5 生效；编辑视图保持 Godot。\n添加 MuJoCo 运行面板后，两种渲染共用原版相机、选择、跟踪和扰动操作。"
 	if not reason.is_empty(): renderer_choice.tooltip_text+="\n"+reason
 	renderer_note.text=renderer_error if not renderer_error.is_empty() else ("下次 F5 生效" if EditorInterface.is_playing_scene() else "")
 	renderer_note.visible=not renderer_note.text.is_empty()
@@ -146,6 +151,7 @@ func update_scene() -> void:
 	overlay_root.visible=collisions
 func shutdown() -> void:
 	restore_visuals()
+	if is_instance_valid(runtime_panel_preset): runtime_panel_preset.free()
 	if is_instance_valid(renderer_row): renderer_row.free()
 	if is_instance_valid(renderer_note): renderer_note.free()
 	if is_instance_valid(overlay_root): overlay_root.free()

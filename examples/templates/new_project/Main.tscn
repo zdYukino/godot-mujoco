@@ -3,6 +3,9 @@
 [ext_resource type="Script" path="res://addons/godot_mujoco/model/runtime_world.gd" id="1_uu6xs"]
 [ext_resource type="Script" path="res://addons/godot_mujoco/model/author_resource.gd" id="2_r0du0"]
 
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/runtime_viewer.gd" id="viewer_component"]
+[ext_resource type="Script" path="res://addons/godot_mujoco/viewer/godot_extras.gd" id="extras_component"]
+
 [sub_resource type="Resource" id="Resource_cm0pq"]
 script = ExtResource("2_r0du0")
 document_id = "7b254c3b615a75bdd4c25fcdce392bf8"
@@ -64,38 +67,48 @@ material = SubResource("BallMaterial")
 [sub_resource type="SphereShape3D" id="BallShape"]
 
 [node name="Main" type="Node3D" unique_id=1097118013]
+
+[node name="Runtime" type="Node3D" parent="."]
 script = ExtResource("1_uu6xs")
 world_design = SubResource("Resource_cm0pq")
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1652511324]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Runtime" unique_id=1652511324]
 environment = SubResource("Environment")
 
-[node name="Ground" type="StaticBody3D" parent="." unique_id=968048023]
+[node name="Ground" type="StaticBody3D" parent="Runtime" unique_id=968048023]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 physics_material_override = SubResource("ContactMaterial")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground" unique_id=460464351]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Runtime/Ground" unique_id=460464351]
 mesh = SubResource("GroundMesh")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground" unique_id=616839062]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Runtime/Ground" unique_id=616839062]
 shape = SubResource("GroundShape")
 
-[node name="Ball" type="RigidBody3D" parent="." unique_id=1044291187]
+[node name="Ball" type="RigidBody3D" parent="Runtime" unique_id=1044291187]
 position = Vector3(0, 1.5, 0)
 mass = 100.0
 physics_material_override = SubResource("ContactMaterial")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Ball" unique_id=353717742]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Runtime/Ball" unique_id=353717742]
 mesh = SubResource("BallMesh")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ball" unique_id=145447453]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Runtime/Ball" unique_id=145447453]
 shape = SubResource("BallShape")
 
-[node name="Camera3D" type="Camera3D" parent="." unique_id=893926465]
+[node name="Camera3D" type="Camera3D" parent="Runtime" unique_id=893926465]
 transform = Transform3D(0.7808667, -0.21365918, 0.5870238, 0, 0.9396926, 0.34202012, -0.6246977, -0.2670721, 0.73377466, 4, 3, 5)
 current = true
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1016905699]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Runtime" unique_id=1016905699]
 transform = Transform3D(0.8660254, 0.40957603, -0.28678823, 0, 0.57357645, 0.81915206, 0.5, -0.7094065, 0.49673176, 0, 0, 0)
 light_energy = 1.3
 shadow_enabled = true
+
+[node name="RuntimeViewer" type="CanvasLayer" parent="." node_paths=PackedStringArray("world")]
+script = ExtResource("viewer_component")
+world = NodePath("../Runtime")
+
+[node name="GodotExtras" type="CanvasLayer" parent="." node_paths=PackedStringArray("world")]
+script = ExtResource("extras_component")
+world = NodePath("../Runtime")

@@ -1,8 +1,133 @@
-# Shared runtime viewer
+# Independent runtime UI components
 
-`MjRuntimeWorld` installs `MjRuntimeViewer` automatically in games. Godot editing
-continues to use Godot input. `MjEnvironmentHost` stages candidates without input
-or a native display lease, then binds the viewer after a successful commit.
+The plugin provides two optional `CanvasLayer` components. Add either, both or
+neither to a saved scene; each binds directly to exactly one `world` or
+`environment_host`. Neither creates or requires the other.
+
+| Saved component | Owns | When absent or disabled |
+|---|---|---|
+| `MjRuntimeViewer` | MuJoCo sidebars, F1–F4, official actions, camera, picking and perturbation | Gameplay keeps its camera/input; no original panel shortcuts |
+| `MjGodotExtras` | F11, FPS/system metrics, renderer choice, exact steps/snapshots and example widgets | No F11 handler or optional system sampling; original interaction continues |
+| Neither | Simulation and selected renderer only | Native rendering follows the gameplay camera; no runtime UI |
+| Both | One shared simulation/presentation session, separate UI ownership | Disabling one does not disable the other |
+
+`shape_gallery` saves sibling `Runtime`, `RuntimeViewer` and `GodotExtras` nodes
+under a neutral scene root. `enabled` controls each component's runtime ownership;
+hiding its panel only changes visibility. A bare World never creates UI.
+
+## Add from the editor
+
+Select an editable `MjRuntimeWorld` or `MjEnvironmentHost` in the scene tree and
+press **添加 MuJoCo 运行面板** in the right MuJoCo dock. The preset creates and
+selects a saved, bound `MjRuntimeViewer` sibling, with Undo/Redo. If the target
+already has a viewer, it selects that viewer instead. It adds no Extras, example
+provider, binding, model or camera. Missing/ambiguous/uneditable selection shows a
+reason. A target that is itself the scene root needs an ordinary parent first;
+the preset never silently restructures the scene.
+
+For manual authoring, search **MjRuntimeViewer** or **MjGodotExtras** in **Add
+Child Node**, place it beside the target and assign exactly one Inspector target.
+Keep the default **UI Scene**, save and run F5. Each node independently exposes
+**Enabled**, **UI Scene**, **UI Theme**, configuration and pure editor preview.
+The standard UI needs no `DisplayControls` or Binding child.
+
+Public MuJoCo node types have different scene-tree/Create Node icons: a globe for
+`MjRuntimeWorld`, layers for `MjModelInstance`, a cube for `MjBody3D`, linked circles
+for `MjJoint3D`, shapes for `MjGeom3D`, terrain for `MjStaticHeightField`, and a
+crosshair for `MjDebugDraw`. The viewer uses a monitor, Extras a controls icon, `MjEnvironmentHost` an
+inset viewport, and `MjViewerExtensionBinding` a chain link.
+
+## Author and customize
+
+- `ui_scene` selects an editable/inheritable `MjViewerUI` PackedScene for the
+  original component or `MjExtrasUI` for Extras. Edit either in the 2D editor.
+  Defaults are `default_ui.tscn` and `extras_ui.tscn`.
+- `ui_theme` supplies the authored Theme. Runtime view state never rewrites the
+  saved scene, Theme or configuration resource.
+- `configuration` defines group and individual action availability. Buttons,
+  keyboard, help and component commands use the same policy. Gameplay World APIs
+  remain independent; hiding a control does not disable its action.
+- Original viewer `layout_mode` selects reserved space or overlay. Extras never
+  owns a 3D region or camera. The UI contract identifies one
+  rectangular 3D display/input region; drawing, projection and picking use it on
+  both backends. Missing required bindings report configuration errors rather
+  than silently replacing a custom scene.
+- `preview_in_editor` shows authored layout/style with labeled sample data. It
+  never starts simulation, native GL, system sampling or viewer input.
+- `restore_preferences` permits allowed per-component personal view state.
+  `preferences_id` can give a stable unique identity; otherwise scene identity
+  and node path define the namespace. Scene capabilities and Theme binding win.
+
+World/Host replacement rebinds the live scene-owned component only after commit.
+World exit does not delete a sibling UI. Invalid targets and duplicate ownership
+(one original viewer and one Extras owner per target 3D viewport) give explicit reasons.
+
+For a custom layout, inherit `res://addons/godot_mujoco/viewer/default_ui.tscn`
+and save it in your project, then assign that PackedScene to `ui_scene`. Changing
+its saved controls, margins or Theme does not require editing the controller.
+A fully replaced scene must extend `MjViewerUI`, export one descendant `Control`
+as `render_region`, and emit `action_requested(action_id, arguments)` for its
+widgets. Set `use_default_presenters = false` when replacing the supplied panel
+modules. A missing optional panel disables its view action with an explanation;
+a missing/out-of-bounds required region is a configuration error. The controller
+never reconstructs the removed default layout over a custom scene. An Extras
+replacement extends `MjExtrasUI` and provides a descendant controls `Window`,
+performance HUD `Label`, or both; it needs no `render_region`.
+
+`MjViewerConfiguration.disabled_groups` accepts `camera`, `selection`,
+`perturbation`, `simulation`, `output`, `visualization`, `analysis`, `interface`
+and `performance`. `disabled_actions` accepts an action or selector such as
+`camera:0`, `vis:2` or `metric:cpu`; `allowed_metrics` limits metric choices.
+`allowed_preferences` limits the categories `layout`, `visibility`, `metrics`,
+`display`, `output` and `style`. These are authored limits, not saved simulation
+settings. Internal session commands are not part of `execute()`.
+
+Reserved layout moves the target viewport's whole 3D view into the declared
+rectangle, including gameplay meshes outside the Runtime subtree in the same
+World3D. Other viewports and 2D game UI stay independent. Overlay mode keeps the
+full 3D viewport behind the custom controls. Rendering several independent 3D
+regions within one component is outside this component's scope.
+
+## Optional example extensions
+
+`DisplayControls` is a saved **example-owned node name**, not a plugin node type
+or a viewer-generated child. In ShapeGallery it is a plain `Node` with
+`res://gallery.gd` attached, saved under `Runtime`. That script supplies the
+example's floor grid and help text. It therefore does not appear as
+"DisplayControls" in Add Child Node. Other projects supply their own scripts.
+
+Saved example tools connect through an explicit `MjViewerExtensionBinding`.
+Assign **Viewer** for F1 help, **Extras** for F11 widgets, or both. Set **Provider
+Path** relative to each destination's committed World (`DisplayControls` in
+ShapeGallery, `.` when the World itself supplies the provider), never relative to
+the Binding. Binding may be a sibling of both components and does no provider
+work in the editor.
+
+Providers implement independent methods:
+
+```gdscript
+func get_viewer_help() -> Dictionary:
+    return {"key": "my_example", "title": "My example", "text": "Instructions"}
+
+func register_extras(extras: MjGodotExtras) -> String:
+    var widget := Label.new()
+    widget.text = "Example tools"
+    extras.add_extension("my_example", "My example", widget)
+    return "my_example"
+```
+
+Native-only help does not construct unused tool widgets. Each binding follows
+its destination's successful committed-world replacement and retires old
+callbacks; failed reload preserves the previous world and tools. Removing a
+binding removes only its content. Example grid/drive/SDF behavior remains in the
+example script.
+
+Programmatic composition uses `SceneBuilder.attach_viewer(parent, target)`,
+`attach_extras(parent, target)` and optional
+`attach_extension(parent, viewer, extras, provider_path)`. Either extension
+destination may be null. `with_runtime_ui(world)` is the explicit convenience
+constructor for a neutral root plus both components; `with_viewer` is removed.
+Plain physics scene creation installs neither UI.
 
 ## Controls
 
@@ -10,7 +135,7 @@ or a native display lease, then binds the viewer after a successful commit.
 |---|---|
 | Tab / Shift+Tab | Toggle the original left / right panels independently |
 | Alt+F/O/S/W/P/R/V/G/L/J/C/E | Fold the corresponding original section |
-| F11 | Open/close Godot extras only (renderer, performance, tools, examples) |
+| F11 (Extras installed) | Open/close Godot extras only (renderer, performance, tools, examples) |
 | F1 / F2 / F3 / F4 | Original Help / MuJoCo Info / Profiler / Sensors overlays |
 | Left / right / middle drag; wheel | Orbit / pan / zoom; Shift changes the direction |
 | Left double-click / PageUp | Select body / select parent |
@@ -89,36 +214,68 @@ change FPS/system metrics. F11 → Performance controls the Godot overlay, initi
 FPS-only; every metric, including FPS, can be disabled. Optional CPU/RAM/GPU/VRAM numbers
 refer to the whole system/card. GPU selection must match the renderer, otherwise
 it is unavailable. GPU milliseconds are elapsed render time, not utilization.
-Native update FPS and Godot host FPS are labeled separately. Information refreshes
+Native update FPS and Godot host FPS are labeled separately. With Extras alone,
+an explicitly disabled Godot SubViewport reports zero target FPS; conditional
+update modes have no reliable per-target counter and display labeled host FPS
+with an availability explanation. The supported EnvironmentHost uses UPDATE_ALWAYS
+after commit and provides a measured target update rate. Information refreshes
 at 5 Hz, optional OS samples at 1 Hz; no optional polling without a visible consumer.
 
-Preferences live in a per-project `user://mujoco_viewer_*.cfg`; simulation state is
-not stored there. F11 starts closed; original sidebars default to visible and
-original F1–F4 overlays to hidden. Old mixed Info/performance preferences migrate
-into separate settings. Each fresh run starts from the
-authored camera, including its initial projection. Outputs default to timestamped
-folders under `user://mujoco_viewer`; F11 → Tools accepts a different directory.
+Preferences use independent role/component namespaces under `user://mujoco_components/`;
+even identical IDs in the two roles do not share state. Old mixed viewer
+preferences are not imported. Only allowed window/layout/visibility/display and
+performance choices are stored. Target, Enabled, feature restrictions, Theme/UI
+resource binding and simulation state never enter personal preferences. Restore
+can be disabled. F11 starts closed; original sidebars default visible and F1–F4
+hidden. Outputs default to timestamped folders under `user://mujoco_viewer`;
+Output commands can supply an explicit `path`; output preferences belong to the
+component issuing the output, never an absent counterpart.
 Original File includes XML/MJB saves, print exports and screenshots. XML exports
 the committed compiled world with its session keyframes; it never uses the
 process-global last-XML parser slot or writes back editor design. State copying
 remains the original key XML operation, including high-precision Ctrl+Shift+C.
 Reload is transactional: invalid saved resources preserve the current world.
 
-## Integration
+## Component API
 
-- `world.runtime_viewer` exposes `request_action(Dictionary)` and
-  `viewer_command_finished(Dictionary)`, plus `world_changed(Node3D)`.
-- `register_extension(key, title, Control, help)` places example controls inside
-  F11 → Examples and adds their help to F1.
-- `WorldHandle.ResetInitial()/RestoreSnapshot()` and `ViewerHandle` provide C#
-  access. Rebind typed world/model handles after `world_changed`.
-- `set_controls_visible` / C# `ShowControls` remain aliases for Godot extras.
-  `set_overlay` / `SetOverlay` control Godot performance. Original sidebars and
-  Info use `set_native_panels` / `ShowNativePanels` and `set_info` / `SetInfo`.
-- Native interfaces are `scene_viewer_request(space, revision, frame, sequence,
-  command)`, `scene_viewer_frame(space, known_revision, options)` and
-  `scene_viewer_ack(space, revision, frame)`. Consume results with
-  `scene_viewer_result(request)`; cancel unused requests explicitly.
+Bind the explicit component node, not a World lookup:
+
+```gdscript
+@export var extras: MjGodotExtras
+
+func step_exactly() -> void:
+    var request := extras.execute("step", {"count": 10})
+    if request == 0:
+        push_warning(extras.last_error)
+        return
+    # Poll action_result(request) or observe action_finished(request, result).
+```
+
+- Both roles expose `read_state()`, `execute(action_id, arguments)`,
+  `action_result(id)`, `action_finished(id, result)` and `target_changed(world)`.
+  Commands return a request ID or 0 with `last_error`; snapshots contain values,
+  not live authority pointers. Original viewer snapshots also contain the
+  model catalog, inspection details and presentation state.
+- Original: `show_native_panels(left, right)`, `show_info(enabled)`,
+  `add_help(key, title, text)`, `remove_help(key)` and official MuJoCo commands.
+- Extras: `show_performance(enabled)`, `show_extras(visible)`,
+  `add_extension(key, title, Control)`, `remove_extension(key)`, `step`,
+  `capture_snapshot`, `restore_snapshot` and renderer/metric commands.
+- Each API rejects the other role's actions; it never creates an invisible UI
+  counterpart to execute them.
+- C#: `ViewerHandle.Bind(viewer)` provides `ShowNativePanels`, `ShowInfo`,
+  `SetControl`, `SetJoint`, `SetEquality` and `ResetInitial`.
+  `ExtrasHandle.Bind(extras)` provides `ShowExtras`, `ShowPerformance`,
+  `CaptureSnapshot` and `RestoreSnapshot`. Both expose `Execute`, `Read` and
+  `SetEnabled`, and follow only their explicit component's lifetime.
+- Low-level authority interfaces remain `scene_viewer_request`,
+  `scene_viewer_frame`, `scene_viewer_ack` and `scene_viewer_result`. The internal
+  world presentation session owns their lifetimes and never installs UI.
+
+This is a breaking refactor. The former World viewer lookup, automatic installation,
+old GDScript/C# wrapper calls and hidden SimulationControls are removed. There are
+no compatibility aliases or old-preference migration. Update scenes and scripts
+to explicit components. Existing gameplay physics APIs keep their domain behavior.
 
 The core uses public `mjv_*` APIs and adapted MuJoCo 3.16 simulate logic, with no
 GLFW or second simulation loop. Frozen scenes use `mjv_copyData`; packets contain
@@ -142,13 +299,76 @@ See `src/viewer/UPSTREAM.md` and `src/viewer/LICENSE-MUJOCO` for source and lice
 `python3 tests/runtime_viewer/run.py --out build-runtime-viewer/godot`
 checks real Godot input, authoritative operations, outputs and saved-scene reload.
 Add `--native` for the GLX path or `--headless` for the display-free path.
-`tests/runtime_clock/run.sh` retains the existing clock/C# compatibility checks.
-The graphical fixture records p50/p95 frame times and process RSS with VSync off
+`tests/runtime_clock/run.sh` retains the authoritative clock/C# regression checks.
+Add `--component-only` for actual no-UI rendering and game-camera/lifecycle cases,
+or `--contract-only` for inherited UI/Theme, feature policy, rectangular layout
+and independent per-viewport preferences. These focused modes do not replace the
+full interaction and all-entry regressions. `tests/native_view/run.py --preset-only`
+checks the actual editor preset, ownership, Undo/Redo and saved bindings. `--saved-scenes-only` independently
+checks nested saved data freshness, cached executing Script identity and scoped
+loader removal; `--bindings-only` checks real same-ID model commits and stale
+model widgets. Deliberately invalid component configurations are accepted only
+when their exact diagnostic occurs once and its matching rejection assertion
+passes; unrelated errors remain fatal.
+The component probe records overlay-off/FPS/all supported metrics/analysis and
+absent/disabled p50/p95 and RSS with paused physics. Optional CPU sampling warms
+up at its real 1 Hz rate; unavailable GPU counters retain their driver reason.
+Graphical runs check actual presented-backend FPS and stop optional consumers
+after teardown, including the following real integration batch.
+The full graphical fixture also records p50/p95 frame times and process RSS with VSync off
 and a 120 FPS cap for overlay off/FPS/all metrics/analysis modes. These short,
 capped fixture samples are not uncapped throughput or production benchmarks.
 
-The panel-separation acceptance also captures both renderers with the four sidebar
+The historical panel-separation acceptance captured both renderers with the four sidebar
 combinations, F1–F4 and F11; it tests real keyboard/focus routing, central picking,
 resize/SubViewport, orthographic/fixed/tracking/off-axis cameras, native-control
 outputs and independent data consumers. Historical viewer results predate these
 UI criteria; new evidence is recorded separately.
+
+
+## Historical component captures
+
+The following images and [validation scopes, hashes and raw evidence](../../../docs/development/runtime-viewer-component-validation-2026-10-31.json)
+cover the earlier combined-viewer implementation, including native/Godot/OFF
+and rejection cases. They do not certify the new independent-component split;
+the independent split has its own evidence below.
+
+These are actual editor previews. Sample rows are labeled and runtime services
+are inactive; the custom scene inherits saved widgets and uses an authored Theme.
+The editor images show the visible canvas at its native zoom; the runtime pair
+below shows the complete custom viewport.
+
+| Default editor preview | Custom editor preview |
+|---|---|
+| ![Default component in the editor](../../../docs/pics/runtime-viewer-component-editor-default.png) | ![Custom component in the editor](../../../docs/pics/runtime-viewer-component-editor-custom.png) |
+
+These actual custom fixture captures use a reduced rectangular 3D region with
+horizontal and vertical margins. Both backends use the shared frozen-frame
+interaction core. Godot retains gameplay 3D/materials; native MuJoCo draws its
+supported MuJoCo geometry and lighting.
+
+| Custom Godot layout | Custom native MuJoCo layout |
+|---|---|
+| ![Custom Godot component](../../../docs/pics/runtime-viewer-component-custom-godot.png) | ![Custom native component](../../../docs/pics/runtime-viewer-component-custom-native.png) |
+
+## Independent component captures
+
+The [independent split validation record](../../../docs/development/runtime-ui-split-validation-2026-10-31.json) records exact scopes, source hashes, expected diagnostics and performance limitations.
+These actual captures show the split components, without compositing or bitmap edits.
+The editor preset adds only the original panel; the Extras preview is separately authored.
+
+| Godot rendering | Native MuJoCo rendering |
+|---|---|
+| ![Original panel with Godot](../../../docs/pics/runtime-ui-split-godot.png) | ![Original panel with MuJoCo](../../../docs/pics/runtime-ui-split-native.png) |
+
+| Independent F11 Extras | Editor preset |
+|---|---|
+| ![Godot Extras](../../../docs/pics/runtime-ui-split-extras.png) | ![Add original panel preset](../../../docs/pics/runtime-ui-split-preset.png) |
+
+| Original editor preview | Extras editor preview |
+|---|---|
+| ![Original preview](../../../docs/pics/runtime-ui-split-editor-original.png) | ![Extras preview](../../../docs/pics/runtime-ui-split-editor-extras.png) |
+
+The actual Add Child Node dialog lists both public components. Its abstract shared base is not creatable.
+
+![Create independent Godot Extras](../../../docs/pics/runtime-ui-split-add-node.png)

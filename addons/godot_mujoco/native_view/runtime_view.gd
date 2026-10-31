@@ -1,6 +1,6 @@
 class_name MjNativeRuntimeView
 extends Control
-## Native display adapter. Input and authoritative CPU scenes belong to RuntimeViewer.
+## Native display adapter. Input is optional; authoritative CPU scenes belong to the world presentation session.
 @export var enabled := false
 @export var request_direct_to_screen := false
 var world: Node3D
@@ -13,10 +13,7 @@ var last_cleanup: Dictionary = {}
 var last_error := ""
 var known_revision := -1
 var active := false
-var saved_visible := true
 var saved_disable_3d := false
-var saved_picking := false
-var saved_camera: Camera3D
 var source_viewport: Viewport
 var camera_action := -1
 var camera_delta := Vector2.ZERO
@@ -45,6 +42,7 @@ func start_for(value: Node3D) -> bool:
 	if value.native_view_active or value.has_meta("native_view_owner"):
 		last_error = "Shared world already has a native view owner"; return false
 	world=value;world.set_meta("native_view_owner",weakref(self));source_viewport=value.get_viewport()
+	world._view_session.retry_camera_sync()
 	bridge=ClassDB.instantiate("MjSharedNativeViewBridge");add_child(bridge)
 	if not bridge.acquire_transport():
 		last_error="Another native view owns the process memory budget";bridge.queue_free();bridge=null;world.remove_meta("native_view_owner");world=null;return false
@@ -72,7 +70,7 @@ func _process(_delta: float) -> void:
 	latest=bridge.snapshot()
 	if latest.has("error"):
 		stop(str(latest.error)); return
-	var viewer: Node=world.runtime_viewer
+	var viewer: Node=world._view_session
 	if is_instance_valid(viewer): viewer.update_viewport_rect()
 	if latest.has("texture"):
 		var layout: Dictionary=request_layouts.get(int(latest.frame),{})
@@ -89,21 +87,28 @@ func _process(_delta: float) -> void:
 		for ticket in request_layouts.keys():
 			if ticket<int(latest.frame): request_layouts.erase(ticket)
 		if valid_layout and not active:
-			saved_visible=world.visible;saved_disable_3d=source_viewport.disable_3d;saved_picking=source_viewport.physics_object_picking;saved_camera=source_viewport.get_camera_3d()
-			if is_instance_valid(saved_camera): saved_camera.clear_current(false)
-			source_viewport.disable_3d=true;source_viewport.physics_object_picking=false;world.visible=false;world.native_view_active=true;active=true
+			# Keep the clipped Godot fallback until a valid native texture exists.
+			viewer.suspend_godot_presentation()
+			saved_disable_3d=source_viewport.disable_3d
+			source_viewport.disable_3d=true;world.native_view_active=true;active=true
 			if request_direct_to_screen:
 				RenderingServer.force_sync()
 				RenderingServer.viewport_set_render_direct_to_screen(source_viewport.get_viewport_rid(),true)
 	if not bridge.ready_for_request() or is_instance_valid(viewer) and viewer.frames_retiring: return
-	var options: Dictionary=world.runtime_viewer.frame_options("native") if is_instance_valid(world.runtime_viewer) else {}
+	if is_instance_valid(viewer): viewer.prepare_frame()
+	if is_instance_valid(viewer) and not viewer.camera_sync_error.is_empty():
+		stop("Source camera synchronization failed: "+viewer.camera_sync_error); return
+	if is_instance_valid(viewer) and not viewer.ready_for_capture():
+		waiting_for_world=true;pending_status="Synchronizing source camera";return
+	var options: Dictionary=viewer.frame_options("native") if is_instance_valid(viewer) else {}
 	var packet: Dictionary=PhysicsServer3D.call("scene_native_view_snapshot",world.space,known_revision,true,options)
 	if packet.get("pending",false):
 		waiting_for_world=true;pending_status=str(packet.get("status","pending"));return
 	waiting_for_world=false;pending_status=""
 	if packet.has("error"):
 		stop(str(packet.error)); return
-	if is_instance_valid(world.runtime_viewer): world.runtime_viewer.accept_frame(packet)
+	if is_instance_valid(world._view_session): world._view_session.accept_frame(packet)
+	if is_instance_valid(viewer) and viewer.frames_retiring: return
 	var central: Rect2=viewer.render_rect_in_source() if is_instance_valid(viewer) else Rect2(Vector2.ZERO,size)
 	var ticket: int=bridge.request_shared(packet,maxi(16,int(central.size.x)),maxi(16,int(central.size.y)),camera_delta.x,camera_delta.y,camera_action)
 	if ticket>0:
@@ -111,14 +116,14 @@ func _process(_delta: float) -> void:
 		known_revision=int(packet.revision);last_snapshot=packet;last_snapshot.erase("model");last_snapshot.erase("objects");submitted+=1;camera_action=-1;camera_delta=Vector2.ZERO
 
 func after_draw() -> void:
-	if stopped or pending_presented.is_empty() or not is_instance_valid(world) or not is_instance_valid(world.runtime_viewer): return
+	if stopped or pending_presented.is_empty() or not is_instance_valid(world) or not is_instance_valid(world._view_session): return
 	var shown: Dictionary=pending_presented
 	pending_presented={}
-	world.runtime_viewer.native_presented(shown.number,shown.revision,shown.frame_id,shown.layout)
+	world._view_session.native_presented(shown.number,shown.revision,shown.frame_id,shown.layout)
 
 func stop(reason := "") -> Dictionary:
 	if stopped: return last_cleanup
-	if is_instance_valid(world) and is_instance_valid(world.runtime_viewer): world.runtime_viewer.release_display_frames()
+	if is_instance_valid(world) and is_instance_valid(world._view_session): world._view_session.release_display_frames()
 	stopped=true;waiting_for_world=false;pending_status="";last_error=reason;set_process(false)
 	if is_instance_valid(source_viewport): RenderingServer.viewport_set_render_direct_to_screen(source_viewport.get_viewport_rid(),false)
 	if canvas.is_valid():
@@ -128,14 +133,13 @@ func stop(reason := "") -> Dictionary:
 	RenderingServer.force_sync()
 	if is_instance_valid(bridge): last_cleanup=bridge.finish();bridge.queue_free();bridge=null
 	if active and is_instance_valid(source_viewport):
-		source_viewport.disable_3d=saved_disable_3d;source_viewport.physics_object_picking=saved_picking
-		if is_instance_valid(saved_camera): saved_camera.make_current()
+		source_viewport.disable_3d=saved_disable_3d
 	if is_instance_valid(world):
 		world.native_view_error=reason
 		if active:
 			world.sync_native_view_fallback()
-			world.visible=saved_visible
 		world.native_view_active=false
+		if is_instance_valid(world._view_session): world._view_session.resume_godot_presentation()
 		if world.has_meta("native_view_owner"): world.remove_meta("native_view_owner")
 	active=false;world=null;mouse_filter=Control.MOUSE_FILTER_IGNORE
 	return last_cleanup

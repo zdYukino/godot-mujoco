@@ -8,13 +8,12 @@ var model: Node3D
 func _ready() -> void:
 	world=get_parent(); model=world.get_node("Model")
 	apply_floor_grid()
-	if not Engine.is_editor_hint(): call_deferred("register_viewer")
-func register_viewer(_viewer: Node = null) -> void:
-	if not is_instance_valid(world.runtime_viewer):
-		if not world.viewer_ready.is_connected(register_viewer): world.viewer_ready.connect(register_viewer,CONNECT_ONE_SHOT)
-		return
+func get_viewer_help() -> Dictionary:
+	return {"key":"gallery","title":help_title(),"text":help_description()}
+func register_extras(extras: Node) -> String:
 	var note := Label.new(); note.autowrap_mode=TextServer.AUTOWRAP_WORD_SMART; note.text=help_title()
-	world.runtime_viewer.register_extension("gallery",help_title(),note,help_description())
+	extras.add_extension("gallery",help_title(),note)
+	return "gallery"
 func help_title() -> String:
 	return "动态形状示例"
 func help_description() -> String:

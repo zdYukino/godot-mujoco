@@ -1,5 +1,7 @@
 extends SceneTree
 const Builder=preload("res://addons/godot_mujoco/model/author_builder.gd")
+const Author=preload("res://addons/godot_mujoco/model/author_resource.gd")
+const Xml=preload("res://addons/godot_mujoco/model/author_xml.gd")
 const SceneBuilder=preload("res://addons/godot_mujoco/model/scene_builder.gd")
 func _initialize() -> void: call_deferred("run")
 func box(world: Node, name_: String, size_: Vector3, pos: Vector3, friction: float) -> void:
@@ -18,6 +20,12 @@ func run() -> void:
   var candidate: Dictionary=source.snapshot().duplicate(true)
   var regex=RegEx.new();regex.compile(' friction="[^"]*"')
   candidate.xml=regex.sub(candidate.xml,"",true).replace("<worldbody>",'<default><geom friction="%s .005 .0001"/></default><worldbody>' % friction)
+  var authored: Resource=Author.from_xml(candidate.xml).design
+  var option: Dictionary=Xml.section(authored.tree,"option")
+  if option.is_empty():
+   option={"tag":"option","attrs":{},"children":[]};authored.tree.children.push_front(option)
+  option.attrs.gravity="2 0 -9.8"
+  candidate.xml=authored.xml()
   candidate.state.erase("integration")
   var doc: RefCounted=ClassDB.instantiate("MjEditorDocument")
   if not doc.restore(candidate):printerr(doc.get_error());quit(1);return
@@ -27,7 +35,7 @@ func run() -> void:
   var lowest=INF
   for g in doc.geometry():
    if collisions.get(g.name,"").contains("ankle_roll") and g.type==2:lowest=minf(lowest,g.transform.origin.y-g.size.x)
-  candidate=doc.snapshot();candidate.state.erase("integration");candidate.state.qpos[2]=.001-lowest;candidate.state.qvel[0]=1.5
+  candidate=doc.snapshot();candidate.state.erase("integration");candidate.state.qpos[2]=.001-lowest
   if not doc.restore(candidate):printerr(doc.get_error());quit(1);return
   var package=await Builder.save_document(doc,"res://models","gui_"+mode)
   if not package.error.is_empty():printerr(package.error);quit(1);return
