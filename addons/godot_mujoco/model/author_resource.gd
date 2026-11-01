@@ -22,6 +22,11 @@ signal design_changed
 @export_storage var collision_stats: Array = []
 @export_storage var validated_context := ""
 @export_storage var compiled_snapshot: Dictionary = {}
+@export_storage var editor_artifact_stamp: Dictionary = {}
+var _source_epoch := 0
+var _projection_epoch := -1
+var _projection_source: Dictionary = {}
+var _projection: Dictionary = {}
 
 static func from_xml(text: String) -> Dictionary:
 	var parsed := Xml.parse(text)
@@ -55,6 +60,12 @@ static func from_native_document(document: RefCounted) -> Dictionary:
 func author_snapshot() -> Dictionary:
 	return {"format":format_version, "document_id":document_id, "tree":tree.duplicate(true), "initial_pose":initial_pose.duplicate(true), "initial_controls":initial_controls.duplicate(true), "mesh_options":mesh_options.duplicate(true), "dependencies":dependencies.duplicate(true), "provenance":provenance.duplicate(true), "revision":revision}
 
+func matches_author_snapshot(value: Dictionary) -> bool:
+	if value.is_empty(): return false
+	for field in value:
+		if get("format_version" if field == "format" else field) != value[field]: return false
+	return true
+
 func restore_author(value: Dictionary) -> String:
 	if value.get("format") != 1 or not value.get("tree") is Dictionary: return "Unsupported author document"
 	var candidate: Dictionary = value.tree.duplicate(true)
@@ -80,6 +91,7 @@ func restore_author(value: Dictionary) -> String:
 	dependencies = value.get("dependencies", {}).duplicate(true)
 	provenance = value.get("provenance", {}).duplicate(true)
 	revision = int(value.get("revision", 0))
+	invalidate_source_projection()
 	design_changed.emit()
 	emit_changed()
 	return ""
@@ -88,6 +100,7 @@ func xml() -> String:
 	return Xml.write(tree)
 
 func normalize_geometries() -> void:
+	invalidate_source_projection()
 	Xml.normalize_fromto(tree)
 	var world := Xml.section(tree,"worldbody")
 	if world.is_empty(): return
@@ -106,13 +119,57 @@ func compiler_degrees() -> bool:
 	return Xml.section(tree, "compiler").get("attrs", {}).get("angle", "degree") != "radian"
 
 func entities() -> Array[Dictionary]:
+	# Public callers own their results; internal read passes use entity_snapshot().
+	return entity_snapshot().entities.duplicate(true)
+
+func invalidate_source_projection() -> void:
+	# This lifetime is independent of serialized revision (notably after Undo).
+	_source_epoch += 1
+
+func entity_snapshot() -> Dictionary:
+	# tree is deliberately a public mutable Dictionary. Compare actual content,
+	# including XML that is not a visible entity, rather than trusting revision or
+	# a hash. This also detects mutations through Xml.find()/section() aliases in
+	# the middle of a command. A read pass acquires once, then discards on mutation.
+	# epoch covers this tree projection only, not initial state, mesh options or
+	# dependencies. It cannot certify a complete author/compiled artifact.
+	if _projection_epoch == _source_epoch and tree == _projection_source: return _projection
+	if _projection_epoch == _source_epoch: _source_epoch += 1
 	var result: Array[Dictionary] = []
 	var classes := {}
 	for kind in ["body","geom","joint"]:
 		classes[kind] = {}
 		default_classes(kind, Xml.section(tree,"default"), {}, classes[kind])
 	_collect(Xml.section(tree, "worldbody"), "", Transform3D.IDENTITY, [], result, classes, "main")
-	return result
+	var by_id := {}
+	var geom_by_name := {}
+	var names := {}
+	var actuators_by_joint := {}
+	for element in Xml.walk(tree): names[element.get("id", "")] = str(element.get("attrs", {}).get("name", ""))
+	for item in result:
+		by_id[item.id] = item
+		if item.kind == "geom" and not geom_by_name.has(item.name): geom_by_name[item.name] = item
+	for actuator in Xml.section(tree, "actuator").get("children", []):
+		var joint: String = actuator.get("attrs", {}).get("joint", "")
+		if not actuators_by_joint.has(joint): actuators_by_joint[joint] = []
+		actuators_by_joint[joint].append(actuator.duplicate(true))
+	_projection_source = tree.duplicate(true)
+	_projection_epoch = _source_epoch
+	_projection = {"epoch":_source_epoch, "entities":result, "by_id":by_id, "geom_by_name":geom_by_name, "names":names, "actuators_by_joint":actuators_by_joint}
+	_make_read_only(_projection)
+	return _projection
+
+func _make_read_only(value: Variant) -> void:
+	if value is Dictionary:
+		for child in value.values(): _make_read_only(child)
+		value.make_read_only()
+	elif value is Array:
+		for child in value: _make_read_only(child)
+		value.make_read_only()
+
+func joint_actuators(identity: String) -> Array:
+	var snapshot := entity_snapshot()
+	return snapshot.actuators_by_joint.get(snapshot.names.get(identity, ""), []).duplicate(true)
 
 func default_classes(kind: String, block: Dictionary, inherited: Dictionary, result: Dictionary) -> void:
 	var values := inherited.duplicate(true)
@@ -166,14 +223,13 @@ func _collect(element: Dictionary, parent_id: String, frame_pose: Transform3D, f
 	for child in element.get("children", []): _collect(child, next_parent, next_pose, next_frames, output, classes, element.get("attrs",{}).get("childclass",inherited_class))
 
 func entity(identity: String) -> Dictionary:
-	for item in entities():
-		if item.id == identity: return item
-	return {}
+	return entity_snapshot().by_id.get(identity, {}).duplicate(true)
 
 func source_name(identity: String) -> String:
-	return str(Xml.find(tree, identity).get("attrs", {}).get("name", ""))
+	return entity_snapshot().names.get(identity, "")
 
 func touch() -> void:
+	invalidate_source_projection()
 	revision += 1
 	validation_error = ""
 	design_changed.emit()
@@ -191,16 +247,18 @@ func fork() -> MjAuthorResource:
 	result.collision_stats = collision_stats.duplicate(true)
 	result.validated_context = validated_context
 	result.compiled_snapshot = compiled_snapshot.duplicate(true)
+	result.editor_artifact_stamp = editor_artifact_stamp.duplicate(true)
 	return result
 
-func worker_xml(collision_options: Dictionary = {}) -> String:
+func worker_xml(collision_options: Dictionary = {}, dependency_paths: Dictionary = {}) -> String:
 	var copy := tree.duplicate(true)
 	if not collision_options.is_empty(): preload("collision_settings.gd").write_world(copy,collision_options)
 	for element in Xml.walk(copy):
 		for key in element.get("attrs", {}):
 			if key in ["file", "fileleft", "fileright", "fileup", "filedown", "filefront", "fileback"]:
 				var path: String = element.attrs[key]
-				if path.begins_with("res://"): element.attrs[key] = ProjectSettings.globalize_path(path)
+				if dependency_paths.has(path): element.attrs[key] = dependency_paths[path]
+				elif path.begins_with("res://"): element.attrs[key] = ProjectSettings.globalize_path(path)
 	return Xml.write(copy)
 
 func native_initial_pose() -> Dictionary:
@@ -219,19 +277,31 @@ func native_mesh_options() -> Dictionary:
 
 func runtime_xml(collision_options: Dictionary = {}) -> String:
 	if compiled_snapshot.is_empty() or validated_revision != revision: return worker_xml(collision_options)
+	if not compiled_snapshot.get("xml") is String: return worker_xml(collision_options)
 	var parsed := Xml.parse(compiled_snapshot.get("xml", ""))
 	if not parsed.error.is_empty(): return worker_xml(collision_options)
+	_remap_snapshot_assets(parsed.tree, true)
+	if not collision_options.is_empty(): preload("collision_settings.gd").write_world(parsed.tree,collision_options)
+	return Xml.write(parsed.tree)
+
+func portable_snapshot(value: Dictionary) -> Dictionary:
+	var result := value.duplicate(true)
+	var parsed := Xml.parse(result.get("xml", ""))
+	if not parsed.error.is_empty(): return {}
+	_remap_snapshot_assets(parsed.tree, false)
+	result.xml = Xml.write(parsed.tree)
+	return result
+
+func _remap_snapshot_assets(snapshot_tree: Dictionary, absolute: bool) -> void:
 	var assets := {}
 	for element in Xml.walk(tree):
 		if element.get("attrs", {}).has("name"): assets[str(element.tag) + ":" + str(element.attrs.name)] = element.attrs
-	for element in Xml.walk(parsed.tree):
+	for element in Xml.walk(snapshot_tree):
 		var source: Dictionary = assets.get(str(element.tag) + ":" + str(element.get("attrs", {}).get("name", "")), {})
 		for key in element.get("attrs", {}):
 			if key in ["file", "fileleft", "fileright", "fileup", "filedown", "filefront", "fileback"] and source.has(key):
 				var path: String = source[key]
-				element.attrs[key] = ProjectSettings.globalize_path(path) if path.begins_with("res://") else path
-	if not collision_options.is_empty(): preload("collision_settings.gd").write_world(parsed.tree,collision_options)
-	return Xml.write(parsed.tree)
+				element.attrs[key] = ProjectSettings.globalize_path(path) if absolute and path.begins_with("res://") else path
 
 func validate_dependencies() -> String:
 	if format_version != 1 or tree.get("tag") != "mujoco": return "Invalid author design"

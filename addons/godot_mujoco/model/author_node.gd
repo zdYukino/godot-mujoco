@@ -8,6 +8,7 @@ var motion_correction := Transform3D.IDENTITY
 var source_model: WeakRef
 var inspector_schema: Array[Dictionary] = []
 var inspector_schema_initialized := false
+var _read_snapshot: Dictionary = {}
 
 func author_kind() -> String:
 	return ""
@@ -23,12 +24,15 @@ func _ready() -> void:
 	set_notify_local_transform(Engine.is_editor_hint())
 	if Engine.is_editor_hint(): refresh_inspector_schema()
 
-func refresh_inspector_schema() -> void:
+func refresh_inspector_schema(snapshot: Dictionary = {}) -> void:
 	# Rebuilding the Inspector destroys active color pickers and slider drags.
 	# Values are read through _get(); only a changed field layout needs a rebuild.
+	var previous := _read_snapshot
+	_read_snapshot = snapshot
 	var fields: Array[Dictionary] = []
 	for field in get_property_list():
 		if String(field.name).begins_with("mjcf/"): fields.append(field)
+	_read_snapshot = previous
 	var layout_changed := inspector_schema_initialized and fields != inspector_schema
 	inspector_schema = fields
 	inspector_schema_initialized = true
@@ -44,6 +48,7 @@ func _notification(what: int) -> void:
 		model.author_scene.node_transform_changed(self)
 
 func item() -> Dictionary:
+	if not _read_snapshot.is_empty(): return _read_snapshot.by_id.get(entity_id, {}).duplicate(true)
 	var model := author_model()
 	return model.design.entity(entity_id) if model and model.get("design") else {}
 
@@ -101,7 +106,8 @@ func _get_property_list() -> Array[Dictionary]:
 func joint_actuators() -> Array:
 	var model := author_model()
 	if not model or not model.design: return []
-	return Xml.section(model.design.tree, "actuator").get("children", []).filter(func(a): return a.get("attrs", {}).get("joint", "") == item().get("name", ""))
+	if not _read_snapshot.is_empty(): return _read_snapshot.actuators_by_joint.get(_read_snapshot.names.get(entity_id, ""), []).duplicate(true)
+	return model.design.joint_actuators(entity_id)
 
 func actuator_parameters(actuator: Dictionary) -> Array:
 	match actuator.tag:
@@ -113,21 +119,26 @@ func actuator_parameters(actuator: Dictionary) -> Array:
 func native_properties() -> Dictionary:
 	var model := author_model()
 	if not model or not model.get("design"): return {}
+	var label: String = model.design.source_name(entity_id)
+	var kind := author_kind()
 	for entity in model.design.cached_entities:
-		if entity.kind == author_kind() and entity.name == model.design.source_name(entity_id): return entity.properties
+		if entity.kind == kind and entity.name == label: return entity.properties
 	return {}
 
-func values(key: String, fallback: String) -> PackedFloat64Array:
-	return Xml.numbers(item().get("attrs", {}).get(key, fallback))
+func values(key: String, fallback: String, attrs: Dictionary = {}) -> PackedFloat64Array:
+	return Xml.numbers((item().get("attrs", {}) if attrs.is_empty() else attrs).get(key, fallback))
 
 func _get(property_name: StringName) -> Variant:
 	var key := String(property_name).trim_prefix("mjcf/")
 	if key == String(property_name): return null
-	var entity := item()
+	var model := author_model()
+	if not model or not model.get("design"): return null
+	# This private getter returns scalar/value fields, so it can read the frozen
+	# stage directly. Public item() still returns an independently mutable copy.
+	var snapshot: Dictionary = _read_snapshot if not _read_snapshot.is_empty() else model.design.entity_snapshot()
+	var entity: Dictionary = snapshot.by_id.get(entity_id, {})
 	if entity.is_empty(): return null
 	var attrs: Dictionary = entity.attrs
-	var compiled := native_properties()
-	var model := author_model()
 	if key.begins_with("actuators/"):
 		var parts := key.split("/")
 		var actuator: Dictionary = joint_actuators().filter(func(a):return a.attrs.get("name",a.tag)==parts[1])[0]
@@ -140,30 +151,30 @@ func _get(property_name: StringName) -> Variant:
 		"inertia_mode": return "automatic" if Xml.section(Xml.find(model.design.tree, entity_id), "inertial").is_empty() else "explicit"
 		"mass":
 			var inertial := Xml.section(Xml.find(model.design.tree, entity_id), "inertial")
-			return float(inertial.get("attrs", {}).get("mass", compiled.get("mass", 1.0)))
+			return float(inertial.attrs.mass) if inertial.get("attrs", {}).has("mass") else float(native_properties().get("mass", 1.0))
 		"inertia":
 			var inertial := Xml.section(Xml.find(model.design.tree, entity_id), "inertial")
-			var v: Variant = Xml.numbers(inertial.attrs.diaginertia) if inertial.get("attrs", {}).has("diaginertia") else compiled.get("inertia", [1.0, 1.0, 1.0])
+			var v: Variant = Xml.numbers(inertial.attrs.diaginertia) if inertial.get("attrs", {}).has("diaginertia") else native_properties().get("inertia", [1.0, 1.0, 1.0])
 			return Vector3(v[0], v[1], v[2])
 		"center_of_mass":
 			var inertial := Xml.section(Xml.find(model.design.tree, entity_id), "inertial")
-			var v: Variant = Xml.numbers(inertial.attrs.pos) if inertial.get("attrs", {}).has("pos") else compiled.get("ipos", [0.0, 0.0, 0.0])
+			var v: Variant = Xml.numbers(inertial.attrs.pos) if inertial.get("attrs", {}).has("pos") else native_properties().get("ipos", [0.0, 0.0, 0.0])
 			return Xml.mj_vector(Vector3(v[0], v[1], v[2]))
 		"inertial_orientation":
 			var inertial := Xml.section(Xml.find(model.design.tree, entity_id), "inertial")
-			var v: Variant = Xml.numbers(inertial.attrs.quat) if inertial.get("attrs", {}).has("quat") else compiled.get("iquat", [1.0,0.0,0.0,0.0])
+			var v: Variant = Xml.numbers(inertial.attrs.quat) if inertial.get("attrs", {}).has("quat") else native_properties().get("iquat", [1.0,0.0,0.0,0.0])
 			return Xml.mj_basis(Basis(Quaternion(v[1],v[2],v[3],v[0]))).get_rotation_quaternion()
 		"radius":
-			var size := values("size", ".1")
+			var size := values("size", ".1", attrs)
 			return size[0] if size.size() else 0.1
 		"height":
-			var size := values("size", ".1 .1")
+			var size := values("size", ".1 .1", attrs)
 			return 2.0 * ((size[1] if size.size() > 1 else 0.1) + (size[0] if attrs.get("type") == "capsule" else 0.0))
 		"dimensions":
-			var size := values("size", ".1 .1 .1")
+			var size := values("size", ".1 .1 .1", attrs)
 			return Vector3(size[0], size[2] if size.size() > 2 else 0.1, size[1] if size.size() > 1 else 0.1) * 2.0
 		"display_extent":
-			var size := values("size", "5 5 .1")
+			var size := values("size", "5 5 .1", attrs)
 			return Vector2(size[0], size[1]) * 2.0
 		"mesh": return attrs.get("mesh","")
 		"mesh_file":
@@ -177,18 +188,18 @@ func _get(property_name: StringName) -> Variant:
 					return Vector3(size[0], size[2], size[1])
 			return Vector3.ONE
 		"friction":
-			var v := values("friction", "1 .005 .0001")
+			var v := values("friction", "1 .005 .0001", attrs)
 			return Vector3(v[0], v[1] if v.size() > 1 else .005, v[2] if v.size() > 2 else .0001)
 		"density": return float(attrs.get("density", "1000"))
 		"collision_layer": return int(attrs.get("contype", "1"))
 		"collision_mask": return int(attrs.get("conaffinity", "1"))
 		"margin": return float(attrs.get("margin", "0"))
 		"axis":
-			var v := values("axis", "0 0 1")
+			var v := values("axis", "0 0 1", attrs)
 			return entity.frame_transform.basis * Xml.mj_vector(Vector3(v[0], v[1], v[2]))
 		"limited": return attrs.get("limited", "auto") == "true" or (attrs.get("limited", "auto") == "auto" and attrs.has("range"))
 		"limits":
-			var v := values("range", "-1 1")
+			var v := values("range", "-1 1", attrs)
 			return Vector2(v[0], v[1]) * (180.0 / PI if attrs.get("type", "hinge") == "hinge" and not model.design.compiler_degrees() else 1.0)
 		"damping": return float(attrs.get("damping", "0").split(" ")[0])
 		"friction_loss": return float(attrs.get("frictionloss", "0"))

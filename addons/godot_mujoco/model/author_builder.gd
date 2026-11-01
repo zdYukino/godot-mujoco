@@ -26,13 +26,21 @@ static func apply_result(design: Resource, result: Dictionary) -> String:
 	design.collision_stats = result.collision_stats
 	design.validated_revision = design.revision
 	design.validated_context = result.context
+	design.editor_artifact_stamp = result.get("editor_artifact_stamp", {}).duplicate(true)
+	design.validation_error = ""
 	# Worker scratch paths are never required by a relocated saved design.
 	design.cache_path = ""
 	return ""
 
 static func compile_design(design: Resource, context: Dictionary = {}) -> String:
 	if context.is_empty(): context = Collision.context(null, design)
-	return apply_result(design, await run_worker({"op":"compile", "author":design.author_snapshot(), "context":context}))
+	var source: Dictionary = design.author_snapshot()
+	var captured_context := context.duplicate(true)
+	var limits := Collision.limits()
+	var result: Dictionary = await run_worker({"op":"compile", "author":source, "context":captured_context})
+	if not design.matches_author_snapshot(source): return "Author design changed during background compilation"
+	if context != captured_context or Collision.limits() != limits: return "Compilation context changed during background compilation"
+	return apply_result(design, result)
 
 static func save_design(design: Resource, parent: String, label: String) -> Dictionary:
 	if not parent.begins_with("res://") or parent.contains(".."):

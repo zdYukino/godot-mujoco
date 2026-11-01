@@ -14,7 +14,8 @@ static func create(model: MjAuthorResource) -> Node3D:
 	instance.owner = world
 	instance.author_scene = preload("author_scene.gd").new()
 	instance.author_scene.initialize(instance)
-	while not instance.author_scene.geometry_queue.is_empty(): instance.author_scene.build_geometry_step()
+	var error: String = instance.author_scene.drain_geometry()
+	if not error.is_empty(): world.last_error = error
 	return world
 
 static func prepare_tree(root: Node) -> String:
@@ -30,7 +31,8 @@ static func prepare_tree(root: Node) -> String:
 			root.author_scene.initialize(root)
 		if compiled:
 			root.author_scene.apply_compiled({"entities":root.design.cached_entities,"geometry":root.design.cached_geometry,"collision_geometry":root.design.collision_geometry,"collision_stats":root.design.collision_stats,"context":root.design.validated_context,"snapshot":root.design.compiled_snapshot})
-		while not root.author_scene.geometry_queue.is_empty(): root.author_scene.build_geometry_step()
+		var visual_error: String = root.author_scene.drain_geometry()
+		if not visual_error.is_empty(): return visual_error
 	for child in root.get_children():
 		var error := await prepare_tree(child)
 		if not error.is_empty(): return error

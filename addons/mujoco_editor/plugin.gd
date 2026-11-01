@@ -29,6 +29,7 @@ var scan_at := 0
 var history_states := {}
 var last_history_version := -1
 var last_scene: Node
+var author_sync_pending := false
 
 func _enter_tree() -> void:
 	if not ClassDB.class_exists("MjEditorDocument"): return
@@ -221,9 +222,11 @@ func _process(_delta: float) -> void:
 	var root := EditorInterface.get_edited_scene_root()
 	if not root: return
 	if root != last_scene: scene_switched(root)
+	var scene_nodes := all_nodes(root)
+	var structure_changed := false
 	# Native drag-and-drop can cross model roots. Reject that before reconciling
 	# either source, otherwise it could look like a deletion in the old model.
-	for node in all_nodes(root):
+	for node in scene_nodes:
 		if not node.has_method("author_kind") or not node.source_model: continue
 		var original: Node = node.source_model.get_ref()
 		if not original or original == node.author_model() or not original.author_scene: continue
@@ -234,10 +237,14 @@ func _process(_delta: float) -> void:
 		original.last_error = "仅支持在同一个模型内重新挂载；跨模型移动已撤回。"
 		original.author_scene.refresh_nodes()
 		author_status_changed(original)
+		structure_changed = true
+	# A repair can add/remove/reparent nodes. Reacquire traversal and author data
+	# on the next bounded scan before any model's deletion reconciliation.
+	if structure_changed: return
 	var history := get_undo_redo().get_history_undo_redo(get_undo_redo().get_object_history_id(root))
 	var version := int(history.get_version()) if history else 0
 	var current_models := {}; var instance_ids := {}
-	for node in all_nodes(root):
+	for node in scene_nodes:
 		if node is World and node.world_design:
 			current_models["world:" + str(node.get_path())] = node
 			continue
@@ -247,7 +254,9 @@ func _process(_delta: float) -> void:
 			node.design_instance_id = Xml.uuid(); node.design = node.design.fork()
 			if node.author_scene: node.author_scene.shutdown()
 			node.author_scene = preload("res://addons/godot_mujoco/model/author_scene.gd").new(); node.author_scene.initialize(node)
+			structure_changed = true
 		instance_ids[node.design_instance_id] = true; current_models[node.design_instance_id] = node
+	if structure_changed: return
 	if version != last_history_version and history_states.has(version):
 		syncing = true
 		for key in current_models:
@@ -259,15 +268,19 @@ func _process(_delta: float) -> void:
 		for model in current_models.values():
 			if model is Model: reconcile_nodes(model)
 	if version != last_history_version or not history_states.has(version):
-		var snapshots := {}
-		for key in current_models:
-			snapshots[key] = current_models[key].world_design.author_snapshot() if current_models[key] is World else current_models[key].design.author_snapshot()
-		history_states[version] = snapshots; last_history_version = version
+		store_history_state(current_models, version)
 	selected_models = current_models
+
+func store_history_state(models: Dictionary, version: int) -> void:
+	var snapshots := {}
+	for key in models:
+		snapshots[key] = models[key].world_design.author_snapshot() if models[key] is World else models[key].design.author_snapshot()
+	history_states[version] = snapshots; last_history_version = version
 
 func reconcile_nodes(model: Node) -> void:
 	if not model.author_scene or model.author_scene.applying: return
 	var manager: RefCounted = model.author_scene
+	var snapshot: Dictionary = model.design.entity_snapshot()
 	var seen := {}
 	for node in all_nodes(model):
 		if not node.has_method("author_kind") or node.author_model() != model: continue
@@ -279,14 +292,14 @@ func reconcile_nodes(model: Node) -> void:
 					descendant.entity_id = result.id_map[descendant.entity_id]; manager.nodes[descendant.entity_id] = descendant
 			model.restore_author_snapshot(result.after); return
 		seen[node.entity_id] = true
-		var item: Dictionary = model.design.entity(node.entity_id)
+		var item: Dictionary = snapshot.by_id.get(node.entity_id, {})
 		if item.is_empty(): continue
 		if str(node.name) != manager.last_names.get(node.entity_id, str(node.name)):
 			model.apply_author_command({"op":"rename", "id":node.entity_id, "name":str(node.name)}, false); return
 		var parent_id: String = node.get_parent().entity_id if node.get_parent().has_method("author_kind") else ""
 		if parent_id != item.parent_id:
 			model.apply_author_command({"op":"reparent", "id":node.entity_id, "parent_id":parent_id}, false); return
-	for item in model.design.entities():
+	for item in snapshot.entities:
 		if seen.has(item.id): continue
 		var result := Commands.execute(model.design, {"op":"delete", "id":item.id})
 		if result.get("confirmation_required", false):
@@ -306,12 +319,104 @@ func reconcile_nodes(model: Node) -> void:
 		else: model.apply_author_command({"op":"delete", "id":item.id, "confirmed":true}, false)
 		return
 
+func native_edit_intents(root: Node) -> Array[Dictionary]:
+	# Save/F5 can arrive before the next 50 ms scan, with several native edits in
+	# one action. Preserve their intent across each authoritative node refresh.
+	var result: Array[Dictionary] = []
+	var instance_ids := {}
+	for model in all_nodes(root):
+		if model is World and model.world_design:
+			if selected_models.get("world:" + str(model.get_path())) != model: result.append({"op":"scan"})
+			continue
+		if not model is Model or not model.design or not model.author_scene: continue
+		if selected_models.get(model.design_instance_id) != model: result.append({"op":"scan"})
+		if instance_ids.has(model.design_instance_id): result.append({"op":"scan"})
+		instance_ids[model.design_instance_id] = true
+		var snapshot: Dictionary = model.design.entity_snapshot()
+		var owned: Array[Node] = []
+		var seen := {}
+		for node in all_nodes(model):
+			if node.has_method("author_kind") and node.author_model() == model:
+				owned.append(node)
+				seen[node.entity_id] = int(seen.get(node.entity_id, 0)) + 1
+		for node in owned:
+			if node.source_model and node.source_model.get_ref() != model:
+				result.append({"op":"scan"}); continue
+			if seen[node.entity_id] > 1:
+				result.append({"op":"scan"}); continue
+			var item: Dictionary = snapshot.by_id.get(node.entity_id, {})
+			if item.is_empty(): continue
+			var intent := {"op":"edit", "model":weakref(model), "node":weakref(node), "id":node.entity_id}
+			if str(node.name) != model.author_scene.last_names.get(node.entity_id, str(node.name)): intent.name = str(node.name)
+			var parent: Node = node.get_parent()
+			var parent_id: String = parent.entity_id if parent.has_method("author_kind") else ""
+			if parent_id != item.parent_id:
+				intent.parent = weakref(parent); intent.parent_id = parent_id; intent.transform = node.transform
+			if intent.has("name") or intent.has("parent"): result.append(intent)
+		for item in snapshot.entities:
+			if seen.has(item.id) or (not item.parent_id.is_empty() and not seen.has(item.parent_id)): continue
+			var node: Variant = model.author_scene.nodes.get(item.id)
+			if is_instance_valid(node) and node.is_inside_tree() and node.author_model() != model:
+				result.append({"op":"scan"}) # A foreign move must be rejected globally.
+			else: result.append({"op":"delete", "model":weakref(model), "id":item.id})
+	return result
+
+func restore_native_intents(intents: Array[Dictionary]) -> bool:
+	var complete := true
+	for intent in intents:
+		if intent.op == "scan": continue
+		var model: Node = intent.model.get_ref()
+		if not is_instance_valid(model) or not model.design or not model.author_scene: continue
+		var item: Dictionary = model.design.entity(intent.id)
+		if item.is_empty(): continue
+		if intent.op == "delete":
+			complete = false
+			var node: Variant = model.author_scene.nodes.get(intent.id)
+			if is_instance_valid(node) and node.get_parent(): node.get_parent().remove_child(node)
+			continue
+		var node: Node3D = intent.node.get_ref()
+		if not is_instance_valid(node) or node.entity_id != intent.id: continue
+		if intent.has("name") and item.name != intent.name:
+			complete = false; node.name = intent.name
+		if intent.has("parent") and item.parent_id != intent.parent_id:
+			complete = false
+			var parent: Node = intent.parent.get_ref()
+			if not is_instance_valid(parent): continue
+			var previous: bool = node.synchronizing
+			node.synchronizing = true
+			if node.get_parent() != parent: node.reparent(parent, false)
+			node.transform = intent.transform
+			node.synchronizing = previous
+	return complete
+
 func _apply_changes() -> void:
+	var root := EditorInterface.get_edited_scene_root()
+	if not root: return
+	author_sync_pending = true
+	if syncing or modal_pending: return
+	var intents := native_edit_intents(root)
+	# Each pass accepts at most one structural source edit per model. Deleted
+	# nodes are absent from the traversal, and one intent can need both rename
+	# and reparent passes. Also allow native duplication/fork/repair scans.
+	for attempt in all_nodes(root).size() + 2 * intents.size() + 2:
+		restore_native_intents(intents)
+		scan_at = 0
+		_process(0.0)
+		if modal_pending: return # A save/run never consents to dependent deletion.
+		if restore_native_intents(intents) and native_edit_intents(root).is_empty():
+			author_sync_pending = false
+			break
+	if author_sync_pending:
+		push_warning("MuJoCo 节点改动尚未同步；请先解决结构编辑后再保存或运行。")
+		return
 	for model in selected_models.values():
 		if is_instance_valid(model) and model is Model and model.author_scene: model.author_scene.flush_transforms()
+	var history := get_undo_redo().get_history_undo_redo(get_undo_redo().get_object_history_id(root))
+	store_history_state(selected_models, int(history.get_version()) if history else 0)
 
 func _build() -> bool:
 	_apply_changes()
+	if author_sync_pending or modal_pending: return false
 	var root := EditorInterface.get_edited_scene_root()
 	if not root: return true
 	for node in all_nodes(root):
@@ -322,9 +427,12 @@ func _build() -> bool:
 		if node is Model and node.design:
 			if not node.global_transform.is_finite() or not node.global_basis.orthonormalized().is_equal_approx(node.global_basis) or not node.global_basis.get_scale().is_equal_approx(Vector3.ONE) or node.global_basis.determinant() <= 0:
 				push_warning("MuJoCo 模型摆放必须为刚性变换："+str(node.name)); return false
-			if node.design.validated_revision != node.design.revision or node.design.validated_context != node.compilation_signature() or not node.design.validation_error.is_empty() or (node.author_scene and (node.author_scene.due_ms > 0 or node.author_scene.compiler.busy())):
+			if not author_model_ready(node, true):
 				push_warning("MuJoCo 设计未通过当前版本验证：" + str(node.name)); return false
 	return true
+
+func author_model_ready(model: Node, check_files := false) -> bool:
+	return not author_sync_pending and not modal_pending and is_instance_valid(model) and model.design and model.author_scene and model.author_scene.editor_ready(check_files)
 
 func create_preview_root(title: String) -> Node3D:
 	var root := Node3D.new(); root.name = title
@@ -407,7 +515,8 @@ func finish_mesh_asset(model: Node, parent_id: String, source_path: String, asse
 
 func export_author(model: Node, directory: String) -> String:
 	if not model.design: return "Select a node author model"
-	if model.design.validated_revision != model.design.revision or model.design.validated_context != model.compilation_signature(): return "请先修复模型并等待后台验证完成。"
+	_apply_changes()
+	if not author_model_ready(model, true): return "请先修复模型并等待后台验证完成。"
 	var copy: Dictionary = model.design.tree.duplicate(true)
 	preload("res://addons/godot_mujoco/model/collision_settings.gd").write_world(copy,model.compilation_context().collision_options)
 	DirAccess.make_dir_recursive_absolute(directory.path_join("assets"))

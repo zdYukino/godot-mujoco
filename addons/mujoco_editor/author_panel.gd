@@ -119,14 +119,8 @@ func import_finished(result: Dictionary) -> void:
 	var error: String = design.restore_author(result.author)
 	if not error.is_empty(): status.text = error; return
 	if result.get("success", false):
-		design.cache_path = result.directory.path_join("result.bin")
-		design.cached_entities = result.entities
-		design.cached_geometry = result.geometry
-		design.collision_geometry = result.collision_geometry
-		design.collision_stats = result.get("collision_stats",[])
-		design.validated_context = result.get("context", "")
-		design.compiled_snapshot = result.snapshot
-		design.validated_revision = design.revision
+		error = preload("res://addons/godot_mujoco/model/author_builder.gd").apply_result(design, result)
+		if not error.is_empty(): status.text = error; return
 	else:
 		design.validation_error = result.get("error", "设计尚未完成")
 	create_model(design)

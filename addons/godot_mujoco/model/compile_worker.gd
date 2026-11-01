@@ -2,8 +2,11 @@ extends SceneTree
 const Xml = preload("author_xml.gd")
 const Author = preload("author_resource.gd")
 const Collision = preload("collision_settings.gd")
+const Artifact = preload("editor_artifact.gd")
 var request: Dictionary
 var source_files := {}
+var verified_preview_files := {}
+var repaired_preview_paths: Array = []
 
 func _initialize() -> void:
 	call_deferred("run")
@@ -52,10 +55,42 @@ func compile_request() -> Dictionary:
 		for file in source_files: source_files[file] = FileAccess.get_sha256(file)
 		var copied := copy_project_dependencies(design,source_path)
 		if not copied.error.is_empty(): return {"success":false,"error":copied.error}
-	var document: RefCounted = ClassDB.instantiate("MjEditorDocument")
 	var context: Dictionary = request.get("context",Collision.context(null,design))
-	if not document.compile_author(design.worker_xml(context.collision_options), design.native_initial_pose(), design.native_mesh_options(), design.native_initial_controls()):
+	var source_observation := Artifact.observe_files(design.dependencies.keys())
+	var dependency_error := stable_dependencies(design, source_observation)
+	if not dependency_error.is_empty(): return {"success":false, "error":dependency_error}
+	var stamp: Dictionary = request.get("editor_artifact_stamp", {})
+	# Only previously qualified bytes can be reused during a producing compile.
+	# File existence alone must never bless an old or replaced generated resource.
+	if stamp.get("schema") == Artifact.SCHEMA and stamp.get("producer") == Artifact.producer() and stamp.get("preview_files") is Dictionary:
+		for file in stamp.preview_files:
+			if Artifact.project_path(file) and FileAccess.file_exists(file) and FileAccess.get_sha256(file) == stamp.preview_files[file]: verified_preview_files[file] = stamp.preview_files[file]
+	var miss_reason := "compile requested"
+	if request.get("op", "") == "verify_or_compile":
+		var payload: Dictionary = request.get("payload", {})
+		miss_reason = Artifact.candidate_reason(design.author_snapshot(), context, payload, stamp)
+		if miss_reason.is_empty():
+			for file in Artifact.preview_paths(payload):
+				if not verified_preview_files.has(file): miss_reason = "preview resource missing or changed"; break
+		if miss_reason.is_empty():
+			dependency_error = stable_dependencies(design, source_observation)
+			if not dependency_error.is_empty(): return {"success":false, "error":dependency_error}
+			# A file can change while the other source/resource files are hashed.
+			for file in verified_preview_files:
+				if FileAccess.get_sha256(file) != verified_preview_files[file]:
+					verified_preview_files.erase(file)
+					miss_reason = "preview resource changed during verification"; break
+			if miss_reason.is_empty():
+				dependency_error = stable_dependencies(design, source_observation)
+				if not dependency_error.is_empty(): return {"success":false, "error":dependency_error}
+				return qualification(design, context, stamp, "hit", "")
+	var inputs := snapshot_dependencies(design)
+	if not inputs.error.is_empty(): return {"success":false, "error":inputs.error}
+	var document: RefCounted = ClassDB.instantiate("MjEditorDocument")
+	if not document.compile_author(design.worker_xml(context.collision_options, inputs.paths), design.native_initial_pose(), design.native_mesh_options(), design.native_initial_controls()):
 		return {"success":false, "error":document.get_error(), "author":design.author_snapshot()}
+	dependency_error = stable_dependencies(design, source_observation)
+	if not dependency_error.is_empty(): return {"success":false, "error":dependency_error}
 	if request.get("op") == "capture_preset":
 		var value: Dictionary = preload("res://addons/mujoco_editor/control_presets.gd").capture(document)
 		return {"success":not value.has("error"), "error":value.get("error", ""), "preset":value}
@@ -81,7 +116,48 @@ func compile_request() -> Dictionary:
 	var boundaries := collision_geometry.filter(func(g): return g.get("preview_kind", "") in ["compiled_convex_hull", "analytic_boundary"])
 	geometry_error = cache_visual_meshes(boundaries)
 	if not geometry_error.is_empty(): return {"success":false, "error":geometry_error}
-	return {"success":true, "error":"", "author":design.author_snapshot(), "context":Collision.signature(context), "snapshot":document.snapshot(), "entities":description.entities, "geometry":geometry, "collision_geometry":collision_geometry, "collision_stats":stats, "compiled_path":path, "mujoco_version":description.version}
+	var result := {"snapshot":design.portable_snapshot(document.snapshot()), "entities":description.entities, "geometry":geometry, "collision_geometry":collision_geometry, "collision_stats":stats, "compiled_path":path, "mujoco_version":description.version, "repaired_preview_paths":repaired_preview_paths}
+	var payload := Artifact.result_payload(result)
+	if not Artifact.payload_complete(payload): return {"success":false, "error":"Compiler produced an incomplete portable preview"}
+	var files := {}
+	for file in Artifact.preview_paths(payload):
+		if not FileAccess.file_exists(file): return {"success":false, "error":"Generated preview disappeared: " + str(file)}
+		files[file] = FileAccess.get_sha256(file)
+		if verified_preview_files.get(file) != files[file]: return {"success":false, "error":"Generated preview changed during publication: " + str(file)}
+	dependency_error = stable_dependencies(design, source_observation)
+	if not dependency_error.is_empty(): return {"success":false, "error":dependency_error}
+	result.merge(qualification(design, context, Artifact.make_stamp(design.author_snapshot(), context, payload, files), "compiled", miss_reason))
+	return result
+
+func stable_dependencies(design: Resource, observation: Dictionary) -> String:
+	var error: String = design.validate_dependencies()
+	if not error.is_empty(): return error
+	if Artifact.observe_files(design.dependencies.keys()) != observation: return "Author dependency changed during validation"
+	for file in source_files:
+		if not FileAccess.file_exists(file) or FileAccess.get_sha256(file) != source_files[file]: return "Source/include changed during import: " + str(file)
+	return ""
+
+func snapshot_dependencies(design: Resource) -> Dictionary:
+	# Native compilation reads immutable, operation-private verified bytes. An
+	# external A->B->A source race cannot make it consume B between two hashes of
+	# A. These paths never enter saved payloads or runtime authoritative requests.
+	var paths := {}
+	if design.dependencies.is_empty(): return {"error":"", "paths":paths}
+	var directory: String = request.directory.path_join("dependencies")
+	if DirAccess.make_dir_recursive_absolute(directory) != OK: return {"error":"Cannot snapshot author dependencies"}
+	for path in design.dependencies:
+		var target := directory.path_join(str(design.dependencies[path]) + "." + str(path).get_extension())
+		if DirAccess.copy_absolute(path, target) != OK or FileAccess.get_sha256(target) != design.dependencies[path]: return {"error":"Author dependency changed while snapshotting: " + str(path)}
+		paths[path] = target
+	return {"error":"", "paths":paths}
+
+func qualification(design: Resource, context: Dictionary, stamp: Dictionary, kind: String, reason: String) -> Dictionary:
+	var paths: Array = design.dependencies.keys()
+	for path in stamp.preview_files:
+		if not paths.has(path): paths.append(path)
+	var result := {"success":true, "error":"", "artifact_kind":kind, "cache_miss_reason":reason, "author_digest":stamp.author_digest, "context_digest":stamp.context_digest, "editor_artifact_stamp":stamp, "file_observation":Artifact.observe_files(paths), "context":Collision.signature(context)}
+	if kind == "compiled": result.author = design.author_snapshot()
+	return result
 
 func copy_mesh_asset() -> Dictionary:
 	var path: String = request.source
@@ -100,24 +176,20 @@ func cache_visual_meshes(geometry: Array) -> String:
 	for geom in geometry:
 		if geom.has("texture_image"):
 			var data: Dictionary = geom.texture_image
-			var digest := HashingContext.new()
-			digest.start(HashingContext.HASH_SHA256)
-			digest.update(var_to_bytes(data))
-			var texture_hash := digest.finish().hex_encode()
+			var texture_hash := Artifact.digest([Artifact.producer(), data])
 			var texture_path := directory.path_join(texture_hash + ".res")
-			if not FileAccess.file_exists(texture_path):
+			if not verified_preview_files.has(texture_path):
 				var texture: Texture2D = visual.texture(data)
 				var temporary := directory.path_join("." + texture_hash + "_" + str(hash(request.directory)) + ".tmp.res")
 				if not texture or ResourceSaver.save(texture, temporary, ResourceSaver.FLAG_COMPRESS) != OK: return "Cannot cache visual texture"
 				if ResourceSaver.set_uid(temporary, texture_hash.left(15).hex_to_int()) != OK or DirAccess.rename_absolute(temporary, texture_path) != OK: return "Cannot publish visual texture"
+				verified_preview_files[texture_path] = FileAccess.get_sha256(texture_path)
+				repaired_preview_paths.append(texture_path)
 			geom.texture_path = texture_path
 			geom.texture_alpha = data.channels == 4
-		var hasher := HashingContext.new()
-		hasher.start(HashingContext.HASH_SHA256)
-		hasher.update(var_to_bytes([Engine.get_version_info().hash, geom.type, geom.size, geom.get("vertices", []), geom.get("normals", []), geom.get("uvs", []), geom.has("texture_path"), geom.get("texture_uniform", false)]))
-		var fingerprint := hasher.finish().hex_encode()
+		var fingerprint := Artifact.digest([Artifact.producer(), geom.type, geom.size, geom.get("source_size", geom.size), geom.get("vertices", []), geom.get("normals", []), geom.get("uvs", []), geom.has("texture_path"), geom.get("texture_uniform", false)])
 		var path := directory.path_join(fingerprint + ".res")
-		if not FileAccess.file_exists(path):
+		if not verified_preview_files.has(path):
 			var instance: MeshInstance3D = visual.create(geom)
 			if not instance: return "Cannot create visual geometry: " + str(geom.name)
 			var temporary := directory.path_join("." + fingerprint + "_" + str(hash(request.directory)) + ".tmp.res")
@@ -126,6 +198,8 @@ func cache_visual_meshes(geometry: Array) -> String:
 			if error != OK: return "Cannot save visual mesh"
 			if ResourceSaver.set_uid(temporary, fingerprint.left(15).hex_to_int()) != OK: return "Cannot assign visual asset identity"
 			if DirAccess.rename_absolute(temporary, path) != OK: return "Cannot publish visual asset"
+			verified_preview_files[path] = FileAccess.get_sha256(path)
+			repaired_preview_paths.append(path)
 		geom.mesh_path = path
 		geom.erase("vertices")
 		geom.erase("normals")

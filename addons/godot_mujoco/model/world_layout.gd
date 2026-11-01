@@ -3,6 +3,7 @@ extends RefCounted
 const Model = preload("model_instance.gd")
 const Terrain = preload("static_heightfield.gd")
 const Xml = preload("author_xml.gd")
+const Artifact = preload("editor_artifact.gd")
 
 static func nodes(root: Node) -> Array[Node]:
 	var result: Array[Node] = [root]
@@ -73,13 +74,4 @@ static func signature(layout: Dictionary) -> String:
 	return var_to_bytes(canonical(lean)).hex_encode().sha256_text()
 
 static func canonical(value: Variant) -> Variant:
-	if value is Dictionary:
-		var result := {}
-		var keys: Array = value.keys();keys.sort_custom(func(a,b):return str(a)<str(b))
-		for key in keys: result[str(key)]=canonical(value[key])
-		return result
-	if value is Array:
-		var result := []
-		for item in value: result.append(canonical(item))
-		return result
-	return value
+	return Artifact.canonical(value)

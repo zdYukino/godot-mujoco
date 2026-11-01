@@ -9,6 +9,7 @@ var failures := []
 var service: Node
 var observed_model_stats := []
 var observed_runtime_stats := []
+var observed_open_surface_error := ""
 
 func check(ok: bool, label: String) -> void:
 	checks += 1
@@ -37,8 +38,9 @@ func _initialize() -> void:
 func run() -> void:
 	var file := FileAccess.open("res://depth-shared.obj",FileAccess.WRITE)
 	file.store_string("v 0 0 0\nv 1 0 0\nv 0 1 0\nv 0 0 1\nf 1 3 2\nf 1 2 4\nf 1 4 3\nf 2 3 4\n");file.close()
-	var source := '<mujoco><asset><mesh name="shared" file="%s" scale=".005 .005 .005"/></asset><worldbody><geom name="first" type="mesh" mesh="shared"/><geom name="second" type="mesh" mesh="shared" pos=".01 0 0"/></worldbody></mujoco>' % ProjectSettings.globalize_path("res://depth-shared.obj")
+	var source := '<mujoco><asset><mesh name="shared" file="res://depth-shared.obj" scale=".005 .005 .005"/></asset><worldbody><geom name="first" type="mesh" mesh="shared"/><geom name="second" type="mesh" mesh="shared" pos=".01 0 0"/></worldbody></mujoco>'
 	var design: Resource = Author.from_xml(source).design
+	design.dependencies = {"res://depth-shared.obj":FileAccess.get_sha256("res://depth-shared.obj")}
 	var first: String = design.entities()[0].id
 	var second: String = design.entities()[1].id
 	edit(design,first,"mode","sdf");edit(design,second,"mode","sdf")
@@ -85,7 +87,7 @@ func run() -> void:
 	check(not Collision.validate_stats([{ "mesh":"test","triangles":4,"cells":500001,"depth":8,"query_valid":false}],Collision.limits()).is_empty(),"per-mesh query limit enforced")
 	await runtime_collision_checks()
 	service.queue_free();await process_frame
-	print("NODE_COLLISION_RESULT ",JSON.stringify({"checks":checks,"failed":failures.size(),"failures":failures,"native_model_stats":observed_model_stats,"native_runtime_stats":observed_runtime_stats}))
+	print("NODE_COLLISION_RESULT ",JSON.stringify({"checks":checks,"failed":failures.size(),"failures":failures,"native_model_stats":observed_model_stats,"native_runtime_stats":observed_runtime_stats,"open_surface_error":observed_open_surface_error}))
 	quit(0 if failures.is_empty() else 1)
 
 func settled(world: Node) -> bool:
@@ -138,6 +140,8 @@ func runtime_collision_checks() -> void:
 	var open: Resource = Author.from_xml(source).design
 	var data := FileAccess.get_file_as_string("res://depth-shared.obj").replace("f 2 3 4\n", "")
 	var file := FileAccess.open("res://open.obj",FileAccess.WRITE);file.store_string(data);file.close()
-	for asset in Xml.section(open.tree,"asset").children: asset.attrs.file=ProjectSettings.globalize_path("res://open.obj")
+	for asset in Xml.section(open.tree,"asset").children: asset.attrs.file="res://open.obj"
+	open.dependencies = {"res://open.obj":FileAccess.get_sha256("res://open.obj")}
 	var output := await compile_design(open)
-	check(not output.get("success",true),"open SDF triangles are rejected by the author compiler")
+	observed_open_surface_error = output.get("error", "")
+	check(not output.get("success",true) and observed_open_surface_error == "SDF tetra has no closed triangle surface", "open SDF triangles reach the intended geometry-quality rejection: " + observed_open_surface_error)

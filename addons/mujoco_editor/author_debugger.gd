@@ -114,8 +114,7 @@ func apply_model(model: Node, _result: Dictionary) -> void:
 func models_valid(world: Node) -> bool:
 	for node in Layout.nodes(world):
 		if not node.has_method("author_definition") or not node.design: continue
-		if node.design.validated_revision != node.design.revision or node.design.validated_context != node.compilation_signature() or not node.design.validation_error.is_empty(): return false
-		if node.author_scene and (node.author_scene.due_ms > 0 or node.author_scene.compiler.busy()): return false
+		if not plugin or not plugin.author_model_ready(node): return false
 	return true
 
 func synchronize(world: Node) -> void:

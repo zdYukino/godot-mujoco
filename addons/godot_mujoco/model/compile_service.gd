@@ -54,7 +54,7 @@ func _start() -> void:
 	if process_id < 0:
 		_finish({"success":false, "error":"Cannot start isolated MuJoCo compiler"})
 		return
-	status_changed.emit("正在后台编译")
+	status_changed.emit("正在后台验证保存的预览（必要时编译）" if active.get("op") == "verify_or_compile" else "正在后台编译")
 
 func _process(_delta: float) -> void:
 	if active.is_empty(): return
